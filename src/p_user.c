@@ -1449,11 +1449,11 @@ boolean P_PlayerHitFloor(player_t *player, boolean fromAir, angle_t oldPitch, an
 			{
 				air = true;
 			}
-
-			if (K_CheckStumble(player, oldPitch, oldRoll, air) == true)
+			
+			/*if (K_CheckStumble(player, oldPitch, oldRoll, air) == true)
 			{
 				return false;
-			}
+			}*/
 
 			if (air == false && K_FastFallBounce(player) == true)
 			{

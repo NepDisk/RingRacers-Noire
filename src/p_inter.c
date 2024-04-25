@@ -3281,12 +3281,14 @@ boolean P_DamageMobj(mobj_t *target, mobj_t *inflictor, mobj_t *source, INT32 da
 				case DMG_STUMBLE:
 				case DMG_WHUMBLE:
 					//K_StumblePlayer(player);
-					K_SpinPlayer(player, inflictor, source, KSPIN_SPINOUT);
+					if (!(player->spinouttimer > 0))
+						K_SpinPlayer(player, inflictor, source, KSPIN_SPINOUT);
 					ringburst = 0;
 					break;
 				case DMG_TUMBLE:
 					//K_TumblePlayer(player, inflictor, source);
-					K_SpinPlayer(player, inflictor, source, KSPIN_SPINOUT);
+					if (!(player->spinouttimer > 0))
+						K_SpinPlayer(player, inflictor, source, KSPIN_SPINOUT);
 					ringburst = 10;
 					break;
 				case DMG_EXPLODE:
@@ -3310,7 +3312,7 @@ boolean P_DamageMobj(mobj_t *target, mobj_t *inflictor, mobj_t *source, INT32 da
 				ringburst = 0;
 			}
 
-			if (type != DMG_STUMBLE && type != DMG_WHUMBLE)
+			if (type)
 			{
 				if (type != DMG_STING)
 					player->flashing = K_GetKartFlashing(player);

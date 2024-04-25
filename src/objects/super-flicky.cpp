@@ -584,7 +584,7 @@ struct Flicky : mobj_t
 		if (P_DamageMobj(mobj, this, source(), 1, DMG_NORMAL))
 		{
 			P_InstaThrust(mobj, K_MomentumAngleReal(this), std::max(FixedHypot(momx, momy), kMinKnockback * mapobjectscale));
-			K_StumblePlayer(mobj->player);
+			//K_StumblePlayer(mobj->player);
 
 			mobj->player->spinouttimer = 1; // need invulnerability for one tic
 

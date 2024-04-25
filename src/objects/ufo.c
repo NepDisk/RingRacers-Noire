@@ -1037,7 +1037,7 @@ void Obj_PlayerUFOCollide(mobj_t *ufo, mobj_t *other)
 		if (AngleDelta(moveAngle, clipAngle) < ANG60)
 		{
 			// in front
-			K_StumblePlayer(other->player);
+			//K_StumblePlayer(other->player);
 		}
 
 		K_KartBouncing(other, ufo);

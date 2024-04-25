@@ -187,7 +187,7 @@ boolean P_PlayerOrbit(player_t *player)
 		P_HaltPlayerOrbit(player);
 		player->markedfordeath = true;
 		K_PlayPainSound(player->mo, NULL);
-		K_StumblePlayer(player);
+		//K_StumblePlayer(player);
 
 		return false;
 	}

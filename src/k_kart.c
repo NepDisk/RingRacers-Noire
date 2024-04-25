@@ -4081,6 +4081,14 @@ void K_SpinPlayer(player_t *player, mobj_t *inflictor, mobj_t *source, INT32 typ
 {
 	(void)inflictor;
 	(void)source;
+	
+	
+	if (player->spinouttimer > 0 || player->flashing > 0 || player->invincibilitytimer > 0 || player->growshrinktimer > 0)
+	{
+			K_DoInstashield(player);
+			return;
+	}
+	
 
 	K_DirectorFollowAttack(player, inflictor, source);
 
@@ -4335,7 +4343,7 @@ boolean K_CheckStumble(player_t *player, angle_t oldPitch, angle_t oldRoll, bool
 	// Oh jeez, you landed on your side.
 	// You get to tumble.
 
-	K_StumblePlayer(player);
+	//K_StumblePlayer(player);
 	return true;
 }
 
@@ -4878,7 +4886,7 @@ INT32 K_ExplodePlayer(player_t *player, mobj_t *inflictor, mobj_t *source) // A 
 			if (spbMultiplier <= 0)
 			{
 				// Convert into stumble.
-				K_StumblePlayer(player);
+				//K_StumblePlayer(player);
 				return 0;
 			}
 			else if (spbMultiplier < FRACUNIT)
@@ -11811,17 +11819,6 @@ boolean K_FastFallBounce(player_t *player)
 		const fixed_t minBounce = mapobjectscale;
 		fixed_t bounce = 2 * abs(player->fastfall) / 3;
 
-		if (player->curshield != KSHIELD_BUBBLE && bounce <= 2 * maxBounce)
-		{
-			// Lose speed on bad bounce.
-			// Slow down more as horizontal momentum shrinks
-			// compared to vertical momentum.
-			angle_t a = R_PointToAngle2(0, 0, 4 * maxBounce, player->speed);
-			fixed_t f = FSIN(a);
-			player->mo->momx = FixedMul(player->mo->momx, f);
-			player->mo->momy = FixedMul(player->mo->momy, f);
-		}
-
 		if (bounce > maxBounce)
 		{
 			bounce = maxBounce;
@@ -11843,22 +11840,28 @@ boolean K_FastFallBounce(player_t *player)
 			P_InstaThrust(player->mo, player->mo->angle, 11*max(minspeed, fallspeed)/10);
 
 			bounce += 3 * mapobjectscale;
+			
+			if (player->mo->eflags & MFE_UNDERWATER)
+				bounce = (117 * bounce) / 200;
+			
+			player->mo->momz = bounce * P_MobjFlip(player->mo);
+			
+			player->pflags |= PF_UPDATEMYRESPAWN;
+
+			player->fastfall = 0;
+			
+			return true;
 		}
 		else
 		{
-			S_StartSound(player->mo, sfx_ffbonc);
+			S_StartSound(player->mo, sfx_doord2);
+			
+			player->pflags |= PF_UPDATEMYRESPAWN;
+
+			player->fastfall = 0;
+			
+			return false;
 		}
-
-		if (player->mo->eflags & MFE_UNDERWATER)
-			bounce = (117 * bounce) / 200;
-
-		player->pflags |= PF_UPDATEMYRESPAWN;
-
-		player->fastfall = 0;
-
-		player->mo->momz = bounce * P_MobjFlip(player->mo);
-
-		return true;
 	}
 
 	return false;
