@@ -8482,7 +8482,7 @@ void K_KartPlayerThink(player_t *player, ticcmd_t *cmd)
 	}
 
 	K_UpdateOffroad(player);
-	K_UpdateDraft(player);
+	//K_UpdateDraft(player);
 	K_UpdateEngineSounds(player); // Thanks, VAda!
 
 	Obj_DashRingPlayerThink(player);
@@ -10524,22 +10524,6 @@ INT16 K_GetKartTurnValue(const player_t *player, INT16 turnvalue)
 	}
 
 	return (turnfixed / FRACUNIT);
-}
-
-INT32 K_GetUnderwaterTurnAdjust(const player_t *player)
-{
-	if (player->mo->eflags & MFE_UNDERWATER)
-	{
-		INT32 steer = (K_GetKartTurnValue(player,
-					player->steering) << TICCMD_REDUCE);
-
-		if (!player->drift)
-			steer = 9 * steer / 5;
-
-		return FixedMul(steer, 8 * K_GetUnderwaterStrafeMul(player));
-	}
-	else
-		return 0;
 }
 
 INT32 K_GetKartDriftSparkValue(const player_t *player)

@@ -148,9 +148,9 @@ void K_InitGrandPrixBots(void)
 	}
 	grabskins[usableskins] = MAXSKINS;
 
-#if MAXPLAYERS != 16
-	I_Error("GP bot difficulty levels need rebalanced for the new player count!\n");
-#endif
+//#if MAXPLAYERS != 16
+//	I_Error("GP bot difficulty levels need rebalanced for the new player count!\n");
+//#endif
 
 	if (grandprixinfo.masterbots)
 	{
@@ -176,6 +176,23 @@ void K_InitGrandPrixBots(void)
 		difficultylevels[13] = max(1, startingdifficulty-7);
 		difficultylevels[14] = max(1, startingdifficulty-7);
 		difficultylevels[15] = max(1, startingdifficulty-8);
+		difficultylevels[16] = max(1, startingdifficulty-8);
+		difficultylevels[17] = max(1, startingdifficulty-8);
+		difficultylevels[18] = max(1, startingdifficulty-9);
+		difficultylevels[19] = max(1, startingdifficulty-9);
+		difficultylevels[20] = max(1, startingdifficulty-9);
+		difficultylevels[21] = max(1, startingdifficulty-10);
+		difficultylevels[22] = max(1, startingdifficulty-10);
+		difficultylevels[23] = max(1, startingdifficulty-10);
+		difficultylevels[24] = max(1, startingdifficulty-11);
+		difficultylevels[25] = max(1, startingdifficulty-11);
+		difficultylevels[26] = max(1, startingdifficulty-11);
+		difficultylevels[27] = max(1, startingdifficulty-12);
+		difficultylevels[28] = max(1, startingdifficulty-12);
+		difficultylevels[29] = max(1, startingdifficulty-12);
+		difficultylevels[30] = max(1, startingdifficulty-13);
+		difficultylevels[31] = max(1, startingdifficulty-13);
+		
 	}
 
 	for (i = 0; i < MAXPLAYERS; i++)

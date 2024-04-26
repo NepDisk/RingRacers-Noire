@@ -1371,7 +1371,7 @@ static INT32 K_HandleBotTrack(const player_t *player, ticcmd_t *cmd, botpredicti
 
 	destangle = K_BotSmoothLanding(player, destangle);
 
-	moveangle = player->mo->angle + K_GetUnderwaterTurnAdjust(player);
+	moveangle = player->mo->angle;
 	anglediff = AngleDeltaSigned(moveangle, destangle);
 
 	if (anglediff < 0)
@@ -1506,7 +1506,7 @@ static INT32 K_HandleBotReverse(const player_t *player, ticcmd_t *cmd, botpredic
 	destangle = K_BotSmoothLanding(player, destangle);
 
 	// Calculate turn direction first.
-	moveangle = player->mo->angle + K_GetUnderwaterTurnAdjust(player);
+	moveangle = player->mo->angle;
 	angle = (moveangle - destangle);
 
 	if (angle < ANGLE_180)
