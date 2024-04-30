@@ -11,7 +11,7 @@
 
 #ifdef CMAKECONFIG
 
-#define ASSET_HASH_MAIN_KART     "${SRB2_ASSET_main.kart_HASH}"
+#define ASSET_HASH_MAIN_KART     "${SRB2_ASSET_bios.pk3_HASH}"
 #define ASSET_HASH_GFX_PK3       "${SRB2_ASSET_gfx.pk3_HASH}"
 #define ASSET_HASH_TEXTURES_PK3  "${SRB2_ASSET_textures.pk3_HASH}"
 #define ASSET_HASH_CHARS_PK3     "${SRB2_ASSET_chars.pk3_HASH}"

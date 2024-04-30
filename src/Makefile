@@ -135,7 +135,7 @@ endif
 
 # SRB2 data files
 D_DIR?=../bin/Resources
-D_FILES=$(D_DIR)/main.kart \
+D_FILES=$(D_DIR)/bios.pk3 \
 	$(D_DIR)/gfx.pk3 \
 	$(D_DIR)/textures.pk3 \
 	$(D_DIR)/chars.pk3 \

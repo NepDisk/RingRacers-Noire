@@ -20,7 +20,7 @@ set(SRB2_ASSET_INSTALL ON
 ####################
 
 set(SRB2_ASSET_HASHED
-"main.kart;\
+"bios.pk3;\
 gfx.pk3;\
 textures.pk3;\
 chars.pk3;\

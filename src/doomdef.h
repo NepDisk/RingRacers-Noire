@@ -149,7 +149,9 @@ extern char logfilename[1024];
 
 // Does this version require an added patch file?
 // Comment or uncomment this as necessary.
-#define USE_PATCH_FILE
+//#define USE_PATCH_FILE
+
+#define DEVELOP
 
 // Use .kart extension addons
 #define USE_KART

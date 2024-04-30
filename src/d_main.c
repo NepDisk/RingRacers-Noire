@@ -1038,7 +1038,7 @@ static void ChangeDirForUrlHandler(void)
 
 static boolean AddIWAD(void)
 {
-	char * path = va(pandf,srb2path,"main.kart");
+	char * path = va(pandf,srb2path,"bios.pk3");
 
 	if (FIL_ReadFileOK(path))
 	{
@@ -1056,7 +1056,7 @@ static void IdentifyVersion(void)
 	const char *srb2waddir = NULL;
 
 #if (defined (__unix__) && !defined (MSDOS)) || defined (UNIXCOMMON) || defined (HAVE_SDL)
-	// change to the directory where 'main.kart' is found
+	// change to the directory where 'bios.pk3' is found
 	srb2waddir = I_LocateWad();
 #endif
 
@@ -1076,7 +1076,7 @@ static void IdentifyVersion(void)
 	// Load the IWAD
 	if (! AddIWAD())
 	{
-		I_Error("MAIN.KART not found! Expected in %s\n", srb2waddir);
+		I_Error("bios.pk3 not found! Expected in %s\n", srb2waddir);
 	}
 
 	// will be overwritten in case of -cdrom or unix/win home
@@ -1103,6 +1103,8 @@ static void IdentifyVersion(void)
 
 #else
 
+D_AddFile(startupiwads, va(pandf,srb2waddir,"sounds.pk3"));
+
 #if !defined (HAVE_SDL) || defined (HAVE_MIXER)
 
 #define MUSICTEST(str) \
@@ -1115,7 +1117,6 @@ static void IdentifyVersion(void)
 			I_Error("File "str" has been modified with non-music/sound lumps"); \
 	}
 
-	MUSICTEST("sounds.wad")
 	MUSICTEST("music.pk3")
 
 #undef MUSICTEST
@@ -1384,7 +1385,7 @@ void D_SRB2Main(void)
 #ifndef DEVELOP
 	// Check MD5s of autoloaded files
 	// Note: Do not add any files that ignore MD5!
-	W_VerifyFileMD5(mainwads, ASSET_HASH_MAIN_KART);					// main.kart
+	W_VerifyFileMD5(mainwads, ASSET_HASH_MAIN_KART);					// bios.pk3
 	mainwads++; W_VerifyFileMD5(mainwads, ASSET_HASH_GFX_PK3);			// gfx.pk3
 	mainwads++; W_VerifyFileMD5(mainwads, ASSET_HASH_TEXTURES_PK3);		// textures.pk3
 	mainwads++; W_VerifyFileMD5(mainwads, ASSET_HASH_CHARS_PK3);		// chars.pk3
