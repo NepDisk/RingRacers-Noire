@@ -119,7 +119,6 @@ set(SRB2_SDL2_EXE_NAME srb2kart CACHE STRING "Executable binary output name")
 include_directories(${CMAKE_CURRENT_BINARY_DIR}/src)
 
 add_subdirectory(src)
-add_subdirectory(assets)
 
 
 ## config.h generation
