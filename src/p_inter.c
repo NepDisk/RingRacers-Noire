@@ -30,7 +30,7 @@
 #include "f_finale.h"
 
 // SRB2kart
-#include "k_kart.h"
+#include "k_kart.h" 
 #include "k_battle.h"
 #include "k_pwrlv.h"
 #include "k_grandprix.h"
@@ -1219,7 +1219,7 @@ void P_KillMobj(mobj_t *target, mobj_t *inflictor, mobj_t *source, UINT8 damaget
 		if (gametyperules & GTR_BUMPERS)
 			K_CheckBumpers();
 
-		target->player->trickpanel = 0;
+		target->player->kartstuff[k_pogospring] = 0;
 	}
 
 	if (source && target && target->player && source->player)
