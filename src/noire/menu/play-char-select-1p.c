@@ -12,14 +12,14 @@
 /// \file  menus/play-char-select.c
 /// \brief Character Select
 
-#include "../i_time.h"
-#include "../k_menu.h"
-#include "../r_skins.h"
-#include "../s_sound.h"
-#include "../k_grandprix.h" // K_CanChangeRules
-#include "../m_cond.h" // Condition Sets
-#include "../k_color.h"
-#include "../z_zone.h"
+#include "../../i_time.h"
+#include "../../k_menu.h"
+#include "../../r_skins.h"
+#include "../../s_sound.h"
+#include "../../k_grandprix.h" // K_CanChangeRules
+#include "../../m_cond.h" // Condition Sets
+#include "../../k_color.h"
+#include "../../z_zone.h"
 #include "../n_menu.h"
 
 //#define CHARSELECT_DEVICEDEBUG
@@ -29,7 +29,7 @@ menuitem_t PLAY_CharSelect1P[] =
 	{IT_NOTHING, NULL, NULL, NULL, {NULL}, 0, 0},
 };
 
-static void M_DrawCharacterBack(void)
+static void M_DrawCharacter1PBack(void)
 {
 	if (!optionsmenu.profile)
 	{
@@ -51,14 +51,15 @@ menu_t PLAY_CharSelect1PDef = {
 	0,
 	NULL,
 	2, 5, // matches OPTIONS_EditProfileDef
-	M_DrawCharacterSelect,
-	M_DrawCharacterBack,
-	M_CharacterSelectTick,
-	M_CharacterSelectInit,
-	M_CharacterSelectQuit,
-	M_CharacterSelectHandler
+	M_DrawCharacter1PSelect,
+	M_DrawCharacter1PBack,
+	M_Character1PSelectTick,
+	M_Character1PSelectInit,
+	M_Character1PSelectQuit,
+	M_Character1PSelectHandler
 };
 
+/*
 CV_PossibleValue_t skins_cons_t[MAXSKINS+1] = {{1, DEFAULTSKIN}};
 
 // Character Select!
@@ -75,6 +76,7 @@ tic_t setup_animcounter = 0;
 
 UINT8 setup_page = 0;
 UINT8 setup_maxpage = 0;	// For charsel page to identify alts easier...
+*/
 
 static void M_PushMenuColor(setup_player_colors_t *colors, UINT16 newColor)
 {
@@ -113,6 +115,7 @@ static void M_ClearMenuColors(setup_player_colors_t *colors)
 	colors->listLen = colors->listCap = 0;
 }
 
+/*
 UINT16 M_GetColorAfter(setup_player_colors_t *colors, UINT16 value, INT32 amount)
 {
 	const INT32 sign = (amount < 0) ? -1 : 1;
@@ -159,7 +162,7 @@ UINT16 M_GetColorAfter(setup_player_colors_t *colors, UINT16 value, INT32 amount
 	}
 
 	return colors->list[index];
-}
+}*/
 
 static void M_NewPlayerColors(setup_player_t *p)
 {
@@ -287,7 +290,7 @@ static void M_SetupMidGameGridPos(setup_player_t *p, UINT8 num)
 }
 
 
-void M_CharacterSelectInit(void)
+void M_Character1PSelectInit(void)
 {
 	UINT8 i, j;
 	setup_maxpage = 0;
@@ -340,7 +343,7 @@ void M_CharacterSelectInit(void)
 				// Un-set devices
 				G_SetDeviceForPlayer(i, -1);
 #ifdef CHARSELECT_DEVICEDEBUG
-				CONS_Printf("M_CharacterSelectInit: Device for %d set to %d\n", i, -1);
+				CONS_Printf("M_Character1PSelectInit: Device for %d set to %d\n", i, -1);
 #endif
 			}
 		}
@@ -395,7 +398,7 @@ void M_CharacterSelectInit(void)
 }
 
 
-void M_CharacterSelect(INT32 choice)
+void M_Character1PSelect(INT32 choice)
 {
 	(void)choice;
 	PLAY_CharSelect1PDef.music = currentMenu->music;
@@ -725,6 +728,7 @@ static void M_HandleCharAskChange(setup_player_t *p, UINT8 num)
 	}
 }
 
+/*
 boolean M_CharacterSelectForceInAction(void)
 {
 	if (!Playing())
@@ -734,7 +738,7 @@ boolean M_CharacterSelectForceInAction(void)
 		return false;
 
 	return (cv_forceskin.value != -1);
-}
+}*/
 
 static void M_HandleBackToChars(setup_player_t *p)
 {
@@ -1250,7 +1254,7 @@ static void M_HandleFollowerColorRotate(setup_player_t *p, UINT8 num)
 	}
 }
 
-boolean M_CharacterSelectHandler(INT32 choice)
+boolean M_Character1PSelectHandler(INT32 choice)
 {
 	INT32 i;
 	boolean forceskin = M_CharacterSelectForceInAction();
@@ -1397,7 +1401,7 @@ static void M_MPConfirmCharacterSelection(void)
 	M_ClearMenus(true);
 }
 
-void M_CharacterSelectTick(void)
+void M_Character1PSelectTick(void)
 {
 	UINT8 i;
 	boolean setupnext = true;
@@ -1492,11 +1496,11 @@ void M_CharacterSelectTick(void)
 		M_OptionsTick();
 }
 
-boolean M_CharacterSelectQuit(void)
+boolean M_Character1PSelectQuit(void)
 {
 	return true;
 }
-
+/*
 void Splitplayers_OnChange(void);
 void Splitplayers_OnChange(void)
 {
@@ -1504,4 +1508,4 @@ void Splitplayers_OnChange(void)
 	if (cv_splitplayers.value < setupm_pselect)
 		setupm_pselect = 1;
 #endif
-}
+}*/

@@ -46,6 +46,12 @@ extern menuitem_t OPTIONS_Noire[];
 extern menu_t OPTIONS_NoireDef;
 
 extern menu_t PLAY_CharSelect1PDef;
+void M_Character1PSelect(INT32);
+void M_DrawCharacter1PSelect(void);
+void M_Character1PSelectTick(void);
+void M_Character1PSelectInit(void);
+boolean M_Character1PSelectQuit(void);
+boolean M_Character1PSelectHandler(INT32);
 
 #ifdef __cplusplus
 } // extern "C"
