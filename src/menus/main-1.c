@@ -29,11 +29,12 @@
 #include "../i_video.h" // I_FinishUpdate
 #include "../i_system.h" // I_Sleep
 #include "../m_cond.h" // M_GameTrulyStarted
+#include "../noire/n_menu.h" //M_Character1PSelect
 
 menuitem_t MainMenu[] =
 {
 	{IT_STRING | IT_CALL, "Local Play", "Play only on this computer.",
-		"MENUI002", {.routine = M_CharacterSelect}, 0, 0},
+		"MENUI002", {.routine = M_Character1PSelect}, 0, 0},
 
 	{IT_STRING | IT_CALL, "Online", "Connect to other computers over the Internet.",
 		"MENUI009", {.routine = M_MPOptSelectInit}, /*M_MPRoomSelectInit,*/ 0, 0},

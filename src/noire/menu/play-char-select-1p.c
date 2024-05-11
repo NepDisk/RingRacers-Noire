@@ -42,21 +42,21 @@ static void M_DrawCharacter1PBack(void)
 }
 
 menu_t PLAY_CharSelect1PDef = {
-	sizeof (PLAY_CharSelect1P) / sizeof (menuitem_t),
-	&MainDef,
-	0,
-	PLAY_CharSelect1P,
-	0, 0,
-	SKINCOLOR_ULTRAMARINE, 0,
-	0,
-	NULL,
-	2, 5, // matches OPTIONS_EditProfileDef
-	M_DrawCharacter1PSelect,
-	M_DrawCharacter1PBack,
-	M_Character1PSelectTick,
-	M_Character1PSelectInit,
-	M_Character1PSelectQuit,
-	M_Character1PSelectHandler
+	sizeof (PLAY_CharSelect1P) / sizeof (menuitem_t), 	// # of menu items
+	&MainDef, 											// previous menu
+	0,													// last item user was on in menu
+	PLAY_CharSelect1P,									// menu items
+	0, 0,												// x, y of menu
+	SKINCOLOR_SUPERORANGE5, 0,							// Can be whatever really! Options menu uses extra1 for bg colour.
+	0,													// menubehaviourflags_t
+	NULL,												// Track to play in M_PlayMenuJam. NULL for default, "." to stop
+	2, 5, // matches OPTIONS_EditProfileDef				// only transition if IDs match AND tics for transitions out
+	M_DrawCharacter1PSelect,							// draw routine
+	M_DrawCharacter1PBack,								// draw routine, but, like, for the background
+	M_Character1PSelectTick,							// ticker routine
+	M_Character1PSelectInit,							// called when starting a new menu
+	M_Character1PSelectQuit,							// called before quit a menu return true if we can
+	M_Character1PSelectHandler							// if set, called every frame in the input handler. Returning true overwrites normal input handling.
 };
 
 /*
@@ -401,7 +401,7 @@ void M_Character1PSelectInit(void)
 void M_Character1PSelect(INT32 choice)
 {
 	(void)choice;
-	PLAY_CharSelect1PDef.music = currentMenu->music;
+	PLAY_CharSelect1PDef.music = "."; //currentMenu->music;
 	PLAY_CharSelect1PDef.prevMenu = currentMenu;
 	M_SetupNextMenu(&PLAY_CharSelect1PDef, false);
 }
