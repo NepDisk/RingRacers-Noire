@@ -37,14 +37,14 @@ void ColorHUD_OnChange(void)
 
 	if(cv_colorizedhud.value && clr_hud)
 	{
-		for (int i = 2; i < 5; i++)
+		for (int i = 2; i < 4; i++)
 		{
 			OPTIONS_Noire[i].status = IT_STRING | IT_CVAR;
 		}
 	}
 	else
 	{
-		for (int i = 2; i < 5; i++)
+		for (int i = 2; i < 4; i++)
 		{
 			OPTIONS_Noire[i].status = IT_GRAYEDOUT;
 		}
