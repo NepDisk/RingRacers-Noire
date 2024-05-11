@@ -45,6 +45,8 @@ extern menu_t OPTIONS_NoireGameplayRivalsDef;
 extern menuitem_t OPTIONS_Noire[];
 extern menu_t OPTIONS_NoireDef;
 
+extern menu_t PLAY_CharSelect1PDef;
+
 #ifdef __cplusplus
 } // extern "C"
 #endif

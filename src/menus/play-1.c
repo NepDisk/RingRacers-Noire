@@ -12,6 +12,8 @@
 #include "../k_menu.h"
 #include "../m_cond.h"
 
+#include "../noire/n_menu.h"
+
 menuitem_t PLAY_MainMenu[] =
 {
 	{IT_STRING | IT_CALL, "Local Play", "Play only on this computer.",
@@ -23,7 +25,8 @@ menuitem_t PLAY_MainMenu[] =
 	{IT_STRING | IT_CALL, "Back", NULL, NULL, {.routine = M_GoBack}, 0, 0},
 };
 
-menu_t PLAY_MainDef = KARTGAMEMODEMENU(PLAY_MainMenu, &PLAY_CharSelectDef);
+//menu_t PLAY_MainDef = KARTGAMEMODEMENU(PLAY_MainMenu, &PLAY_CharSelectDef);
+menu_t PLAY_MainDef = KARTGAMEMODEMENU(PLAY_MainMenu, &PLAY_CharSelect1PDef);
 
 void M_SetupPlayMenu(INT32 choice)
 {

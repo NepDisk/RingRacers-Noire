@@ -28,6 +28,8 @@
 #include "m_cond.h"
 #include "music.h"
 
+#include "noire/n_menu.h" //NOIRE: 1P menu...
+
 #ifdef HAVE_DISCORDRPC
 #include "discord.h"
 #endif
@@ -726,6 +728,7 @@ menu_t *M_SpecificMenuRestore(menu_t *torestore)
 	// One last catch.
 	M_SetupPlayMenu(-1);
 	PLAY_CharSelectDef.prevMenu = &MainDef;
+	PLAY_CharSelect1PDef.prevMenu = &MainDef; //Is this right?
 
 	if (torestore != &MISC_ChallengesDef)
 	{
