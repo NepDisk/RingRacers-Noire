@@ -58,18 +58,23 @@ boolean M_Character1PSelectHandler(INT32);
 UINT8 M_GetSkinIndexGivenPos(setup_player_t* p);
 
 struct setup_nestedchar {
-    UINT8 parentSkinId; //Skin ID of the parent.
+    UINT8 parentSkinId; //Skin ID of this (the parent).
     UINT8 childNum; // Amount of items in childrenSkinIds
-    UINT8 childrenSkinIds[]; //Skin IDs that will be hold in this instance. Needs to be dynamically allocated!
+    UINT8 *childrenSkinIds; //Skin IDs that will be hold in this instance. Needs to be dynamically allocated!
 };
 
 extern struct setup_flatchargrid_s {
     UINT8 sortingMode; 					// How we are currently sorting
 	UINT8 numSkins; 					// Length of skinList, as skinList is dynamically allocated.
 	boolean isExtended; 				// Is SkinList expanded right now or not, showing children as individual items outside of their parents.
-    struct setup_nestedchar skinList[]; // Skins that we'll have
+    struct setup_nestedchar *skinList; // Skins that we'll have
 } setup_flatchargrid;
 
+//NOTES:
+//Is allocating skinList dynamically worth it? we WILl eventually have the same amount of data as skins[] which is 255
+//The only reason would be saving up on struct data since children will only get its ids saved, instead of childNum and parentSkinId as well..
+//But then we need to do stupid search functions to find skins as we don't know how or when or in which order they got loaded into the array. is that worth it?
+//Make an union? Something? make a setup_nestedchar only have parentSkinId if its a child? no idea.
 
 #ifdef __cplusplus
 } // extern "C"

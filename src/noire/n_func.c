@@ -9,6 +9,7 @@
 
 #include "n_func.h"
 #include "n_cvar.h"
+#include "../z_zone.h"
 
 // Old update Player angle taken from old kart commits
 void N_UpdatePlayerAngle(player_t* player)
@@ -472,20 +473,34 @@ mobj_t *P_GetObjectTypeInSectorNum(mobjtype_t type, size_t s)
 }
 
 // Function to add an element to an array dynamically
-void add_element(void **array, size_t *size, UINT8 elem_size, void *new_elem) {
+void add_element(void **array, UINT8 *capacity, UINT8 typeSize, void *new_elem) {
+    // If the array is not initialized
+    if (*array == NULL) {
+        *array = Z_Malloc(typeSize, PU_STATIC, NULL);
+        if (*array == NULL) {
+            // Handle memory allocation failure
+            return; // Or any appropriate error handling
+        }
+        *capacity = 1;
+        memcpy(*array, new_elem, typeSize); // Copy the new element
+        return;
+    }
+
     // Increase the size of the array
-    *size += 1;
+    *capacity++;
 
     // Reallocate memory for the array
-    void *temp = realloc(*array, (*size) * elem_size);
+    void *temp = Z_Realloc(*array, (*capacity) * typeSize, PU_STATIC, NULL);
     if (temp == NULL) {
-        // Handle memory allocation failure
-        fprintf(stderr, "Memory allocation failed\n");
-        exit(EXIT_FAILURE);
+        // Handle reallocation failure
+        // Free the old memory block to avoid memory leaks
+        Z_Free(*array);
+        return; // Or any appropriate error handling
     }
-    *array = temp;
+    
+    *array = temp; // Update array to point to the newly reallocated memory
 
     // Copy the new element to the end of the array
-    void *dest = (char *)(*array) + ((*size - 1) * elem_size);
-    memcpy(dest, new_elem, elem_size);
+    void *dest = (char *)(*array) + ((*capacity - 1) * typeSize);
+    memcpy(dest, new_elem, typeSize);
 }
