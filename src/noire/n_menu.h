@@ -75,6 +75,7 @@ extern struct setup_flatchargrid_s {
 //The only reason would be saving up on struct data since children will only get its ids saved, instead of childNum and parentSkinId as well..
 //But then we need to do stupid search functions to find skins as we don't know how or when or in which order they got loaded into the array. is that worth it?
 //Make an union? Something? make a setup_nestedchar only have parentSkinId if its a child? no idea.
+//Just make it not bloat the memory so we eventually have way more skins like in Neptune...
 
 #ifdef __cplusplus
 } // extern "C"
