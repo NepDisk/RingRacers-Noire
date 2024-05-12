@@ -11,6 +11,8 @@
 #include "../../sanitize.h"
 #include "../../v_video.h"
 
+#include "../n_menu.h" //setup_flatchargrid
+
 //
 // PLAY MENUS
 //
@@ -21,11 +23,11 @@ static void M_DrawCharSelectCircle(setup_player_t *p, INT16 x, INT16 y)
 	UINT16 i, numoptions = 0;
 	INT16 l = 0, r = 0;
 	INT16 subtractcheck;
-
+	UINT8 skinIndexGivenPos = M_GetSkinIndexGivenPos(p);
 	switch (p->mdepth)
 	{
 		case CSSTEP_ALTS:
-			numoptions = setup_chargrid[p->gridx][p->gridy].numskins;
+			numoptions = setup_flatchargrid.skinList[skinIndexGivenPos].childNum;
 			break;
 		case CSSTEP_COLORS:
 		case CSSTEP_FOLLOWERCOLORS:
@@ -73,7 +75,7 @@ static void M_DrawCharSelectCircle(setup_player_t *p, INT16 x, INT16 y)
 					n += ((i+1)/2);
 				n = (n + numoptions) % numoptions;
 
-				skin = setup_chargrid[p->gridx][p->gridy].skinlist[n];
+				skin = setup_flatchargrid.skinList[skinIndexGivenPos].childrenSkinIds[n];
 				patch = faceprefix[skin][FACE_RANK];
 				colormap = R_GetTranslationColormap(skin, skins[skin].prefcolor, GTC_MENUCACHE);
 				radius = 24<<FRACBITS;
@@ -538,7 +540,7 @@ static void M_DrawCharSelectPreview(UINT8 num)
 			V_DrawThinString(xpos+16, cy, (p->changeselect == i ? highlightflags : 0), choices[i]);
 		}
 	}
-
+	UINT8 skinIndexGivenPos = M_GetSkinIndexGivenPos(p);
 	if (p->showextra == true)
 	{
 		INT32 randomskin = 0;
@@ -546,12 +548,12 @@ static void M_DrawCharSelectPreview(UINT8 num)
 		{
 			case CSSTEP_ALTS: // Select clone
 			case CSSTEP_READY:
-				if (p->clonenum < setup_chargrid[p->gridx][p->gridy].numskins
-					&& setup_chargrid[p->gridx][p->gridy].skinlist[p->clonenum] < numskins)
+				if (p->clonenum < setup_flatchargrid.skinList[skinIndexGivenPos].childNum
+					&& setup_flatchargrid.skinList[skinIndexGivenPos].childrenSkinIds[p->clonenum] < numskins)
 				{
 					V_DrawThinString(x-3, y+12, 0,
-						skins[setup_chargrid[p->gridx][p->gridy].skinlist[p->clonenum]].name);
-					randomskin = (skins[setup_chargrid[p->gridx][p->gridy].skinlist[p->clonenum]].flags & SF_IRONMAN);
+						skins[setup_flatchargrid.skinList[skinIndexGivenPos].childrenSkinIds[p->clonenum]].name);
+					randomskin = (skins[setup_flatchargrid.skinList[skinIndexGivenPos].childrenSkinIds[p->clonenum]].flags & SF_IRONMAN);
 				}
 				else
 				{
@@ -766,7 +768,7 @@ void M_DrawCharacter1PSelect(void)
 		K_drawButton((x += 58) * FRACUNIT, (kTop - 1) * FRACUNIT, 0, kp_button_c[1], M_MenuButtonPressed(pid, MBT_C));
 		V_DrawThinString((x += kButtonWidth), kTop, 0, "Default");
 	}
-
+	#if 0
 	// We have to loop twice -- first time to draw the drop shadows, a second time to draw the icons.
 	if (forceskin == false)
 	{
@@ -774,7 +776,7 @@ void M_DrawCharacter1PSelect(void)
 		{
 			for (j = 0; j < 9; j++)
 			{
-				skin = setup_chargrid[i][j].skinlist[setup_page];
+				skin = setup_flatchargrid[i][j].skinlist[setup_page];
 				quadx = 4 * (i / 3);
 				quady = 4 * (j / 3);
 
@@ -782,9 +784,9 @@ void M_DrawCharacter1PSelect(void)
 				// Don't draw a shadow if it'll get covered by another icon
 				if ((i % 3 < 2) && (j % 3 < 2))
 				{
-					if ((setup_chargrid[i+1][j].skinlist[setup_page] != -1)
-					&& (setup_chargrid[i][j+1].skinlist[setup_page] != -1)
-					&& (setup_chargrid[i+1][j+1].skinlist[setup_page] != -1))
+					if ((setup_flatchargrid[i+1][j].skinlist[setup_page] != -1)
+					&& (setup_flatchargrid[i][j+1].skinlist[setup_page] != -1)
+					&& (setup_flatchargrid[i+1][j+1].skinlist[setup_page] != -1))
 						continue;
 				}
 
@@ -793,7 +795,7 @@ void M_DrawCharacter1PSelect(void)
 			}
 		}
 	}
-
+	#endif
 	// Draw this inbetween. These drop shadows should be covered by the stat graph, but the icons shouldn't.
 	V_DrawScaledPatch(basex+ 3, 2, 0, W_CachePatchName((optionsmenu.profile ? "PR_STGRPH" : "STATGRPH"), PU_CACHE));
 
@@ -813,7 +815,7 @@ void M_DrawCharacter1PSelect(void)
 			}
 			else
 			{
-				skin = setup_chargrid[i][j].skinlist[setup_page];
+				skin = setup_flatchargrid.skinList[i+j].childrenSkinIds[setup_page];
 			}
 
 			for (k = 0; k < setup_numplayers; k++)
@@ -840,7 +842,7 @@ void M_DrawCharacter1PSelect(void)
 				V_DrawMappedPatch(basex + 82 + (i*16) + quadx, 22 + (j*16) + quady, 0, faceprefix[skin][FACE_RANK], colormap);
 
 				// draw dot if there are more alts behind there!
-				if (forceskin == false && setup_page+1 < setup_chargrid[i][j].numskins)
+				if (forceskin == false && setup_page+1 < setup_flatchargrid.skinList[i+j].childNum)
 					V_DrawScaledPatch(basex + 82 + (i*16) + quadx, 22 + (j*16) + quady + 11, 0, W_CachePatchName("ALTSDOT", PU_CACHE));
 			}
 		}

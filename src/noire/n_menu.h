@@ -45,6 +45,8 @@ extern menu_t OPTIONS_NoireGameplayRivalsDef;
 extern menuitem_t OPTIONS_Noire[];
 extern menu_t OPTIONS_NoireDef;
 
+//Character Menu stuff
+//Def and functions
 extern menu_t PLAY_CharSelect1PDef;
 void M_Character1PSelect(INT32);
 void M_DrawCharacter1PSelect(void);
@@ -52,6 +54,22 @@ void M_Character1PSelectTick(void);
 void M_Character1PSelectInit(void);
 boolean M_Character1PSelectQuit(void);
 boolean M_Character1PSelectHandler(INT32);
+
+UINT8 M_GetSkinIndexGivenPos(setup_player_t* p);
+
+struct setup_nestedchar {
+    UINT8 parentSkinId; //Skin ID of the parent.
+    UINT8 childNum; // Amount of items in childrenSkinIds
+    UINT8 childrenSkinIds[]; //Skin IDs that will be hold in this instance. Needs to be dynamically allocated!
+};
+
+extern struct setup_flatchargrid_s {
+    UINT8 sortingMode; 					// How we are currently sorting
+	UINT8 numSkins; 					// Length of skinList, as skinList is dynamically allocated.
+	boolean isExtended; 				// Is SkinList expanded right now or not, showing children as individual items outside of their parents.
+    struct setup_nestedchar skinList[]; // Skins that we'll have
+} setup_flatchargrid;
+
 
 #ifdef __cplusplus
 } // extern "C"

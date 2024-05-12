@@ -470,3 +470,22 @@ mobj_t *P_GetObjectTypeInSectorNum(mobjtype_t type, size_t s)
 	}
 	return NULL;
 }
+
+// Function to add an element to an array dynamically
+void add_element(void **array, size_t *size, UINT8 elem_size, void *new_elem) {
+    // Increase the size of the array
+    *size += 1;
+
+    // Reallocate memory for the array
+    void *temp = realloc(*array, (*size) * elem_size);
+    if (temp == NULL) {
+        // Handle memory allocation failure
+        fprintf(stderr, "Memory allocation failed\n");
+        exit(EXIT_FAILURE);
+    }
+    *array = temp;
+
+    // Copy the new element to the end of the array
+    void *dest = (char *)(*array) + ((*size - 1) * elem_size);
+    memcpy(dest, new_elem, elem_size);
+}
