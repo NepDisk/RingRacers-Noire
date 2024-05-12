@@ -835,6 +835,46 @@ static boolean R_ProcessPatchableFields(skin_t *skin, char *stoken, char *value)
 		}
 	}
 
+	//I copy pasted the rivals parsing code because I cannot into parsin
+	else if (!stricmp(stoken, "parentnames"))
+	{
+		size_t len = strlen(value);
+		size_t i;
+		char parentnames[SKINNAMESIZE+1] = "";
+		UINT8 pos = 0;
+		UINT8 numparents = 0;
+
+		for (i = 0; i <= len; i++)
+		{
+			if (numparents >= SKINRIVALS)
+			{
+				break;
+			}
+
+			if (value[i] == ',' || i == len)
+			{
+				if (pos == 0)
+					continue;
+
+				STRBUFCPY(skin->parentnames[numparents], parentnames);
+				strlwr(skin->parentnames[numparents]);
+				numparents++;
+
+				if (i == len)
+					break;
+
+				for (; pos > 0; pos--)
+				{
+					parentnames[pos] = '\0';
+				}
+
+				continue;
+			}
+
+			parentnames[pos] = value[i];
+			pos++;
+		}
+	}
 	// custom translation table
 	else if (!stricmp(stoken, "startcolor"))
 	{

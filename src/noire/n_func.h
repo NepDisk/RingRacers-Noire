@@ -36,6 +36,8 @@ void N_PogoSidemove(player_t *player);
 void K_KartLegacyUpdatePosition(player_t *player);
 mobj_t *P_GetObjectTypeInSectorNum(mobjtype_t type, size_t s);
 
+void add_element(void **array, UINT8 *capacity, UINT8 typeSize, void *new_elem);
+
 #ifdef __cplusplus
 } // extern "C"
 #endif

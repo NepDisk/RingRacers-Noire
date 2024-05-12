@@ -82,6 +82,8 @@
 #include "m_easing.h"
 #include "sanitize.h"
 
+#include "noire/n_menu.h" //PLAY_CharSelectDef1P
+
 #ifdef PC_DOS
 #include <stdio.h> // for snprintf
 int	snprintf(char *str, size_t n, const char *fmt, ...);
@@ -376,7 +378,7 @@ static void M_DrawMenuParty(void)
 	UINT16 color;
 	UINT8 *colormap;
 
-	if (setup_numplayers == 0 || currentMenu == &PLAY_CharSelectDef || currentMenu == &MISC_ChallengesDef)
+	if (setup_numplayers == 0 || currentMenu == &PLAY_CharSelectDef || currentMenu == &PLAY_CharSelect1PDef || currentMenu == &MISC_ChallengesDef)
 	{
 		return;
 	}

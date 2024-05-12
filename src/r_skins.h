@@ -29,6 +29,7 @@ extern "C" {
 
 /// Defaults
 #define SKINRIVALS 3
+#define SKINPARENTS 3
 // should be all lowercase!! S_SKIN processing does a strlwr
 #define DEFAULTSKIN "eggman"
 #define DEFAULTSKIN2 "tails" // secondary player
@@ -63,6 +64,7 @@ struct skin_t
 	skinrecord_t records;
 
 	char rivals[SKINRIVALS][SKINNAMESIZE+1]; // Your top 3 rivals for GP mode. Uses names so that you can reference skins that aren't added
+	char parentnames[SKINPARENTS][SKINNAMESIZE+1]; // As with rivals, your top 3 skin names of the parents to shove this skin in in the 1P character selection screen. The first one found will be the one used, the others serving as fallbacks.
 
 	// specific sounds per skin
 	sfxenum_t soundsid[NUMSKINSOUNDS]; // sound # in S_sfx table
