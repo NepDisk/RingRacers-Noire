@@ -470,3 +470,52 @@ mobj_t *P_GetObjectTypeInSectorNum(mobjtype_t type, size_t s)
 	}
 	return NULL;
 }
+
+void N_PogoSidemove(player_t *player)
+{
+	fixed_t movepushside = 0;
+	angle_t movepushangle = 0, movepushsideangle = 0;
+	fixed_t sidemove[2] = {2<<FRACBITS>>16, 4<<FRACBITS>>16};
+	fixed_t side = 0;
+
+	if (!player->pogoSpringJumped)
+		return;
+
+	if (player->drift != 0)
+		movepushangle = player->mo->angle-(ANGLE_45/5)*player->drift;
+	else
+		movepushangle = player->mo->angle;
+
+	movepushsideangle = movepushangle-ANGLE_90;
+
+	// let movement keys cancel each other out
+	if (player->cmd.turning < 0)
+	{;
+		side += sidemove[1];
+	}
+	else if (player->cmd.turning > 0 )
+	{
+		side -= sidemove[1];
+	}
+
+	if (side > MAXPLMOVE)
+		side = MAXPLMOVE;
+	else if (side < -MAXPLMOVE)
+		side = -MAXPLMOVE;
+
+	if (side !=0 && (!player->pogoSpringJumped))
+		side = 0;
+
+	// Sideways movement
+	if (side != 0 && !((player->exiting || mapreset)))
+	{
+		if (side > 0)
+			movepushside = (side * FRACUNIT/128) + FixedDiv(player->speed, K_GetKartSpeed(player, true, false));
+		else
+			movepushside = (side * FRACUNIT/128) - FixedDiv(player->speed, K_GetKartSpeed(player, true, false));
+
+		player->mo->momx += P_ReturnThrustX(player->mo, movepushsideangle, movepushside);
+		player->mo->momy += P_ReturnThrustY(player->mo, movepushsideangle, movepushside);
+	}
+
+}

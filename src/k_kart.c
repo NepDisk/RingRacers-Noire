@@ -9549,6 +9549,8 @@ void K_KartPlayerThink(player_t *player, ticcmd_t *cmd)
 		}
 	}
 
+	N_PogoSidemove(player);
+
 	//NOIRE Springs: Pogo stuff put in the same place as in the original code (after eggman stuff)
 	if (P_IsObjectOnGround(player->mo) && player->pogoSpringJumped)
 	{
@@ -14581,6 +14583,8 @@ boolean K_Cooperative(void)
 
 void K_SetTireGrease(player_t *player, tic_t tics)
 {
+	if (player->pogoSpringJumped)
+		return;
 	if (!player->tiregrease)
 	{
 		UINT8 i;
