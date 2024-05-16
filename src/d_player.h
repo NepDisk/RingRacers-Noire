@@ -337,6 +337,7 @@ typedef enum
 	k_jmp,				// In Mario Kart, letting go of the jump button stops the drift
 	k_offroad,			// In Super Mario Kart, going offroad has lee-way of about 1 second before you start losing speed
 	k_pogospring,		// Pogo spring bounce effect
+	k_pogosidemove,		// Used to store sidemove for pogo
 	k_spindash,			// Spindash charge timer
 	k_spindashspeed,	// Spindash release speed
 	k_spindashboost,	// Spindash release boost timer

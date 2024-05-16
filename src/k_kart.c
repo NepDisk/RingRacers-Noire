@@ -5,6 +5,7 @@
 ///        All of the SRB2kart-unique stuff.
 
 #include "k_kart.h"
+#include "d_player.h"
 #include "k_battle.h"
 #include "k_pwrlv.h"
 #include "k_color.h"
@@ -5676,6 +5677,52 @@ static void K_LookForRings(mobj_t *pmo)
 			P_BlockThingsIterator(bx, by, PIT_AttractingRings);
 }
 
+void K_PogoSidemove(player_t *player)
+{
+	fixed_t movepushside = 0;
+	angle_t movepushangle = 0, movepushsideangle = 0;
+	fixed_t sidemove[2] = {2<<FRACBITS>>16, 4<<FRACBITS>>16};
+	fixed_t side = player->kartstuff[k_pogosidemove];
+
+	if (player->kartstuff[k_drift] != 0)
+		movepushangle = player->mo->angle-(ANGLE_45/5)*player->kartstuff[k_drift];
+	else
+		movepushangle = player->mo->angle;
+
+	movepushsideangle = movepushangle-ANGLE_90;
+
+	// let movement keys cancel each other out
+	if (player->cmd.turning < 0)
+	{;
+		side += sidemove[1];
+	}
+	else if (player->cmd.turning > 0 )
+	{
+		side -= sidemove[1];
+	}
+
+	if (side > MAXPLMOVE)
+		side = MAXPLMOVE;
+	else if (side < -MAXPLMOVE)
+		side = -MAXPLMOVE;
+
+	if (side !=0 && (!player->kartstuff[k_pogospring]))
+		side = 0;
+
+	// Sideways movement
+	if (side != 0 && !((player->exiting || mapreset)))
+	{
+		if (side > 0)
+			movepushside = (side * FRACUNIT/128) + FixedDiv(player->speed, K_GetKartSpeed(player, true));
+		else
+			movepushside = (side * FRACUNIT/128) - FixedDiv(player->speed, K_GetKartSpeed(player, true));
+
+		player->mo->momx += P_ReturnThrustX(player->mo, movepushsideangle, movepushside);
+		player->mo->momy += P_ReturnThrustY(player->mo, movepushsideangle, movepushside);
+	}
+
+}
+
 /**	\brief	Decreases various kart timers and powers per frame. Called in P_PlayerThink in p_user.c
 
 	\param	player	player object passed from P_PlayerThink
@@ -6163,6 +6210,8 @@ void K_KartPlayerThink(player_t *player, ticcmd_t *cmd)
 		if (P_MobjFlip(player->mo)*player->mo->momz <= 0)
 			player->kartstuff[k_pogospring] = 0;
 	}
+	
+	K_PogoSidemove(player);
 
 	if (cmd->buttons & BT_DRIFT)
 		player->kartstuff[k_jmp] = 1;

@@ -4852,6 +4852,7 @@ static void HandlePacketFromAwayNode(SINT8 node)
 static boolean CheckForSpeedHacks(UINT8 p)
 {
 	if (netcmds[maketic%TICQUEUE][p].forwardmove > MAXPLMOVE || netcmds[maketic%TICQUEUE][p].forwardmove < -MAXPLMOVE
+		|| netcmds[maketic%TICQUEUE][p].sidemove > MAXPLMOVE || netcmds[maketic%TICQUEUE][p].sidemove < -MAXPLMOVE
 		|| netcmds[maketic%TICQUEUE][p].turning > KART_FULLTURN || netcmds[maketic%TICQUEUE][p].turning < -KART_FULLTURN)
 	{
 		CONS_Alert(CONS_WARNING, M_GetText("Illegal movement value received from node %d\n"), playernode[p]);
