@@ -4599,41 +4599,45 @@ DoneSection2:
 	switch (special)
 	{
 		case 1: // SRB2kart: Spring Panel
-		case 3:
 			if (roversector || P_MobjReadyToTrigger(player->mo, sector))
 			{
 				const fixed_t hscale = mapobjectscale + (mapobjectscale - player->mo->scale);
 				const fixed_t minspeed = 24*hscale;
-				fixed_t speed = FixedHypot(player->mo->momx, player->mo->momy);
-				fixed_t upwards = 32*FRACUNIT;
+				angle_t pushangle = K_MomentumAngle(player->mo);
 
 				if (player->mo->eflags & MFE_SPRUNG)
-				{
 					break;
-				}
 
-				if (special == 3)
-				{
-					upwards /= 2;
-				}
+				if (player->speed < minspeed) // Push forward to prevent getting stuck
+					P_InstaThrust(player->mo, pushangle, minspeed);
 
-				player->trickpanel = 1;
-				player->trickdelay = 1;
-				K_DoPogoSpring(player->mo, upwards, 1);
-
-				// Reduce speed
-				speed /= 2;
-
-				if (speed < minspeed)
-				{
-					speed = minspeed;
-				}
-
-				P_InstaThrust(player->mo, player->mo->angle, speed);
+				player->kartstuff[k_pogospring] = 1;
+				K_DoPogoSpring(player->mo, 0, 1);
 			}
 			break;
 
 		case 2: // Wind/Current
+			break;
+
+		case 3: // SRB2kart: Spring Panel (capped speed)
+			if (roversector || P_MobjReadyToTrigger(player->mo, sector))
+			{
+				const fixed_t hscale = mapobjectscale + (mapobjectscale - player->mo->scale);
+				const fixed_t minspeed = 24*hscale;
+				const fixed_t maxspeed = 28*hscale;
+				angle_t pushangle = K_MomentumAngle(player->mo);
+
+				if (player->mo->eflags & MFE_SPRUNG)
+					break;
+
+				if (player->speed > maxspeed) // Prevent overshooting jumps
+					P_InstaThrust(player->mo, pushangle, maxspeed);
+				else if (player->speed < minspeed) // Push forward to prevent getting stuck
+					P_InstaThrust(player->mo, pushangle, minspeed);
+
+				player->kartstuff[k_pogospring] = 2;
+				K_DoPogoSpring(player->mo, 0, 1);
+			}
 			break;
 
 		case 4: // Conveyor Belt
@@ -4675,7 +4679,7 @@ DoneSection2:
 				P_InstaThrust(player->mo, lineangle, max(linespeed, 2*playerspeed));
 
 				player->kartstuff[k_dashpadcooldown] = TICRATE/3;
-				player->trickpanel = 0;
+				player->kartstuff[k_pogospring] = 0;
 				player->kartstuff[k_floorboost] = 2;
 				S_StartSound(player->mo, sfx_cdfm62);
 			}
