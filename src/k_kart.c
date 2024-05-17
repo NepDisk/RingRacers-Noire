@@ -5,7 +5,9 @@
 ///        All of the SRB2kart-unique stuff.
 
 #include "k_kart.h"
+#include "command.h"
 #include "d_player.h"
+#include "info.h"
 #include "k_battle.h"
 #include "k_pwrlv.h"
 #include "k_color.h"
@@ -34,6 +36,12 @@
 #include "k_waypoint.h"
 #include "k_bot.h"
 #include "k_hud.h"
+
+
+//hardcode saltyhop mhhm
+consvar_t cv_saltyhop = {"hardcodehop", "Off", CV_SAVE, CV_OnOff, NULL};
+consvar_t cv_saltyhopsfx = {"hardcodehopsfx", "On", CV_SAVE, CV_OnOff};
+//consvar_t cv_saltysquish = {"hardcodehopsquish", "On", CV_SAVE, CV_OnOff};
 
 // SOME IMPORTANT VARIABLES DEFINED IN DOOMDEF.H:
 // gamespeed is cc (0 for easy, 1 for normal, 2 for hard)
@@ -200,6 +208,9 @@ void K_RegisterKartStuff(void)
 	CV_RegisterVar(&cv_kartdebugcheckpoint);
 	CV_RegisterVar(&cv_kartdebugnodes);
 	CV_RegisterVar(&cv_kartdebugcolorize);
+	
+	CV_RegisterVar(&cv_saltyhop);
+	CV_RegisterVar(&cv_saltyhopsfx);
 }
 
 //}
@@ -2552,11 +2563,12 @@ void K_SquishPlayer(player_t *player, mobj_t *inflictor, mobj_t *source)
 
 	player->mo->flags |= MF_NOCLIP;
 
-	if (player->mo->state != &states[S_KART_SQUISH]) // Squash
-		P_SetPlayerMobjState(player->mo, S_KART_SQUISH);
+	if (player->mo->state != &states[S_KART_SPINOUT]) // Squash
+		P_SetPlayerMobjState(player->mo, S_KART_SPINOUT);
 
-	P_PlayRinglossSound(player->mo);
-
+	//P_PlayRinglossSound(player->mo);
+	P_PlayerRingBurst(player, 5);
+	
 	player->kartstuff[k_instashield] = 15;
 	if (cv_kartdebughuddrop.value && !modeattacking)
 		K_DropItems(player);
@@ -3275,6 +3287,67 @@ static void K_SpawnAIZDust(player_t *player)
 		//spark->momz = player->mo->momz/2;
 
 		K_MatchGenericExtraFlags(spark, player->mo);
+	}
+}
+
+static void K_QuiteSaltyHop(player_t *p) 
+{
+	// what the fuck is this haya
+	fixed_t mos = FRACUNIT; // doesnt work correctly if it isnt :/
+
+	// ready?
+	if (!p->kartstuff[k_jmp]) {
+		p->mo->salty_ready = true;
+		p->mo->salty_tapping = false;
+	} else if (p->mo->salty_ready) {
+		p->mo->salty_ready = false;
+		p->mo->salty_tapping = true;
+	} else {
+		p->mo->salty_tapping = false;
+	}
+
+	// GO!
+	if (!p->mo->init_salty) {
+		p->mo->salty_jump = false;
+		p->mo->salty_zoffset = 0;
+		p->mo->salty_momz = 0;
+		p->mo->init_salty = true;
+	}	
+	else if ((p->mo->salty_jump)) {
+		if (p->mo->eflags & MFE_JUSTHITFLOOR) {
+			p->mo->salty_zoffset = 0;
+		} else if (P_IsObjectOnGround(p->mo)) {
+			p->mo->salty_zoffset += p->mo->salty_momz;
+			p->mo->salty_momz -= (mos*3/2);
+		} else {
+			p->mo->salty_zoffset *= (49/50)*mos;
+			p->mo->salty_momz = 0;
+		}
+		if (p->mo->salty_zoffset <= 0) {
+			if (!(p->mo->eflags & MFE_JUSTHITFLOOR) && P_IsObjectOnGround(p->mo) && cv_saltyhopsfx.value)
+				S_StartSound(p->mo, sfx_s268);
+			p->mo->salty_jump = false;
+			p->mo->salty_zoffset = 0;
+			p->mo->salty_momz = 0;
+			// shlamma damma
+			//p->mo->stretchslam += cv_saltysquish.value ? (8*mos) : 0;
+		} //else if (p->mo->salty_zoffset >= 0 && cv_saltysquish.value) {
+			// goofy ahh hack
+			//p->mo->spriteyscale += (mos/8);
+			//p->mo->spritexscale -= (mos/8);
+		//}
+		p->mo->sprzoff = p->mo->salty_zoffset;
+		if (S_SoundPlaying(p->mo, sfx_screec))
+			S_StopSoundByID(p->mo, sfx_screec);
+		if (S_SoundPlaying(p->mo, sfx_drift))
+			S_StopSoundByID(p->mo, sfx_drift);
+	}
+	else if (p->mo->salty_tapping && P_IsObjectOnGround(p->mo) && !p->kartstuff[k_spinouttimer] && !p->kartstuff[k_squishedtimer]) {
+		p->mo->salty_jump = true;
+		p->mo->salty_zoffset = 0;
+		p->mo->salty_momz = 6*mos;
+		if (cv_saltyhopsfx.value) 
+			S_StartSound(p->mo, sfx_s25a);
 	}
 }
 
@@ -8222,6 +8295,16 @@ void K_MoveKartPlayer(player_t *player, boolean onground)
 	
 	
 	K_LegacyStart(player);
+	
+	// salty hop! i wanna die
+	if (cv_saltyhop.value)
+		K_QuiteSaltyHop(player);
+	else {
+		player->mo->sprzoff = 0;
+		player->mo->salty_jump = false;
+		player->mo->salty_zoffset = 0;
+		player->mo->salty_momz = 0;
+	}
 	
 }
 

@@ -3011,7 +3011,7 @@ static void Got_Respawn(UINT8 **cp, INT32 playernum)
 		if (!P_IsObjectOnGround(players[respawnplayer].mo))
 			return;
 
-		K_DoIngameRespawn(&players[respawnplayer]);
+		P_DamageMobj(players[respawnplayer].mo, NULL, NULL, 10000, DMG_INSTAKILL);
 		demo_extradata[playernum] |= DXD_RESPAWN;
 	}
 }

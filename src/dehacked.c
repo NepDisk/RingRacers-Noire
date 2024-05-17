@@ -5217,7 +5217,7 @@ static const char *const STATE_LIST[] = { // array length left dynamic for sanit
 	"S_KART_DRIFT_R_OUT",
 	"S_KART_DRIFT_R_IN",
 	"S_KART_SPINOUT",
-	"S_KART_SQUISH",
+	"S_KART_DEAD",
 	"S_KART_SIGN",
 
 	// technically the player goes here but it's an infinite tic state

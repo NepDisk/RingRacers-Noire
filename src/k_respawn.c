@@ -81,6 +81,7 @@ static void K_RespawnAtWaypoint(player_t *player, waypoint_t *waypoint)
 	player->respawn.pointx = waypoint->mobj->x;
 	player->respawn.pointy = waypoint->mobj->y;
 	player->respawn.pointz = waypoint->mobj->z;
+	player->respawn.pointangle = waypoint->mobj->z;
 	player->respawn.flip = (waypoint->mobj->flags2 & MF2_OBJECTFLIP) ? true : false; // K_RespawnOffset wants a boolean!
 	player->respawn.pointz += K_RespawnOffset(player, player->respawn.flip);
 }

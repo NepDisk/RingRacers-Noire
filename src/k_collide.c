@@ -537,6 +537,7 @@ boolean K_PvPTouchDamage(mobj_t *t1, mobj_t *t2)
 		}
 	}
 
+	/*
 	// Ring sting, this is a bit more unique
 	t1Condition = (K_GetShieldFromItem(t2->player->kartstuff[k_itemtype]) == KSHIELD_NONE);
 	t2Condition = (K_GetShieldFromItem(t1->player->kartstuff[k_itemtype]) == KSHIELD_NONE);
@@ -564,5 +565,5 @@ boolean K_PvPTouchDamage(mobj_t *t1, mobj_t *t2)
 		P_PlayerRingBurst(t2->player, 1);
 	}
 
-	return stung;
+	return stung;*/
 }

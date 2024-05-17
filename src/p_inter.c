@@ -15,6 +15,7 @@
 #include "i_system.h"
 #include "am_map.h"
 #include "g_game.h"
+#include "info.h"
 #include "m_random.h"
 #include "p_local.h"
 #include "s_sound.h"
@@ -760,6 +761,7 @@ void P_TouchStarPost(mobj_t *post, player_t *player, boolean snaptopost)
 		player->respawn.pointx = toucher->x;
 		player->respawn.pointy = toucher->y;
 		player->respawn.pointz = post->z;
+		player->respawn.pointangle = post->angle;
 		player->respawn.flip = ((post->flags2 & MF2_OBJECTFLIP) || (post->spawnpoint->options & MTF_OBJECTFLIP)) ? true : false;	// store flipping
 		player->respawn.manual = true;
 
@@ -1219,6 +1221,7 @@ void P_KillMobj(mobj_t *target, mobj_t *inflictor, mobj_t *source, UINT8 damaget
 		target->pmomz = 0;
 
 		target->player->playerstate = PST_DEAD;
+		P_SetPlayerMobjState(target, S_KART_DEAD);
 
 		if (target->player == &players[consoleplayer])
 		{
@@ -1401,7 +1404,9 @@ void P_KillMobj(mobj_t *target, mobj_t *inflictor, mobj_t *source, UINT8 damaget
 
 				if (target->player && target->player->pflags & PF_GAMETYPEOVER)
 					break;
-
+				
+				target->state = &states[S_KART_DEAD];
+				CONS_Printf("Deadedededed pls use death state :)\n");
 				P_SetObjectMomZ(target, 14*FRACUNIT, false);
 				P_PlayDeathSound(target);
 			}
@@ -1735,7 +1740,7 @@ static boolean P_KillPlayer(player_t *player, mobj_t *inflictor, mobj_t *source,
 
 	K_DestroyBumpers(player, 1);
 
-	switch (type)
+	/*switch (type)
 	{
 		case DMG_DEATHPIT:
 			// Respawn kill types
@@ -1744,7 +1749,7 @@ static boolean P_KillPlayer(player_t *player, mobj_t *inflictor, mobj_t *source,
 		default:
 			// Everything else REALLY kills
 			break;
-	}
+	}*/
 
 	K_DropEmeraldsFromPlayer(player, player->powers[pw_emeralds]);
 

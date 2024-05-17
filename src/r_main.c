@@ -166,10 +166,10 @@ consvar_t cv_drawdist = CVAR_INIT ("drawdist", "8192", CV_SAVE, drawdist_cons_t,
 consvar_t cv_drawdist_precip = CVAR_INIT ("drawdist_precip", "1024", CV_SAVE, drawdist_precip_cons_t, NULL);
 
 consvar_t cv_fov[MAXSPLITSCREENPLAYERS] = {
-	CVAR_INIT ("fov", "90", CV_FLOAT|CV_CALL, fov_cons_t, Fov_OnChange),
-	CVAR_INIT ("fov2", "90", CV_FLOAT|CV_CALL, fov_cons_t, Fov_OnChange),
-	CVAR_INIT ("fov3", "90", CV_FLOAT|CV_CALL, fov_cons_t, Fov_OnChange),
-	CVAR_INIT ("fov4", "90", CV_FLOAT|CV_CALL, fov_cons_t, Fov_OnChange)
+	CVAR_INIT ("fov", "90", CV_FLOAT|CV_CALL|CV_SAVE, fov_cons_t, Fov_OnChange),
+	CVAR_INIT ("fov2", "90", CV_FLOAT|CV_CALL|CV_SAVE, fov_cons_t, Fov_OnChange),
+	CVAR_INIT ("fov3", "90", CV_FLOAT|CV_CALL|CV_SAVE, fov_cons_t, Fov_OnChange),
+	CVAR_INIT ("fov4", "90", CV_FLOAT|CV_CALL|CV_SAVE, fov_cons_t, Fov_OnChange)
 };
 
 // Okay, whoever said homremoval causes a performance hit should be shot.

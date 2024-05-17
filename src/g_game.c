@@ -2316,10 +2316,10 @@ void G_PlayerReborn(INT32 player, boolean betweenmaps)
 	if (songcredit)
 		S_ShowMusicCredit();
 
-	if (leveltime > (starttime + (TICRATE/2)) && !p->spectator)
+	/*if (leveltime > (starttime + (TICRATE/2)) && !p->spectator)
 	{
 		K_DoIngameRespawn(p);
-	}
+	}*/
 }
 
 //

@@ -320,6 +320,14 @@ typedef struct mobj_s
 	UINT32 frame; // frame number, plus bits see p_pspr.h
 	UINT8 sprite2; // player sprites
 	UINT16 anim_duration; // for FF_ANIMATE states
+	
+	// saltyhop! hardcode edition
+	boolean salty_ready;
+	boolean salty_tapping;
+	fixed_t salty_zoffset;
+	fixed_t salty_momz;
+	boolean salty_jump;
+	boolean init_salty;
 
 	struct msecnode_s *touching_sectorlist; // a linked list of sectors where this object appears
 

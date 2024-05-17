@@ -463,7 +463,7 @@ UINT8 P_FindHighestLap(void)
 //
 boolean P_PlayerInPain(player_t *player)
 {
-	if (player->kartstuff[k_spinouttimer])
+	if (player->kartstuff[k_spinouttimer] || player->kartstuff[k_squishedtimer])
 		return true;
 
 	return false;
@@ -2148,10 +2148,9 @@ void P_MovePlayer(player_t *player)
 	P_3dMovement(player);
 
 	// Kart frames
-	
 	if (player->kartstuff[k_squishedtimer] > 0)
 	{
-		P_SetPlayerMobjState(player->mo, S_KART_SQUISH);
+		P_SetPlayerMobjState(player->mo, S_KART_SPINOUT);
 		player->mo->rollangle = 0;
 	}
 	else if (player->pflags & PF_SLIDING)

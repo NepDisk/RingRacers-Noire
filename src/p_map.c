@@ -13,6 +13,7 @@
 ///
 ///	Shooting and aiming
 
+#include "d_player.h"
 #include "doomdef.h"
 #include "g_game.h"
 #include "m_bbox.h"
@@ -1237,7 +1238,9 @@ static boolean PIT_CheckThing(mobj_t *thing)
 			if (tmthing->z + tmthing->height < thing->z)
 				return true; // underneath
 
-			if (thing->player->kartstuff[k_hyudorotimer] || tmthing->player->kartstuff[k_hyudorotimer])
+			if (thing->player->kartstuff[k_hyudorotimer] || tmthing->player->kartstuff[k_hyudorotimer]
+				|| thing->player->kartstuff[k_squishedtimer] || tmthing->player->kartstuff[k_squishedtimer]
+			)
 			{
 				return true;
 			}
@@ -1352,6 +1355,14 @@ static boolean PIT_CheckThing(mobj_t *thing)
 				|| tmthing->player->kartstuff[k_growshrinktimer] > 0)
 			{
 				P_KillMobj(thing, tmthing, tmthing, DMG_NORMAL);
+				return true;
+			}
+			
+			// continue to squish
+			if (tmthing->player->kartstuff[k_squishedtimer])
+			{
+				tmthing->player->kartstuff[k_squishedtimer] = 2*TICRATE;
+				tmthing->player->powers[pw_flashing] = K_GetKartFlashing(tmthing->player);
 				return true;
 			}
 

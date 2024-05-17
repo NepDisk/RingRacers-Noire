@@ -779,7 +779,7 @@ playersprite_t spr2defaults[NUMPLAYERSPRITES] = {
 	SPR2_DRRN, // SPR2_DRRI
 
 	0, // SPR2_SPIN
-	SPR2_SPIN, // SPR2_SQSH
+	0, // SPR2_DEAD
 
 	0, // SPR2_SIGN
 };
@@ -825,7 +825,7 @@ state_t states[NUMSTATES] =
 	{SPR_PLAY, SPR2_DRRO,					  1, {NULL}, 0, 0, S_KART_DRIFT_R_OUT},			// S_KART_DRIFT_R_OUT
 	{SPR_PLAY, SPR2_DRRI,					  1, {NULL}, 0, 0, S_KART_DRIFT_R_IN},			// S_KART_DRIFT_R_IN
 	{SPR_PLAY, SPR2_SPIN|FF_ANIMATE,		350, {NULL}, 0, 1, S_KART_STILL},				// S_KART_SPINOUT
-	{SPR_PLAY, SPR2_SQSH|FF_ANIMATE,		350, {NULL}, 0, 1, S_KART_STILL},				// S_KART_SQUISH
+	{SPR_PLAY, SPR2_DEAD|FF_SEMIBRIGHT,		  3, {NULL}, 0, 0, S_KART_DEAD},				// S_KART_DEAD
 	{SPR_PLAY, SPR2_SIGN|FF_PAPERSPRITE,	  1, {NULL}, 0, 0, S_KART_SIGN},				// S_KART_SIGN
 
 	{SPR_NULL, 0, -1, {NULL}, 0, 0, S_OBJPLACE_DUMMY}, // S_OBJPLACE_DUMMY
@@ -5214,7 +5214,7 @@ mobjinfo_t mobjinfo[NUMMOBJTYPES] =
 		sfx_None,       // painsound
 		S_NULL,         // meleestate
 		S_NULL,         // missilestate
-		S_KART_SPINOUT, // deathstate
+		S_KART_DEAD,    // deathstate
 		S_NULL,         // xdeathstate
 		sfx_None,       // deathsound
 		1,              // speed

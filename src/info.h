@@ -1029,7 +1029,7 @@ typedef enum playersprite
 	SPR2_DRLN, SPR2_DRLO, SPR2_DRLI,
 	SPR2_DRRN, SPR2_DRRO, SPR2_DRRI,
 	SPR2_SPIN,
-	SPR2_SQSH,
+	SPR2_DEAD,
 	SPR2_SIGN,
 	SPR2_XTRA,
 	SPR2_FIRSTFREESLOT,
@@ -1070,7 +1070,7 @@ typedef enum state
 	S_KART_DRIFT_R_OUT,
 	S_KART_DRIFT_R_IN,
 	S_KART_SPINOUT,
-	S_KART_SQUISH,
+	S_KART_DEAD,
 	S_KART_SIGN,
 
 	// technically the player goes here but it's an infinite tic state

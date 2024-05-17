@@ -242,7 +242,7 @@ boolean P_SetPlayerMobjState(mobj_t *mobj, statenum_t state)
 			player->panim = PA_DASH;
 			break;
 		case S_KART_SPINOUT:
-		case S_KART_SQUISH:
+		case S_KART_DEAD:
 			player->panim = PA_PAIN;
 			break;
 		default:
@@ -10498,6 +10498,7 @@ void P_MovePlayerToStarpost(INT32 playernum)
 	P_UnsetThingPosition(mobj);
 	mobj->x = p->respawn.pointx;
 	mobj->y = p->respawn.pointy;
+	mobj->angle = p->respawn.pointangle;
 	P_SetThingPosition(mobj);
 	sector = R_PointInSubsector(mobj->x, mobj->y)->sector;
 
