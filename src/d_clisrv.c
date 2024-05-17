@@ -621,11 +621,6 @@ static inline void resynch_write_player(resynch_pak *rsp, const size_t i)
 	rsp->karmadelay = SHORT(players[i].karmadelay);
 	rsp->eliminated = players[i].eliminated;
 
-	rsp->tumbleBounces = players[i].tumbleBounces;
-	rsp->tumbleHeight = SHORT(players[i].tumbleHeight);
-	rsp->tumbleLastBounce = players[i].tumbleLastBounce;
-	rsp->tumbleSound = players[i].tumbleSound;
-
 	// respawnvars_t
 	rsp->respawn_state = players[i].respawn.state;
 	rsp->respawn_pointx = (fixed_t)LONG(players[i].respawn.pointx);
@@ -773,11 +768,6 @@ static void resynch_read_player(resynch_pak *rsp)
 	players[i].bumpers = rsp->bumpers;
 	players[i].karmadelay = SHORT(rsp->karmadelay);
 	players[i].eliminated = rsp->eliminated;
-
-	players[i].tumbleBounces = rsp->tumbleBounces;
-	players[i].tumbleHeight = SHORT(rsp->tumbleHeight);
-	players[i].tumbleLastBounce = (boolean)rsp->tumbleLastBounce;
-	players[i].tumbleSound = (boolean)rsp->tumbleSound;
 
 	// respawnvars_t
 	players[i].respawn.state = rsp->respawn_state;

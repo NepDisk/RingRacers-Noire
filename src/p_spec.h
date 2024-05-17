@@ -530,7 +530,7 @@ typedef struct
 } friction_t;
 
 // Friction defines.
-#define ORIG_FRICTION          (0xF5 << (FRACBITS-8)) ///< Original value.
+#define ORIG_FRICTION          (62914) ///< Original value.
 
 void T_Friction(friction_t *f);
 

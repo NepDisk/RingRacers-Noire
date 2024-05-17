@@ -5078,8 +5078,6 @@ state_t states[NUMSTATES] =
 	{SPR_DRAF, 3, 1, {NULL}, 0, 0, S_DRAFTDUST5}, // S_DRAFTDUST4
 	{SPR_DRAF, 4, 1, {NULL}, 0, 0, S_NULL}, // S_DRAFTDUST5
 
-	{SPR_GRES, FF_ANIMATE|FF_PAPERSPRITE, -1, {NULL}, 2, 4, S_NULL}, // S_TIREGREASE
-
 	{SPR_OTBU, FF_FULLBRIGHT, 1, {NULL}, 0, 0, S_NULL}, // S_OVERTIME_BULB1
 	{SPR_OTBU, FF_FULLBRIGHT|2, 1, {NULL}, 0, 0, S_NULL}, // S_OVERTIME_BULB2
 	{SPR_OTLS, FF_FULLBRIGHT, 1, {NULL}, 0, 0, S_NULL}, // S_OVERTIME_LASER
@@ -28386,33 +28384,6 @@ mobjinfo_t mobjinfo[NUMMOBJTYPES] =
 	    0,              // damage
 	    sfx_None,       // activesound
 	    MF_DONTENCOREMAP|MF_NOGRAVITY|MF_PAIN, // flags
-	    S_NULL          // raisestate
-	},
-
-	{           // MT_TIREGREASE
-	    -1,             // doomednum
-	    S_TIREGREASE,   // spawnstate
-	    1000,           // spawnhealth
-	    S_NULL,         // seestate
-	    sfx_None,       // seesound
-	    8,              // reactiontime
-	    sfx_None,       // attacksound
-	    S_NULL,         // painstate
-	    0,              // painchance
-	    sfx_None,       // painsound
-	    S_NULL,         // meleestate
-	    S_NULL,         // missilestate
-	    S_NULL,         // deathstate
-	    S_NULL,         // xdeathstate
-	    sfx_None,       // deathsound
-	    0,              // speed
-	    8<<FRACBITS,    // radius
-	    16<<FRACBITS,   // height
-	    0,              // display offset
-	    100,            // mass
-	    0,              // damage
-	    sfx_None,       // activesound
-	    MF_NOBLOCKMAP|MF_NOGRAVITY|MF_DONTENCOREMAP, // flags
 	    S_NULL          // raisestate
 	},
 

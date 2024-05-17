@@ -118,19 +118,18 @@ void K_DoIngameRespawn(player_t *player)
 
 	player->kartstuff[k_ringboost] = 0;
 	player->kartstuff[k_driftboost] = 0;
-	
-	// If player was tumbling, set variables so that they don't tumble like crazy after they're done respawning
-	if (player->tumbleBounces > 0)
-	{
-		player->tumbleBounces = 3;		// Max # of bounces-1 (so you still tumble once)
-		player->tumbleLastBounce = 0;	// Still force them to bounce at least once for the funny
-		players->tumbleHeight = 20;		// force tumble height
-	}
 
 	P_ResetPlayer(player);
 
 	// Set up respawn position if invalid
-	if (player->respawn.wp != NULL && leveltime >= starttime)
+	if (player->respawn.manual == true)
+	{
+		player->respawn.distanceleft = 0;
+		player->respawn.pointz += K_RespawnOffset(player, player->respawn.flip);
+		if (numbosswaypoints == 0)
+			player->respawn.manual = false; // one respawn only!
+	}
+	else if (player->respawn.wp != NULL && leveltime >= starttime)
 	{
 		const UINT32 dist = RESPAWN_DIST + (player->airtime * 48);
 		player->respawn.distanceleft = (dist * mapobjectscale) / FRACUNIT;

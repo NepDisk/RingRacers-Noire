@@ -284,11 +284,6 @@ typedef struct
 	INT16 karmadelay;
 	boolean eliminated;
 
-	UINT8 tumbleBounces;
-	UINT16 tumbleHeight;
-	boolean tumbleLastBounce;
-	boolean tumbleSound;
-
 	// respawnvars_t
 	UINT8 respawn_state;
 	fixed_t respawn_pointx;

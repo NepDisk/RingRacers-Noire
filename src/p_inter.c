@@ -449,9 +449,6 @@ void P_TouchSpecialThing(mobj_t *special, mobj_t *toucher, boolean heightcheck)
 			if (special->threshold > 0)
 				return;
 
-			if (toucher->hitlag > 0)
-				return;
-
 			player->powers[pw_emeralds] |= special->extravalue1;
 			K_CheckEmeralds(player);
 			break;
@@ -722,15 +719,31 @@ void P_TouchStarPost(mobj_t *post, player_t *player, boolean snaptopost)
 		return;
 
 	// Player must have touched all previous starposts
-	if (post->health - player->starpostnum > 1)
+	if ((post->health - player->starpostnum > 1) && numbosswaypoints == 0) 
 	{
-		// blatant reuse of a variable that's normally unused in circuit
 		if (!player->tossdelay)
 			S_StartSound(toucher, sfx_lose);
 		player->tossdelay = 3;
 		return;
 	}
 
+		// Going backwards triggers sound and increases antigrief
+	if ((post->health >= ((numstarposts/2) + player->starpostnum)) && numbosswaypoints > 0)
+	{
+		if (!player->tossdelay)
+		{
+			S_StartSound(toucher, sfx_lose);
+
+			//if (netgame	&& cv_antigrief.value)
+			//{
+					//player->griefValue += TICRATE;
+			//}
+		}
+
+		player->tossdelay = 3;
+		return;
+	}
+	
 	// With the parameter + angle setup, we can go up to 1365 star posts. Who needs that many?
 	if (post->health > 1365)
 	{
@@ -740,6 +753,17 @@ void P_TouchStarPost(mobj_t *post, player_t *player, boolean snaptopost)
 
 	if (player->starpostnum >= post->health)
 		return; // Already hit this post
+		
+	if (numbosswaypoints > 0) // NOIRE: Handles Respawning related things on Binary maps using legacy checkpoints
+	{
+		player->starposttime = player->realtime;
+		player->respawn.pointx = toucher->x;
+		player->respawn.pointy = toucher->y;
+		player->respawn.pointz = post->z;
+		player->respawn.flip = ((post->flags2 & MF2_OBJECTFLIP) || (post->spawnpoint->options & MTF_OBJECTFLIP)) ? true : false;	// store flipping
+		player->respawn.manual = true;
+
+	}
 
 	player->starpostnum = post->health;
 }
@@ -1097,8 +1121,6 @@ void P_KillMobj(mobj_t *target, mobj_t *inflictor, mobj_t *source, UINT8 damaget
 
 	if (LUAh_MobjDeath(target, inflictor, source, damagetype) || P_MobjWasRemoved(target))
 		return;
-
-	//K_SetHitLagForObjects(target, inflictor, 15);
 
 	// SRB2kart
 	// I wish I knew a better way to do this
@@ -1725,7 +1747,6 @@ static boolean P_KillPlayer(player_t *player, mobj_t *inflictor, mobj_t *source,
 	}
 
 	K_DropEmeraldsFromPlayer(player, player->powers[pw_emeralds]);
-	K_SetHitLagForObjects(player->mo, inflictor, 15);
 
 	player->pflags &= ~PF_SLIDING;
 	player->powers[pw_carry] = CR_NONE;
@@ -1853,8 +1874,6 @@ boolean P_DamageMobj(mobj_t *target, mobj_t *inflictor, mobj_t *source, INT32 da
 		if (!(target->flags & MF_SHOOTABLE))
 			return false; // shouldn't happen...
 
-		if (target->hitlag > 0)
-			return false;
 	}
 
 	if (target->flags2 & MF2_SKULLFLY)
@@ -1877,7 +1896,7 @@ boolean P_DamageMobj(mobj_t *target, mobj_t *inflictor, mobj_t *source, INT32 da
 	if (player) // Player is the target
 	{
 		const UINT8 type = (damagetype & DMG_TYPEMASK);
-		const boolean combo = (type == DMG_EXPLODE || type == DMG_KARMA || type == DMG_TUMBLE); // This damage type can be comboed from other damage
+		const boolean combo = (type == DMG_EXPLODE || type == DMG_KARMA); // This damage type can be comboed from other damage
 		INT16 ringburst = 5;
 
 		if (player->pflags & PF_GODMODE)
@@ -2013,8 +2032,9 @@ boolean P_DamageMobj(mobj_t *target, mobj_t *inflictor, mobj_t *source, INT32 da
 					K_KartPainEnergyFling(player);
 					ringburst = 0;
 					break;
-				case DMG_TUMBLE:
-					K_TumblePlayer(player, inflictor, source);
+				case DMG_SQUISH:
+					//CONS_Printf("Squish Squash :)");
+					K_SquishPlayer(player, inflictor, source);
 					break;
 				case DMG_EXPLODE:
 				case DMG_KARMA:
@@ -2056,7 +2076,6 @@ boolean P_DamageMobj(mobj_t *target, mobj_t *inflictor, mobj_t *source, INT32 da
 			}
 
 			player->kartstuff[k_instashield] = 15;
-			K_SetHitLagForObjects(target, inflictor, laglength);
 			return true;
 		}
 	}
@@ -2078,15 +2097,11 @@ boolean P_DamageMobj(mobj_t *target, mobj_t *inflictor, mobj_t *source, INT32 da
 	if (source && source->player && target)
 		G_GhostAddHit((INT32) (source->player - players), target);
 
-	K_SetHitLagForObjects(target, inflictor, laglength);
-
 	if (target->health <= 0)
 	{
 		P_KillMobj(target, inflictor, source, damagetype);
 		return true;
 	}
-
-	//K_SetHitLagForObjects(target, inflictor, laglength);
 
 	if (player)
 		P_ResetPlayer(target->player);

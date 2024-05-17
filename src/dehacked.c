@@ -9362,8 +9362,6 @@ static const char *const STATE_LIST[] = { // array length left dynamic for sanit
 	"S_DRAFTDUST4",
 	"S_DRAFTDUST5",
 
-	"S_TIREGREASE",
-
 	"S_OVERTIME_BULB1",
 	"S_OVERTIME_BULB2",
 	"S_OVERTIME_LASER",
@@ -10460,7 +10458,6 @@ static const char *const MOBJTYPE_LIST[] = {  // array length left dynamic for s
 	"MT_RINGSPARKS",
 	"MT_DRAFTDUST",
 	"MT_SPBDUST",
-	"MT_TIREGREASE",
 
 	"MT_OVERTIME_PARTICLE",
 	"MT_OVERTIME_CENTER",
@@ -10996,7 +10993,6 @@ static const char *const KARTSTUFF_LIST[] = {
 	"GETSPARKS",
 	"JAWZTARGETDELAY",
 	"SPECTATEWAIT",
-	"TIREGREASE",
 	"SPRINGSTARS",
 	"SPRINGCOLOR",
 	"KILLFIELD",
@@ -11361,7 +11357,7 @@ struct {
 	{"DMG_NORMAL",DMG_NORMAL},
 	{"DMG_WIPEOUT",DMG_WIPEOUT},
 	{"DMG_EXPLODE",DMG_EXPLODE},
-	{"DMG_TUMBLE",DMG_TUMBLE},
+	{"DMG_SQUISH",DMG_SQUISH},
 	{"DMG_STING",DMG_STING},
 	{"DMG_KARMA",DMG_KARMA},
 	//// Death types

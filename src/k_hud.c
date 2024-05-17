@@ -3268,7 +3268,7 @@ static void K_drawKartStartCountdown(void)
 	}
 	else if (leveltime >= introtime && leveltime < starttime-(3*TICRATE))
 	{
-		K_drawKartStartBulbs();
+		//K_drawKartStartBulbs();
 	}
 	else
 	{
@@ -3952,10 +3952,12 @@ static void K_drawCheckpointDebugger(void)
 	if (stplyr != &players[displayplayers[0]]) // only for p1
 		return;
 
-	if (stplyr->starpostnum == numstarposts)
+	if ((numbosswaypoints > 0) ? (stplyr->starpostnum >= (numstarposts - (numstarposts/2))) : stplyr->starpostnum == numstarposts)
 		V_DrawString(8, 184, 0, va("Checkpoint: %d / %d (Can finish)", stplyr->starpostnum, numstarposts));
 	else
-		V_DrawString(8, 184, 0, va("Checkpoint: %d / %d", stplyr->starpostnum, numstarposts));
+		V_DrawString(8, 184, 0, va("Checkpoint: %d / %d (Skip: %d)", stplyr->starpostnum, numstarposts, ((numstarposts/2) + stplyr->starpostnum)));
+		
+	V_DrawString(8, 192, 0, va("Waypoint dist: Prev %d, Next %d", stplyr->prevcheck, stplyr->nextcheck));
 }
 
 static void K_DrawWaypointDebugger(void)

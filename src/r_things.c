@@ -1437,21 +1437,6 @@ static void R_ProjectSprite(mobj_t *thing)
 	angle_t spriterotangle = 0;
 #endif
 
-	// hitlag vibrating
-	if (thing->hitlag > 0)
-	{
-		fixed_t mul = thing->hitlag * (FRACUNIT / 10);
-
-		if (leveltime & 1)
-		{
-			mul = -mul;
-		}
-
-		thingxpos += FixedMul(thing->momx, mul);
-		thingypos += FixedMul(thing->momy, mul);
-		thingzpos += FixedMul(thing->momz, mul);
-	}
-
 	// transform the origin point
 	tr_x = thingxpos - viewx;
 	tr_y = thingypos - viewy;

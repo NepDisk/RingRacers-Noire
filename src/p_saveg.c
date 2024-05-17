@@ -159,6 +159,9 @@ static void P_NetArchivePlayers(void)
 		WRITEUINT32(save_p, players[i].realtime);
 		WRITEUINT8(save_p, players[i].laps);
 		WRITEINT32(save_p, players[i].starpostnum);
+		WRITEUINT32(save_p, players[i].starposttime);
+		WRITEINT32(save_p, players[i].prevcheck);
+		WRITEINT32(save_p, players[i].nextcheck);
 
 		////////////////////
 		// CTF Mode Stuff //
@@ -261,11 +264,6 @@ static void P_NetArchivePlayers(void)
 		WRITEINT16(save_p, players[i].karmadelay);
 		WRITEUINT8(save_p, players[i].eliminated);
 
-		WRITEUINT8(save_p, players[i].tumbleBounces);
-		WRITEUINT16(save_p, players[i].tumbleHeight);
-		WRITEUINT8(save_p, players[i].tumbleLastBounce);
-		WRITEUINT8(save_p, players[i].tumbleSound);
-
 		// respawnvars_t
 		WRITEUINT8(save_p, players[i].respawn.state);
 		WRITEUINT32(save_p, K_GetWaypointHeapIndex(players[i].respawn.wp));
@@ -273,6 +271,7 @@ static void P_NetArchivePlayers(void)
 		WRITEFIXED(save_p, players[i].respawn.pointy);
 		WRITEFIXED(save_p, players[i].respawn.pointz);
 		WRITEUINT8(save_p, players[i].respawn.flip);
+		WRITEINT32(save_p, players[i].respawn.manual);
 		WRITEUINT32(save_p, players[i].respawn.timer);
 		WRITEUINT32(save_p, players[i].respawn.distanceleft);
 		WRITEUINT32(save_p, players[i].respawn.dropdash);
@@ -362,6 +361,9 @@ static void P_NetUnArchivePlayers(void)
 		players[i].realtime = READUINT32(save_p); // integer replacement for leveltime
 		players[i].laps = READUINT8(save_p); // Number of laps (optional)
 		players[i].starpostnum = READINT32(save_p);
+		players[i].starposttime = READUINT32(save_p);
+		players[i].prevcheck = READINT32(save_p);
+		players[i].nextcheck = READINT32(save_p);
 
 		////////////////////
 		// CTF Mode Stuff //
@@ -456,11 +458,6 @@ static void P_NetUnArchivePlayers(void)
 		players[i].karmadelay = READINT16(save_p);
 		players[i].eliminated = (boolean)READUINT8(save_p);
 
-		players[i].tumbleBounces = READUINT8(save_p);
-		players[i].tumbleHeight = READUINT16(save_p);
-		players[i].tumbleLastBounce = (boolean)READUINT8(save_p);
-		players[i].tumbleSound = (boolean)READUINT8(save_p);
-
 		// respawnvars_t
 		players[i].respawn.state = READUINT8(save_p);
 		players[i].respawn.wp = (waypoint_t *)(size_t)READUINT32(save_p);
@@ -468,6 +465,7 @@ static void P_NetUnArchivePlayers(void)
 		players[i].respawn.pointy = READFIXED(save_p);
 		players[i].respawn.pointz = READFIXED(save_p);
 		players[i].respawn.flip = (boolean)READUINT8(save_p);
+		players[i].respawn.manual = (boolean)READINT32(save_p);
 		players[i].respawn.timer = READUINT32(save_p);
 		players[i].respawn.distanceleft = READUINT32(save_p);
 		players[i].respawn.dropdash = READUINT32(save_p);
@@ -1389,7 +1387,7 @@ typedef enum
 	MD2_ROLLANGLE    = 1<<14,
 	MD2_SHADOWSCALE  = 1<<15,
 	MD2_DRAWFLAGS    = 1<<16,
-	MD2_HITLAG       = 1<<17,
+	//freeID here was hitlag      = 1<<17,
 	MD2_WAYPOINTCAP  = 1<<18,
 	MD2_KITEMCAP     = 1<<19,
 	MD2_ITNEXT       = 1<<20,
@@ -1607,8 +1605,6 @@ static void SaveMobjThinker(const thinker_t *th, const UINT8 type)
 		diff2 |= MD2_SHADOWSCALE;
 	if (mobj->drawflags)
 		diff2 |= MD2_DRAWFLAGS;
-	if (mobj->hitlag)
-		diff2 |= MD2_HITLAG;
 	if (mobj == waypointcap)
 		diff2 |= MD2_WAYPOINTCAP;
 	if (mobj == kitemcap)
@@ -1773,8 +1769,6 @@ static void SaveMobjThinker(const thinker_t *th, const UINT8 type)
 
 		WRITEUINT16(save_p, df);
 	}
-	if (diff2 & MD2_HITLAG)
-		WRITEINT32(save_p, mobj->hitlag);
 
 	WRITEUINT32(save_p, mobj->mobjnum);
 }
@@ -2834,8 +2828,6 @@ static thinker_t* LoadMobjThinker(actionf_p1 thinker)
 	}
 	if (diff2 & MD2_DRAWFLAGS)
 		mobj->drawflags = READUINT16(save_p);
-	if (diff2 & MD2_HITLAG)
-		mobj->hitlag = READINT32(save_p);
 
 	if (diff & MD_REDFLAG)
 	{

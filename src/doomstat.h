@@ -640,7 +640,6 @@ extern INT32 itemtime;
 extern INT32 bubbletime;
 extern INT32 comebacktime;
 extern INT32 bumptime;
-extern INT32 greasetics;
 extern INT32 wipeoutslowtime;
 extern INT32 wantedreduce;
 extern INT32 wantedfrequency;

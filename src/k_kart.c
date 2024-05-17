@@ -2356,76 +2356,6 @@ angle_t K_MomentumAngle(mobj_t *mo)
 	}
 }
 
-void K_SetHitLagForObjects(mobj_t *mo1, mobj_t *mo2, INT32 tics)
-{
-	boolean mo1valid = (mo1 && !P_MobjWasRemoved(mo1));
-	boolean mo2valid = (mo2 && !P_MobjWasRemoved(mo2));
-
-	INT32 tics1 = tics;
-	INT32 tics2 = tics;
-
-	if (tics <= 0)
-	{
-		return;
-	}
-
-	if (mo1valid == true && mo2valid == true)
-	{
-		const INT32 mintics = tics;
-		const fixed_t ticaddfactor = mapobjectscale * 8;
-
-		const fixed_t mo1speed = FixedHypot(FixedHypot(mo1->momx, mo1->momy), mo1->momz);
-		const fixed_t mo2speed = FixedHypot(FixedHypot(mo2->momx, mo2->momy), mo2->momz);
-		const fixed_t speeddiff = mo2speed - mo1speed;
-
-		const fixed_t scalediff = mo2->scale - mo1->scale;
-
-		const angle_t mo1angle = K_MomentumAngle(mo1);
-		const angle_t mo2angle = K_MomentumAngle(mo2);
-
-		angle_t anglediff = mo1angle - mo2angle;
-		fixed_t anglemul = FRACUNIT;
-
-		if (anglediff > ANGLE_180)
-		{
-			anglediff = InvAngle(anglediff);
-		}
-
-		anglemul = FRACUNIT + (AngleFixed(anglediff) / 180); // x1.0 at 0, x1.5 at 90, x2.0 at 180
-
-		/*
-		CONS_Printf("anglemul: %f\n", FIXED_TO_FLOAT(anglemul));
-		CONS_Printf("speeddiff: %f\n", FIXED_TO_FLOAT(speeddiff));
-		CONS_Printf("scalediff: %f\n", FIXED_TO_FLOAT(scalediff));
-		*/
-
-		tics1 += FixedMul(speeddiff, FixedMul(anglemul, FRACUNIT + scalediff)) / ticaddfactor;
-		tics2 += FixedMul(-speeddiff, FixedMul(anglemul, FRACUNIT - scalediff)) / ticaddfactor;
-
-		if (tics1 < mintics)
-		{
-			tics1 = mintics;
-		}
-
-		if (tics2 < mintics)
-		{
-			tics2 = mintics;
-		}
-	}
-
-	//CONS_Printf("tics1: %d, tics2: %d\n", tics1, tics2);
-
-	if (mo1valid == true)
-	{
-		mo1->hitlag = max(tics1, mo1->hitlag);
-	}
-
-	if (mo2valid == true)
-	{
-		mo2->hitlag = max(tics2, mo2->hitlag);
-	}
-}
-
 void K_DoInstashield(player_t *player)
 {
 	mobj_t *layera;
@@ -2533,114 +2463,106 @@ static void K_RemoveGrowShrink(player_t *player)
 	P_RestoreMusic(player);
 }
 
-void K_TumblePlayer(player_t *player, mobj_t *inflictor, mobj_t *source)
+void K_SquishPlayer(player_t *player, mobj_t *inflictor, mobj_t *source)
 {
-	fixed_t gravityadjust;
-	(void)source;
+	// PS: Inflictor is unused for all purposes here and is actually only ever relevant to Lua. It may be nil too.
+	boolean force = false;	// Used to check if Lua ShouldSquish should get us damaged reguardless of flashtics or heck knows what.
+	//UINT8 shouldForce = LUAh_ShouldSquish(player, inflictor, source);
+	if (P_MobjWasRemoved(player->mo))
+		return; // mobj was removed (in theory that shouldn't happen)
+	//if (shouldForce == 1)
+	//	force = true;
+	//else if (shouldForce == 2)
+	//	return;
 
-	player->tumbleBounces = 1;
+	//if (player->health <= 0)
+		//return;
 
-	player->mo->momx = 2 * player->mo->momx / 3;
-	player->mo->momy = 2 * player->mo->momy / 3;
-
-	player->tumbleHeight = 30;
-	player->tumbleSound = 0;
-
-	if (inflictor && !P_MobjWasRemoved(inflictor))
+	if (player->powers[pw_flashing] > 0 || player->kartstuff[k_squishedtimer] > 0 || player->kartstuff[k_invincibilitytimer] > 0
+		|| player->kartstuff[k_growshrinktimer] > 0 || player->kartstuff[k_hyudorotimer] > 0
+		|| (/*G_BattleGametype() &&*/ ((player->kartstuff[k_bumper] <= 0 && player->kartstuff[k_comebacktimer]) || player->kartstuff[k_comebackmode] == 1)))
 	{
-		const fixed_t addHeight = FixedHypot(FixedHypot(inflictor->momx, inflictor->momy) / 2, FixedHypot(player->mo->momx, player->mo->momy) / 2);
-		player->tumbleHeight += (addHeight / player->mo->scale);
-	}
-
-	S_StartSound(player->mo, sfx_s3k9b);
-
-	// adapt momz w/ gravity?
-	// as far as kart goes normal gravity is 2 (FRACUNIT*2)
-
-	gravityadjust = P_GetMobjGravity(player->mo)/2;	// so we'll halve it for our calculations.
-
-	if (player->mo->eflags & MFE_UNDERWATER)
-		gravityadjust /= 2;	// halve "gravity" underwater
-
-	// and then modulate momz like that...
-	player->mo->momz = -gravityadjust * player->tumbleHeight;
-
-	P_SetPlayerMobjState(player->mo, S_KART_SPINOUT);
-
-	if (P_IsDisplayPlayer(player))
-		P_StartQuake(64<<FRACBITS, 10);
-}
-
-static boolean K_LastTumbleBounceCondition(player_t *player)
-{
-	return (player->tumbleBounces > 4 && player->tumbleHeight < 40);
-}
-
-static void K_HandleTumbleBounce(player_t *player)
-{
-	fixed_t gravityadjust;
-	player->tumbleBounces++;
-	player->tumbleHeight = (player->tumbleHeight * 4) / 5;
-	player->tumbleSound = 0;
-
-	if (player->tumbleHeight < 10)
-	{
-		// 10 minimum bounce height
-		player->tumbleHeight = 10;
-	}
-
-	if (K_LastTumbleBounceCondition(player))
-	{
-		// Leave tumble state when below 40 height, and have bounced off the ground enough
-
-		if (player->tumbleLastBounce == true)
+		if (!force)	// You know the drill by now.
 		{
-			// End tumble state
-			player->tumbleBounces = 0;
-			player->tumbleLastBounce = false; // Reset for next time
+			K_DoInstashield(player);
 			return;
 		}
-		else
-		{
-			// One last bounce at the minimum height, to reset the animation
-			player->tumbleHeight = 10;
-			player->tumbleLastBounce = true;
-			player->mo->rollangle = 0;	// p_user.c will stop rotating the player automatically
-		}
 	}
 
-	if (P_IsDisplayPlayer(player) && player->tumbleHeight >= 40)
-		P_StartQuake((player->tumbleHeight*3/2)<<FRACBITS, 6);	// funny earthquakes for the FEEL
+	//if (LUAh_PlayerSquish(player, inflictor, source))	// Let Lua do its thing or overwrite if it wants to. Make sure to let any possible instashield happen because we didn't get "damaged" in this case.
+	//	return;
 
-	S_StartSound(player->mo, (player->tumbleHeight < 40) ? sfx_s3k5d : sfx_s3k5f);	// s3k5d is bounce < 50, s3k5f otherwise!
+	player->kartstuff[k_sneakertimer] = 0;
+	player->kartstuff[k_driftboost] = 0;
 
-	player->mo->momx = player->mo->momx / 2;
-	player->mo->momy = player->mo->momy / 2;
+	player->kartstuff[k_drift] = 0;
+	player->kartstuff[k_driftcharge] = 0;
+	player->kartstuff[k_pogospring] = 0;
 
-	// adapt momz w/ gravity?
-	// as far as kart goes normal gravity is 2 (FRACUNIT*2)
-
-	gravityadjust = P_GetMobjGravity(player->mo)/2;	// so we'll halve it for our calculations.
-
-	if (player->mo->eflags & MFE_UNDERWATER)
-		gravityadjust /= 2;	// halve "gravity" underwater
-
-	// and then modulate momz like that...
-	player->mo->momz = -gravityadjust * player->tumbleHeight;
-}
-
-// Play a falling sound when you start falling while tumbling and you're nowhere near done bouncing
-static void K_HandleTumbleSound(player_t *player)
-{
-	fixed_t momz;
-	momz = player->mo->momz * P_MobjFlip(player->mo);
-
-	if (!K_LastTumbleBounceCondition(player) &&
-			!player->tumbleSound && momz < -10*player->mo->scale)
+	/*if (G_BattleGametype())
 	{
-		S_StartSound(player->mo, sfx_s3k51);
-		player->tumbleSound = 1;
+		if (source && source->player && player != source->player)
+		{
+			P_AddPlayerScore(source->player, scoremultiply);
+			K_SpawnBattlePoints(source->player, player, scoremultiply);
+			source->player->kartstuff[k_wanted] -= wantedreduce;
+			player->kartstuff[k_wanted] -= (wantedreduce/2);
+		}
+
+		if (player->kartstuff[k_bumper] > 0)
+		{
+			if (player->kartstuff[k_bumper] == 1)
+			{
+				mobj_t *karmahitbox = P_SpawnMobj(player->mo->x, player->mo->y, player->mo->z, MT_KARMAHITBOX); // Player hitbox is too small!!
+				P_SetTarget(&karmahitbox->target, player->mo);
+				karmahitbox->destscale = player->mo->scale;
+				P_SetScale(karmahitbox, player->mo->scale);
+				CONS_Printf(M_GetText("%s lost all of their bumpers!\n"), player_names[player-players]);
+			}
+			player->kartstuff[k_bumper]--;
+			if (K_IsPlayerWanted(player))
+				K_CalculateBattleWanted();
+		}
+
+		if (!player->kartstuff[k_bumper])
+		{
+			player->kartstuff[k_comebacktimer] = comebacktime;
+			if (player->kartstuff[k_comebackmode] == 2)
+			{
+				mobj_t *poof = P_SpawnMobj(player->mo->x, player->mo->y, player->mo->z, MT_EXPLODE);
+				S_StartSound(poof, mobjinfo[MT_KARMAHITBOX].seesound);
+				player->kartstuff[k_comebackmode] = 0;
+			}
+		}
+
+		K_CheckBumpers();
+	}*/
+
+	player->kartstuff[k_squishedtimer] = TICRATE;
+
+	// Reduce Shrink timer
+	if (player->kartstuff[k_growshrinktimer] < 0)
+	{
+		player->kartstuff[k_growshrinktimer] += TICRATE;
+		if (player->kartstuff[k_growshrinktimer] >= 0)
+			K_RemoveGrowShrink(player);
 	}
+
+	player->powers[pw_flashing] = K_GetKartFlashing(player);
+
+	player->mo->flags |= MF_NOCLIP;
+
+	if (player->mo->state != &states[S_KART_SQUISH]) // Squash
+		P_SetPlayerMobjState(player->mo, S_KART_SQUISH);
+
+	P_PlayRinglossSound(player->mo);
+
+	player->kartstuff[k_instashield] = 15;
+	if (cv_kartdebughuddrop.value && !modeattacking)
+		K_DropItems(player);
+	else
+		K_DropHnextList(player,false);
+	return;
 }
 
 void K_ExplodePlayer(player_t *player, mobj_t *inflictor, mobj_t *source) // A bit of a hack, we just throw the player up higher here and extend their spinout timer
@@ -3916,10 +3838,7 @@ void K_PuntMine(mobj_t *origMine, mobj_t *punter)
 
 	if (!origMine || P_MobjWasRemoved(origMine))
 		return;
-
-	if (punter->hitlag > 0)
-		return;
-
+	
 	// This guarantees you hit a mine being dragged
 	if (origMine->type == MT_SSMINE_SHIELD) // Create a new mine, and clean up the old one
 	{
@@ -3953,7 +3872,7 @@ void K_PuntMine(mobj_t *origMine, mobj_t *punter)
 	if (!mine || P_MobjWasRemoved(mine))
 		return;
 
-	if (mine->threshold > 0 || mine->hitlag > 0)
+	if (mine->threshold > 0)
 		return;
 
 	spd = FixedMul(82 * punter->scale, K_GetKartGameSpeedScalar(gamespeed)); // Avg Speed is 41 in Normal
@@ -3967,8 +3886,6 @@ void K_PuntMine(mobj_t *origMine, mobj_t *punter)
 	mine->momx = punter->momx + FixedMul(FINECOSINE(fa >> ANGLETOFINESHIFT), spd);
 	mine->momy = punter->momy + FixedMul(FINESINE(fa >> ANGLETOFINESHIFT), spd);
 	P_SetObjectMomZ(mine, z, false);
-
-	//K_SetHitLagForObjects(punter, mine, 5);
 
 	mine->flags &= ~MF_NOCLIPTHING;
 }
@@ -5723,6 +5640,85 @@ void K_PogoSidemove(player_t *player)
 
 }
 
+void K_LegacyStart(player_t *player)
+{
+
+	if (leveltime <= starttime)
+		player->powers[pw_nocontrol] = 2;
+
+	// Start charging once you're given the opportunity.
+	if (leveltime >= starttime-(2*TICRATE) && leveltime <= starttime)
+	{
+		if (player->cmd.buttons & BT_ACCELERATE)
+		{
+			if (player->kartstuff[k_boostcharge] == 0)
+				player->kartstuff[k_boostcharge] = player->cmd.latency;
+
+			player->kartstuff[k_boostcharge]++;
+		}
+		else
+			player->kartstuff[k_boostcharge] = 0;
+	}
+
+	// Increase your size while charging your engine.
+	if (leveltime < starttime+10)
+	{
+		player->mo->scalespeed = mapobjectscale/12;
+		player->mo->destscale = mapobjectscale + (FixedMul(mapobjectscale, player->kartstuff[k_boostcharge]*131));
+		if (cv_kartdebugshrink.value && !modeattacking && !player->bot)
+			player->mo->destscale = (6*player->mo->destscale)/8;
+	}
+
+	// Determine the outcome of your charge.
+	if (leveltime > starttime && player->kartstuff[k_boostcharge])
+	{
+		// Not even trying?
+		if (player->kartstuff[k_boostcharge] < 35)
+		{
+			if (player->kartstuff[k_boostcharge] > 17)
+				S_StartSound(player->mo, sfx_cdfm00); // chosen instead of a conventional skid because it's more engine-like
+		}
+		// Get an instant boost!
+		else if (player->kartstuff[k_boostcharge] <= 50)
+		{
+			player->kartstuff[k_startboost] = (50-player->kartstuff[k_boostcharge])+20;
+
+			if (player->kartstuff[k_boostcharge] <= 36)
+			{
+				player->kartstuff[k_startboost] = 0;
+				K_DoSneaker(player, 0);
+				player->kartstuff[k_sneakertimer] = 70; // PERFECT BOOST!!
+
+				if (!player->kartstuff[k_floorboost] || player->kartstuff[k_floorboost] == 3) // Let everyone hear this one
+					S_StartSound(player->mo, sfx_s25f);
+			}
+			else
+			{
+				K_SpawnDashDustRelease(player); // already handled for perfect boosts by K_DoSneaker
+				if ((!player->kartstuff[k_floorboost] || player->kartstuff[k_floorboost] == 3) && P_IsLocalPlayer(player))
+				{
+					if (player->kartstuff[k_boostcharge] <= 40)
+						S_StartSound(player->mo, sfx_cdfm01); // You were almost there!
+					else
+						S_StartSound(player->mo, sfx_s23c); // Nope, better luck next time.
+				}
+			}
+		}
+		// You overcharged your engine? Those things are expensive!!!
+		else if (player->kartstuff[k_boostcharge] > 50)
+		{
+			//player->spinouttimer = 40;
+			player->powers[pw_nocontrol] = 40;
+			//S_StartSound(player->mo, sfx_kc34);
+			S_StartSound(player->mo, sfx_s3k83);
+			player->pflags |= PF_FAULT; // cheeky pflag reuse
+		}
+
+		player->kartstuff[k_boostcharge] = 0;
+	}
+
+}
+
 /**	\brief	Decreases various kart timers and powers per frame. Called in P_PlayerThink in p_user.c
 
 	\param	player	player object passed from P_PlayerThink
@@ -6108,19 +6104,12 @@ void K_KartPlayerThink(player_t *player, ticcmd_t *cmd)
 
 	if (player->kartstuff[k_stolentimer])
 		player->kartstuff[k_stolentimer]--;
+	
+	if (player->kartstuff[k_squishedtimer])
+		player->kartstuff[k_squishedtimer]--;
 
 	if (player->kartstuff[k_justbumped] > 0)
 		player->kartstuff[k_justbumped]--;
-
-	if (player->kartstuff[k_tiregrease])
-		player->kartstuff[k_tiregrease]--;
-
-	if (player->tumbleBounces > 0)
-	{
-		K_HandleTumbleSound(player);
-		if (P_IsObjectOnGround(player->mo) && player->mo->momz * P_MobjFlip(player->mo) <= 0)
-			K_HandleTumbleBounce(player);
-	}
 
 	// This doesn't go in HUD update because it has potential gameplay ramifications
 	if (player->karthud[khud_itemblink] && player->karthud[khud_itemblink]-- <= 0)
@@ -6685,16 +6674,6 @@ static INT16 K_GetKartDriftValue(player_t *player, fixed_t countersteer)
 	basedrift = (83 * player->kartstuff[k_drift]) - (((driftweight - 14) * player->kartstuff[k_drift]) / 5); // 415 - 303
 	driftadjust = abs((252 - driftweight) * player->kartstuff[k_drift] / 5);
 
-	if (player->kartstuff[k_tiregrease] > 0) // Buff drift-steering while in greasemode
-	{
-		basedrift += (basedrift / greasetics) * player->kartstuff[k_tiregrease];
-	}
-
-	if (player->mo->eflags & (MFE_UNDERWATER|MFE_TOUCHWATER))
-	{
-		countersteer = FixedMul(countersteer, 3*FRACUNIT/2);
-	}
-
 	return basedrift + (FixedMul(driftadjust * FRACUNIT, countersteer) / FRACUNIT);
 }
 
@@ -6742,26 +6721,28 @@ INT16 K_GetKartTurnValue(player_t *player, INT16 turnvalue)
 
 	if (player->kartstuff[k_drift] != 0 && P_IsObjectOnGround(player->mo))
 	{
-		fixed_t countersteer = FixedDiv(turnfixed, KART_FULLTURN*FRACUNIT);
-
-		// If we're drifting we have a completely different turning value
-
 		if (player->kartstuff[k_driftend] != 0)
 		{
-			countersteer = FRACUNIT;
+			// Sal: K_GetKartDriftValue is short-circuited to give a weird additive magic number,
+			// instead of an entirely replaced turn value. This gaslit me years ago when I was doing a
+			// code readability pass, where I missed that fact because it also returned early.
+			turnfixed += K_GetKartDriftValue(player, FRACUNIT) * FRACUNIT;
+			return (turnfixed / FRACUNIT);
+
+		}
+		else
+		{
+			// If we're drifting we have a completely different turning value
+			fixed_t countersteer = FixedDiv(turnfixed, KART_FULLTURN * FRACUNIT);
+			return K_GetKartDriftValue(player, countersteer);
+
 		}
 
-		return K_GetKartDriftValue(player, countersteer);
 	}
 
 	if (player->kartstuff[k_handleboost] > 0)
 	{
 		turnfixed = FixedMul(turnfixed, FRACUNIT + player->kartstuff[k_handleboost]);
-	}
-
-	if (player->mo->eflags & (MFE_UNDERWATER|MFE_TOUCHWATER))
-	{
-		turnfixed = FixedMul(turnfixed, 3*FRACUNIT/2);
 	}
 
 	// Weight has a small effect on turning
@@ -7040,89 +7021,203 @@ static void K_KartDrift(player_t *player, boolean onground)
 //
 // K_KartUpdatePosition
 //
-void K_KartUpdatePosition(player_t *player)
+void K_KartLegacyUpdatePosition(player_t *player)
 {
 	fixed_t position = 1;
 	fixed_t oldposition = player->kartstuff[k_position];
-	fixed_t i;
+	fixed_t i, ppcd, pncd, ipcd, incd;
+	fixed_t pmo, imo;
+	mobj_t *mo;
 
 	if (player->spectator || !player->mo)
-	{
-		// Ensure these are reset for spectators
-		player->kartstuff[k_position] = 0;
-		player->kartstuff[k_positiondelay] = 0;
 		return;
-	}
 
 	for (i = 0; i < MAXPLAYERS; i++)
 	{
 		if (!playeringame[i] || players[i].spectator || !players[i].mo)
 			continue;
 
-		if (gametyperules & GTR_CIRCUIT)
+		//if (G_RaceGametype())
 		{
-			if (player->exiting) // End of match standings
+			if ((((players[i].starpostnum) + (numstarposts + 1) * players[i].laps) >
+				((player->starpostnum) + (numstarposts + 1) * player->laps)))
+				position++;
+			else if (((players[i].starpostnum) + (numstarposts+1)*players[i].laps) ==
+				((player->starpostnum) + (numstarposts+1)*player->laps))
 			{
-				// Only time matters
-				if (players[i].realtime < player->realtime)
-					position++;
-			}
-			else
-			{
-				// I'm a lap behind this player OR
-				// My distance to the finish line is higher, so I'm behind
-				if ((players[i].laps > player->laps)
-					|| (players[i].distancetofinish < player->distancetofinish))
-				{
-					position++;
-				}
-			}
-		}
-		else
-		{
-			if (player->exiting) // End of match standings
-			{
-				// Only score matters
-				if (players[i].marescore > player->marescore)
-					position++;
-			}
-			else
-			{
-				UINT8 myEmeralds = K_NumEmeralds(player);
-				UINT8 yourEmeralds = K_NumEmeralds(&players[i]);
+				ppcd = pncd = ipcd = incd = 0;
 
-				if (yourEmeralds > myEmeralds)
+				player->prevcheck = players[i].prevcheck = 0;
+				player->nextcheck = players[i].nextcheck = 0;
+
+				// This checks every thing on the map, and looks for MT_BOSS3WAYPOINT (the thing we're using for checkpoint wp's, for now)
+				for (mo = waypointcap; mo != NULL; mo = mo->tracer)
 				{
-					// Emeralds matter above all
-					position++;
+					pmo = P_AproxDistance(P_AproxDistance(	mo->x - player->mo->x,
+															mo->y - player->mo->y),
+															mo->z - player->mo->z) / FRACUNIT;
+					imo = P_AproxDistance(P_AproxDistance(	mo->x - players[i].mo->x,
+															mo->y - players[i].mo->y),
+															mo->z - players[i].mo->z) / FRACUNIT;
+
+					if (mo->health == player->starpostnum && (!mo->movecount || mo->movecount == player->laps+1))
+					{
+						player->prevcheck += pmo;
+						ppcd++;
+					}
+					if (mo->health == (player->starpostnum + 1) && (!mo->movecount || mo->movecount == player->laps+1))
+					{
+						player->nextcheck += pmo;
+						pncd++;
+					}
+					if (mo->health == players[i].starpostnum && (!mo->movecount || mo->movecount == players[i].laps+1))
+					{
+						players[i].prevcheck += imo;
+						ipcd++;
+					}
+					if (mo->health == (players[i].starpostnum + 1) && (!mo->movecount || mo->movecount == players[i].laps+1))
+					{
+						players[i].nextcheck += imo;
+						incd++;
+					}
 				}
-				else if (yourEmeralds == myEmeralds)
+
+				if (ppcd > 1) player->prevcheck /= ppcd;
+				if (pncd > 1) player->nextcheck /= pncd;
+				if (ipcd > 1) players[i].prevcheck /= ipcd;
+				if (incd > 1) players[i].nextcheck /= incd;
+
+				if ((players[i].nextcheck > 0 || player->nextcheck > 0) && !player->exiting)
 				{
-					// Bumpers are a tie breaker
-					if (players[i].bumpers > player->bumpers)
-					{
+					if ((players[i].nextcheck - players[i].prevcheck) <
+						(player->nextcheck - player->prevcheck))
 						position++;
-					}
-					else if (players[i].bumpers == player->bumpers)
-					{
-						// Score is the second tier tie breaker
-						if (players[i].marescore > player->marescore)
-						{
-							position++;
-						}
-					}
+				}
+				else if (!player->exiting)
+				{
+					if (players[i].prevcheck > player->prevcheck)
+						position++;
+				}
+				else
+				{
+					if (players[i].starposttime < player->starposttime)
+						position++;
 				}
 			}
 		}
+		/*else if (G_BattleGametype())
+		{
+			if (player->exiting) // Ends of match standings
+			{
+				if (players[i].marescore > player->marescore) // Only score matters
+					position++;
+			}
+			else
+			{
+				if (players[i].kartstuff[k_bumper] == player->kartstuff[k_bumper] && players[i].marescore > player->marescore)
+					position++;
+				else if (players[i].kartstuff[k_bumper] > player->kartstuff[k_bumper])
+					position++;
+			}
+		}*/
 	}
 
 	if (leveltime < starttime || oldposition == 0)
 		oldposition = position;
 
 	if (oldposition != position) // Changed places?
-		player->kartstuff[k_positiondelay] = 10; // Position number growth
+		player->karthud[k_positiondelay]= 10; // Position number growth
 
 	player->kartstuff[k_position] = position;
+}
+
+void K_KartUpdatePosition(player_t *player)
+{
+	fixed_t position = 1;
+	fixed_t oldposition = player->kartstuff[k_position];
+	fixed_t i;
+	if (numbosswaypoints == 0)
+	{
+		if (player->spectator || !player->mo)
+		{
+			// Ensure these are reset for spectators
+			player->kartstuff[k_position] = 0;
+			player->kartstuff[k_positiondelay] = 0;
+			return;
+		}
+
+		for (i = 0; i < MAXPLAYERS; i++)
+		{
+			if (!playeringame[i] || players[i].spectator || !players[i].mo)
+				continue;
+
+			if (gametyperules & GTR_CIRCUIT)
+			{
+				if (player->exiting) // End of match standings
+				{
+					// Only time matters
+					if (players[i].realtime < player->realtime)
+						position++;
+				}
+				else
+				{
+					// I'm a lap behind this player OR
+					// My distance to the finish line is higher, so I'm behind
+					if ((players[i].laps > player->laps)
+						|| (players[i].distancetofinish < player->distancetofinish))
+					{
+						position++;
+					}
+				}
+			}
+			else
+			{
+				if (player->exiting) // End of match standings
+				{
+					// Only score matters
+					if (players[i].marescore > player->marescore)
+						position++;
+				}
+				else
+				{
+					UINT8 myEmeralds = K_NumEmeralds(player);
+					UINT8 yourEmeralds = K_NumEmeralds(&players[i]);
+
+					if (yourEmeralds > myEmeralds)
+					{
+						// Emeralds matter above all
+						position++;
+					}
+					else if (yourEmeralds == myEmeralds)
+					{
+						// Bumpers are a tie breaker
+						if (players[i].bumpers > player->bumpers)
+						{
+							position++;
+						}
+						else if (players[i].bumpers == player->bumpers)
+						{
+							// Score is the second tier tie breaker
+							if (players[i].marescore > player->marescore)
+							{
+								position++;
+							}
+						}
+					}
+				}
+			}
+		}
+
+		if (leveltime < starttime || oldposition == 0)
+			oldposition = position;
+
+		if (oldposition != position) // Changed places?
+			player->kartstuff[k_positiondelay] = 10; // Position number growth
+
+		player->kartstuff[k_position] = position;
+	}
+	else
+		K_KartLegacyUpdatePosition(player);
 }
 
 //
@@ -7278,21 +7373,6 @@ static void K_KartSpindash(player_t *player)
 		player->kartstuff[k_spindashspeed] = (player->kartstuff[k_spindash] * FRACUNIT) / MAXCHARGETIME;
 		player->kartstuff[k_spindashboost] = TICRATE;
 
-		if (!player->kartstuff[k_tiregrease])
-		{
-			UINT8 i;
-			for (i = 0; i < 2; i++)
-			{
-				mobj_t *grease;
-				grease = P_SpawnMobj(player->mo->x, player->mo->y, player->mo->z, MT_TIREGREASE);
-				P_SetTarget(&grease->target, player->mo);
-				grease->angle = K_MomentumAngle(player->mo);
-				grease->extravalue1 = i;
-			}
-		}
-
-		player->kartstuff[k_tiregrease] = 2*TICRATE;
-
 		player->kartstuff[k_spindash] = 0;
 		S_StartSound(player->mo, sfx_s23c);
 	}
@@ -7373,28 +7453,19 @@ void K_AdjustPlayerFriction(player_t *player)
 	{
 		return;
 	}
-
-	// Reduce friction after hitting a horizontal spring
-	if (player->kartstuff[k_tiregrease])
+	
+	if (player->kartstuff[k_pogospring])
 	{
-		player->mo->friction += ((FRACUNIT - prevfriction) / greasetics) * player->kartstuff[k_tiregrease];
+		return;
 	}
-
-	/*
+	
 	if (K_PlayerEBrake(player) == true)
 	{
-		player->mo->friction -= 1024;
+		player->mo->friction -= 2048;
 	}
-	else if (player->speed > 0 && cmd->forwardmove < 0)
+	else if (player->speed > 0 && player->cmd.forwardmove < 0)
 	{
-		player->mo->friction -= 512;
-	}
-	*/
-
-	// Water gets ice physics too
-	if (player->mo->eflags & (MFE_UNDERWATER|MFE_TOUCHWATER))
-	{
-		player->mo->friction += 614;
+		player->mo->friction -= 2048;
 	}
 
 	// Wipeout slowdown
@@ -8120,8 +8191,22 @@ void K_MoveKartPlayer(player_t *player, boolean onground)
 		}
 	}
 
-	K_KartDrift(player, P_IsObjectOnGround(player->mo)); // Not using onground, since we don't want this affected by spring pads
+	K_KartDrift(player, onground); // Not using onground, since we don't want this affected by spring pads
 	K_KartSpindash(player);
+	
+	// Squishing
+	// If a Grow player or a sector crushes you, get flattened instead of being killed.
+	if (player->kartstuff[k_squishedtimer] <= 0)
+	{
+		player->mo->flags &= ~MF_NOCLIP;
+	}
+	else
+	{
+		player->mo->flags |= MF_NOCLIP;
+		player->mo->momx = 0;
+		player->mo->momy = 0;
+		//player->mo->spriteyscale = FRACUNIT/2
+	}
 
 	// Play the starting countdown sounds
 	if (player == &players[g_localplayers[0]]) // Don't play louder in splitscreen
@@ -8134,6 +8219,10 @@ void K_MoveKartPlayer(player_t *player, boolean onground)
 			S_StopMusic(); // The GO! sound stops the level start ambience
 		}
 	}
+	
+	
+	K_LegacyStart(player);
+	
 }
 
 void K_CheckSpectateStatus(void)

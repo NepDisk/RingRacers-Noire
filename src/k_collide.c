@@ -30,7 +30,7 @@ boolean K_OrbinautJawzCollide(mobj_t *t1, mobj_t *t2)
 
 	if (t2->player)
 	{
-		if ((t2->player->powers[pw_flashing] > 0 && t2->hitlag == 0)
+		if ((t2->player->powers[pw_flashing] > 0)
 			&& !(t1->type == MT_ORBINAUT || t1->type == MT_JAWZ || t1->type == MT_JAWZ_DUD))
 			return true;
 
@@ -123,7 +123,7 @@ boolean K_BananaBallhogCollide(mobj_t *t1, mobj_t *t2)
 
 	if (t2->player)
 	{
-		if (t2->player->powers[pw_flashing] > 0 && t2->hitlag == 0)
+		if (t2->player->powers[pw_flashing] > 0)
 			return true;
 
 		// Banana snipe!
@@ -272,7 +272,7 @@ boolean K_MineCollide(mobj_t *t1, mobj_t *t2)
 
 	if (t2->player)
 	{
-		if (t2->player->powers[pw_flashing] > 0 && t2->hitlag == 0)
+		if (t2->player->powers[pw_flashing] > 0)
 			return true;
 
 		// Bomb punting
@@ -314,7 +314,7 @@ boolean K_MineExplosionCollide(mobj_t *t1, mobj_t *t2)
 {
 	if (t2->player)
 	{
-		if (t2->player->powers[pw_flashing] > 0 && t2->hitlag == 0)
+		if (t2->player->powers[pw_flashing] > 0)
 			return true;
 
 		if (t1->state == &states[S_MINEEXPLOSION1])
@@ -360,7 +360,7 @@ boolean K_LandMineCollide(mobj_t *t1, mobj_t *t2)
 		else
 		{
 			// Player Damage
-			P_DamageMobj(t2, t1, t1->target, 1, DMG_TUMBLE);
+			P_DamageMobj(t2, t1, t1->target, 1, DMG_WIPEOUT);
 		}
 
 		P_KillMobj(t1, t2, t2, DMG_NORMAL);
@@ -409,7 +409,7 @@ boolean K_KitchenSinkCollide(mobj_t *t1, mobj_t *t2)
 
 	if (t2->player)
 	{
-		if (t2->player->powers[pw_flashing] > 0 && t2->hitlag == 0)
+		if (t2->player->powers[pw_flashing] > 0)
 			return true;
 
 		S_StartSound(NULL, sfx_bsnipe); // let all players hear it.
@@ -479,12 +479,12 @@ boolean K_PvPTouchDamage(mobj_t *t1, mobj_t *t2)
 
 	if (t1Condition == true && t2Condition == false)
 	{
-		P_DamageMobj(t2, t1, t1, 1, DMG_TUMBLE);
+		P_DamageMobj(t2, t1, t1, 1, DMG_SQUISH);
 		return true;
 	}
 	else if (t1Condition == false && t2Condition == true)
 	{
-		P_DamageMobj(t1, t2, t2, 1, DMG_TUMBLE);
+		P_DamageMobj(t1, t2, t2, 1, DMG_SQUISH);
 		return true;
 	}
 
@@ -494,12 +494,12 @@ boolean K_PvPTouchDamage(mobj_t *t1, mobj_t *t2)
 
 	if (t1Condition == true && t2Condition == false)
 	{
-		P_DamageMobj(t2, t1, t1, 1, DMG_TUMBLE);
+		P_DamageMobj(t2, t1, t1, 1, DMG_WIPEOUT);
 		return true;
 	}
 	else if (t1Condition == false && t2Condition == true)
 	{
-		P_DamageMobj(t1, t2, t2, 1, DMG_TUMBLE);
+		P_DamageMobj(t1, t2, t2, 1, DMG_WIPEOUT);
 		return true;
 	}
 

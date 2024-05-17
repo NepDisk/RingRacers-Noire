@@ -1106,10 +1106,6 @@ fixed_t P_GetMobjGravity(mobj_t *mo)
 			gravityadd = (4*gravityadd)/3;
 		}
 
-		if (mo->player->tumbleBounces > 0)
-		{
-			gravityadd = (5*gravityadd)/2;
-		}
 	}
 	else
 	{
@@ -2633,7 +2629,7 @@ void P_PlayerZMovement(mobj_t *mo)
 			mo->z = mo->floorz;
 
 		// Get up if you fell.
-		if (mo->player->panim == PA_PAIN && mo->player->kartstuff[k_spinouttimer] == 0 && mo->player->tumbleBounces == 0)
+		if (mo->player->panim == PA_PAIN && mo->player->kartstuff[k_spinouttimer] == 0)
 			P_SetPlayerMobjState(mo, S_KART_STILL);
 
 		if (!mo->standingslope && (mo->eflags & MFE_VERTICALFLIP ? tmceilingslope : tmfloorslope)) {
@@ -3456,10 +3452,10 @@ static void P_PlayerMobjThinker(mobj_t *mobj)
 
 	P_MobjCheckWater(mobj);
 
-	P_ButteredSlope(mobj);
+	//P_ButteredSlope(mobj);
 
 	// momentum movement
-	mobj->eflags &= ~MFE_JUSTSTEPPEDDOWN;
+	//mobj->eflags &= ~MFE_JUSTSTEPPEDDOWN;
 
 	// Zoom tube
 	if ((mobj->player->powers[pw_carry] == CR_ZOOMTUBE && mobj->tracer && !P_MobjWasRemoved(mobj->tracer))
@@ -6872,53 +6868,6 @@ static boolean P_MobjRegularThink(mobj_t *mobj)
 				mobj->angle = mobj->target->angle + ANGLE_45;
 		}
 		break;
-	case MT_TIREGREASE:
-		if (!mobj->target || P_MobjWasRemoved(mobj->target) || !mobj->target->player
-			|| !mobj->target->player->kartstuff[k_tiregrease])
-		{
-			P_RemoveMobj(mobj);
-			return false;
-		}
-
-		K_MatchGenericExtraFlags(mobj, mobj->target);
-
-		{
-			const angle_t off = FixedAngle(40*FRACUNIT);
-			angle_t ang = K_MomentumAngle(mobj->target);
-			fixed_t z;
-			UINT8 trans = (mobj->target->player->kartstuff[k_tiregrease] * (NUMTRANSMAPS+1)) / greasetics;
-
-			if (trans > NUMTRANSMAPS)
-				trans = NUMTRANSMAPS;
-
-			trans = NUMTRANSMAPS - trans;
-
-			z = mobj->target->z;
-			if (mobj->eflags & MFE_VERTICALFLIP)
-				z += mobj->target->height;
-
-			if (mobj->extravalue1)
-				ang = (signed)(ang - off);
-			else
-				ang = (signed)(ang + off);
-
-			P_TeleportMove(mobj,
-				mobj->target->x - FixedMul(mobj->target->radius, FINECOSINE(ang >> ANGLETOFINESHIFT)),
-				mobj->target->y - FixedMul(mobj->target->radius, FINESINE(ang >> ANGLETOFINESHIFT)),
-				z);
-			mobj->angle = ang;
-
-			if (leveltime & 1)
-				mobj->drawflags |= MFD_DONTDRAW;
-
-			if (trans >= NUMTRANSMAPS)
-				mobj->drawflags |= MFD_DONTDRAW;
-			else if (trans == 0)
-				mobj->drawflags = (mobj->drawflags & ~MFD_TRANSMASK);
-			else
-				mobj->drawflags = (mobj->drawflags & ~MFD_TRANSMASK)|(trans << MFD_TRANSSHIFT);
-		}
-		break;
 	case MT_THUNDERSHIELD:
 	{
 		fixed_t destx, desty;
@@ -8623,13 +8572,6 @@ void P_MobjThinker(mobj_t *mobj)
 	if ((mobj->flags & MF_BOSS) && mobj->spawnpoint && (bossdisabled & (1<<mobj->spawnpoint->extrainfo)))
 		return;
 
-	// Don't run any thinker code while in hitlag
-	if (mobj->hitlag > 0)
-	{
-		mobj->hitlag--;
-		return;
-	}
-
 	mobj->eflags &= ~(MFE_PUSHED|MFE_SPRUNG|MFE_JUSTBOUNCEDWALL);
 
 	tmfloorthing = tmhitthing = NULL;
@@ -9235,8 +9177,6 @@ mobj_t *P_SpawnMobj(fixed_t x, fixed_t y, fixed_t z, mobjtype_t type)
 
 	mobj->colorized = false;
 
-	mobj->hitlag = 0;
-
 	// Set shadowscale here, before spawn hook so that Lua can change it
 	P_DefaultMobjShadowScale(mobj);
 
@@ -9638,7 +9578,7 @@ mobj_t *P_SpawnMobj(fixed_t x, fixed_t y, fixed_t z, mobjtype_t type)
 			break;
 		case MT_BOSS3WAYPOINT:
 			// Remove before release
-			CONS_Alert(CONS_WARNING, "Boss waypoints are deprecated. Did you forget to remove the old checkpoints, too?\n");
+			//CONS_Alert(CONS_WARNING, "Boss waypoints are deprecated. Did you forget to remove the old checkpoints, too?\n");
 			break;
 		default:
 			break;
@@ -11495,6 +11435,13 @@ static boolean P_SetupSpawnedMapThing(mapthing_t *mthing, mobj_t *mobj, boolean 
 			numstarposts++;
 		break;
 	}
+	case MT_BOSS3WAYPOINT:
+		mobj->health = mthing->angle;
+		mobj->movecount = mthing->extrainfo;
+		P_SetTarget(&mobj->tracer, waypointcap);
+		P_SetTarget(&waypointcap, mobj);
+		numbosswaypoints++;
+		break;
 	case MT_SPIKE:
 		// Pop up spikes!
 		if (mthing->options & MTF_OBJECTSPECIAL)

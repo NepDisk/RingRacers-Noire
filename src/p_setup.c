@@ -119,6 +119,7 @@ sector_t *spawnsectors;
 line_t *spawnlines;
 side_t *spawnsides;
 INT32 numstarposts;
+INT32 numbosswaypoints;
 UINT16 bossdisabled;
 boolean stoppedclock;
 boolean levelloading;
@@ -3369,6 +3370,7 @@ static void P_InitLevelSettings(void)
 	// circuit, race and competition stuff
 	circuitmap = false;
 	numstarposts = 0;
+	numbosswaypoints = 0;
 	ssspheres = timeinmap = 0;
 
 	// special stage
@@ -3428,27 +3430,30 @@ static void P_InitLevelSettings(void)
 
 	rainbowstartavailable = false;
 
-	if (p >= 2)
-		rainbowstartavailable = true;
+	//if (p >= 2)
+		//rainbowstartavailable = true;
 
-	if (p <= 2)
+	/*if (p <= 2)
 	{
 		introtime = 0; // No intro in Record Attack / 1v1
 	}
-	else
+	else*/
 	{
 		introtime = (108) + 5; // 108 for rotation, + 5 for white fade
 	}
 
-	numbulbs = 5;
+	//numbulbs = 5;
+	numbulbs = 0;
 
-	if (p > 2)
+	/*if (p > 2)
 	{
 		numbulbs += (p-2);
-	}
+	}*/
 
-	starttime = (introtime + (3*TICRATE)) + ((2*TICRATE) + (numbulbs * bulbtime)); // Start countdown time, + buffer time
+	//starttime = (introtime + (3*TICRATE)) + ((2*TICRATE) + (numbulbs * bulbtime)); // Start countdown time, + buffer time
 
+	starttime = 6*TICRATE + (3*TICRATE/4);
+	
 	// SRB2Kart: map load variables
 	if (grandprixinfo.gp == true)
 	{
@@ -4062,7 +4067,7 @@ boolean P_LoadLevel(boolean fromnetsave)
 	// Load the waypoints please!
 	if (gametyperules & GTR_CIRCUIT)
 	{
-		if (K_SetupWaypointList() == false)
+		if ((K_SetupWaypointList() == false) && (numbosswaypoints == 0))
 		{
 			CONS_Alert(CONS_ERROR, "Waypoints were not able to be setup! Player positions will not work correctly.\n");
 		}

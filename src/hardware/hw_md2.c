@@ -1357,21 +1357,6 @@ boolean HWR_DrawModel(gl_vissprite_t *spr)
 		float finalscale;
 		FBITFIELD blendmode = PF_Masked;
 
-		// hitlag vibrating
-		if (spr->mobj->hitlag > 0)
-		{
-			fixed_t mul = spr->mobj->hitlag * (FRACUNIT / 10);
-
-			if (leveltime & 1)
-			{
-				mul = -mul;
-			}
-
-			thingxpos += FixedMul(spr->mobj->momx, mul);
-			thingypos += FixedMul(spr->mobj->momy, mul);
-			thingzpos += FixedMul(spr->mobj->momz, mul);
-		}
-
 		// Apparently people don't like jump frames like that, so back it goes
 		//if (tics > durs)
 			//durs = tics;

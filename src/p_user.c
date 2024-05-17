@@ -14,11 +14,13 @@
 ///        Bobbing POV/weapon, movement.
 ///        Pending weapon.
 
+#include "d_player.h"
 #include "doomdef.h"
 #include "i_system.h"
 #include "d_event.h"
 #include "d_net.h"
 #include "g_game.h"
+#include "info.h"
 #include "p_local.h"
 #include "r_main.h"
 #include "s_sound.h"
@@ -461,7 +463,7 @@ UINT8 P_FindHighestLap(void)
 //
 boolean P_PlayerInPain(player_t *player)
 {
-	if (player->kartstuff[k_spinouttimer] || player->tumbleBounces > 0)
+	if (player->kartstuff[k_spinouttimer])
 		return true;
 
 	return false;
@@ -2146,31 +2148,11 @@ void P_MovePlayer(player_t *player)
 	P_3dMovement(player);
 
 	// Kart frames
-	if (player->tumbleBounces > 0)
+	
+	if (player->kartstuff[k_squishedtimer] > 0)
 	{
-		fixed_t playerSpeed = P_AproxDistance(player->mo->momx, player->mo->momy); // maybe momz too?
-
-		const UINT8 minSpinSpeed = 4;
-		UINT8 spinSpeed = max(minSpinSpeed, min(8 + minSpinSpeed, (playerSpeed / player->mo->scale) * 2));
-
-		UINT8 rollSpeed = max(1, min(8, player->tumbleHeight / 10));
-
-		if (player->tumbleLastBounce == true)
-			spinSpeed = 2;
-
-		P_SetPlayerMobjState(player->mo, S_KART_SPINOUT);
-		player->drawangle -= (ANGLE_11hh * spinSpeed);
-
-		player->mo->rollangle -= (ANGLE_11hh * rollSpeed);
-
-		if (player->tumbleLastBounce == true)
-		{
-			if (abs((signed)(player->mo->angle - player->drawangle)) < ANGLE_22h)
-				player->drawangle = player->mo->angle;
-
-			if (abs((signed)player->mo->rollangle) < ANGLE_22h)
-				player->mo->rollangle = 0;
-		}
+		P_SetPlayerMobjState(player->mo, S_KART_SQUISH);
+		player->mo->rollangle = 0;
 	}
 	else if (player->pflags & PF_SLIDING)
 	{
@@ -2379,7 +2361,7 @@ void P_MovePlayer(player_t *player)
 		if (player->spectator)
 			P_DamageMobj(player->mo, NULL, NULL, 1, DMG_SPECTATOR); // Respawn crushed spectators
 		else
-			P_DamageMobj(player->mo, NULL, NULL, 1, DMG_CRUSHED);
+			P_DamageMobj(player->mo, NULL, NULL, 1, DMG_SQUISH);
 
 		if (player->playerstate == PST_DEAD)
 			return;
@@ -4259,11 +4241,6 @@ void P_PlayerThink(player_t *player)
 		}
 	}
 #endif
-
-	if (player->mo->hitlag > 0)
-	{
-		return;
-	}
 
 	if (player->awayviewmobj && P_MobjWasRemoved(player->awayviewmobj))
 	{

@@ -344,28 +344,6 @@ boolean P_DoSpring(mobj_t *spring, mobj_t *object)
 			}
 		}
 
-		if (object->player)
-		{
-			// Less friction when hitting horizontal springs
-			if (!vertispeed)
-			{
-				if (!object->player->kartstuff[k_tiregrease])
-				{
-					UINT8 i;
-					for (i = 0; i < 2; i++)
-					{
-						mobj_t *grease;
-						grease = P_SpawnMobj(object->x, object->y, object->z, MT_TIREGREASE);
-						P_SetTarget(&grease->target, object);
-						grease->angle = K_MomentumAngle(object);
-						grease->extravalue1 = i;
-					}
-				}
-
-				object->player->kartstuff[k_tiregrease] = greasetics; //FixedMul(greasetics << FRACBITS, finalSpeed/72) >> FRACBITS
-			}
-		}
-
 		// Horizontal speed is used as a minimum thrust, not a direct replacement
 		finalSpeed = max(objectSpeed, finalSpeed);
 
@@ -1383,7 +1361,7 @@ static boolean PIT_CheckThing(mobj_t *thing)
 
 			// collide
 			if (tmthing->z < thing->z && thing->momz < 0)
-				P_DamageMobj(tmthing, thing, thing, 1, DMG_TUMBLE);
+				P_DamageMobj(tmthing, thing, thing, 1, DMG_SQUISH);
 			else
 			{
 				if (thing->flags2 & MF2_AMBUSH)
@@ -2433,12 +2411,6 @@ boolean P_TryMove(mobj_t *thing, fixed_t x, fixed_t y, boolean allowdropoff)
 	// Originally was MAXRADIUS/2, but that causes some inconsistencies for small players.
 	if (radius < mapobjectscale)
 		radius = mapobjectscale;
-
-	if (thing->hitlag > 0)
-	{
-		// Do not move during hitlag
-		return false;
-	}
 
 	do {
 		if (thing->flags & MF_NOCLIP) {
@@ -4021,8 +3993,10 @@ static boolean PIT_ChangeSector(mobj_t *thing, boolean realcrush)
 			// Crush the object
 			if (netgame && thing->player && thing->player->spectator)
 				P_DamageMobj(thing, NULL, NULL, 1, DMG_SPECTATOR); // Respawn crushed spectators
-			else
+			else if (!thing->player)
 				P_DamageMobj(thing, killer, killer, 1, DMG_CRUSHED);
+			else
+				P_DamageMobj(thing, NULL, NULL, 1, DMG_SQUISH);
 			return true;
 		}
 	}

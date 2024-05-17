@@ -1995,7 +1995,7 @@ static void K_HandleLapIncrement(player_t *player)
 			// Will fault the player
 			K_DoIngameRespawn(player);
 		}
-		else if ((player->starpostnum == numstarposts) || (player->laps == 0))
+		else if (((numbosswaypoints > 0) ? (stplyr->starpostnum >= (numstarposts - (numstarposts/2))) : stplyr->starpostnum == numstarposts) || (player->laps == 0))
 		{
 			size_t i = 0;
 			UINT8 nump = 0;
@@ -2038,13 +2038,13 @@ static void K_HandleLapIncrement(player_t *player)
 				}
 			}
 
-			if (rainbowstartavailable == true)
+			/*if (rainbowstartavailable == true)
 			{
 				S_StartSound(player->mo, sfx_s23c);
 				player->kartstuff[k_startboost] = 125;
 				K_SpawnDriftBoostExplosion(player, 3);
 				rainbowstartavailable = false;
-			}
+			}*/
 
 			if (netgame && player->laps >= (UINT8)cv_numlaps.value)
 				CON_LogMessage(va(M_GetText("%s has finished the race.\n"), player_names[player-players]));
@@ -4875,7 +4875,18 @@ DoneSection2:
 			}
 			break;
 
-		case 10: // Unused
+		case 10: // Circuit Finish Line
+		{
+			if ((gametyperules & GTR_CIRCUIT) && (player->exiting == 0) && !(player->pflags & PF_HITFINISHLINE))
+			{
+				K_HandleLapIncrement(player);
+
+				//ACS_RunLapScript(mo, line);
+				//K_HandleLapIncrement(player);
+				player->pflags |= PF_HITFINISHLINE;
+			}
+			break;
+		}
 		case 11: // Unused
 		case 12: // Camera noclip
 		case 13: // Unused
@@ -6019,7 +6030,7 @@ void P_SpawnSpecials(boolean fromnetsave)
 		{
 			case 10: // Circuit finish line (Unused)
 				// Remove before release
-				CONS_Alert(CONS_WARNING, "Finish line sector type is deprecated.\n");
+				//CONS_Alert(CONS_WARNING, "Finish line sector type is deprecated.\n");
 				break;
 		}
 	}

@@ -3412,22 +3412,6 @@ static int lib_kSpinPlayer(lua_State *L)
 	return 0;
 }
 
-static int lib_kTumblePlayer(lua_State *L)
-{
-	player_t *player = *((player_t **)luaL_checkudata(L, 1, META_PLAYER));
-	mobj_t *inflictor = NULL;
-	mobj_t *source = NULL;
-	NOHUD
-	if (!player)
-		return LUA_ErrInvalid(L, "player_t");
-	if (!lua_isnone(L, 2) && lua_isuserdata(L, 2))
-		inflictor = *((mobj_t **)luaL_checkudata(L, 2, META_MOBJ));
-	if (!lua_isnone(L, 3) && lua_isuserdata(L, 3))
-		source = *((mobj_t **)luaL_checkudata(L, 3, META_MOBJ));
-	K_TumblePlayer(player, inflictor, source);
-	return 0;
-}
-
 static int lib_kExplodePlayer(lua_State *L)
 {
 	player_t *player = *((player_t **)luaL_checkudata(L, 1, META_PLAYER));
@@ -3930,7 +3914,6 @@ static luaL_Reg lib[] = {
 	{"K_DoInstashield",lib_kDoInstashield},
 	{"K_SpawnBattlePoints",lib_kSpawnBattlePoints},
 	{"K_SpinPlayer",lib_kSpinPlayer},
-	{"K_TumblePlayer",lib_kTumblePlayer},
 	{"K_ExplodePlayer",lib_kExplodePlayer},
 	{"K_TakeBumpersFromPlayer",lib_kTakeBumpersFromPlayer},
 	{"K_SpawnKartExplosion",lib_kSpawnKartExplosion},

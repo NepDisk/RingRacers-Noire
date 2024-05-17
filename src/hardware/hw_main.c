@@ -3644,21 +3644,6 @@ static void HWR_DrawDropShadow(mobj_t *thing, fixed_t scale)
 	fixed_t slopez;
 	pslope_t *groundslope;
 
-	// hitlag vibrating
-	if (thing->hitlag > 0)
-	{
-		fixed_t mul = thing->hitlag * (FRACUNIT / 10);
-
-		if (leveltime & 1)
-		{
-			mul = -mul;
-		}
-
-		thingxpos += FixedMul(thing->momx, mul);
-		thingypos += FixedMul(thing->momy, mul);
-		thingzpos += FixedMul(thing->momz, mul);
-	}
-
 	groundz = R_GetShadowZ(thing, &groundslope);
 
 	floordiff = abs((flip < 0 ? thing->height : 0) + thingzpos - groundz);
@@ -4917,21 +4902,6 @@ static void HWR_ProjectSprite(mobj_t *thing)
 
 	if (!thing)
 		return;
-
-	// hitlag vibrating
-	if (thing->hitlag > 0)
-	{
-		fixed_t mul = thing->hitlag * (FRACUNIT / 10);
-
-		if (leveltime & 1)
-		{
-			mul = -mul;
-		}
-
-		thingxpos += FixedMul(thing->momx, mul);
-		thingypos += FixedMul(thing->momy, mul);
-		thingzpos += FixedMul(thing->momz, mul);
-	}
 
 	dispoffset = thing->info->dispoffset;
 

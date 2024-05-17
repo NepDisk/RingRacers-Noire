@@ -402,7 +402,6 @@ typedef enum
 	k_getsparks,		// Disable drift sparks at low speed, JUST enough to give acceleration the actual headstart above speed
 	k_jawztargetdelay,	// Delay for Jawz target switching, to make it less twitchy
 	k_spectatewait,		// How long have you been waiting as a spectator
-	k_tiregrease,		// Reduced friction timer after hitting a horizontal spring
 	k_springstars,		// Spawn stars around a player when they hit a spring
 	k_springcolor,		// Color of spring stars
 	k_killfield, 		// How long have you been in the kill field, stay in too long and lose a bumper
@@ -462,6 +461,7 @@ typedef struct respawnvars_s
 	fixed_t pointy;
 	fixed_t pointz;
 	boolean flip; // Flip upside down or not
+	boolean manual;
 	tic_t timer; // Time left on respawn animation once you're there
 	UINT32 distanceleft; // How far along the course to respawn you
 	tic_t dropdash; // Drop Dash charge timer
@@ -559,11 +559,6 @@ typedef struct player_s
 	UINT16 followercolor;	// Kart: Used to store the follower colour the player wishes to use
 	mobj_t *follower;		// Kart: This is the follower object we have. (If any)
 
-	UINT8 tumbleBounces;
-	UINT16 tumbleHeight;
-	boolean tumbleLastBounce;
-	boolean tumbleSound;
-
 	//
 
 	UINT32 charflags; // Extra abilities/settings for skins (combinable stuff)
@@ -611,6 +606,9 @@ typedef struct player_s
 	tic_t realtime; // integer replacement for leveltime
 	UINT8 laps; // Number of laps (optional)
 	INT32 starpostnum; // The number of the last starpost you hit
+	tic_t starposttime; // Time when you hit starpost
+	INT32 prevcheck; // Distance from Previous Legacy Checkpoint
+	INT32 nextcheck; // Distace to Next Legacy Checkpoint
 
 	////////////////////
 	// CTF Mode Stuff //

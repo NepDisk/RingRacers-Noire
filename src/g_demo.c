@@ -1442,8 +1442,6 @@ void G_PreviewRewind(tic_t previewtime)
 		players[i].mo->sprite2 = info->playerinfo[i].mobj.sprite2;
 		players[i].mo->frame = info->playerinfo[i].mobj.frame;
 
-		players[i].mo->hitlag = info->playerinfo[i].mobj.hitlag;
-
 		players[i].realtime = info->playerinfo[i].player.realtime;
 		for (j = 0; j < NUMKARTSTUFF; j++)
 			players[i].kartstuff[j] = info->playerinfo[i].player.kartstuff[j];
