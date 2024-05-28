@@ -50,6 +50,7 @@
 #include "noire/n_cvar.h"
 #include "noire/n_legacycheckpoint.h"
 #include "noire/n_control.h"
+#include "noire/n_object.h"
 
 tm_t g_tm = {0};
 
@@ -927,7 +928,10 @@ static BlockItReturn_t PIT_CheckThing(mobj_t *thing)
 			return BMIT_CONTINUE; // underneath
 		}
 
-		Obj_SPBTouch(thing, g_tm.thing);
+		if (cv_ng_oldspb.value)
+			Obj_SPBOldTouch(thing, g_tm.thing);
+		else
+			Obj_SPBTouch(thing, g_tm.thing);
 		return BMIT_CONTINUE;
 	}
 	else if (g_tm.thing->type == MT_SPB)
@@ -950,7 +954,10 @@ static BlockItReturn_t PIT_CheckThing(mobj_t *thing)
 			return BMIT_CONTINUE; // underneath
 		}
 
-		Obj_SPBTouch(g_tm.thing, thing);
+		if (cv_ng_oldspb.value)
+			Obj_SPBOldTouch(g_tm.thing,thing);
+		else
+			Obj_SPBTouch(g_tm.thing, thing);
 		return BMIT_CONTINUE;
 	}
 

@@ -85,6 +85,12 @@ menuitem_t OPTIONS_NoireGameplayItems[] =
 
 	{IT_STRING | IT_CVAR, "Hyudoro Behavior", "Toggle between Ring Racers or Kart's Hyudoro behavior.",
 		NULL, {.cvar = &cv_ng_oldhyudoro}, 0, 0},
+
+	{IT_STRING | IT_CVAR, "Ballhog Behavior", "Toggle between Ring Racers or Kart's Ballhog behavior.",
+		NULL, {.cvar = &cv_ng_oldballhog}, 0, 0},
+
+	{IT_STRING | IT_CVAR, "SPB Behavior", "Toggle between Ring Racers or Kart's SPB behavior.",
+		NULL, {.cvar = &cv_ng_oldspb}, 0, 0},
 };
 
 ///////////
@@ -254,6 +260,23 @@ void NG_Generic_OnChange(void)
 		M_StartMessage(
 			"WARNING!",
 			M_GetText("The map must be reset for your changes to apply."),
+			NULL,
+			MM_NOTHING,
+			NULL,
+			NULL
+		);
+		messageHasBeenDelivered = true; //Through patches of violet
+	}
+}
+
+void NG_Olditem_OnChange(void)
+{
+	static boolean messageHasBeenDelivered = false;
+	if (gamestate == GS_LEVEL && !messageHasBeenDelivered && menuactive)
+	{
+		M_StartMessage(
+			"WARNING!",
+			M_GetText("This may be busted if using default RR item odds.\n Stay Tuned for custom odds!."),
 			NULL,
 			MM_NOTHING,
 			NULL,

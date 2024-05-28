@@ -33,6 +33,7 @@
 #include "doomdef.h"
 #include "doomtype.h"
 #include "m_fixed.h" // FRACUNIT
+#include "noire/n_cvar.h"
 #include "r_skins.h" // DEFAULTSKIN
 #include "v_video.h"
 
@@ -852,8 +853,9 @@ consvar_t cv_ng_ringboxtransform = UnsavedNetVar("ng_ringboxtransform", "On").on
 consvar_t cv_ng_capsules = UnsavedNetVar("ng_capsules", "On").on_off().onchange_noinit(NG_Generic_OnChange);
 consvar_t cv_ng_oldorbinaut = UnsavedNetVar("ng_oldorbinaut", "Ring Racers").values(rrOrKart_cons_t);
 consvar_t cv_ng_oldjawz = UnsavedNetVar("ng_oldjawz", "Ring Racers").values(rrOrKart_cons_t);
-consvar_t cv_ng_oldhyudoro = UnsavedNetVar("ng_oldhyudoro", "Ring Racers").values(rrOrKart_cons_t);
+consvar_t cv_ng_oldhyudoro = UnsavedNetVar("ng_oldhyudoro", "Ring Racers").values(rrOrKart_cons_t).onchange_noinit(NG_Olditem_OnChange);
 consvar_t cv_ng_oldballhog = UnsavedNetVar("ng_oldballhog", "Ring Racers").values(rrOrKart_cons_t);
+consvar_t cv_ng_oldspb = UnsavedNetVar("ng_oldspb", "Ring Racers").values(rrOrKart_cons_t);
 
 //Mechanics
 consvar_t cv_ng_fastfallbounce = UnsavedNetVar("ng_fastfallbounce", "On").values({

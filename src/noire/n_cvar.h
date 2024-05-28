@@ -42,6 +42,7 @@ extern consvar_t cv_ng_oldorbinaut;
 extern consvar_t cv_ng_oldjawz;
 extern consvar_t cv_ng_oldhyudoro;
 extern consvar_t cv_ng_oldballhog;
+extern consvar_t cv_ng_oldspb;
 
 //Mechanics
 extern consvar_t cv_ng_fastfallbounce;
@@ -91,6 +92,7 @@ void NG_Generic_OnChange(void);
 void NG_Rings_OnChange(void);
 void NG_Instawhip_OnChange(void);
 void NG_Spindash_OnChange(void);
+void NG_Olditem_OnChange(void);
 void NG_Lives_OnChange(void);
 void NG_OldPogoOverride_OnChange(void);
 void NG_Rivals_OnChange(void);

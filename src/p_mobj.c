@@ -1810,14 +1810,14 @@ void P_XYMovement(mobj_t *mo)
 
 					//{ SRB2kart - Orbinaut, Ballhog
 					// Ballhog dies on contact with walls
-					if (mo->type == MT_BALLHOG)
+					if (mo->type == MT_BALLHOG && !cv_ng_oldballhog.value)
 					{
 						S_StartSound(mo, mo->info->deathsound);
 						P_KillMobj(mo, NULL, NULL, DMG_NORMAL);
 						return;
 					}
 					// Bump sparks
-					else if (mo->type == MT_ORBINAUT || mo->type == MT_GACHABOM)
+					else if (mo->type == MT_ORBINAUT || mo->type == MT_GACHABOM || (mo->type == MT_BALLHOG && cv_ng_oldballhog.value))
 					{
 						mobj_t *fx;
 						fx = P_SpawnMobj(mo->x, mo->y, mo->z, MT_BUMP);
@@ -7290,7 +7290,13 @@ static boolean P_MobjRegularThink(mobj_t *mobj)
 		}
 	case MT_SPB:
 		{
-			Obj_SPBThink(mobj);
+			if (cv_ng_oldspb.value)
+			{
+				Obj_SPBOldThink(mobj);
+				Obj_SPBChase(mobj);
+			}
+			else
+				Obj_SPBThink(mobj);
 			break;
 		}
 	case MT_MANTARING:

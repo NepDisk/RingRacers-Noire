@@ -457,7 +457,10 @@ boolean K_LandMineCollide(mobj_t *t1, mobj_t *t2)
 		else
 		{
 			// Player Damage
-			P_DamageMobj(t2, t1, t1->target, 1, DMG_TUMBLE);
+			if (cv_ng_tumble.value)
+				P_DamageMobj(t2, t1, t1->target, 1, DMG_TUMBLE);
+			else
+				P_DamageMobj(t2, t1, t1->target, 1, DMG_EXPLODE);
 		}
 
 		t1->reactiontime = (t2->hitlag - oldhitlag);

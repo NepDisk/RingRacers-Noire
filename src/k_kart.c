@@ -5029,6 +5029,7 @@ INT32 K_ExplodePlayer(player_t *player, mobj_t *inflictor, mobj_t *source) // A 
 {
 	INT32 ringburst = 10;
 	fixed_t spbMultiplier = FRACUNIT;
+	INT32 spbOldThrust = 0;
 
 	(void)source;
 
@@ -5045,17 +5046,24 @@ INT32 K_ExplodePlayer(player_t *player, mobj_t *inflictor, mobj_t *source) // A 
 				Music_StopAll();
 			}
 
-			spbMultiplier = inflictor->movefactor;
 
-			if (spbMultiplier <= 0)
+
+
+			if (cv_ng_oldspb.value)
+				spbOldThrust = inflictor->extravalue1;
+			else
 			{
-				// Convert into stumble.
-				K_StumblePlayer(player);
-				return 0;
-			}
-			else if (spbMultiplier < FRACUNIT)
-			{
-				spbMultiplier = FRACUNIT;
+				spbMultiplier = inflictor->movefactor;
+				if (spbMultiplier <= 0)
+				{
+					// Convert into stumble.
+					K_StumblePlayer(player);
+					return 0;
+				}
+				else if (spbMultiplier < FRACUNIT)
+				{
+					spbMultiplier = FRACUNIT;
+				}
 			}
 		}
 	}
@@ -5066,15 +5074,29 @@ INT32 K_ExplodePlayer(player_t *player, mobj_t *inflictor, mobj_t *source) // A 
 	player->spinouttype = KSPIN_EXPLOSION;
 	player->spinouttimer = (3*TICRATE/2)+2;
 	//NOIRE: Around here in original kart code it reset sneaker timers, drift, drift charge and pogo state, should we do that?
-	if (spbMultiplier != FRACUNIT)
-	{
-		player->mo->momz = FixedMul(player->mo->momz, spbMultiplier);
-		player->spinouttimer = FixedMul(player->spinouttimer, spbMultiplier + ((spbMultiplier - FRACUNIT) / 2));
 
-		ringburst = FixedMul(ringburst * FRACUNIT, spbMultiplier) / FRACUNIT;
-		if (ringburst > cv_ng_ringcap.value)
+	if (cv_ng_oldspb.value)
+	{
+		if (spbOldThrust)
 		{
-			ringburst = cv_ng_ringcap.value;
+			player->spinouttimer = (5*((3*TICRATE/2)+2)/2)+1;
+			player->mo->momz *= 2;
+		}
+
+		ringburst = 10;
+	}
+	else
+	{
+		if (spbMultiplier != FRACUNIT)
+		{
+			player->mo->momz = FixedMul(player->mo->momz, spbMultiplier);
+			player->spinouttimer = FixedMul(player->spinouttimer, spbMultiplier + ((spbMultiplier - FRACUNIT) / 2));
+
+			ringburst = FixedMul(ringburst * FRACUNIT, spbMultiplier) / FRACUNIT;
+			if (ringburst > cv_ng_ringcap.value)
+			{
+				ringburst = cv_ng_ringcap.value;
+			}
 		}
 	}
 
@@ -13331,89 +13353,123 @@ void K_MoveKartPlayer(player_t *player, boolean onground)
 							}
 							break;
 						case KITEM_BALLHOG:
-							if (!HOLDING_ITEM && NO_HYUDORO)
+							if (cv_ng_oldballhog.value)
 							{
-								INT32 ballhogmax = (player->itemamount) * BALLHOGINCREMENT;
-
-								// This construct looks a little goofy, but we're basically just
-								// trying to prevent rapid taps from restarting a charge, while
-								// still allowing quick tapfire.
-								// (The player still has to pace their shots like this, it's not
-								// semi-auto, but that's probably kind of okay.)
-								if (player->ballhogcharge && !(cmd->buttons & BT_ATTACK))
-									player->ballhogtap = true;
-
-								if (player->ballhogcharge == 0)
-									player->ballhogtap = false;
-
-								boolean realcharge = (cmd->buttons & BT_ATTACK) && (player->itemflags & IF_HOLDREADY) && (player->ballhogcharge < ballhogmax);
-								if ((realcharge && !player->ballhogtap) || (player->ballhogtap && player->ballhogcharge < BALLHOGINCREMENT))
+								if (ATTACK_IS_DOWN && !HOLDING_ITEM && NO_HYUDORO)
 								{
-									player->ballhogcharge++;
-									if (player->ballhogcharge % BALLHOGINCREMENT == 0)
+									INT32 ballhogamount = player->itemamount;
+
+									K_SetItemOut(player);
+
+									if (ballhogamount > 1)
 									{
-										sfxenum_t hogsound[] =
+										angle_t cone = 0x01800000 * (ballhogamount-1);
+										angle_t offsetAmt = (cone * 2) / (ballhogamount-1);
+										angle_t angleOffset = cone;
+										INT32 i;
+
+										for (i = 0; i < ballhogamount; i++)
 										{
-											sfx_bhog00,
-											sfx_bhog01,
-											sfx_bhog02,
-											sfx_bhog03,
-											sfx_bhog04,
-											sfx_bhog05
-										};
-										UINT8 chargesound = max(1, min(player->ballhogcharge / BALLHOGINCREMENT, 6));
-										S_StartSound(player->mo, hogsound[chargesound-1]);
-									}
-								}
-								else
-								{
-									if (cmd->buttons & BT_ATTACK)
-									{
-										player->itemflags &= ~IF_HOLDREADY;
+											K_ThrowKartItem(player, true, MT_BALLHOG, 1, 0, angleOffset);
+											angleOffset -= offsetAmt;
+										}
 									}
 									else
 									{
-										player->itemflags |= IF_HOLDREADY;
+										K_ThrowKartItem(player, true, MT_BALLHOG, 1, 0, 0);
 									}
 
-									if (player->ballhogcharge > 0)
+									K_PlayAttackTaunt(player->mo);
+									player->itemamount--;
+									player->botvars.itemconfirm = 0;
+								}
+							}
+							else
+							{
+								if (!HOLDING_ITEM && NO_HYUDORO)
+								{
+									INT32 ballhogmax = (player->itemamount) * BALLHOGINCREMENT;
+
+									// This construct looks a little goofy, but we're basically just
+									// trying to prevent rapid taps from restarting a charge, while
+									// still allowing quick tapfire.
+									// (The player still has to pace their shots like this, it's not
+									// semi-auto, but that's probably kind of okay.)
+									if (player->ballhogcharge && !(cmd->buttons & BT_ATTACK))
+										player->ballhogtap = true;
+
+									if (player->ballhogcharge == 0)
+										player->ballhogtap = false;
+
+									boolean realcharge = (cmd->buttons & BT_ATTACK) && (player->itemflags & IF_HOLDREADY) && (player->ballhogcharge < ballhogmax);
+									if ((realcharge && !player->ballhogtap) || (player->ballhogtap && player->ballhogcharge < BALLHOGINCREMENT))
 									{
-										INT32 numhogs = min((player->ballhogcharge / BALLHOGINCREMENT), player->itemamount);
-
-										K_SetItemOut(player); // need this to set itemscale
-
-										if (numhogs <= 0)
+										player->ballhogcharge++;
+										if (player->ballhogcharge % BALLHOGINCREMENT == 0)
 										{
-											// no tapfire scams
+											sfxenum_t hogsound[] =
+											{
+												sfx_bhog00,
+												sfx_bhog01,
+												sfx_bhog02,
+												sfx_bhog03,
+												sfx_bhog04,
+												sfx_bhog05
+											};
+											UINT8 chargesound = max(1, min(player->ballhogcharge / BALLHOGINCREMENT, 6));
+											S_StartSound(player->mo, hogsound[chargesound-1]);
 										}
-										else if (numhogs == 1)
+									}
+									else
+									{
+										if (cmd->buttons & BT_ATTACK)
 										{
-											player->itemamount--;
-											K_ThrowKartItem(player, true, MT_BALLHOG, 1, 0, 0);
-											K_PlayAttackTaunt(player->mo);
+											player->itemflags &= ~IF_HOLDREADY;
 										}
 										else
 										{
-											angle_t cone = 0x01800000 * (numhogs-1);
-											angle_t offsetAmt = (cone * 2) / (numhogs-1);
-											angle_t angleOffset = cone;
-											INT32 i;
-
-											player->itemamount -= numhogs;
-
-											for (i = 0; i < numhogs; i++)
-											{
-												K_ThrowKartItem(player, true, MT_BALLHOG, 1, 0, angleOffset);
-												angleOffset -= offsetAmt;
-											}
-
-											K_PlayAttackTaunt(player->mo);
+											player->itemflags |= IF_HOLDREADY;
 										}
 
-										K_UnsetItemOut(player);
-										player->ballhogcharge = 0;
-										player->itemflags &= ~IF_HOLDREADY;
-										player->botvars.itemconfirm = 0;
+										if (player->ballhogcharge > 0)
+										{
+											INT32 numhogs = min((player->ballhogcharge / BALLHOGINCREMENT), player->itemamount);
+
+											K_SetItemOut(player); // need this to set itemscale
+
+											if (numhogs <= 0)
+											{
+												// no tapfire scams
+											}
+											else if (numhogs == 1)
+											{
+												player->itemamount--;
+												K_ThrowKartItem(player, true, MT_BALLHOG, 1, 0, 0);
+												K_PlayAttackTaunt(player->mo);
+											}
+											else
+											{
+												angle_t cone = 0x01800000 * (numhogs-1);
+												angle_t offsetAmt = (cone * 2) / (numhogs-1);
+												angle_t angleOffset = cone;
+												INT32 i;
+
+												player->itemamount -= numhogs;
+
+												for (i = 0; i < numhogs; i++)
+												{
+													K_ThrowKartItem(player, true, MT_BALLHOG, 1, 0, angleOffset);
+													angleOffset -= offsetAmt;
+												}
+
+												K_PlayAttackTaunt(player->mo);
+											}
+
+											K_UnsetItemOut(player);
+											player->ballhogcharge = 0;
+											player->itemflags &= ~IF_HOLDREADY;
+											player->botvars.itemconfirm = 0;
+										}
 									}
 								}
 							}
