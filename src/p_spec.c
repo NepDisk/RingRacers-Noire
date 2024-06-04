@@ -5564,6 +5564,13 @@ static void P_EvaluateOldSectorSpecial(player_t *player, sector_t *sector, secto
 			}
 			break;
 		}
+		case 7: // SRB2kart 190117 - Oil Slick (deprecated)
+			if (roversector || isTouching)
+			{
+				if (player)
+					P_DamageMobj(player->mo, NULL, NULL, 1, DMG_NORMAL);
+			}
+			break;
 		case 10: // Finish Line
 		{
 			if ((gametyperules & GTR_CIRCUIT) && (player->exiting == 0) && !(player->pflags & PF_HITFINISHLINE))
