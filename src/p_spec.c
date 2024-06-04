@@ -276,7 +276,9 @@ void P_ParseANIMDEFSLump(INT32 wadNum, UINT16 lumpnum)
 		}
 		else if (stricmp(animdefsToken, "FLAT") == 0)
 		{
-			I_Error("Error parsing ANIMDEFS lump: FLats are no longer supported by Ring Racers");
+			//I_Error("Error parsing ANIMDEFS lump: FLats are no longer supported by Ring Racers");
+			Z_Free(animdefsToken);
+			P_ParseAnimationDefintion();
 		}
 		else if (stricmp(animdefsToken, "OSCILLATE") == 0)
 		{
@@ -5459,47 +5461,72 @@ static void P_EvaluateOldSectorSpecial(player_t *player, sector_t *sector, secto
 			}
 			break;
 		}
-		case 5: // Speed pad
+		case 5: // Speed pad w/o spin
+		case 6: // Speed pad w/ spin
 		{
 			int i;
-			if (player->floorboost != 0)
-			{
-				player->floorboost = 2;
+			if (player->dashpadcooldown != 0)
 				break;
-			}
+
 
 			i = P_FindSpecialLineFromTag(4, Tag_FGet(&sector->tags), -1);
 
-			if (i != -1)
+			if ((i != -1) && (roversector || isTouching))
 			{
-				angle_t lineangle = R_PointToAngle2(lines[i].v1->x, lines[i].v1->y, lines[i].v2->x, lines[i].v2->y);
-				fixed_t linespeed = P_AproxDistance(lines[i].v2->x-lines[i].v1->x, lines[i].v2->y-lines[i].v1->y);
-				fixed_t playerspeed = P_AproxDistance(player->mo->momx, player->mo->momy);
+				angle_t lineangle;
+				fixed_t linespeed;
 
-				if (linespeed == 0)
-				{
-					CONS_Debug(DBG_GAMELOGIC, "ERROR: Speed pad (tag %d) at zero speed.\n", Tag_FGet(&sector->tags));
-					break;
-				}
+				lineangle = R_PointToAngle2(lines[i].v1->x, lines[i].v1->y, lines[i].v2->x, lines[i].v2->y);
+				linespeed = P_AproxDistance(lines[i].v2->x-lines[i].v1->x, lines[i].v2->y-lines[i].v1->y);
+
+				player->mo->angle = lineangle;
 
 				// SRB2Kart: Scale the speed you get from them!
 				// This is scaled differently from other horizontal speed boosts from stuff like springs, because of how this is used for some ramp jumps.
 				if (player->mo->scale > mapobjectscale)
-				{
 					linespeed = FixedMul(linespeed, mapobjectscale + (player->mo->scale - mapobjectscale));
+
+				if (!demo.playback)
+				{
+					if (player == &players[consoleplayer])
+						localangle[0] = player->mo->angle;
+					else if (player == &players[displayplayers[1]])
+						localangle[1] = player->mo->angle;
+					else if (player == &players[displayplayers[2]])
+						localangle[2] = player->mo->angle;
+					else if (player == &players[displayplayers[3]])
+						localangle[3] = player->mo->angle;
 				}
 
-				lineangle = K_ReflectAngle(
-					K_MomentumAngle(player->mo), lineangle,
-					playerspeed, linespeed
-				);
+				if (!(lines[i].flags & 512))
+				{
+					P_UnsetThingPosition(player->mo);
+					if (roversector) // make FOF speed pads work
+					{
+						player->mo->x = roversector->soundorg.x;
+						player->mo->y = roversector->soundorg.y;
+					}
+					else
+					{
+						player->mo->x = sector->soundorg.x;
+						player->mo->y = sector->soundorg.y;
+					}
+					P_SetThingPosition(player->mo);
+				}
 
-				P_InstaThrust(player->mo, lineangle, max(linespeed, 2*playerspeed));
+				P_InstaThrust(player->mo, player->mo->angle, linespeed);
 
 				player->dashpadcooldown = TICRATE/3;
+				player->drift = 0;
+				player->driftcharge = 0;
 				player->pogoSpringJumped = 0;
-				player->floorboost = 2;
-				S_StartSound(player->mo, sfx_cdfm62);
+				S_StartSound(player->mo, sfx_spdpad);
+				{
+					sfxenum_t pick = P_RandomKey(PR_VOICES,2); // Gotta roll the RNG every time this is called for sync reasons
+					if (cv_kartvoices.value)
+						S_StartSound(player->mo, sfx_kbost1+pick);
+					//K_TauntVoiceTimers(player);
+				}
 			}
 			break;
 		}
