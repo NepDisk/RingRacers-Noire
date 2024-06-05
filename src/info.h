@@ -234,6 +234,7 @@ enum actionnum
 	A_MINERANGE,
 	A_CONNECTTOGROUND,
 	A_SPAWNPARTICLERELATIVE,
+	A_PARTICLESPAWN,
 	A_MULTISHOTDIST,
 	A_WHOCARESIFYOURSONISABEE,
 	A_PARENTTRIESTOSLEEP,
@@ -496,6 +497,7 @@ void A_MineExplode();
 void A_MineRange();
 void A_ConnectToGround();
 void A_SpawnParticleRelative();
+void A_ParticleSpawn();
 void A_MultiShotDist();
 void A_WhoCaresIfYourSonIsABee();
 void A_ParentTriesToSleep();
@@ -2407,6 +2409,7 @@ typedef enum state
 	S_SEED,
 
 	S_PARTICLE,
+	S_PARTICLEGEN,
 
 	// Drowning Timer Numbers
 	S_ZERO1,

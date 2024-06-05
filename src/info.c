@@ -1942,6 +1942,7 @@ state_t states[NUMSTATES] =
 
 	// Particle sprite
 	{SPR_PRTL, 0, 2*TICRATE, {NULL}, 0, 0, S_NULL}, // S_PARTICLE
+	{SPR_NULL,     0,         1, {A_ParticleSpawn}, 0, 0, S_PARTICLEGEN}, // S_PARTICLEGEN
 
 	// Drowning Timer Numbers
 	{SPR_DRWN, 0, 40, {NULL}, 0, 0, S_NULL}, // S_ZERO1
@@ -11818,7 +11819,7 @@ mobjinfo_t mobjinfo[NUMMOBJTYPES] =
 
 	{           // MT_PARTICLEGEN
 		757,            // doomednum
-		S_INVISIBLE,    // spawnstate
+		S_PARTICLEGEN,    // spawnstate
 		1000,           // spawnhealth
 		S_NULL,         // seestate
 		sfx_None,       // seesound
@@ -11839,7 +11840,7 @@ mobjinfo_t mobjinfo[NUMMOBJTYPES] =
 		16,             // mass
 		0,              // damage
 		sfx_None,       // activesound
-		MF_NOBLOCKMAP|MF_NOSECTOR|MF_NOCLIP|MF_NOGRAVITY|MF_NOCLIPHEIGHT|MF_SCENERY, // flags
+		MF_NOBLOCKMAP|MF_NOSECTOR|MF_NOCLIP|MF_NOGRAVITY|MF_NOCLIPHEIGHT, // flags
 		S_NULL          // raisestate
 	},
 

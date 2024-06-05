@@ -5739,6 +5739,9 @@ static void P_VerticalFlameJetSceneryThink(mobj_t *mobj)
 
 static boolean P_ParticleGenSceneryThink(mobj_t *mobj)
 {
+	if (!udmf)
+		return false;
+	
 	if (!mobj->lastlook)
 		return false;
 
@@ -13007,6 +13010,9 @@ static boolean P_SetupParticleGen(mapthing_t *mthing, mobj_t *mobj)
 	angle_t angledivision;
 	INT32 line;
 	const size_t mthingi = (size_t)(mthing - mapthings);
+
+	if (!udmf)
+		return false;
 
 	// Find the corresponding linedef special, using args[6] as tag
 	line = mthing->thing_args[6] ? Tag_FindLineSpecial(15, mthing->thing_args[6]) : -1;

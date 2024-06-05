@@ -239,6 +239,7 @@ actionpointer_t actionpointers[] =
 	{{A_MineRange},              "A_MINERANGE"},
 	{{A_ConnectToGround},        "A_CONNECTTOGROUND"},
 	{{A_SpawnParticleRelative},  "A_SPAWNPARTICLERELATIVE"},
+	{{A_ParticleSpawn},  "A_PARTICLESPAWN"},
 	{{A_MultiShotDist},          "A_MULTISHOTDIST"},
 	{{A_WhoCaresIfYourSonIsABee},"A_WHOCARESIFYOURSONISABEE"},
 	{{A_ParentTriesToSleep},     "A_PARENTTRIESTOSLEEP"},
@@ -1386,6 +1387,7 @@ const char *const STATE_LIST[] = { // array length left dynamic for sanity testi
 	"S_SEED",
 
 	"S_PARTICLE",
+	"S_PARTICLEGEN",
 
 	// Drowning Timer Numbers
 	"S_ZERO1",

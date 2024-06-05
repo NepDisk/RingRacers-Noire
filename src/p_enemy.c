@@ -261,6 +261,7 @@ void A_MineExplode(mobj_t *actor);
 void A_MineRange(mobj_t *actor);
 void A_ConnectToGround(mobj_t *actor);
 void A_SpawnParticleRelative(mobj_t *actor);
+void A_ParticleSpawn(mobj_t *actor);
 void A_MultiShotDist(mobj_t *actor);
 void A_WhoCaresIfYourSonIsABee(mobj_t *actor);
 void A_ParentTriesToSleep(mobj_t *actor);
@@ -10661,7 +10662,6 @@ void A_SpawnParticleRelative(mobj_t *actor)
 	if (LUA_CallAction(A_SPAWNPARTICLERELATIVE, actor))
 		return;
 
-
 	CONS_Debug(DBG_GAMELOGIC, "A_SpawnParticleRelative called from object type %d, var1: %d, var2: %d\n", actor->type, locvar1, locvar2);
 
 	x = (INT16)(locvar1>>16);
@@ -10682,6 +10682,40 @@ void A_SpawnParticleRelative(mobj_t *actor)
 		mo->flags2 |= MF2_OBJECTFLIP;
 
 	P_SetMobjState(mo, state);
+}
+
+void A_ParticleSpawn(mobj_t *actor)
+{
+	INT32 locvar1 = var1;
+	fixed_t speed;
+	mobjtype_t type;
+	mobj_t *spawn;
+
+	if (udmf) // dont make this crap work in durr maps kek
+		return;
+
+	if (LUA_CallAction(A_PARTICLESPAWN, actor))
+		return;
+
+	if (!actor->spawnpoint)
+	{
+		P_RemoveMobj(actor);
+		return;
+	}
+
+	if (locvar1)
+		type = (mobjtype_t)locvar1;
+	else
+		type = MT_PARTICLE;
+
+	speed = FixedMul((actor->spawnpoint->angle >> 12)<<FRACBITS, actor->scale);
+
+	spawn = P_SpawnMobj(actor->x, actor->y, actor->z, type);
+	P_SetScale(spawn, actor->scale);
+	spawn->momz = speed;
+	spawn->destscale = FixedDiv(spawn->scale<<FRACBITS, 100<<FRACBITS);
+	spawn->scalespeed = FixedDiv(((actor->spawnpoint->angle >> 8) & 63) * actor->scale, 100<<FRACBITS);
+	actor->tics = actor->spawnpoint->extrainfo + 1;
 }
 
 // Function: A_MultiShotDist
