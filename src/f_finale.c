@@ -537,6 +537,7 @@ static boolean dc_ticking = false;
 static UINT8 dc_bluesegafade = 0;
 static UINT8 dc_textfade = 9;
 static UINT8 dc_subtextfade = 9;
+static boolean dc_skipped = false;
 
 static void F_DisclaimerAdvanceState(void)
 {
@@ -729,30 +730,33 @@ static void F_DisclaimerDrawScene(void)
 	if (dc_state == DISCLAIMER_SHINE || dc_state == DISCLAIMER_FADE || (dc_state == DISCLAIMER_SLIDE && dc_tics%2))
 		dc_segaframe++;
 
-	// Fade BG to black
-	if (dc_state >= DISCLAIMER_SLIDE)
+	if (!dc_skipped)
 	{
-		if (dc_bgcol < 31)
-			dc_bgcol++;
-		else
-			dc_bgcol = 31;
-	}
+		// Fade BG to black
+		if (dc_state >= DISCLAIMER_SLIDE)
+		{
+			if (dc_bgcol < 31)
+				dc_bgcol++;
+			else
+				dc_bgcol = 31;
+		}
 
-	// Fade out blue SEGA overlay
-	if (dc_state == DISCLAIMER_SLIDE)
-	{
-		if (dc_bluesegafade < 10 && !(dc_tics%2))
-			dc_bluesegafade++;
-	}
+		// Fade out blue SEGA overlay
+		if (dc_state == DISCLAIMER_SLIDE)
+		{
+			if (dc_bluesegafade < 10 && !(dc_tics%2))
+				dc_bluesegafade++;
+		}
 
-	// Fade in text
-	if (dc_state == DISCLAIMER_FINAL)
-	{
-		if (dc_textfade > 0 && !(dc_tics%3))
-			dc_textfade--;
+		// Fade in text
+		if (dc_state == DISCLAIMER_FINAL)
+		{
+			if (dc_textfade > 0 && !(dc_tics%3))
+				dc_textfade--;
 
-		if (dc_subtextfade > 5 && !(dc_tics%6))
-			dc_subtextfade--;
+			if (dc_subtextfade > 5 && !(dc_tics%6))
+				dc_subtextfade--;
+		}
 	}
 
 	// ================================= STATE TRANSITIONS
@@ -855,8 +859,6 @@ void F_IntroTicker(void)
 	const boolean disclaimerskippable =
 	(
 		intro_scenenum == INTROSCENE_DISCLAIMER
-		&& dc_state == DISCLAIMER_FINAL
-		&& dc_tics >= (TICRATE/2) + (5*6) // bottom text needs to fade all the way in
 	);
 	const boolean doskip =
 	(
@@ -874,8 +876,18 @@ void F_IntroTicker(void)
 
 	if (doskip && disclaimerskippable)
 	{
-		dc_state = DISCLAIMER_OUT;
-		dc_tics = 0;
+		if (!dc_skipped)
+		{
+			I_FadeOutStopSong(MUSICRATE*2/3);
+			timetonext = (dc_state == DISCLAIMER_FINAL && dc_textfade == 0) ? 0 : 50;
+			dc_state = DISCLAIMER_FINAL;
+			dc_skipped = true;
+			dc_segaframe = 37;
+			dc_bgcol = 31;
+			dc_textfade = 0;
+			dc_subtextfade = 5;
+			dc_bluesegafade = 10;
+		}
 	}
 	else if (doskip || timetonext <= 0)
 	{
