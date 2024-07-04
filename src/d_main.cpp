@@ -2130,6 +2130,21 @@ void D_SRB2Main(void)
 	SV_SaveStats();
 	SV_SaveBans();
 
+	if (M_CheckParm("-unlockall"))
+	{
+		// Unlock all unlockables.
+		for (i = 0; i < MAXUNLOCKABLES; i++)
+			gamedata->unlocked[i] = true;
+
+		// Unlock all hidden levels.
+		for (i = 0; i < nummapheaders; i++)
+			mapheaderinfo[i]->records.mapvisited |= MV_VISITED|MV_BEATEN;
+
+		gamedata->gonerlevel = GDGONER_DONE;
+		gamedata->sealedswapalerted = true;
+		G_SetUsedCheats();
+	}
+
 	if (autostart || netgame)
 	{
 		gameaction = ga_nothing;
