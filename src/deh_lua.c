@@ -15,6 +15,7 @@
 #include "s_sound.h"
 #include "z_zone.h"
 #include "k_menu.h"
+#include "m_argv.h"
 #include "m_misc.h"
 #include "p_local.h"
 #include "st_stuff.h"
@@ -68,7 +69,8 @@ static inline int lib_freeslot(lua_State *L)
 		if (fastcmp(type, "SFX")) {
 			sfxenum_t sfx;
 			strlwr(word);
-			CONS_Printf("Sound sfx_%s allocated.\n",word);
+			if (M_CheckParm("-verbose"))
+				CONS_Printf("Sound sfx_%s allocated.\n",word);
 			sfx = S_AddSoundFx(word, false, 0, false);
 			if (sfx != sfx_None) {
 				lua_pushinteger(L, sfx);
@@ -92,7 +94,8 @@ static inline int lib_freeslot(lua_State *L)
 					continue; // Already allocated, next.
 				}
 				// Found a free slot!
-				CONS_Printf("Sprite SPR_%s allocated.\n",word);
+				if (M_CheckParm("-verbose"))
+					CONS_Printf("Sprite SPR_%s allocated.\n",word);
 				strncpy(sprnames[j],word,4);
 				//sprnames[j][4] = 0;
 				used_spr[(j-SPR_FIRSTFREESLOT)/8] |= 1<<(j%8); // Okay, this sprite slot has been named now.
@@ -108,7 +111,8 @@ static inline int lib_freeslot(lua_State *L)
 			statenum_t i;
 			for (i = 0; i < NUMSTATEFREESLOTS; i++)
 				if (!FREE_STATES[i]) {
-					CONS_Printf("State S_%s allocated.\n",word);
+					if (M_CheckParm("-verbose"))
+						CONS_Printf("State S_%s allocated.\n",word);
 					FREE_STATES[i] = Z_Malloc(strlen(word)+1, PU_STATIC, NULL);
 					strcpy(FREE_STATES[i],word);
 					freeslotusage[0][0]++;
@@ -124,7 +128,8 @@ static inline int lib_freeslot(lua_State *L)
 			mobjtype_t i;
 			for (i = 0; i < NUMMOBJFREESLOTS; i++)
 				if (!FREE_MOBJS[i]) {
-					CONS_Printf("MobjType MT_%s allocated.\n",word);
+					if (M_CheckParm("-verbose"))
+						CONS_Printf("MobjType MT_%s allocated.\n",word);
 					FREE_MOBJS[i] = Z_Malloc(strlen(word)+1, PU_STATIC, NULL);
 					strcpy(FREE_MOBJS[i],word);
 					freeslotusage[1][0]++;
@@ -140,7 +145,8 @@ static inline int lib_freeslot(lua_State *L)
 			skincolornum_t i;
 			for (i = 0; i < NUMCOLORFREESLOTS; i++)
 				if (!FREE_SKINCOLORS[i]) {
-					CONS_Printf("Skincolor SKINCOLOR_%s allocated.\n",word);
+					if (M_CheckParm("-verbose"))
+						CONS_Printf("Skincolor SKINCOLOR_%s allocated.\n",word);
 					FREE_SKINCOLORS[i] = Z_Malloc(strlen(word)+1, PU_STATIC, NULL);
 					strcpy(FREE_SKINCOLORS[i],word);
 					skincolors[i].cache_spraycan = UINT16_MAX;
@@ -163,7 +169,8 @@ static inline int lib_freeslot(lua_State *L)
 			if (i >= free_spr2) {
 				if (free_spr2 < NUMPLAYERSPRITES)
 				{
-					CONS_Printf("Sprite SPR2_%s allocated.\n",word);
+					if (M_CheckParm("-verbose"))
+						CONS_Printf("Sprite SPR2_%s allocated.\n",word);
 					strncpy(spr2names[free_spr2],word,4);
 					spr2defaults[free_spr2] = 0;
 					lua_pushinteger(L, free_spr2);
@@ -186,7 +193,8 @@ static inline int lib_freeslot(lua_State *L)
 				if (lastcustomtol == (UINT32)MAXTOL) // Unless you have way too many, since they're flags.
 					CONS_Alert(CONS_WARNING, "Ran out of free typeoflevel slots!\n");
 				else {
-					CONS_Printf("TypeOfLevel TOL_%s allocated.\n",word);
+					if (M_CheckParm("-verbose"))
+						CONS_Printf("TypeOfLevel TOL_%s allocated.\n",word);
 					G_AddTOL(lastcustomtol, word);
 					lua_pushinteger(L, lastcustomtol);
 					lastcustomtol <<= 1;
@@ -206,7 +214,8 @@ static inline int lib_freeslot(lua_State *L)
 			if (i >= precip_freeslot) {
 				if (precip_freeslot < MAXPRECIP)
 				{
-					CONS_Printf("Weather PRECIP_%s allocated.\n",word);
+					if (M_CheckParm("-verbose"))
+						CONS_Printf("Weather PRECIP_%s allocated.\n",word);
 					precipprops[i].name = Z_StrDup(word);
 					lua_pushinteger(L, precip_freeslot);
 					r++;

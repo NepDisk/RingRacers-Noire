@@ -13,6 +13,7 @@
 
 #include "doomdef.h"
 
+#include "m_argv.h"
 #include "m_cond.h"
 #include "deh_soc.h"
 #include "deh_tables.h"
@@ -547,7 +548,8 @@ static void DEH_LoadDehackedFile(MYFILE *f, boolean mainfile)
 							if (kartcupheaders == NULL)
 								kartcupheaders = cup;
 							numkartcupheaders++;
-							CONS_Printf("Added cup %d ('%s')\n", cup->id, cup->name);
+							if (M_CheckParm("-verbose"))
+								CONS_Printf("Added cup %d ('%s')\n", cup->id, cup->name);
 						}
 
 						readcupheader(f, cup);

@@ -21,6 +21,7 @@
 #include "p_setup.h"
 #include "r_state.h"
 #include "r_sky.h"
+#include "m_argv.h"
 #include "g_game.h"
 #include "f_finale.h"
 #include "byteptr.h"
@@ -557,7 +558,8 @@ static inline void LUA_LoadFile(MYFILE *f, char *name, boolean noresults)
 
 	if (!name)
 		name = wadfiles[f->wad]->filename;
-	CONS_Printf("Loading Lua script from %s\n", name);
+	if (M_CheckParm("-verbose"))
+		CONS_Printf("Loading Lua script from %s\n", name);
 	if (!gL) // Lua needs to be initialized
 		LUA_ClearState();
 	lua_pushinteger(gL, f->wad);

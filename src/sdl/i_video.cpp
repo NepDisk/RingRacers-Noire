@@ -1671,7 +1671,8 @@ void I_StartupGraphics(void)
 
 	borderlesswindow = M_CheckParm("-borderless") ? SDL_TRUE : SDL_FALSE;
 
-	VID_Command_ModeList_f();
+	if (M_CheckParm("-verbose"))
+		VID_Command_ModeList_f();
 
 #ifdef HWRENDER
 	if (rendermode == render_opengl)
