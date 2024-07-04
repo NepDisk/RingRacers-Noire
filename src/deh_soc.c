@@ -24,6 +24,7 @@
 #include "w_wad.h"
 #include "y_inter.h"
 #include "k_menu.h"
+#include "m_argv.h"
 #include "m_misc.h"
 #include "f_finale.h"
 #include "st_stuff.h"
@@ -275,7 +276,8 @@ void readfreeslots(MYFILE *f)
 			// TODO: Name too long (truncated) warnings.
 			if (fastcmp(type, "SFX"))
 			{
-				CONS_Printf("Sound sfx_%s allocated.\n",word);
+				if (M_CheckParm("-verbose"))
+					CONS_Printf("Sound sfx_%s allocated.\n",word);
 				S_AddSoundFx(word, false, 0, false);
 			}
 			else if (fastcmp(type, "SPR"))
@@ -291,7 +293,8 @@ void readfreeslots(MYFILE *f)
 					// Found a free slot!
 					strncpy(sprnames[i],word,4);
 					//sprnames[i][4] = 0;
-					CONS_Printf("Sprite SPR_%s allocated.\n",word);
+					if (M_CheckParm("-verbose"))
+						CONS_Printf("Sprite SPR_%s allocated.\n",word);
 					used_spr[(i-SPR_FIRSTFREESLOT)/8] |= 1<<(i%8); // Okay, this sprite slot has been named now.
 					break;
 				}
@@ -303,7 +306,8 @@ void readfreeslots(MYFILE *f)
 			{
 				for (i = 0; i < NUMSTATEFREESLOTS; i++)
 					if (!FREE_STATES[i]) {
-						CONS_Printf("State S_%s allocated.\n",word);
+						if (M_CheckParm("-verbose"))
+							CONS_Printf("State S_%s allocated.\n",word);
 						FREE_STATES[i] = Z_Malloc(strlen(word)+1, PU_STATIC, NULL);
 						strcpy(FREE_STATES[i],word);
 						freeslotusage[0][0]++;
@@ -317,7 +321,8 @@ void readfreeslots(MYFILE *f)
 			{
 				for (i = 0; i < NUMMOBJFREESLOTS; i++)
 					if (!FREE_MOBJS[i]) {
-						CONS_Printf("MobjType MT_%s allocated.\n",word);
+						if (M_CheckParm("-verbose"))
+							CONS_Printf("MobjType MT_%s allocated.\n",word);
 						FREE_MOBJS[i] = Z_Malloc(strlen(word)+1, PU_STATIC, NULL);
 						strcpy(FREE_MOBJS[i],word);
 						freeslotusage[1][0]++;
@@ -331,7 +336,8 @@ void readfreeslots(MYFILE *f)
 			{
 				for (i = 0; i < NUMCOLORFREESLOTS; i++)
 					if (!FREE_SKINCOLORS[i]) {
-						CONS_Printf("Skincolor SKINCOLOR_%s allocated.\n",word);
+						if (M_CheckParm("-verbose"))
+							CONS_Printf("Skincolor SKINCOLOR_%s allocated.\n",word);
 						FREE_SKINCOLORS[i] = Z_Malloc(strlen(word)+1, PU_STATIC, NULL);
 						strcpy(FREE_SKINCOLORS[i],word);
 						skincolors[i].cache_spraycan = UINT16_MAX;
@@ -4428,7 +4434,8 @@ if (!followers[numfollowers].field) \
 		followers[numfollowers].hornsound = sfx_horn00;
 	}
 
-	CONS_Printf("Added follower '%s'\n", testname);
+	if (M_CheckParm("-verbose"))
+		CONS_Printf("Added follower '%s'\n", testname);
 	if (followers[numfollowers].category < numfollowercategories)
 		followercategories[followers[numfollowers].category].numincategory++;
 	numfollowers++; // add 1 follower
@@ -4500,7 +4507,8 @@ void readfollowercategory(MYFILE *f)
 		strcpy(followercategories[numfollowercategories].name, va("Followercategory%d", numfollowercategories)); // this is lazy, so what
 	}
 
-	CONS_Printf("Added follower category '%s'\n", followercategories[numfollowercategories].name);
+	if (M_CheckParm("-verbose"))
+		CONS_Printf("Added follower category '%s'\n", followercategories[numfollowercategories].name);
 	numfollowercategories++; // add 1 follower
 	Z_Free(s);
 }

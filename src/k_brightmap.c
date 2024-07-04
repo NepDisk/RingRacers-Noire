@@ -16,6 +16,7 @@
 #include "doomdef.h"
 #include "doomtype.h"
 #include "fastcmp.h"
+#include "m_argv.h"
 #include "r_textures.h"
 #include "w_wad.h"
 #include "z_zone.h"
@@ -198,7 +199,8 @@ void K_InitBrightmapsPwad(INT32 wadNum)
 
 			size = W_LumpLengthPwad(wadNum, lumpNum);
 
-			CONS_Printf(M_GetText("Loading BRIGHT from %s\n"), name);
+			if (M_CheckParm("-verbose"))
+				CONS_Printf(M_GetText("Loading BRIGHT from %s\n"), name);
 
 			datacopy = (char *)Z_Malloc((size+1)*sizeof(char),PU_STATIC,NULL);
 			memmove(datacopy,data,size);

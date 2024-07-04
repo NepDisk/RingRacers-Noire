@@ -21,6 +21,7 @@
 #include "g_input.h"
 #include "hu_stuff.h"
 #include "keys.h"
+#include "m_argv.h"
 #include "r_main.h"
 #include "r_defs.h"
 #include "sounds.h"
@@ -1947,7 +1948,7 @@ void CON_SetLoadingProgress(con_loadprogress_t newStep)
 
 	con_startup_loadprogress = newStep;
 
-	if (con_startup_loadprogress <= LOADED_ALLDONE)
+	if (M_CheckParm("-verbose") && con_startup_loadprogress <= LOADED_ALLDONE)
 		CONS_Printf("LOADING UPDATE - %s\n", CON_LoadingStrings[con_startup_loadprogress]);
 
 	if (con_startup_loadprogress < LOADED_ISTARTUPGRAPHICS) // rendering not possible?

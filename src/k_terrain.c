@@ -19,6 +19,7 @@
 #include "doomdef.h"
 #include "doomtype.h"
 #include "fastcmp.h"
+#include "m_argv.h"
 #include "m_fixed.h"
 #include "m_random.h"
 #include "p_local.h"
@@ -1847,7 +1848,8 @@ static boolean K_TERRAINLumpParser(char *data, size_t size)
 					strncpy(s->name, tkn, TERRAIN_NAME_LEN);
 					s->hash = tknHash;
 
-					CONS_Printf("Created new Splash type '%s'\n", s->name);
+					if (M_CheckParm("-verbose"))
+						CONS_Printf("Created new Splash type '%s'\n", s->name);
 				}
 
 				valid = K_DoTERRAINLumpParse(i, K_ParseSplashParameter);
@@ -1888,7 +1890,8 @@ static boolean K_TERRAINLumpParser(char *data, size_t size)
 					strncpy(fs->name, tkn, TERRAIN_NAME_LEN);
 					fs->hash = tknHash;
 
-					CONS_Printf("Created new Footstep type '%s'\n", fs->name);
+					if (M_CheckParm("-verbose"))
+						CONS_Printf("Created new Footstep type '%s'\n", fs->name);
 				}
 
 				valid = K_DoTERRAINLumpParse(i, K_ParseFootstepParameter);
@@ -1929,7 +1932,8 @@ static boolean K_TERRAINLumpParser(char *data, size_t size)
 					strncpy(o->name, tkn, TERRAIN_NAME_LEN);
 					o->hash = tknHash;
 
-					CONS_Printf("Created new Overlay type '%s'\n", o->name);
+					if (M_CheckParm("-verbose"))
+						CONS_Printf("Created new Overlay type '%s'\n", o->name);
 				}
 
 				valid = K_DoTERRAINLumpParse(i, K_ParseOverlayParameter);
@@ -1970,7 +1974,8 @@ static boolean K_TERRAINLumpParser(char *data, size_t size)
 					strncpy(t->name, tkn, TERRAIN_NAME_LEN);
 					t->hash = tknHash;
 
-					CONS_Printf("Created new Terrain type '%s'\n", t->name);
+					if (M_CheckParm("-verbose"))
+						CONS_Printf("Created new Terrain type '%s'\n", t->name);
 				}
 
 				valid = K_DoTERRAINLumpParse(i, K_ParseTerrainParameter);
@@ -2039,7 +2044,8 @@ static boolean K_TERRAINLumpParser(char *data, size_t size)
 						else
 						{
 							f->terrainID = K_GetTerrainHeapIndex(t);
-							CONS_Printf("Texture '%s' set to Terrain '%s'\n", f->textureName, tkn);
+							if (M_CheckParm("-verbose"))
+								CONS_Printf("Texture '%s' set to Terrain '%s'\n", f->textureName, tkn);
 
 							INT32 tex = R_CheckTextureNumForName(f->textureName);
 							if (tex != -1)
@@ -2096,7 +2102,8 @@ static boolean K_TERRAINLumpParser(char *data, size_t size)
 				else
 				{
 					defaultTerrain = i;
-					CONS_Printf("DefaultTerrain set to '%s'\n", tkn);
+					if (M_CheckParm("-verbose"))
+						CONS_Printf("DefaultTerrain set to '%s'\n", tkn);
 				}
 			}
 			else
@@ -2135,7 +2142,8 @@ static boolean K_TERRAINLumpParser(char *data, size_t size)
 				else
 				{
 					defaultOffroadFootstep = i;
-					CONS_Printf("DefaultOffroadFootstep set to '%s'\n", tkn);
+					if (M_CheckParm("-verbose"))
+						CONS_Printf("DefaultOffroadFootstep set to '%s'\n", tkn);
 				}
 			}
 			else
@@ -2206,7 +2214,8 @@ void K_InitTerrain(UINT16 wadNum)
 
 			size = W_LumpLengthPwad(wadNum, lumpNum);
 
-			CONS_Printf(M_GetText("Loading TERRAIN from %s\n"), name);
+			if (M_CheckParm("-verbose"))
+				CONS_Printf(M_GetText("Loading TERRAIN from %s\n"), name);
 
 			datacopy = (char *)Z_Malloc((size+1)*sizeof(char),PU_STATIC,NULL);
 			memmove(datacopy,data,size);

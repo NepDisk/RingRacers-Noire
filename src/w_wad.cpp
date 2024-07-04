@@ -60,6 +60,7 @@
 #include "d_netfil.h"
 #include "deh_soc.h"
 #include "d_clisrv.h"
+#include "m_argv.h"
 #include "r_defs.h"
 #include "r_data.h"
 #include "r_textures.h"
@@ -234,7 +235,8 @@ static inline void W_LoadDehackedLumpsPK3(UINT16 wadnum, boolean mainfile)
 			char *name = static_cast<char*>(malloc(length + 1));
 			sprintf(name, "%s|%s", wadfiles[wadnum]->filename, lump_p->fullname);
 			name[length] = '\0';
-			CONS_Printf(M_GetText("Loading SOC from %s\n"), name);
+			if (M_CheckParm("-verbose"))
+				CONS_Printf(M_GetText("Loading SOC from %s\n"), name);
 			DEH_LoadDehackedLumpPwad(wadnum, posStart, mainfile);
 			free(name);
 		}
@@ -264,18 +266,21 @@ static inline void W_LoadDehackedLumps(UINT16 wadnum, boolean mainfile)
 				sprintf(name, "%s|%s", wadfiles[wadnum]->filename, lump_p->fullname);
 				name[length] = '\0';
 
-				CONS_Printf(M_GetText("Loading SOC from %s\n"), name);
+				if (M_CheckParm("-verbose"))
+					CONS_Printf(M_GetText("Loading SOC from %s\n"), name);
 				DEH_LoadDehackedLumpPwad(wadnum, lump, mainfile);
 				free(name);
 			}
 			else if (memcmp(lump_p->name,"MAINCFG",8)==0) // Check for MAINCFG
 			{
-				CONS_Printf(M_GetText("Loading main config from %s\n"), wadfiles[wadnum]->filename);
+				if (M_CheckParm("-verbose"))
+					CONS_Printf(M_GetText("Loading main config from %s\n"), wadfiles[wadnum]->filename);
 				DEH_LoadDehackedLumpPwad(wadnum, lump, mainfile);
 			}
 			else if (memcmp(lump_p->name,"OBJCTCFG",8)==0) // Check for OBJCTCFG
 			{
-				CONS_Printf(M_GetText("Loading object config from %s\n"), wadfiles[wadnum]->filename);
+				if (M_CheckParm("-verbose"))
+					CONS_Printf(M_GetText("Loading object config from %s\n"), wadfiles[wadnum]->filename);
 				DEH_LoadDehackedLumpPwad(wadnum, lump, mainfile);
 			}
 	}
@@ -938,7 +943,8 @@ UINT16 W_InitFile(const char *filename, boolean mainfile, boolean startup)
 		W_LoadDehackedLumpsPK3(numwadfiles - 1, mainfile);
 		break;
 	case RET_SOC:
-		CONS_Printf(M_GetText("Loading SOC from %s\n"), wadfile->filename);
+		if (M_CheckParm("-verbose"))
+			CONS_Printf(M_GetText("Loading SOC from %s\n"), wadfile->filename);
 		DEH_LoadDehackedLumpPwad(numwadfiles - 1, 0, mainfile);
 		break;
 	case RET_LUA:
