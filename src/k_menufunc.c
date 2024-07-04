@@ -727,7 +727,7 @@ menu_t *M_SpecificMenuRestore(menu_t *torestore)
 	}
 
 	// One last catch.
-	M_SetupPlayMenu(-1);
+	M_SetupGametypeMenu(-1);
 	PLAY_CharSelectDef.prevMenu = &MainDef;
 
 	if (torestore != &MISC_ChallengesDef)

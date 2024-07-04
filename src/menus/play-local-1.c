@@ -29,7 +29,7 @@ menuitem_t PLAY_GamemodesMenu[] =
 	{IT_STRING | IT_CALL, "Back", NULL, NULL, {.routine = M_GoBack}, 0, 0},
 };
 
-menu_t PLAY_GamemodesDef = KARTGAMEMODEMENU(PLAY_GamemodesMenu, &PLAY_MainDef);
+menu_t PLAY_GamemodesDef = KARTGAMEMODEMENU(PLAY_GamemodesMenu, &MainDef);
 
 void M_SetupGametypeMenu(INT32 choice)
 {

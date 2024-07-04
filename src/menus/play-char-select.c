@@ -1475,7 +1475,7 @@ void M_CharacterSelectTick(void)
 				#if defined (TESTERS)
 					M_MPOptSelectInit(0);
 				#else
-					M_SetupPlayMenu(0);
+					M_SetupGametypeMenu(0);
 				#endif
 
 			}
