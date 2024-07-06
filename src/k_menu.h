@@ -238,6 +238,9 @@ boolean M_GonerMusicPlayable(void);
 extern menuitem_t PLAY_CharSelect[];
 extern menu_t PLAY_CharSelectDef;
 
+extern menuitem_t PLAY_MainMenu[];
+extern menu_t PLAY_MainDef;
+
 extern menuitem_t PLAY_GamemodesMenu[];
 extern menu_t PLAY_GamemodesDef;
 
@@ -874,6 +877,7 @@ boolean M_CharacterSelectHandler(INT32 choice);
 void M_CharacterSelectTick(void);
 boolean M_CharacterSelectQuit(void);
 
+void M_SetupPlayMenu(INT32 choice);
 void M_SetupGametypeMenu(INT32 choice);
 void M_SetupRaceMenu(INT32 choice);
 

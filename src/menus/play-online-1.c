@@ -200,7 +200,7 @@ menu_t PLAY_MP_OptSelectDef = {
 	#if defined (TESTERS)
 		&PLAY_CharSelectDef,
 	#else
-		&MainDef,
+		&PLAY_MainDef,
 	#endif
 	0,
 	PLAY_MP_OptSelect,
