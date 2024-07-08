@@ -12,5 +12,5 @@
         "libyuv",
         "zlib"
     ],
-    "builtin-baseline": "c591ac6466a55ef0a05a3d56bb1489ca36e50102"
+    "builtin-baseline": "4af63c6f3ed667437b8fe0789a7fbc29936c9802"
 }
