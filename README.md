@@ -1,14 +1,18 @@
-# Dr. Robotnik's Ring Racers
+# Ring Racers Funny
 
-<p align="center">
-  <a href="https://www.kartkrew.org">
-    <img src="docs/logo.png" width="404" style="image-rendering:pixelated" alt="Dr. Robotnik's Ring Racers logo">
-  </a>
-</p>
+This is a fork of Ring Racers with miscellaneous QOL changes, inspired by NepDisk's [Ring Racers Noire](https://github.com/NepDisk/RingRacers-Noire) but with a heavier focus on improving what's there.
 
-Dr. Robotnik's Ring Racers is a kart racing video game originally based on the 3D Sonic the Hedgehog fangame [Sonic Robo Blast 2](https://srb2.org/), itself based on a modified version of [Doom Legacy](http://doomlegacy.sourceforge.net/).
+## Changes
+- SEGA logo can be skipped faster
+- Logs are no longer flooded upon launch unless `-verbose` flag is provided
+- Added `-unlockall` flag which unlocks everything (including stuff that Tournament Mode doesn't unlock)
 
-Ring Racers' source code is available to users under the GNU General Public License version 2.0 or higher.
+## Future
+- Add support for SRB2Kart maps using Noire's implementation
+- Add impossible difficulty
+- Improve CPU rubberbanding
+- Experiment with lowering sliptide threshold
+- Maybe create a separate branch for gameplay changes?
 
 ## Links
 
@@ -18,7 +22,7 @@ Ring Racers' source code is available to users under the GNU General Public Lice
 
 ## Disclaimer
 
-Dr. Robotnik's Ring Racers is a work of fan art made available for free without intent to profit or harm the intellectual property rights of the original works it is based on. Kart Krew Dev is in no way affiliated with SEGA Corporation. We do not claim ownership of any of SEGA's intellectual property used in Dr. Robotnik's Ring Racers.
+Dr. Robotnik's Ring Racers is a work of fart made available for free without intent to profit or harm the intellectual property rights of the original works it is based on. Kart Krew Dev is in no way affiliated with SEGA Corporation. We do not claim ownership of any of SEGA's intellectual property used in Dr. Robotnik's Ring Racers.
 
 # Development
 
