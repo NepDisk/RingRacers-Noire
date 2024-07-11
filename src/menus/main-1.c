@@ -35,7 +35,7 @@ menuitem_t MainMenu[] =
 	{IT_STRING | IT_CALL, "Local Play", "Play only on this computer.",
 		"MENUI002", {.routine = M_CharacterSelect}, 0, 0},
 
-	{IT_STRING | IT_CALL, "Online", "Connect to other computers over the Internet.",
+	{IT_STRING | IT_CALL, "Online", "Connect to other computers over the internet.",
 		"MENUI009", {.routine = M_MPOptSelectInit}, /*M_MPRoomSelectInit,*/ 0, 0},
 
 	{IT_STRING | IT_CALL, "Extras",

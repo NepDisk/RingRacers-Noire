@@ -23,10 +23,22 @@
 			"name": "__release",
 			"hidden": true,
 			"cacheVariables": {
-				"CMAKE_C_FLAGS_RELWITHDEBINFO": "-Ofast -g -DNDEBUG",
-				"CMAKE_CXX_FLAGS_RELWITHDEBINFO": "-Ofast -g -DNDEBUG",
+				"CMAKE_C_FLAGS_RELWITHDEBINFO": "-O3 -g -DNDEBUG",
+				"CMAKE_CXX_FLAGS_RELWITHDEBINFO": "-O3 -g -DNDEBUG",
 				"SRB2_CONFIG_DEV_BUILD": "OFF",
 				"CMAKE_BUILD_TYPE": "RelWithDebInfo"
+			}
+		},
+		{
+			"name": "__dedicated",
+			"hidden": true,
+			"cacheVariables": {
+				"CMAKE_C_FLAGS_RELWITHDEBINFO": "-O3 -g -DNDEBUG",
+				"CMAKE_CXX_FLAGS_RELWITHDEBINFO": "-O3 -g -DNDEBUG",
+				"SRB2_CONFIG_DEV_BUILD": "OFF",
+				"CMAKE_BUILD_TYPE": "RelWithDebInfo",
+				"SRB2_CONFIG_ENABLE_WEBM_MOVIES": "OFF",
+				"SRB2_CONFIG_ENABLE_DISCORDRPC" : "OFF"
 			}
 		},
 		{
@@ -132,6 +144,12 @@
 			"inherits": ["__release", "__ninja"]
 		},
 		{
+			"name": "ninja-dedicated-server",
+			"hidden": false,
+			"binaryDir": "build/${presetName}",
+			"inherits": ["__dedicated", "__ninja"]
+		},
+		{
 			"name": "ninja-testers",
 			"hidden": false,
 			"binaryDir": "build/${presetName}",
@@ -220,6 +238,10 @@
 		{
 			"name": "ninja-release",
 			"configurePreset": "ninja-release"
+		},
+		{
+			"name": "ninja-dedicated-server",
+			"configurePreset": "ninja-dedicated-server"
 		},
 		{
 			"name": "ninja-x86_mingw_static_vcpkg-debug",

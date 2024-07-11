@@ -360,6 +360,18 @@ void HU_Init(void)
 		ADIM (NUM);
 		PR   ("PINGF");
 		REG;
+		
+		// AAAAAAAAAAAA
+		if (noire_smfont)
+		{
+			ADIM (SKIDROW);
+			PR   ("SKRFU");
+			REG;
+			
+			ADIM (BIGAMIGA);
+			PR   ("AMBP");
+			REG;
+		}
 
 #undef  REG
 #undef  DIG
@@ -1443,7 +1455,7 @@ static void HU_drawChatLog(INT32 offset)
 	INT32 x = chatx+2, y;
 	UINT32 i = 0;
 	INT32 chat_topy, chat_bottomy;
-	INT32 highlight = V_YELLOWMAP;
+	INT32 highlight = HU_GetHighlightColor();
 	boolean atbottom = false;
 
 	// make sure that our scroll position isn't "illegal";

@@ -52,6 +52,9 @@
 #include "k_credits.h"
 #include "i_sound.h"
 
+// HEP2
+#include "hep2/h_cvars.h"
+
 // Stage of animation:
 // 0 = text, 1 = art screen
 INT32 finalecount;
@@ -866,10 +869,8 @@ void F_IntroTicker(void)
 	const boolean disclaimerskippable =
 	(
 		intro_scenenum == INTROSCENE_DISCLAIMER
-		 /*ORIGINAL CODE
-		 && dc_state == DISCLAIMER_FINAL
-		 && dc_tics >= (TICRATE/2) + (5*6) // bottom text needs to fade all the way in
-		 */
+		&& (dc_state < DISCLAIMER_SLIDE
+		|| (dc_state == DISCLAIMER_FINAL && dc_textfade == 0)) // bottom text needs to fade all the way in
 	);
 	const boolean doskip =
 	(
@@ -887,7 +888,14 @@ void F_IntroTicker(void)
 
 	if (doskip && disclaimerskippable)
 	{
-		dc_state = DISCLAIMER_OUT;
+		if (dc_state == DISCLAIMER_FINAL)
+			dc_state = DISCLAIMER_OUT;
+		else {
+			if (dc_state <= DISCLAIMER_FADE)
+				Music_Play("lawyer");
+			dc_state = DISCLAIMER_SLIDE;
+			dc_segaframe = 23;
+		}
 		dc_tics = 0;
 	}
 	else if (doskip || timetonext <= 0)
@@ -1749,12 +1757,13 @@ void F_VersionDrawer(void)
 		}
 
 #else // Regular build
-		addtext(trans, va("%s", VERSIONSTRING));
+		// Shill :)
+		addtext(trans, va("HEP2 %s (%s)", HEPVSTRING, VERSIONSTRING));
 #endif
 
 		if (compuncommitted)
 		{
-			addtext(V_REDMAP|V_STRINGDANCE, "! UNCOMMITTED CHANGES !");
+			addtext(V_REDMAP|V_STRINGDANCE, va("! %s: UNCOMMITTED CHANGES !", D_GetFancyBranchName()));
 		}
 	}
 #undef addtext
@@ -1963,7 +1972,17 @@ luahook:
 void F_PlayTitleScreenMusic(void)
 {
 	Music_Loop("title", looptitle);
-	Music_Seek("title", titlemusicstart); // kick in
+	// CONS_Printf("Menu music string: %s\n", cv_menumusic.string);
+	if (cv_menumusic.string[0] == '\0') // only seek to the start if its nothing lmao
+	{
+		Music_Seek("title", titlemusicstart); // kick in
+		// always make this the title music if its off
+		Music_Remap("title", "_title");
+	}
+	else
+	{
+		Music_Remap("title", cv_menumusic.string);
+	}
 	Music_Play("title");
 }
 

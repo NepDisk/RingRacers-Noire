@@ -3909,7 +3909,12 @@ static void R_DrawMaskedList (drawnode_t* head)
 		{
 			drawspandata_t ds = {0};
 			next = r2->prev;
-			R_DrawSinglePlane(&ds, r2->plane, false);
+			srb2::ThreadPool::Sema tp_sema;
+			srb2::g_main_threadpool->begin_sema();
+			R_DrawSinglePlane(&ds, r2->plane, cv_parallelsoftware.value); // test
+			tp_sema = srb2::g_main_threadpool->end_sema();
+			srb2::g_main_threadpool->notify_sema(tp_sema);
+			srb2::g_main_threadpool->wait_sema(tp_sema);
 			R_DoneWithNode(r2);
 			r2 = next;
 		}

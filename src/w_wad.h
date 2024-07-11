@@ -15,6 +15,8 @@
 #ifndef __W_WAD__
 #define __W_WAD__
 
+#include <stdio.h>
+
 #ifdef HWRENDER
 #include "hardware/hw_data.h"
 #endif

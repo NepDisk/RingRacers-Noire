@@ -8595,9 +8595,9 @@ static void K_QuiteSaltyHop(player_t *player)
 		player->salty.momz = player->salty.zoffset = 0;
 		return;
 	}
-
+	
 	const boolean onground = P_IsObjectOnGround(player->mo);
-
+	
 	// k_jmp is gone so just check for drift here
 	// TODO: Rework this shit. this is awful
 	if (!(player->pflags & PF_DRIFTINPUT))
@@ -8614,7 +8614,6 @@ static void K_QuiteSaltyHop(player_t *player)
 	{
 		player->salty.tapping = false;
 	}
-
 	if (player->salty.jump)
 	{
 		if (player->mo->eflags & MFE_JUSTHITFLOOR)
@@ -9813,7 +9812,6 @@ void K_KartPlayerThink(player_t *player, ticcmd_t *cmd)
 
 	// update salty hop
 	K_QuiteSaltyHop(player);
-
 }
 
 void K_KartResetPlayerColor(player_t *player)

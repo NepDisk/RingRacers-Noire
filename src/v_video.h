@@ -201,6 +201,23 @@ void V_ClearClipRect(void);
 void V_SaveClipRect(cliprect_t *copy);
 void V_RestoreClipRect(const cliprect_t *copy);
 
+// SINESCROLL
+struct sinescroll_t
+{
+	angle_t angle;
+	INT32 countermul;
+	INT32 mul;
+	INT32 counter;
+	boolean enabled;
+};
+
+sinescroll_t *V_GetAmigaEffect(void);
+void V_SetAmigaEffect(angle_t angle, INT32 countermul, INT32 multiplier);
+void V_ClearAmigaEffect(void);
+void V_ResetAmigaCounter(void);
+void V_SaveAmigaEffect(sinescroll_t *copy);
+void V_RestoreAmigaEffect(const sinescroll_t *copy);
+
 // defines for old functions
 #define V_DrawPatch(x,y,s,p) V_DrawFixedPatch((x)<<FRACBITS, (y)<<FRACBITS, FRACUNIT, s|V_NOSCALESTART|V_NOSCALEPATCH, p, NULL)
 #define V_DrawTranslucentMappedPatch(x,y,s,p,c) V_DrawFixedPatch((x)<<FRACBITS, (y)<<FRACBITS, FRACUNIT, s, p, c)
@@ -263,6 +280,7 @@ void V_DrawPromptBack(INT32 boxheight, INT32 color);
 	(V_StringScaledWidth(scale,FRACUNIT,FRACUNIT,option,font,string) / FRACUNIT)
 
 INT32 V_DanceYOffset(INT32 counter);
+INT32 V_DanceYOffsetBig(INT32 counter);
 
 // draw a single character
 void V_DrawCharacterScaled(fixed_t x, fixed_t y, fixed_t scale, INT32 flags, int font, int c, UINT8 *colormap);
@@ -380,6 +398,9 @@ void V_DrawProfileNum(INT32 x, INT32 y, INT32 flags, UINT8 num);
 
 #define V_CreditStringWidth( string ) \
 	V__IntegerStringWidth ( FRACUNIT,0,CRED_FONT,string )
+	
+#define V_CreditStringWidthOption( string,option ) \
+	V__IntegerStringWidth ( FRACUNIT,option,CRED_FONT,string )
 
 // SRB2Kart
 #define V_DrawTimerString( x,y,option,string ) \

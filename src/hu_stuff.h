@@ -58,6 +58,14 @@ extern "C" {
 #define CRED_FONTEND 'Z' // the last font character
 #define CRED_FONTSIZE (CRED_FONTEND - CRED_FONTSTART + 1)
 
+#define SKIDROW_FONTSTART '!' // the first font character
+#define SKIDROW_FONTEND 'Z' // the last font character
+#define SKIDROW_FONTSIZE (SKIDROW_FONTEND - SKIDROW_FONTSTART + 1)
+
+#define BIGAMIGA_FONTSTART '!' // the first font character
+#define BIGAMIGA_FONTEND 'Z' // the last font character
+#define BIGAMIGA_FONTSIZE (BIGAMIGA_FONTEND - BIGAMIGA_FONTSTART + 1)
+
 #define X( name ) name ## _FONT
 /* fonts */
 enum
@@ -93,6 +101,9 @@ enum
 
 	X     (OPPRF),
 	X     (PINGF),
+	
+	X   (SKIDROW),
+	X  (BIGAMIGA),
 };
 #undef  X
 

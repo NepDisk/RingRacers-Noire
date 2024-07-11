@@ -1565,8 +1565,7 @@ void R_RenderPlayerView(void)
 	ps_sw_spritecliptime = I_GetPreciseTime();
 	R_ClipSprites(drawsegs, NULL);
 	ps_sw_spritecliptime = I_GetPreciseTime() - ps_sw_spritecliptime;
-
-
+	
 	// Add skybox portals caused by sky visplanes.
 	if (cv_skybox.value && player->skybox.viewpoint)
 		Portal_AddSkyboxPortals(player);
@@ -1585,11 +1584,15 @@ void R_RenderPlayerView(void)
 		for(portal = portal_base; portal; portal = portal_base)
 		{
 			portalrender = portal->pass; // Recursiveness depth.
-
+			
 			R_ClearFFloorClips();
 
 			// Apply the viewpoint stored for the portal.
 			R_PortalFrame(portal);
+			
+			// Add skybox portals...
+			if (cv_skybox.value && player->skybox.viewpoint && !portal->isskybox)
+				Portal_AddSkyboxPortals(player);
 
 			// Hack in the clipsegs to delimit the starting
 			// clipping for sprites and possibly other similar

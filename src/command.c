@@ -40,6 +40,10 @@
 #include "m_random.h"
 #include "p_local.h" // P_ResetPlayerCheats
 #include "k_color.h"
+#include "noire/n_hud.h"
+
+// Noire
+#include "noire/n_hud.h"
 
 // Noire
 #include "noire/n_hud.h"
@@ -859,7 +863,8 @@ static void COM_Exec_f(void)
 		CONS_Printf(M_GetText("executing %s\n"), COM_Argv(1));
 
 	// insert text file into the command buffer
-	COM_ImmedExecute((char *)buf);
+	COM_BufAddTextEx((char *)buf, com_flags);
+	COM_BufAddTextEx("\n", com_flags);
 
 	// free buffer
 	Z_Free(buf);
@@ -2319,6 +2324,9 @@ void CV_AddValue(consvar_t *var, INT32 increment)
 				else if (var->PossibleValue == HudColor_cons_t)
 					max = MAXSKINCOLORS;
 			}
+			// HAYA: stupid shit doesnt work without this
+			else if (var->PossibleValue == HudColor_cons_t)
+				max = numskincolors;
 #ifdef PARANOIA
 			if (currentindice == -1)
 				I_Error("CV_AddValue: current value %d not found in possible value\n",

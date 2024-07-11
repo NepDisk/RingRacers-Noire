@@ -49,16 +49,17 @@ extern patch_t *kc_itemmulsticker[2];
 extern patch_t *kc_itembg[4];
 extern patch_t *kc_ringbg[2];
 extern patch_t *kc_trickcool[2];
+
 boolean K_UseColorHud(void);
 UINT16 K_GetHudColor(void);
+
 patch_t *K_getItemBoxPatch(boolean small, boolean dark);
 patch_t *K_getSlotMachinePatch(boolean small);
 patch_t *K_getItemMulPatch(boolean small);
+
 void N_LoadColorizedHud(void);
 void N_ReloadHUDColorCvar(void);
 extern CV_PossibleValue_t HudColor_cons_t[MAXSKINCOLORS+1];
-
-
 
 #ifdef __cplusplus
 } // extern "C"

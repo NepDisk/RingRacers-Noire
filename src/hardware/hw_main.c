@@ -5455,7 +5455,11 @@ static void HWR_DrawSkyBackground(player_t *player)
 		const float fpov = FIXED_TO_FLOAT(R_FOV(viewssnum)+player->fovadd);
 		postimg_t *type = &postimgtype[R_GetViewNumber()];
 
-		memset(&dometransform, 0x00, sizeof(FTransform));
+		memcpy(&dometransform, &atransform, sizeof(FTransform));
+
+		dometransform.x      = 0.0;
+		dometransform.y      = 0.0;
+		dometransform.z      = 0.0;
 
 		//04/01/2000: Hurdler: added for T&L
 		//                     It should replace all other gl_viewxxx when finished

@@ -965,8 +965,11 @@ void HWR_GetRawFlat(lumpnum_t flatlumpnum, boolean noencoremap)
 void HWR_GetLevelFlat(levelflat_t *levelflat, boolean noencoremap)
 {
 	// Who knows?
-	if (levelflat == NULL)
+	if (levelflat == NULL || levelflat->type == LEVELFLAT_NONE || levelflat->u.texture.num < 0)
+	{
+		HWR_SetCurrentTexture(NULL);
 		return;
+	}
 
 	if (levelflat->type == LEVELFLAT_FLAT)
 		HWR_GetRawFlat(levelflat->u.flat.lumpnum, noencoremap);
@@ -981,7 +984,10 @@ void HWR_GetLevelFlat(levelflat_t *levelflat, boolean noencoremap)
 
 		// Who knows?
 		if (texturenum == 0 || texturenum == -1)
+		{
+			HWR_SetCurrentTexture(NULL);
 			return;
+		}
 
 		// Every texture in memory, stored as a 8-bit flat. Wow!
 		grtex = &gl_flats[texturenum];

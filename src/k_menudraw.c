@@ -998,7 +998,10 @@ void M_Drawer(void)
 	if (menuactive)
 	{
 		if (currentMenu->drawroutine)
+		{
+			M_GetGametypeColor();
 			currentMenu->drawroutine(); // call current menu Draw routine
+		}
 
 		M_DrawMenuForeground();
 
@@ -2558,6 +2561,57 @@ void M_DrawCharacterSelect(void)
 
 	// Explosions when you've made your final selection
 	M_DrawCharSelectExplosions(true, basex + 82, 22);
+	
+	// Show obvious info at the bottom of the screen
+	// TODO: Add multiple player support in play character select- only supports player 1 for now...
+	if (setup_numplayers == 1 || optionsmenu.profile)
+	{
+		setup_player_t *sp = &setup_player[0];	// When editing profile character, we'll always be checking for what P1 is doing.
+		INT32 oinfox = (BASEVIDWIDTH/2)+basex, oinfoy = BASEVIDHEIGHT-16;
+	
+		switch (sp->mdepth)
+		{
+			case CSSTEP_ALTS:
+				// fallthru
+			case CSSTEP_CHARS:
+				if (sp->clonenum < setup_chargrid[sp->gridx][sp->gridy].numskins
+					&& setup_chargrid[sp->gridx][sp->gridy].skinlist[sp->clonenum] < numskins)
+				{
+					const char* skname = skins[setup_chargrid[sp->gridx][sp->gridy].skinlist[sp->clonenum]].realname;
+					// display amount of alts
+					if (setup_chargrid[sp->gridx][sp->gridy].numskins > 1 && sp->mdepth != CSSTEP_ALTS)
+						skname = va("%s (+%d)", skins[setup_chargrid[sp->gridx][sp->gridy].skinlist[0]].realname, setup_chargrid[sp->gridx][sp->gridy].numskins-1);
+					V_DrawCenteredMenuString(oinfox, oinfoy, 0, skname);
+				}
+				break;
+			case CSSTEP_COLORS:
+				if (sp->color < numskincolors)
+					V_DrawCenteredMenuString(oinfox, oinfoy, 0, skincolors[sp->color].name);
+				break;
+			case CSSTEP_FOLLOWER:
+				if (sp->followern == -1)
+					V_DrawCenteredMenuString(oinfox, oinfoy, 0, "None");
+				else
+					V_DrawCenteredMenuString(oinfox, oinfoy, 0, followers[sp->followern].name);
+				break;
+			case CSSTEP_FOLLOWERCATEGORY:
+				if (sp->followercategory == -1)
+					V_DrawCenteredMenuString(oinfox, oinfoy, 0, "None");
+				else
+					V_DrawCenteredMenuString(oinfox, oinfoy, 0, followercategories[setup_followercategories[sp->followercategory][1]].name);
+				break;
+			case CSSTEP_FOLLOWERCOLORS:
+				if (sp->followercolor == FOLLOWERCOLOR_MATCH)
+					V_DrawCenteredMenuString(oinfox, oinfoy, 0, "Match");
+				else if (sp->followercolor == FOLLOWERCOLOR_OPPOSITE)
+					V_DrawCenteredMenuString(oinfox, oinfoy, 0, "Opposite");
+				else if (sp->followercolor < numskincolors)
+					V_DrawCenteredMenuString(oinfox, oinfoy, 0, skincolors[sp->followercolor].name);
+				break;
+			default:
+				break;
+		}
+	}
 
 	for (i = 0; i < MAXSPLITSCREENPLAYERS; i++)
 	{

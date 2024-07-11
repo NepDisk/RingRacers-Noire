@@ -1353,6 +1353,7 @@ static boolean AddIWAD(void)
 boolean found_noire_pk3;
 
 boolean clr_hud = false;
+boolean noire_smfont = false;
 
 static void IdentifyVersion(void)
 {
@@ -1768,6 +1769,7 @@ void D_SRB2Main(void)
 	}
 	*/
 
+	// TODO: I swear to god. C++ exists, so next time use a C++ function maybe?????????????????
 	if (W_CheckMultipleLumps("ISPYBCD", "ISPYBC", "K_ISBCD", "K_ISBC", "K_ISMULC",
 	"K_ITBCD", "K_ITBC", "K_ITMULC", "K_RBBC", "K_RECUES",
 	"K_SBBC", "K_SCBALN", "K_SCBALW", "K_SCBSMT", "K_SCCAPN",
@@ -1778,6 +1780,10 @@ void D_SRB2Main(void)
 	{
 		clr_hud = true;
 	}
+	
+	// TODO possibly check if font is completely valid
+	if (W_CheckMultipleLumps("SKRFU033", NULL))
+		noire_smfont = true;
 
 	// Load credits_def lump
 	F_LoadCreditsDefinitions();
@@ -1838,7 +1844,6 @@ void D_SRB2Main(void)
 	
 	CONS_Printf("W_InitMultipleFiles(): Adding external PWADs.\n");
 	W_InitMultipleFiles(startuppwads, true);
-	
 	// Only search for pwad maps and reload graphics if we actually have a pwad added
 	if (startuppwads[0] != NULL)
 	{
@@ -1993,7 +1998,9 @@ void D_SRB2Main(void)
 				grandprixinfo.gamespeed = KARTSPEED_NORMAL;
 				grandprixinfo.masterbots = false;
 
-				grandprixinfo.gp = true;
+				// Allow to test without bots.
+				if (!M_CheckParm("-match"))
+					grandprixinfo.gp = true;
 				grandprixinfo.cup = NULL;
 				grandprixinfo.wonround = false;
 

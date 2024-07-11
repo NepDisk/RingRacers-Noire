@@ -68,6 +68,7 @@ boolean D_IsDeferredStartTitle(void);
 //
 
 extern boolean clr_hud;
+extern boolean noire_smfont;
 
 #ifdef __cplusplus
 } // extern "C"

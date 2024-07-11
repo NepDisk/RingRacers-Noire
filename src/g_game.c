@@ -3314,6 +3314,24 @@ gametype_t *gametypes[MAXGAMETYPES+1] =
 	&defaultgametypes[GT_TUTORIAL],
 };
 
+
+//
+// G_GetGametypeColor
+//
+// Pretty and consistent ^u^
+// See also M_GetGametypeColor.
+//
+/*UINT8 G_GetGametypeColor(INT16 gt)
+{
+	if (modeattacking != ATTACKING_NONE)
+		return orangemap[52];
+	if (gt == GT_BATTLE)
+		return redmap[34];
+	if (gt == GT_RACE)
+		return skymap[131];
+	return 247; // FALLBACK
+}*/
+
 //
 // G_GetGametypeByName
 //

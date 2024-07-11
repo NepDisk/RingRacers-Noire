@@ -122,6 +122,7 @@ void N_ReloadHUDColorCvar(void)
 		HudColor_cons_t[i].value = i;
 		HudColor_cons_t[i].strvalue = skincolors[i].name;				// SRB2kart
 	}
+
 	HudColor_cons_t[MAXSKINCOLORS].value = 0;
 	HudColor_cons_t[MAXSKINCOLORS].strvalue = NULL;
 }

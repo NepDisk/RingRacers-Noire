@@ -100,6 +100,15 @@ menuitem_t OPTIONS_VideoAdvanced[] =
 
 	{IT_STRING | IT_CVAR, "Software Perspective", "Emulates Software shearing when looking up or down. Not recommended.",
 		NULL, {.cvar = &cv_glshearing}, 0, 0},
+
+	{IT_HEADER, "Fancy GL Options...", "Fancier and laggier.",
+		NULL, {NULL}, 0, 0},
+
+	{IT_STRING | IT_CVAR, "Palette Rendering", "Make Legacy GL look more like software at a performance cost.",
+		NULL, {.cvar = &cv_glpaletterendering}, 0, 0},
+
+	{IT_STRING | IT_CVAR, "Palette Depth", "The amount of crunch to apply when the palette is applied on palette rendering.",
+		NULL, {.cvar = &cv_glpalettedepth}, 0, 0},
 };
 
 menu_t OPTIONS_VideoAdvancedDef = {

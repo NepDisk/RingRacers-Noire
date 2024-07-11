@@ -151,6 +151,10 @@ void HWR_DrawStretchyFixedPatch(patch_t *gpatch, fixed_t x, fixed_t y, fixed_t p
 	float s_min, s_max;
 	float t_min, t_max;
 
+
+	if (!gpatch || gpatch == NULL)
+		return;
+
 	// make patch ready in hardware cache
 	if (!colormap)
 		HWR_GetPatch(gpatch);
@@ -158,6 +162,9 @@ void HWR_DrawStretchyFixedPatch(patch_t *gpatch, fixed_t x, fixed_t y, fixed_t p
 		HWR_GetMappedPatch(gpatch, colormap);
 
 	hwrPatch = ((GLPatch_t *)gpatch->hardware);
+
+	if (!hwrPatch|| hwrPatch == NULL)
+		return;
 
 	dupx = (float)vid.dupx;
 	dupy = (float)vid.dupy;
@@ -334,7 +341,7 @@ void HWR_DrawStretchyFixedPatch(patch_t *gpatch, fixed_t x, fixed_t y, fixed_t p
 		else if (alphalevel == 12)
 			Surf.PolyColor.s.alpha = softwaretranstogl_hi[V_GetHUDTranslucency(option)];
 		else
-			Surf.PolyColor.s.alpha = softwaretranstogl[10 - alphalevel];
+			Surf.PolyColor.s.alpha = softwaretranstogl[min(max((10 - alphalevel), 0), 10)];
 
 		HWD.pfnDrawPolygon(&Surf, v, 4, flags|PF_Modulated);
 	}
@@ -357,9 +364,15 @@ void HWR_DrawCroppedPatch(patch_t *gpatch, fixed_t x, fixed_t y, fixed_t pscale,
 //  0--1
 	float dupx, dupy, fscale, fwidth, fheight;
 
+	if (!gpatch || gpatch == NULL)
+		return;
+
 	// make patch ready in hardware cache
 	HWR_GetPatch(gpatch);
 	hwrPatch = ((GLPatch_t *)gpatch->hardware);
+
+	if (!hwrPatch|| hwrPatch == NULL)
+		return;
 
 	dupx = (float)vid.dupx;
 	dupy = (float)vid.dupy;
@@ -488,7 +501,7 @@ void HWR_DrawCroppedPatch(patch_t *gpatch, fixed_t x, fixed_t y, fixed_t pscale,
 		else if (alphalevel == 12)
 			Surf.PolyColor.s.alpha = softwaretranstogl_hi[V_GetHUDTranslucency(option)];
 		else
-			Surf.PolyColor.s.alpha = softwaretranstogl[10 - alphalevel];
+			Surf.PolyColor.s.alpha = softwaretranstogl[min(max((10 - alphalevel), 0), 10)];
 
 		HWD.pfnDrawPolygon(&Surf, v, 4, flags|PF_Modulated);
 	}

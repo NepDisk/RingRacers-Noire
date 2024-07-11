@@ -695,14 +695,13 @@ extern int
 /// OpenGL shaders
 #define GL_SHADERS
 
-
 /// Handle touching sector specials in P_PlayerAfterThink instead of P_PlayerThink.
 /// \note   Required for proper collision with moving sloped surfaces that have sector specials on them.
 #define SECTORSPECIALSAFTERTHINK
 
 /// Sprite rotation
 #define ROTSPRITE
-#define ROTANGLES 72 // Needs to be a divisor of 360 (45, 60, 90, 120...)
+#define ROTANGLES 120 // Needs to be a divisor of 360 (45, 60, 90, 120...)
 #define ROTANGDIFF (360 / ROTANGLES)
 
 /// PNG support

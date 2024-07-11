@@ -52,6 +52,7 @@
 #include "k_boss.h"
 #include "k_pwrlv.h"
 #include "k_grandprix.h"
+#include "k_kart.h"
 #include "k_serverstats.h" // SV_BumpMatchStats
 #include "m_easing.h"
 #include "music.h"
@@ -59,6 +60,8 @@
 #ifdef HWRENDER
 #include "hardware/hw_main.h"
 #endif
+
+#include "hep2/h_cvars.h"
 
 typedef struct
 {
@@ -2163,6 +2166,30 @@ void Y_PlayIntermissionMusic(void)
 		{
 			Music_Remap("intermission", "gprnd5");
 		}
+	}
+	else if (cv_postracemusic.value)
+	{
+		player_t* bestplayer = &players[data.mainplayer];
+		
+		// somehow null.
+		if (bestplayer == NULL)
+		{
+			Music_Remap("intermission", "racent");
+			
+			if (!Music_Playing("intermission"))
+				Music_Play("intermission");
+			
+			return;
+		}
+		
+		if (bestplayer->pflags & PF_NOCONTEST)
+			Music_Remap("intermission", "racenc"); // fzero lose
+		else if (K_IsPlayerLosing(bestplayer) == true)
+			Music_Remap("intermission", "racels"); // cue the 2pac music
+		else if (bestplayer->position == 1) // first place!
+			Music_Remap("intermission", "racewn"); // practice
+		else // nothing else.
+			Music_Remap("intermission", "racent");
 	}
 	else
 	{

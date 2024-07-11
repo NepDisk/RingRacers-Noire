@@ -2955,13 +2955,14 @@ boolean P_ProcessSpecial(activator_t *activator, INT16 special, INT32 *args, cha
 
 						for (i = 0; i <= r_splitscreen; i++)
 						{
-							if (mo->player == &players[displayplayers[i]] && camera[i].chase)
+							if (mo->player == &players[displayplayers[i]] && camera[i].chase && mo->player->exiting == 0)
 							{
 								camera[i].x += x;
 								camera[i].y += y;
 								camera[i].z += z;
 								camera[i].subsector = R_PointInSubsector(camera[i].x, camera[i].y);
 								R_RelativeTeleportViewInterpolation(i, x, y, z, 0);
+								R_ResetViewInterpolation(i + 1); // reset view interp as well
 							}
 						}
 					}
@@ -2978,8 +2979,8 @@ boolean P_ProcessSpecial(activator_t *activator, INT16 special, INT32 *args, cha
 					angle = (args[1] & TMT_KEEPANGLE) ? mo->angle : dest->angle;
 					silent = !!(args[1] & TMT_SILENT);
 					keepmomentum = !!(args[1] & TMT_KEEPMOMENTUM);
-
 					P_Teleport(mo, dest->x, dest->y, dest->z, angle, !silent, keepmomentum);
+
 
 					if (!silent)
 						S_StartSound(dest, sfx_mixup); // Play the 'bowrwoosh!' sound
@@ -3194,7 +3195,7 @@ boolean P_ProcessSpecial(activator_t *activator, INT16 special, INT32 *args, cha
 			break;
 
 		case 423: // Change Sky
-			if ((mo && mo->player && P_IsPartyPlayer(mo->player)) || args[1])
+			if ((mo && mo->player && (P_IsPartyPlayer(mo->player) || P_IsDisplayPlayer(mo->player))) || args[1])
 				P_SetupLevelSky(stringargs[0], args[1]);
 			break;
 
@@ -3204,7 +3205,7 @@ boolean P_ProcessSpecial(activator_t *activator, INT16 special, INT32 *args, cha
 				globalweather = (UINT8)(args[0]);
 				P_SwitchWeather(globalweather);
 			}
-			else if (mo && mo->player && P_IsPartyPlayer(mo->player))
+			else if (mo && mo->player && (P_IsPartyPlayer(mo->player) || P_IsDisplayPlayer(mo->player)))
 				P_SwitchWeather(args[0]);
 			break;
 

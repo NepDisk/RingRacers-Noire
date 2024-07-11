@@ -1,0 +1,31 @@
+Lump RACELS
+Title = Hit 'Em Up
+Author = 2Pac
+Important = True
+Volume = 180
+
+Lump RACEWN
+Title = Practice
+Author = DEKU
+Source = Sora
+Important = True
+Volume = 100
+
+Lump RACENC
+Title = Results
+Author = Yumiko Kanki, Naoto Ishida
+Source = F-Zero
+Important = True
+Volume = 230
+
+Lump 4MAT
+Title = L.F.F
+Author = 4mat
+Important = True
+Volume = 380
+
+Lump KYGN
+Title = Monday
+Author = Random Voice
+Important = True
+Volume = 330

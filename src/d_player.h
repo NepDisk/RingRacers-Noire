@@ -594,7 +594,6 @@ struct saltyhop_t {
 	boolean jump; // Player has the ability to do the hop
 	boolean ready; // Saltyhop is ready
 	boolean tapping; // Player is tapping the drift button
-
 	fixed_t momz, zoffset; // erm... the mechanism....
 };
 

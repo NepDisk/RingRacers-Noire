@@ -527,6 +527,85 @@ boolean M_Responder(event_t *ev)
 	return true;
 }
 
+//
+// M_GetGametypeColor
+//
+// Pretty and consistent ^u^
+// See also G_GetGametypeColor.
+//
+
+INT32 highlightflags, recommendedflags, warningflags;
+
+void M_GetGametypeColor(void)
+{
+	INT16 gt;
+	
+	if (cons_menuhighlight.value == V_AQUAMAP) // standard durr colours
+	{
+		highlightflags = V_AQUAMAP;
+		recommendedflags = V_GREENMAP;
+		warningflags = V_ORANGEMAP;
+		return;
+	}
+
+	warningflags = V_ORANGEMAP;
+	recommendedflags = V_GREENMAP;
+
+	if (cons_menuhighlight.value)
+	{
+		highlightflags = cons_menuhighlight.value;
+		if (highlightflags == V_REDMAP)
+		{
+			warningflags = V_ORANGEMAP;
+			return;
+		}
+		if (highlightflags == V_GREENMAP)
+		{
+			recommendedflags = V_SKYMAP;
+			return;
+		}
+		return;
+	}
+
+	warningflags = V_ORANGEMAP;
+	recommendedflags = V_GREENMAP;
+
+	if (modeattacking != ATTACKING_NONE)
+	{
+		highlightflags = V_ORANGEMAP;
+		return;
+	}
+
+	if (!Playing())
+	{
+		highlightflags = V_YELLOWMAP;
+		return;
+	}
+	else
+		gt = gametype;
+
+	if (gt == GT_BATTLE)
+	{
+		highlightflags = V_REDMAP;
+		warningflags = V_ORANGEMAP;
+		return;
+	}
+	if (gt == GT_RACE)
+	{
+		highlightflags = V_SKYMAP;
+		return;
+	}
+
+	highlightflags = V_AQUAMAP; // FALLBACK
+}
+
+// excuse me but I'm extremely lazy:
+INT32 HU_GetHighlightColor(void)
+{
+	M_GetGametypeColor();	// update flag colour reguardless of the menu being opened or not.
+	return highlightflags;
+}
+
 #define NotCurrentlyPlaying(desiredname) strcmp(desiredname, Music_CurrentSong())
 
 void M_PlayMenuJam(void)

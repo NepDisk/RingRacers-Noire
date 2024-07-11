@@ -12140,6 +12140,14 @@ void P_SpawnPlayer(INT32 playernum)
 	K_InitStumbleIndicator(p);
 	K_InitWavedashIndicator(p);
 	K_InitTrickIndicator(p);
+	
+	// saltyhop
+	p->salty.jump = p->salty.ready = p->salty.tapping = false;
+	p->salty.momz = p->salty.zoffset = 0;
+
+	// saltyhop
+	p->salty.jump = p->salty.ready = p->salty.tapping = false;
+	p->salty.momz = p->salty.zoffset = 0;
 
 	// saltyhop
 	p->salty.jump = p->salty.ready = p->salty.tapping = false;

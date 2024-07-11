@@ -326,6 +326,7 @@ consvar_t cv_closedcaptioning = Player("closedcaptioning", "Off").on_off().oncha
 consvar_t cv_continuousmusic = Player("continuousmusic", "On").on_off();
 consvar_t cv_streamersafemusic = Player("streamersafemusic", "Off").on_off();
 consvar_t cv_controlperkey = Player("controlperkey", "One").values({{1, "One"}, {2, "Several"}});
+consvar_t cv_specialmusic = Player("specialmusic", "On").on_off();
 
 // actual general (maximum) sound & music volume, saved into the config
 // Volume scale is 0-100 in new mixer. 100 is treated as -0dB or 100% gain. No more weirdness to work around SDL_mixer
@@ -364,7 +365,11 @@ consvar_t cv_drawdist_precip = Player("drawdist_precip", "Normal").values({
 });
 
 consvar_t cv_drawinput = Player("drawinput", "Off").on_off();
+
+consvar_t cv_holdscorebutt = Player("holdscoreboardbutton", "Off").on_off();
+
 consvar_t cv_ffloorclip = Player("ffloorclip", "On").on_off();
+
 consvar_t cv_spriteclip = Player("spriteclip", "On").on_off();
 
 consvar_t cv_fpscap = Player("fpscap", "Match refresh rate").values({
@@ -457,6 +462,8 @@ consvar_t cv_scr_scale = Player("scr_scale", "1.0").floating_point();
 consvar_t cv_scr_x = Player("scr_x", "0.0").floating_point();
 consvar_t cv_scr_y = Player("scr_y", "0.0").floating_point();
 
+consvar_t cv_translucenthud = Player("translucenthud", "10").values({{0, "MIN"}, {10, "MAX"}});
+
 consvar_t cv_seenames = Player("seenames", "On").on_off();
 consvar_t cv_shadow = Player("shadow", "On").on_off();
 consvar_t cv_showfocuslost = Player("showfocuslost", "Yes").yes_no();
@@ -518,12 +525,14 @@ consvar_t cv_colorizedhudcolor = Player("colorizedhudcolor", "Skin Color").value
 // HEP2 cvars....
 // Should probably make this profile specific...
 consvar_t cv_saltyhop = Player("saltyhop", "Off").on_off();
+consvar_t cv_menumusic = Player("menumusic", ""); // none means no title music.
 
-consvar_t cv_specialmusic = Player("specialmusic", "On").on_off();
+// post race stuff
+consvar_t cv_postracemusic = Player("postracemusic", "Off").on_off(); // classic srb2k style post race moosic, 2pac and practice
+consvar_t cv_postracejingles = Player("postracejingles", "Off").on_off(); // mean bean
+consvar_t cv_postracevoices = Player("postracevoices", "Off").on_off(); // I can't lose here!
 
-consvar_t cv_holdscorebutt = Player("holdscoreboardbutton", "On").on_off();
-
-consvar_t cv_translucenthud = Player("translucenthud", "10").values({{0, "MIN"}, {10, "MAX"}});
+consvar_t cv_cheatywarning = Player("cheatywarning", "Off").on_off(); // Want some passwords?
 
 //
 // Server local, also available on dedicated servers.
@@ -1434,6 +1443,26 @@ consvar_t cons_height = Console("con_height", "50").values(CV_Unsigned).onchange
 extern CV_PossibleValue_t hudlines_cons_t[];
 void CONS_hudlines_Change(void);
 consvar_t cons_hudlines = Console("con_hudlines", "5").values(hudlines_cons_t).onchange(CONS_hudlines_Change);
+
+consvar_t cons_menuhighlight = Console("con_menuhighlight", "DRRR Default").values({
+	{V_AQUAMAP, 	"DRRR Default"},
+	{0, 			"Gametype Default"},
+	{V_YELLOWMAP, 	"Always Yellow"},
+	{V_PURPLEMAP, 	"Always Purple"},
+	{V_GREENMAP, 	"Always Green"},
+	{V_BLUEMAP, 	"Always Blue"},
+	{V_REDMAP, 		"Always Red"},
+	{V_GRAYMAP, 	"Always Gray"},
+	{V_ORANGEMAP, 	"Always Orange"},
+	{V_SKYMAP, 		"Always Sky-Blue"},
+	{V_GOLDMAP, 	"Always Gold"},
+	{V_LAVENDERMAP, "Always Lavender"},
+	{V_BROWNMAP , 		"Always Brown"},
+	{V_SKYMAP,	"Always Sky"},
+	{V_PINKMAP, 	"Always Pink"},
+	{V_BROWNMAP, 	"Always Brown"},
+	{V_TANMAP, 	"Always Tan"}
+});
 
 // how many seconds the hud messages lasts on the screen
 // CV_Unsigned can overflow when multiplied by TICRATE later, so let's use a 3-year limit instead

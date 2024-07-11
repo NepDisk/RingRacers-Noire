@@ -45,6 +45,7 @@
 #include "d_main.h"
 #include "m_argv.h"
 #include "i_system.h"
+#include "am_map.h"
 #include "command.h" // cv_execversion
 
 #include "m_anigif.h"

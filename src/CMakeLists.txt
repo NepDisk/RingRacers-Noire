@@ -123,6 +123,7 @@ add_executable(SRB2SDL2 MACOSX_BUNDLE WIN32
 	lua_blockmaplib.c
 	lua_hudlib.c
 	lua_hudlib_drawlist.c
+	lua_followerlib.c
 	lua_profile.cpp
 	k_kart.c
 	k_respawn.c
@@ -248,6 +249,9 @@ if("${CMAKE_SYSTEM_NAME}" MATCHES "Linux")
 	if(${SRB2_SYSTEM_BITS} EQUAL 64)
 		target_compile_definitions(SRB2SDL2 PRIVATE -DLINUX64)
 	endif()
+	target_link_libraries(SRB2SDL2 PRIVATE -lpthread)
+	target_compile_options(SRB2SDL2 PRIVATE -rdynamic) # Use -rdynamic so a backtrace log shows function names instead of addresses
+	target_link_options(SRB2SDL2 PRIVATE -rdynamic)
 endif()
 
 if("${CMAKE_SYSTEM_NAME}" MATCHES "Darwin")
@@ -609,6 +613,9 @@ if(SRB2_CONFIG_ENABLE_WEBM_MOVIES)
 endif()
 add_subdirectory(hud)
 add_subdirectory(modp_b64)
+
+# HEP2 specific
+add_subdirectory(hep2)
 
 # strip debug symbols into separate file when using gcc.
 # to be consistent with Makefile, don't generate for OS X.

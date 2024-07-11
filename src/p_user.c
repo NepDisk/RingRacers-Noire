@@ -83,6 +83,8 @@
 #include "hardware/hw_main.h"
 #endif
 
+#include "hep2/h_cvars.h"
+
 #if 0
 static void P_NukeAllPlayers(player_t *player);
 #endif
@@ -1257,6 +1259,14 @@ void P_DoPlayerExit(player_t *player, pflags_t flags)
 	{
 		// Remove a life from the losing player
 		K_PlayerLoseLife(player);
+	}
+	
+	// HEP2: Voicelines at the end of the race
+	if (cv_postracevoices.value && !(flags & PF_NOCONTEST))
+	{
+		const INT32 sfx_id = (losing ? sfx_klose : sfx_kwin);
+		skin_t *playerskin = &skins[player->skin];
+		S_StartSound(player->mo, playerskin->soundsid[S_sfx[sfx_id].skinsound]);
 	}
 
 	if (!player->spectator)

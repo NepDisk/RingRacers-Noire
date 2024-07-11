@@ -185,6 +185,7 @@ void Xmp<C>::_init()
 		flags |= XMP_FORMAT_MONO;
 	}
 	result = xmp_start_player(instance_, 44100, flags);
+	xmp_set_player(instance_, XMP_PLAYER_INTERP, XMP_INTERP_NEAREST);
 	if (result != 0)
 	{
 		xmp_release_module(instance_);
