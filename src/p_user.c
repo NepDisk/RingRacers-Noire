@@ -2382,7 +2382,6 @@ static void P_UpdatePlayerAngle(player_t *player)
 		}
 
 		angle_t leniency = leniency_base * min(player->cmd.latency, 6);
-
 		// Don't force another turning tic, just give them the desired angle!
 
 		if (targetDelta == angleChange || (maxTurnRight == 0 && maxTurnLeft == 0))

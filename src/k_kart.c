@@ -10837,7 +10837,7 @@ INT16 K_GetKartTurnValue(const player_t *player, INT16 turnvalue)
 		}
 		else
 		{
-			if (cv_ng_turnstyle.value == 2)
+			if (cv_ng_turnstyle.value == 3)
 				if (player->pflags & PF_DRIFTEND)
 				{
 					// Sal: This was an unintended control regression from SRB2Kart, but we
@@ -10862,7 +10862,7 @@ INT16 K_GetKartTurnValue(const player_t *player, INT16 turnvalue)
 					fixed_t countersteer = FixedDiv(turnfixed, KART_FULLTURN * FRACUNIT);
 					return K_GetKartDriftValue(player, countersteer);
 				}
-			else if (cv_ng_turnstyle.value == 1)
+			else if (cv_ng_turnstyle.value == 2)
 			{
 				if (player->pflags & PF_DRIFTEND)
 				{
@@ -10911,7 +10911,7 @@ INT16 K_GetKartTurnValue(const player_t *player, INT16 turnvalue)
 		turnfixed = FixedMul(turnfixed, FRACUNIT + finalhandleboost);
 	}
 
-	if (player->curshield == KSHIELD_TOP || !cv_ng_underwaterhandling.value) //NOIRE: Take into consideration the underwater handling cvar
+	if (player->curshield == KSHIELD_TOP)
 		;
 	else if (player->mo->eflags & MFE_UNDERWATER)
 	{
