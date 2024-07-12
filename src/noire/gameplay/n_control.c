@@ -296,7 +296,9 @@ INT16 N_GetKartTurnValue(player_t* player, INT16 turnvalue)
 	}
 
 
-	if (player->mo->eflags & (MFE_UNDERWATER|MFE_TOUCHWATER) && cv_ng_underwaterhandling.value)
+	if (player->curshield == KSHIELD_TOP)
+		;
+	else if (player->mo->eflags & (MFE_UNDERWATER|MFE_TOUCHWATER) && cv_ng_underwaterhandling.value)
 	{
 		turnfixed = FixedMul(turnfixed, 3 * FRACUNIT / 2);
 	}
