@@ -27,6 +27,7 @@ extern "C" {
 #endif
 
 void N_UpdatePlayerAngle(player_t *player);
+void KV1_UpdatePlayerAngle(player_t *player);
 INT16 N_GetKartTurnValue(player_t *player, INT16 turnvalue);
 INT16 N_GetKartDriftValue(const player_t *player, fixed_t countersteer);
 void N_DoPogoSpring(mobj_t* mo, fixed_t vertispeed, UINT8 sound);

@@ -528,9 +528,9 @@ consvar_t cv_saltyhop = Player("saltyhop", "Off").on_off();
 consvar_t cv_menumusic = Player("menumusic", ""); // none means no title music.
 
 // post race stuff
-consvar_t cv_postracemusic = Player("postracemusic", "Off").on_off(); // classic srb2k style post race moosic, 2pac and practice
+consvar_t cv_postracemusic = Player("postracemusic", "On").on_off(); // classic srb2k style post race moosic, 2pac and practice
 consvar_t cv_postracejingles = Player("postracejingles", "Off").on_off(); // mean bean
-consvar_t cv_postracevoices = Player("postracevoices", "Off").on_off(); // I can't lose here!
+consvar_t cv_postracevoices = Player("postracevoices", "On").on_off(); // I can't lose here!
 
 consvar_t cv_cheatywarning = Player("cheatywarning", "Off").on_off(); // Want some passwords?
 
@@ -838,18 +838,18 @@ static CV_PossibleValue_t rrOrKart_cons_t[] = {{0, "Ring Racers"}, {1, "Kart"}, 
 
 //Rings
 void NG_Rings_OnChange(void);
-consvar_t cv_ng_rings = UnsavedNetVar("ng_rings", "On").on_off().onchange(NG_Rings_OnChange);
+consvar_t cv_ng_rings = UnsavedNetVar("ng_rings", "On").on_off().onchange_noinit(NG_Rings_OnChange);
 consvar_t cv_ng_ringcap = UnsavedNetVar("ng_ringcap", "Default (20)").min_max(INT8_MIN, INT8_MAX, {{20, "Default (20)"}}); //Rings in player are a Signed int, so we'll put the limits to the technical limits
 consvar_t cv_ng_spillcap = UnsavedNetVar("ng_spillcap", "Default (20)").min_max(INT8_MIN, INT8_MAX, {{20, "Default (20)"}});
 consvar_t cv_ng_ringdebt = UnsavedNetVar("ng_ringdebt", "On").on_off();
 consvar_t cv_ng_ringsting = UnsavedNetVar("ng_ringsting", "On").on_off();
 consvar_t cv_ng_ringdeathmark = UnsavedNetVar("ng_ringdeathmark", "Default (-20)").min_max(INT8_MIN, INT8_MAX, {{-20, "Default (-20)"}});
-consvar_t cv_ng_maprings = UnsavedNetVar("ng_maprings", "On").on_off().onchange(NG_Generic_OnChange);
+consvar_t cv_ng_maprings = UnsavedNetVar("ng_maprings", "On").on_off().onchange_noinit(NG_Generic_OnChange);
 consvar_t cv_ng_mapringboxes = UnsavedNetVar("ng_mapringboxes", "On").on_off();
 consvar_t cv_ng_ringboxtransform = UnsavedNetVar("ng_ringboxtransform", "On").on_off();
 
 //Items
-consvar_t cv_ng_capsules = UnsavedNetVar("ng_capsules", "On").on_off().onchange(NG_Generic_OnChange);
+consvar_t cv_ng_capsules = UnsavedNetVar("ng_capsules", "On").on_off().onchange_noinit(NG_Generic_OnChange);
 consvar_t cv_ng_oldorbinaut = UnsavedNetVar("ng_oldorbinaut", "Ring Racers").values(rrOrKart_cons_t);
 consvar_t cv_ng_oldjawz = UnsavedNetVar("ng_oldjawz", "Ring Racers").values(rrOrKart_cons_t);
 
@@ -864,27 +864,27 @@ consvar_t cv_ng_tumble = UnsavedNetVar("ng_tumble", "On").on_off();
 consvar_t cv_ng_stumble = UnsavedNetVar("ng_stumble", "On").on_off();
 consvar_t cv_ng_hitlag = UnsavedNetVar("ng_hitlag", "On").on_off();
 consvar_t cv_ng_mapanger = UnsavedNetVar("ng_mapanger", "Default (2)").min_max(0, INT32_MAX, {{-1, "Disabled"}, {2, "Default (2)"}});
-consvar_t cv_ng_tripwires = UnsavedNetVar("ng_tripwires", "On").on_off().onchange(NG_Generic_OnChange);
+consvar_t cv_ng_tripwires = UnsavedNetVar("ng_tripwires", "On").on_off().onchange_noinit(NG_Generic_OnChange);
 void NG_ForceNoPosition_OnChange(void);
 consvar_t cv_ng_forcenoposition = UnsavedNetVar("ng_forcenoposition", "Off").on_off().onchange(NG_ForceNoPosition_OnChange);
 consvar_t cv_ng_dospecialstage = UnsavedNetVar("ng_dospecialstage", "On").on_off();
 
 //Lives
 void NG_Lives_OnChange(void);
-consvar_t cv_ng_lives = UnsavedNetVar("ng_lives", "On").on_off().onchange(NG_Lives_OnChange);
+consvar_t cv_ng_lives = UnsavedNetVar("ng_lives", "On").on_off().onchange_noinit(NG_Lives_OnChange);
 consvar_t cv_ng_continuesrank = UnsavedNetVar("ng_continuesrank", "On").on_off();
 
 
 //Instawhip
 void NG_Instawhip_OnChange(void);
-consvar_t cv_ng_instawhip = UnsavedNetVar("ng_instawhip", "On").on_off().onchange(NG_Instawhip_OnChange);;
+consvar_t cv_ng_instawhip = UnsavedNetVar("ng_instawhip", "On").on_off().onchange_noinit(NG_Instawhip_OnChange);;
 consvar_t cv_ng_instawhipcharge = UnsavedNetVar("ng_instawhipcharge", "Default (75)").min_max(0, 1000, {{75, "Default (75)"}});
 consvar_t cv_ng_instawhiplockout = UnsavedNetVar("ng_instawhiplockout", "Default (70)").min_max(0, 1000, {{70, "Default (70)"}});
 consvar_t cv_ng_instawhipdrain = UnsavedNetVar("ng_instawhipdrain", "On").on_off();
 
 //Spindash
 void NG_Spindash_OnChange(void);
-consvar_t cv_ng_spindash = UnsavedNetVar("ng_spindash", "On").on_off().onchange(NG_Spindash_OnChange);;
+consvar_t cv_ng_spindash = UnsavedNetVar("ng_spindash", "On").on_off().onchange_noinit(NG_Spindash_OnChange);;
 consvar_t cv_ng_spindashthreshold = UnsavedNetVar("ng_spindashthreshold", "Default (6)").min_max(0, 100, {{6, "Default (6)"}});
 consvar_t cv_ng_spindashcharge = UnsavedNetVar("ng_spindashcharge", "Default (0)").min_max(0, 100, {{0, "Default (0)"}});
 consvar_t cv_ng_spindashoverheat = UnsavedNetVar("ng_spindashoverheat", "On").on_off();
@@ -899,12 +899,13 @@ consvar_t cv_ng_stairjank = UnsavedNetVar("ng_stairjank", "All").values({
 	{2, "All"},
 });
 consvar_t cv_ng_turnstyle = UnsavedNetVar("ng_turnstyle", "Vanilla").values({
-	{0, "V2 Indev"},
-	{1, "Tweaked"},
-	{2, "Vanilla"},
+	{0, "V1"},
+	{1, "V2 Indev"},
+	{2, "Tweaked"},
+	{3, "Vanilla"},
 });
 consvar_t cv_ng_underwaterhandling = UnsavedNetVar("ng_underwaterhandling", "On").on_off();
-consvar_t cv_ng_oldpogooverride = UnsavedNetVar("ng_oldpogooverride", "Off").on_off().onchange(NG_OldPogoOverride_OnChange);
+consvar_t cv_ng_oldpogooverride = UnsavedNetVar("ng_oldpogooverride", "Off").on_off().onchange_noinit(NG_OldPogoOverride_OnChange);
 consvar_t cv_ng_nophysicsflag = UnsavedNetVar("ng_nophysicsflag", "Off").on_off();
 
 //Bots
@@ -913,7 +914,7 @@ consvar_t cv_ng_charsetrivals = UnsavedNetVar("ng_charsetrivals", "On").on_off()
 
 //Rivals
 void NG_Rivals_OnChange(void);
-consvar_t cv_ng_rivals = UnsavedNetVar("ng_rivals", "On").on_off().onchange(NG_Rivals_OnChange);;
+consvar_t cv_ng_rivals = UnsavedNetVar("ng_rivals", "On").on_off().onchange_noinit(NG_Rivals_OnChange);;
 consvar_t cv_ng_rivaltopspeed = UnsavedNetVar("ng_rivaltopspeed", "Default (11)").min_max(1, 100, {{11, "Default (11)"}});
 consvar_t cv_ng_rivalringpower = UnsavedNetVar("ng_rivalringpower", "Default (20)").min_max(0, 100, {{20, "Default (20)"}});
 consvar_t cv_ng_rivalfrantic = UnsavedNetVar("ng_rivalfrantic", "On").on_off();

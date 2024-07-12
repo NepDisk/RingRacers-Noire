@@ -8,6 +8,11 @@
 //-----------------------------------------------------------------------------
 
 #include "../n_control.h"
+#include "../n_soc.h"
+
+// v2 almost broke sliptiding when it fixed turning bugs!
+// This value is fine-tuned to feel like v1 again without reverting any of those changes.
+#define SLIPTIDEHANDLING 7*FRACUNIT/8
 
 // Old update Player angle taken from old kart commits
 void N_UpdatePlayerAngle(player_t* player)
@@ -37,6 +42,97 @@ void N_UpdatePlayerAngle(player_t* player)
 			break;
 		}
 	}
+}
+
+// countersteer is how strong the controls are telling us we are turning
+// turndir is the direction the controls are telling us to turn, -1 if turning right and 1 if turning left
+static INT16 KV1_GetKartDriftValue(player_t *player, fixed_t countersteer)
+{
+	INT16 basedrift, driftangle;
+	fixed_t driftweight = player->kartweight*14; // 12
+
+	// If they aren't drifting or on the ground this doesn't apply
+	if (player->drift == 0 || !P_IsObjectOnGround(player->mo))
+		return 0;
+
+	if (player->pflags & PF_DRIFTEND)
+		return -266*player->drift; // Drift has ended and we are tweaking their angle back a bit
+
+	basedrift = 83*player->drift - (driftweight - 14)*player->drift/5; // 415 - 303
+	driftangle = abs((252 - driftweight)*player->drift/5);
+
+	return basedrift + FixedMul(driftangle, countersteer);
+}
+
+void KV1_UpdatePlayerAngle(player_t *player)
+{
+	INT16 angle_diff, max_left_turn, max_right_turn;
+	boolean add_delta = true;
+
+	ticcmd_t *cmd = &player->cmd;
+	player->steering = cmd->turning;
+	int i;
+
+	player->angleturn = N_GetKartTurnValue(player, cmd->turning);
+
+	for (i = 0; i <= r_splitscreen; i++)
+	{
+		if (player == &players[displayplayers[i]])
+		{
+			localangle[i] += (player->angleturn<<TICCMD_REDUCE);
+			player->angleturn = (INT16)(localangle[i] >> TICCMD_REDUCE);
+
+			D_ResetTiccmdAngle(i, player->angleturn<<TICCMD_REDUCE);
+			localsteering[i] = localangle[i];
+			break;
+		}
+	}
+
+	// Kart: store the current turn range for later use
+	if (((player->mo && player->speed > 0) // Moving
+		|| (leveltime > starttime && (cmd->buttons & BT_ACCELERATE && cmd->buttons & BT_BRAKE)) // Rubber-burn turn
+		|| (player->respawn.state == RESPAWNST_DROP) // Respawning
+		|| (player->spectator || objectplacing)) // Not a physical player
+		)
+	{
+		player->lturn_max[leveltime%MAXPREDICTTICS] = N_GetKartTurnValue(player, KART_FULLTURN)+1;
+		player->rturn_max[leveltime%MAXPREDICTTICS] = N_GetKartTurnValue(player, -KART_FULLTURN)-1;
+	} else {
+		player->lturn_max[leveltime%MAXPREDICTTICS] = player->rturn_max[leveltime%MAXPREDICTTICS] = 0;
+	}
+
+	// KART: Don't directly apply angleturn! It may have been either A) forged by a malicious client, or B) not be a smooth turn due to a player dropping frames.
+	// Instead, turn the player only up to the amount they're supposed to turn accounting for latency. Allow exactly 1 extra turn unit to try to keep old replays synced.
+	angle_diff = player->angleturn - (player->mo->angle>>16);
+	max_left_turn = player->lturn_max[(leveltime + MAXPREDICTTICS - cmd->latency) % MAXPREDICTTICS];
+	max_right_turn = player->rturn_max[(leveltime + MAXPREDICTTICS - cmd->latency) % MAXPREDICTTICS];
+
+	CONS_Printf("----------------\nangle diff: %d - turning options: %d to %d - ", angle_diff, max_left_turn, max_right_turn);
+
+	if (angle_diff > max_left_turn)
+		angle_diff = max_left_turn;
+	else if (angle_diff < max_right_turn)
+		angle_diff = max_right_turn;
+	else
+	{
+		// Try to keep normal turning as accurate to 1.0.1 as possible to reduce replay desyncs.
+		//P_ForceLocalAngle(player,player->angleturn<<16);
+		player->mo->angle = player->angleturn<<TICCMD_REDUCE;
+		add_delta = false;
+	}
+	CONS_Printf("applied turn: %d\n", angle_diff);
+
+	if (add_delta) {
+		//P_ForceLocalAngle(player,(player->mo->angle + angle_diff)<<16);
+		player->mo->angle += angle_diff<<TICCMD_REDUCE;
+		player->mo->angle &= ~0xFFFF; // Try to keep the turning somewhat similar to how it was before?
+		//P_ForceLocalAngle(player,player->mo->angle &= ~0xFFFF);
+		CONS_Printf("leftover turn (%s): %5d or %4d%%\n",
+						player_names[player-players],
+						(INT16) (player->angleturn - (player->mo->angle>>TICCMD_REDUCE)),
+						(INT16) (player->angleturn - (player->mo->angle>>TICCMD_REDUCE)) * 100 / (angle_diff ? angle_diff : 1));
+	}
+
 }
 
 // countersteer is how strong the controls are telling us we are turning
@@ -103,6 +199,12 @@ INT16 N_GetKartTurnValue(player_t* player, INT16 turnvalue)
 		return 0;
 	}
 
+	if (N_UseLegacyStart() && (leveltime <= starttime))
+	{
+		// No turning during Legacy Start
+		return 0;
+	}
+
 	// Staff ghosts - direction-only trickpanel behavior
 	if (G_CompatLevel(0x000A) || K_PlayerUsesBotMovement(player))
 	{
@@ -166,9 +268,31 @@ INT16 N_GetKartTurnValue(player_t* player, INT16 turnvalue)
 
 	}
 
-	if (player->handleboost > 0)
+	fixed_t finalhandleboost = player->handleboost;
+
+	// If you're sliptiding, don't interact with handling boosts.
+	// You need turning power proportional to your speed, no matter what!
+	fixed_t topspeed = K_GetKartSpeed(player, false, false);
+	if (K_Sliptiding(player))
 	{
-		turnfixed = FixedMul(turnfixed, FRACUNIT + player->handleboost);
+		fixed_t sliptide_handle;
+
+		if (G_CompatLevel(0x000A))
+		{
+			// Compat level for 2.0 staff ghosts
+			sliptide_handle = 5 * SLIPTIDEHANDLING / 4;
+		}
+		else
+		{
+			sliptide_handle = 3 * SLIPTIDEHANDLING / 4;
+		}
+
+		finalhandleboost = FixedMul(sliptide_handle, FixedDiv(player->speed, topspeed));
+	}
+
+	if (finalhandleboost > 0 && player->respawn.state == RESPAWNST_NONE)
+	{
+		turnfixed = FixedMul(turnfixed, FRACUNIT + finalhandleboost);
 	}
 
 

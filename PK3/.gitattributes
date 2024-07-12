@@ -1,7 +1,0 @@
-# Keep all lua and text files LF
-*.lua text eol=lf
-*.txt text eol=lf
-
-# Just in case...
-*.pk3 binary
-*.lmp binary

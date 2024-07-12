@@ -1,4 +1,0 @@
-$basepath src/Noire/
-$output out/noire.pk3
-
-**

@@ -40,6 +40,9 @@
 #include "tables.h"
 #include "m_random.h" // monkey input
 
+// Noire
+#include "noire/n_cvar.h"
+
 extern "C" consvar_t cv_1pswap;
 
 namespace
@@ -474,7 +477,8 @@ public:
 
 		hook();
 
-		angle_prediction();
+		if (cv_ng_turnstyle.value != 0)
+			angle_prediction();
 	}
 };
 

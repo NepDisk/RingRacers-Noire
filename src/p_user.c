@@ -77,6 +77,7 @@
 // Noire
 #include "noire/n_cvar.h"
 #include "noire/n_control.h"
+#include "noire/n_soc.h"
 
 #ifdef HWRENDER
 #include "hardware/hw_light.h"
@@ -2099,6 +2100,8 @@ static void P_3dMovement(player_t *player)
 		totalthrust.y += P_ReturnThrustY(player->mo, movepushangle, movepushforward);
 	}
 
+	N_PogoSidemove(player);
+
 	if ((totalthrust.x || totalthrust.y)
 		&& player->mo->standingslope != NULL
 		&& (!(player->mo->standingslope->flags & SL_NOPHYSICS))
@@ -2476,10 +2479,12 @@ void P_MovePlayer(player_t *player)
 	// MOVEMENT CODE	//
 	//////////////////////
 
-	if (cv_ng_turnstyle.value == 1 || cv_ng_turnstyle.value == 2)
+	if (cv_ng_turnstyle.value == 2 || cv_ng_turnstyle.value == 3 || K_PlayerUsesBotMovement(player))
 		P_UpdatePlayerAngle(player);
-	else
+	else if (cv_ng_turnstyle.value == 1)
 		N_UpdatePlayerAngle(player);
+	else
+		KV1_UpdatePlayerAngle(player);
 
 	ticruned++;
 	if (!(cmd->flags & TICCMD_RECEIVED))

@@ -9683,8 +9683,6 @@ void K_KartPlayerThink(player_t *player, ticcmd_t *cmd)
 		}
 	}
 
-	N_PogoSidemove(player);
-
 	//NOIRE Springs: Pogo stuff put in the same place as in the original code (after eggman stuff)
 	if (P_IsObjectOnGround(player->mo) && player->pogoSpringJumped)
 	{
@@ -10735,6 +10733,12 @@ INT16 K_GetKartTurnValue(const player_t *player, INT16 turnvalue)
 	if (player->respawn.state == RESPAWNST_MOVE)
 	{
 		// No turning during respawn
+		return 0;
+	}
+
+	if (N_UseLegacyStart() && (leveltime <= starttime))
+	{
+		// No turning during Legacy Start
 		return 0;
 	}
 
