@@ -30,6 +30,10 @@ extern consvar_t cv_postracevoices;
 // Warning
 extern consvar_t cv_cheatywarning;
 
+// Flipcam stuff
+extern consvar_t cv_flipcam[MAXSPLITSCREENPLAYERS];
+extern consvar_t cv_dummyprofileflipcam;
+
 #ifdef __cplusplus
 } // extern "C"
 #endif

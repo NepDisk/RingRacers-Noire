@@ -53,10 +53,12 @@
 #include "m_easing.h"
 #include "k_podium.h"
 #include "g_party.h"
-
 //Noire
 #include "noire/n_cvar.h"
 #include "noire/n_object.h"
+
+// HEP2
+#include "hep2/h_cvars.h"
 
 actioncache_t actioncachehead;
 
@@ -3756,16 +3758,29 @@ void P_CalcChasePostImg(player_t *player, camera_t *thiscam)
 {
 	postimg_t postimg = postimg_none;
 	UINT8 i;
+	boolean flipcam = false;
 
 	// This can happen when joining
 	if (thiscam->subsector == NULL || thiscam->subsector->sector == NULL)
 		return;
+	
+	for (i = 0; i <= r_splitscreen; i++)
+	{
+		// Yeah
+		if (cv_flipcam[i].value && player->mo && !P_MobjWasRemoved(player->mo) && (player->mo->eflags & MFE_VERTICALFLIP) && player == &players[displayplayers[i]])
+		{
+			postimg = postimg_flip;
+			flipcam = true;
+		}
+	}
 
 	if (encoremode)
 	{
 		postimg = postimg_mirror;
+		if (flipcam) // We have flipcam so do that
+			postimg = postimg_flipmirror;
 	}
-	else if (player->awayview.tics && player->awayview.mobj && !P_MobjWasRemoved(player->awayview.mobj)) // Camera must obviously exist
+	else if (player->awayview.tics && player->awayview.mobj && !P_MobjWasRemoved(player->awayview.mobj) && !flipcam) // Camera must obviously exist
 	{
 		camera_t dummycam;
 
@@ -3781,7 +3796,7 @@ void P_CalcChasePostImg(player_t *player, camera_t *thiscam)
 		else if (P_CameraCheckHeat(&dummycam))
 			postimg = postimg_heat;
 	}
-	else
+	else if (!flipcam) // we don't want water and heat to affect flipcam !! TODO: make flip and encore variants of these....
 	{
 		// Are we in water?
 		if (P_CameraCheckWater(thiscam))

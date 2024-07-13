@@ -14,6 +14,7 @@
 #include "../k_menu.h"
 #include "../s_sound.h"
 #include "../m_cond.h"
+#include "../hep2/h_cvars.h"
 
 // These are placed in descending order next to the things they modify, for clarity.
 // Try to keep the mvar2 in order, if you add new profile info!!
@@ -101,6 +102,7 @@ static void M_ProfileEditApply(void)
 	optionsmenu.profile->autoring = cv_dummyprofileautoring.value;
 	optionsmenu.profile->rumble = cv_dummyprofilerumble.value;
 	optionsmenu.profile->fov = cv_dummyprofilefov.value;
+	optionsmenu.profile->flipcam = cv_dummyprofileflipcam.value;
 
 	// If this profile is in-use by anyone, apply the changes immediately upon exiting.
 	// Don't apply the profile itself as that would lead to issues mid-game.
@@ -113,6 +115,7 @@ static void M_ProfileEditApply(void)
 		CV_SetValue(&cv_autoring[belongsto], cv_dummyprofileautoring.value);
 		CV_SetValue(&cv_rumble[belongsto], cv_dummyprofilerumble.value);
 		CV_SetValue(&cv_fov[belongsto], cv_dummyprofilefov.value);
+		CV_SetValue(&cv_flipcam[belongsto], cv_dummyprofileflipcam.value);
 	}
 
 	// Reapply player 1's real profile.

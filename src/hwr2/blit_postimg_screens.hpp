@@ -32,6 +32,7 @@ public:
 		bool heat;
 		bool flip;
 		bool mirror;
+		bool flipmirror; // HAYA: Encore flipcam requires this.
 	};
 
 	struct ScreenConfig

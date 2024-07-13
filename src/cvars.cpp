@@ -605,6 +605,7 @@ consvar_t cv_recordmultiplayerdemos = Server("netdemo_record", kNetDemoRecordDef
 
 consvar_t cv_reducevfx = Server("reducevfx", "No").yes_no();
 consvar_t cv_screenshake = Server("screenshake", "Full").values({{0, "Off"}, {1, "Half"}, {2, "Full"}});
+// consvar_t cv_flipcam = Server("flipcam", "No").yes_no();
 
 consvar_t cv_rendezvousserver = Server("holepunchserver", "relay.kartkrew.org");
 
@@ -1120,6 +1121,7 @@ consvar_t cv_dummyprofilekickstart = MenuDummy("dummyprofilekickstart", "Off").o
 consvar_t cv_dummyprofilename = MenuDummy("dummyprofilename", "");
 consvar_t cv_dummyprofileplayername = MenuDummy("dummyprofileplayername", "");
 consvar_t cv_dummyprofilerumble = MenuDummy("dummyprofilerumble", "On").on_off();
+consvar_t cv_dummyprofileflipcam = MenuDummy("dummyprofileflipcam", "Off").on_off();
 
 consvar_t cv_dummyscramble = MenuDummy("dummyscramble", "Random").values({{0, "Random"}, {1, "Points"}});
 
@@ -1327,6 +1329,13 @@ consvar_t cv_fov[MAXSPLITSCREENPLAYERS] = {
 	Player("fov2", "100").floating_point().min_max(60*FRACUNIT, 179*FRACUNIT).onchange(Fov_OnChange).dont_save(),
 	Player("fov3", "100").floating_point().min_max(60*FRACUNIT, 179*FRACUNIT).onchange(Fov_OnChange).dont_save(),
 	Player("fov4", "100").floating_point().min_max(60*FRACUNIT, 179*FRACUNIT).onchange(Fov_OnChange).dont_save(),
+};
+
+consvar_t cv_flipcam[MAXSPLITSCREENPLAYERS] = {
+	Player("flipcam", "Off").on_off(),
+	Player("flipcam2", "Off").on_off(),
+	Player("flipcam3", "Off").on_off(),
+	Player("flipcam4", "Off").on_off(),
 };
 
 consvar_t cv_freecam_speed = Player("freecam_speed", "1").min_max(-64, 10).dont_save();

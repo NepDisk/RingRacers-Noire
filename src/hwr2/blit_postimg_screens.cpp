@@ -203,6 +203,12 @@ void BlitPostimgScreens::transfer(Rhi& rhi, Handle<GraphicsContext> ctx)
 		glm::mat4 modelview = glm::identity<glm::mat4>();
 
 		glm::vec2 flip_mirror_uv_displace {0.0, 0.0};
+		if (screen_config.post.flipmirror)
+		{
+			flip_mirror_uv_displace.x = 1 - (1 - screen_config.uv_size.x);
+			flip_mirror_uv_displace.y = 1 - (1 - screen_config.uv_size.y);
+		}
+		
 		if (screen_config.post.mirror)
 		{
 			flip_mirror_uv_displace.x = 1 - (1 - screen_config.uv_size.x);
@@ -214,8 +220,8 @@ void BlitPostimgScreens::transfer(Rhi& rhi, Handle<GraphicsContext> ctx)
 
 		glm::mat3 texcoord_transform =
 		{
-			glm::vec3(screen_config.uv_size.x * (screen_config.post.mirror ? -1 : 1), 0.0, 0.0),
-			glm::vec3(0.0, screen_config.uv_size.y * (screen_config.post.flip ? -1 : 1), 0.0),
+			glm::vec3(screen_config.uv_size.x * ((screen_config.post.mirror || screen_config.post.flipmirror) ? -1 : 1), 0.0, 0.0),
+			glm::vec3(0.0, screen_config.uv_size.y * ((screen_config.post.flip || screen_config.post.flipmirror) ? -1 : 1), 0.0),
 			glm::vec3(screen_config.uv_offset + flip_mirror_uv_displace, 1.0)
 		};
 

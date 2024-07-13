@@ -29,6 +29,8 @@
 #include "stun.h"
 #include "k_color.h"
 #include "command.h"
+// HEP2
+#include "hep2/h_cvars.h"
 
 extern "C" consvar_t cv_dummyprofilefov, cv_fov[MAXSPLITSCREENPLAYERS];
 
@@ -85,6 +87,7 @@ profile_t* PR_MakeProfile(
 	newprofile->autoring = false;
 	newprofile->rumble = true;
 	newprofile->fov = atoi(cv_dummyprofilefov.defaultvalue);
+	newprofile->flipcam = false;
 
 	// Copy from gamecontrol directly as we'll be setting controls up directly in the profile.
 	memcpy(newprofile->controls, controlarray, sizeof(newprofile->controls));
@@ -107,6 +110,7 @@ profile_t* PR_MakeProfileFromPlayer(const char *prname, const char *pname, const
 	newprofile->autoring = cv_autoring[pnum].value;
 	newprofile->rumble = cv_rumble[pnum].value;
 	newprofile->fov = cv_fov[pnum].value / FRACUNIT;
+	newprofile->flipcam = cv_flipcam[pnum].value;
 
 	return newprofile;
 }
@@ -304,6 +308,7 @@ void PR_SaveProfiles(void)
 		jsonprof.preferences.autoring = cprof->autoring;
 		jsonprof.preferences.rumble = cprof->rumble;
 		jsonprof.preferences.fov = cprof->fov;
+		jsonprof.preferences.flipcam = cprof->flipcam;
 
 		for (size_t j = 0; j < num_gamecontrols; j++)
 		{
@@ -489,6 +494,7 @@ void PR_LoadProfiles(void)
 		newprof->autoring = jsprof.preferences.autoring;
 		newprof->rumble = jsprof.preferences.rumble;
 		newprof->fov = jsprof.preferences.fov;
+		newprof->flipcam = jsprof.preferences.flipcam;
 
 		try
 		{
@@ -571,6 +577,7 @@ static void PR_ApplyProfile_Settings(profile_t *p, UINT8 playernum)
 	CV_StealthSetValue(&cv_autoring[playernum], p->autoring);
 	CV_StealthSetValue(&cv_rumble[playernum], p->rumble);
 	CV_StealthSetValue(&cv_fov[playernum], p->fov);
+	CV_StealthSetValue(&cv_flipcam[playernum], p->flipcam);
 
 	// set controls...
 	G_ApplyControlScheme(playernum, p->controls);

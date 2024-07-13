@@ -14,6 +14,7 @@
 #include "../k_menu.h"
 #include "../s_sound.h"
 #include "../m_cond.h"
+#include "../hep2/h_cvars.h"
 
 // profile select
 menuitem_t OPTIONS_Profiles[] = {
@@ -105,6 +106,7 @@ void M_StartEditProfile(INT32 c)
 			CV_StealthSetValue(&cv_dummyprofileautoring, optionsmenu.profile->autoring);
 			CV_StealthSetValue(&cv_dummyprofilerumble, optionsmenu.profile->rumble);
 			CV_StealthSetValue(&cv_dummyprofilefov, optionsmenu.profile->fov);
+			CV_StealthSetValue(&cv_dummyprofileflipcam, optionsmenu.profile->flipcam);
 		}
 		else
 		{
@@ -116,6 +118,7 @@ void M_StartEditProfile(INT32 c)
 			CV_StealthSetValue(&cv_dummyprofileautoring, 0); // on
 			CV_StealthSetValue(&cv_dummyprofilerumble, 1);	// on
 			CV_StealthSetValue(&cv_dummyprofilefov, 90);
+			CV_StealthSetValue(&cv_dummyprofileflipcam, 0); // off
 		}
 
 		// Setup greyout and stuff.

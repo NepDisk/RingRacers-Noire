@@ -343,7 +343,8 @@ typedef enum
 	postimg_motion,
 	postimg_flip,
 	postimg_heat,
-	postimg_mirror
+	postimg_mirror,
+	postimg_flipmirror, // You can't have two postimg types at the same time....
 } postimg_t;
 
 typedef UINT32 lumpnum_t; // 16 : 16 unsigned long (wad num: lump num)
