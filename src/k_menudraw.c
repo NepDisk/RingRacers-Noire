@@ -6159,11 +6159,23 @@ void M_DrawKickHandler(void)
 				player_names[i]
 			);
 
-			V_DrawRightAlignedThinString(
-				x+118, y-2,
-				0,
-				(players[i].spectator) ? "SPECTATOR" : "PLAYING"
-			);
+
+			// RadioRacers: Draw a different tooltip next to the player depending on purpose
+			switch(playerkickmenu.purpose) 
+			{
+				case PKM_KICK:
+					V_DrawRightAlignedThinString(x+118, y-2, 0,
+						(players[i].spectator) ? "SPECTATOR" : "PLAYING"
+					);
+					break;
+				case PKM_MUTE:
+					V_DrawRightAlignedThinString(x+118, y-2, 0,
+						(IsPlayerMuted(i)) ? "\x83MUTED" : "\x85UNMUTED"
+					);
+					break;
+				default:
+					break;
+			}
 		}
 
 		if (i == playerkickmenu.player)
@@ -6190,12 +6202,27 @@ void M_DrawKickHandler(void)
 	//V_DrawFill(32 + (playerkickmenu.player & 8), 32 + (playerkickmenu.player & 7)*8, 8, 8, playeringame[playerkickmenu.player] ? 0 : 16);
 
 	V_DrawFixedPatch(0, 0, FRACUNIT, 0, W_CachePatchName("MENUHINT", PU_CACHE), NULL);
+
+
+	// RadioRacers: Draw a different title depending on the kick menu purpose
+	char *kickMenuTitle = NULL;
+	switch(playerkickmenu.purpose) {
+		case PKM_KICK:
+			kickMenuTitle = (playerkickmenu.adminpowered)
+				? "You are using ""\x85""Admin Tools""\x80"", ""\x83""(A)""\x80"" to kick and ""\x84""(C)""\x80"" to ban"
+				: K_GetMidVoteLabel(menucallvote);
+			break;
+		case PKM_MUTE:
+			kickMenuTitle = "Mute Players - ""\x83(A)""\x80 to toggle.";
+			break;
+		default:
+			kickMenuTitle = "Player Menu";
+	}
+
 	V_DrawCenteredThinString(
 		BASEVIDWIDTH/2, 12,
 		0,
-		(playerkickmenu.adminpowered)
-			? "You are using ""\x85""Admin Tools""\x80"", ""\x83""(A)""\x80"" to kick and ""\x84""(C)""\x80"" to ban"
-			: K_GetMidVoteLabel(menucallvote)
+		kickMenuTitle
 	);
 }
 

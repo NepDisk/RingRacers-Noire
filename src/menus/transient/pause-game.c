@@ -49,6 +49,10 @@ menuitem_t PAUSE_Main[] =
 	{IT_STRING | IT_ARROWS, "ADMIN TOOLS", "M_ICOADM",
 		NULL, {.routine = M_KickHandler}, 0, 0},
 
+	// RadioRacers: Using the same icon as voting for now.
+	{IT_STRING | IT_ARROWS, "MUTE PLAYERS", "M_ICOADM",
+		NULL, {.routine = M_MuteHandler}, 0, 0}, 
+
 	{IT_STRING | IT_ARROWS, "CALL VOTE", "M_ICOVOT",
 		NULL, {.routine = M_HandlePauseMenuCallVote}, 0, 0},
 
@@ -135,6 +139,7 @@ void M_OpenPauseMenu(void)
 	PAUSE_Main[mpause_switchmap].status = IT_DISABLED;
 	PAUSE_Main[mpause_callvote].status = IT_DISABLED;
 	PAUSE_Main[mpause_admin].status = IT_DISABLED;
+	PAUSE_Main[mpause_muteplayers].status = IT_DISABLED;
 #ifdef HAVE_DISCORDRPC
 	PAUSE_Main[mpause_discordrequests].status = IT_DISABLED;
 #endif
@@ -230,6 +235,8 @@ void M_OpenPauseMenu(void)
 
 			PAUSE_Main[mpause_callvote].status = IT_STRING | IT_ARROWS;
 		}
+		
+		PAUSE_Main[mpause_muteplayers].status = IT_STRING | IT_CALL;
 	}
 
 	if (G_GametypeHasSpectators())
