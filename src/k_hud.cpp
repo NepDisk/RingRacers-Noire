@@ -2536,7 +2536,7 @@ void PositionFacesInfo::draw_1p()
 				colormap = R_GetTranslationColormap(workingskin, static_cast<skincolornum_t>(players[rankplayer[i]].mo->color), GTC_CACHE);
 
 			V_DrawMappedPatch(FACE_X + xoff, Y + yoff, V_HUDTRANS|V_SLIDEIN|V_SNAPTOLEFT|flipflag, faceprefix[workingskin][FACE_RANK], colormap);
-
+	
 			if (LUA_HudEnabled(hud_battlebumpers))
 			{
 				const UINT8 bumpers = K_Bumpers(&players[rankplayer[i]]);
@@ -4023,7 +4023,11 @@ void K_DrawPlayerTag(fixed_t x, fixed_t y, player_t *p, playertagtype_t type, IN
 
 	case PLAYERTAG_NAME:
 		K_DrawNameTagForPlayer(x, y, p, flags);
-		K_DrawTypingNotifier(x, y, p, flags);
+
+		// RadioRacers: Don't REALLY need to hide this if a player is muted, but, consistency.
+		if (!IsPlayerMuted(p - players)) {
+			K_DrawTypingNotifier(x, y, p, flags);
+		}
 		break;
 
 	default:

@@ -1347,9 +1347,13 @@ static boolean AddIWAD(void)
 	}
 }
 
+// RadioRacers: Custom optional addons for miscelleanous additions
+boolean found_radioracers;
+boolean radioracers_usemuteicons = false;
 static void IdentifyVersion(void)
 {
 	const char *srb2waddir = NULL;
+	found_radioracers = false;
 
 #if (defined (__unix__) && !defined (MSDOS)) || defined (UNIXCOMMON) || defined (HAVE_SDL)
 	// change to the directory where 'bios.pk3' is found
@@ -1396,6 +1400,12 @@ static void IdentifyVersion(void)
 #ifdef USE_PATCH_FILE
 	D_AddFile(startupiwads, va(pandf,srb2waddir,"patch.pk3"));
 #endif
+
+	// RadioRacers: Test
+	if (FIL_ReadFileOK(va(pandf,srb2waddir,"radioracers.wad"))) {
+		D_AddFile(startupiwads, va(pandf,srb2waddir,"radioracers.wad"));
+		found_radioracers = true;
+	}
 
 #define MUSICTEST(str) \
 	{\
@@ -1738,6 +1748,17 @@ void D_SRB2Main(void)
 #endif
 
 #endif //ifndef DEVELOP
+
+	if(found_radioracers)
+		mainwads++;
+
+	//RadioRacers: Mute icon for Pause Menu
+	/**
+	 * Apparently, W_CheckMultipleLumps just got taken out of this source code? Despite being such a helpful utility function. Noire adds it back as a library, but this fork doesn't need that .. for now.
+	 */
+	if (W_LumpExists("M_ICOMUT") && W_LumpExists( "M_ICOMU2")) {
+		radioracers_usemuteicons = true;
+	}
 
 	// Load credits_def lump
 	F_LoadCreditsDefinitions();
