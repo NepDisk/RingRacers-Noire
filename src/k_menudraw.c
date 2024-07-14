@@ -6185,7 +6185,7 @@ void M_DrawKickHandler(void)
 
 						patch_t *typingDot = W_CachePatchName("K_TYPDOT", PU_CACHE); // Typing dot
 						if (!isMuted) {
-							int speechBubbleTicker = (playerkickmenu.ticker % (8*3)) / 3;
+							int speechBubbleTicker = (leveltime % (8*3)) / 3;
 							if (speechBubbleTicker >= 2) {
 								V_DrawMappedPatch(x+(speechBubbleStart+3), y+8, 0, typingDot, NULL);
 								if (speechBubbleTicker >= 4) {
