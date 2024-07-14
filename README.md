@@ -1,5 +1,3 @@
-Test 4
-___
 # Dr. Robotnik's Ring Racers
 
 <p align="center">
