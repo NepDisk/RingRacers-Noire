@@ -6169,9 +6169,34 @@ void M_DrawKickHandler(void)
 					);
 					break;
 				case PKM_MUTE:
-					V_DrawRightAlignedThinString(x+118, y-2, 0,
-						(IsPlayerMuted(i)) ? "\x83MUTED" : "\x85UNMUTED"
-					);
+					if (P_IsMachineLocalPlayer(&players[i]))
+						break;
+						
+					if (players[i].bot) {
+						V_DrawRightAlignedThinString(x+116, y-4, 0, "\x88IT'S A BOT");
+					} else {
+						INT32 speechBubbleStart = 103;
+						boolean isMuted = IsPlayerMuted(i);
+						// Speech bubble
+						V_DrawMappedPatch(x+speechBubbleStart, y+8, 
+							(isMuted) ? V_TRANSLUCENT : 0, 
+							W_CachePatchName("K_TALK", PU_CACHE), 
+							NULL);
+
+						patch_t *typingDot = W_CachePatchName("K_TYPDOT", PU_CACHE); // Typing dot
+						if (!isMuted) {
+							int speechBubbleTicker = (leveltime % (8*3)) / 3;
+							if (speechBubbleTicker >= 2) {
+								V_DrawMappedPatch(x+(speechBubbleStart+3), y+8, 0, typingDot, NULL);
+								if (speechBubbleTicker >= 4) {
+									V_DrawMappedPatch(x+(speechBubbleStart+6), y+8, 0, typingDot, NULL);
+									if (speechBubbleTicker >= 6) {
+										V_DrawMappedPatch(x+(speechBubbleStart+9), y+8, 0, typingDot, NULL);
+									}
+								}
+							}
+						}
+					}					
 					break;
 				default:
 					break;

@@ -185,7 +185,6 @@ static void Command_Sayteam_f(void);
 static void Command_CSay_f(void);
 static void Command_Shout(void);
 static void Command_MutePlayer(void); // RadioRacers - mute player command
-static void Command_ShowMutedPlayers(void); // RadioRacers - mute player command
 static void Got_Saycmd(const UINT8 **p, INT32 playernum);
 
 void HU_LoadGraphics(void)
@@ -238,7 +237,6 @@ void HU_Init(void)
 	COM_AddCommand("csay", Command_CSay_f);
 	COM_AddCommand("shout", Command_Shout);
 	COM_AddCommand("muteplayer", Command_MutePlayer); // RadioRacers - muteplayer command
-	COM_AddCommand("showmutedplayers", Command_ShowMutedPlayers);
 	RegisterNetXCmd(XD_SAY, Got_Saycmd);
 
 	// only allocate if not present, to save us a lot of headache
@@ -668,20 +666,6 @@ static void Command_Shout(void)
 	DoSayPacketFromCommand(0, 1, HU_SHOUT);
 }
 
-static void Command_ShowMutedPlayers(void)
-{
-
-	INT32 i;
-	for (i = 0; i < MAXPLAYERS; i++)
-	{
-		if (playeringame[i])
-		{
-			CONS_Printf("Node %d: %*s", i, (int)i, player_names[i]);
-			CONS_Printf("[%s]", (mutedplayers[i] == -1 ? "UNMUTED" : "MUTED"));
-			CONS_Printf("\n");
-		}
-	}
-}
 /** RadioRacers: Locally mute a player in a netgame.
 */
 static void Command_MutePlayer(void)
@@ -736,6 +720,12 @@ static void Command_MutePlayer(void)
 	// Attempting to mute the server host. Administrators are fine, though.
 	if (target == serverplayer) {
 		CONS_Alert(CONS_NOTICE, M_GetText("You cannot mute the server host.\n"));
+		return;
+	}
+
+	// Attempting to mute .. a bot?
+	if (players[target].bot) {
+		CONS_Alert(CONS_NOTICE, M_GetText("Bots don't talk!\n"));
 		return;
 	}
 

@@ -18,6 +18,7 @@
 #include "../../m_cond.h"
 #include "../../s_sound.h"
 #include "../../k_zvote.h"
+#include "../../d_main.h"
 
 #ifdef HAVE_DISCORDRPC
 #include "../../discord.h"
@@ -25,6 +26,9 @@
 
 // ESC pause menu
 // Since there's no descriptions to each item, we'll use the descriptions as the names of the patches we want to draw for each option :)
+
+// RadioRacers
+char mutePlayersPauseIcon[] = "M_ICOADM";
 
 menuitem_t PAUSE_Main[] =
 {
@@ -50,7 +54,7 @@ menuitem_t PAUSE_Main[] =
 		NULL, {.routine = M_KickHandler}, 0, 0},
 
 	// RadioRacers: Using the same icon as voting for now.
-	{IT_STRING | IT_ARROWS, "MUTE PLAYERS", "M_ICOADM",
+	{IT_STRING | IT_ARROWS, "MUTE PLAYERS", mutePlayersPauseIcon,
 		NULL, {.routine = M_MuteHandler}, 0, 0}, 
 
 	{IT_STRING | IT_ARROWS, "CALL VOTE", "M_ICOVOT",
@@ -117,6 +121,10 @@ void Dummymenuplayer_OnChange(void)
 void M_OpenPauseMenu(void)
 {
 	INT32 i = 0;
+
+	// Radio Racers
+	if (radioracers_usemuteicons)
+		strncpy(mutePlayersPauseIcon, "M_ICOMUT", (sizeof mutePlayersPauseIcon - 1));
 
 	currentMenu = &PAUSE_MainDef;
 

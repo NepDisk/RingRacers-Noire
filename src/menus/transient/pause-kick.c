@@ -63,6 +63,7 @@ static void M_PlayerMuteHandler(INT32 choice)
 			playeringame[playerkickmenu.player]
 			&& P_IsMachineLocalPlayer(&players[playerkickmenu.player]) == false
 			&& playerkickmenu.player != serverplayer
+			&& !players[playerkickmenu.player].bot
 		)
 		{
 			COM_BufInsertText(va("muteplayer %d\n", playerkickmenu.player));
