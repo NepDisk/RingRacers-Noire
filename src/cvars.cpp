@@ -35,6 +35,9 @@
 #include "m_fixed.h" // FRACUNIT
 #include "r_skins.h" // DEFAULTSKIN
 
+// RadioRacers
+#include "radioracers/rr_cvar.h"
+
 // There is a memset in one of consvar_t's constructors. It
 // SHOULD be safe if there is no polymorphism, but just
 // double-checking.
@@ -492,6 +495,12 @@ consvar_t precachesound = Player("precachesound", "Off").on_off();
 consvar_t stereoreverse = Player("stereoreverse", "Off").on_off();
 
 
+/**
+ * RadioRacers: cvars for custom miscellanous functionalities
+ */
+
+// Vote Snitch
+consvar_t cv_votesnitch = Player("votesnitch", "On").on_off();
 
 //
 // Server local, also available on dedicated servers.
