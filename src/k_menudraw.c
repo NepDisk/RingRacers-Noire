@@ -6230,7 +6230,7 @@ void M_DrawKickHandler(void)
 
 
 	// RadioRacers: Draw a different title depending on the kick menu purpose
-	char *kickMenuTitle = NULL;
+	const char *kickMenuTitle = NULL;
 	switch(playerkickmenu.purpose) {
 		case PKM_KICK:
 			kickMenuTitle = (playerkickmenu.adminpowered)

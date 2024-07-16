@@ -501,6 +501,8 @@ consvar_t stereoreverse = Player("stereoreverse", "Off").on_off();
 
 // Vote Snitch
 consvar_t cv_votesnitch = Player("votesnitch", "On").on_off();
+// More Rumble Events
+consvar_t cv_morerumbleevents = Player("morerumbleevents", "On").on_off();
 
 //
 // Server local, also available on dedicated servers.
