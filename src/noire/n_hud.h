@@ -61,6 +61,14 @@ void N_LoadColorizedHud(void);
 void N_ReloadHUDColorCvar(void);
 extern CV_PossibleValue_t HudColor_cons_t[MAXSKINCOLORS+1];
 
+//Input wheel
+extern patch_t *kp_inputwheel[5];
+void N_drawOldInput();
+extern patch_t *kp_oldpositionnum[10][7];
+extern patch_t *kp_oldwinnernum[7];
+void N_LoadOldPositionNumbers(void);
+void N_DrawKartOldPositionNum(INT32 num);
+
 #ifdef __cplusplus
 } // extern "C"
 #endif

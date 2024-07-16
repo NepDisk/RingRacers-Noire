@@ -191,7 +191,7 @@ static patch_t *kp_flameshieldmeter[FLAMESHIELD_MAX][2];
 static patch_t *kp_flameshieldmeter_bg[FLAMESHIELD_MAX][2];
 
 static patch_t *kp_fpview[3];
-static patch_t *kp_inputwheel[5];
+patch_t *kp_inputwheel[5];
 
 static patch_t *kp_challenger[25];
 
@@ -922,6 +922,9 @@ void K_LoadKartHUDGraphics(void)
 
 	// Noire Colorized Hud
 	N_LoadColorizedHud();
+
+	// Noire Old hud
+	N_LoadOldPositionNumbers();
 }
 
 // For the item toggle menu
@@ -2171,6 +2174,10 @@ void K_DrawKartPositionNumXY(
 		boolean exit, boolean lastLap, boolean losing
 	)
 {
+
+	INT32 xoffs = (cv_oldinputdisplay.value) ? -48*FRACUNIT : 0;
+
+	fx += xoffs;
 	if (cv_reducevfx.value != 0)
 	{
 		// Reduce the flashing rate
@@ -5425,15 +5432,20 @@ static void K_drawInput(void)
 		def[0][1] -= 24 + Easing_Linear(t * FRACUNIT / kDelay, 0, 7);
 	}
 
-	K_DrawInputDisplay(
-		def[k][0] - FixedToFloat(34 * slide),
-		def[k][1] - FixedToFloat(51 * slide) + tallySlide,
-		flags,
-		mode,
-		(local ? G_LocalSplitscreenPartyPosition : G_PartyPosition)(stplyr - players),
-		local,
-		stplyr->speed > 0
-	);
+	if (cv_oldinputdisplay.value)
+	{
+		N_drawOldInput();
+	}
+	else
+		K_DrawInputDisplay(
+			def[k][0] - FixedToFloat(34 * slide),
+			def[k][1] - FixedToFloat(51 * slide) + tallySlide,
+			flags,
+			mode,
+			(local ? G_LocalSplitscreenPartyPosition : G_PartyPosition)(stplyr - players),
+			local,
+			stplyr->speed > 0
+		);
 }
 
 static void K_drawChallengerScreen(void)
@@ -5609,6 +5621,7 @@ void K_drawKartFreePlay(void)
 	INT32 h_snap = r_splitscreen < 2 ? V_SNAPTORIGHT | V_SLIDEIN : V_HUDTRANS;
 	fixed_t x = ((r_splitscreen > 1 ? BASEVIDWIDTH/4 : BASEVIDWIDTH - (LAPS_X+6)) * FRACUNIT);
 	fixed_t y = ((r_splitscreen ? BASEVIDHEIGHT/2 : BASEVIDHEIGHT) - 20) * FRACUNIT;
+	INT32 xoffs = (cv_oldinputdisplay.value) ? -48*FRACBITS: 0;
 
 	x -= V_StringScaledWidth(
 		FRACUNIT,
@@ -5620,7 +5633,7 @@ void K_drawKartFreePlay(void)
 	) / (r_splitscreen > 1 ? 2 : 1);
 
 	V_DrawStringScaled(
-		x,
+		x + xoffs,
 		y,
 		FRACUNIT,
 		FRACUNIT,
@@ -6365,7 +6378,12 @@ void K_drawKartHUD(void)
 						K_drawKartEmeralds();
 				}
 				else if (!islonesome && !K_Cooperative())
-					K_DrawKartPositionNum(stplyr->position);
+				{
+					if (cv_oldpositiondisplay.value)
+						N_DrawKartOldPositionNum(stplyr->position);
+					else
+						K_DrawKartPositionNum(stplyr->position);
+				}
 			}
 
 			if (LUA_HudEnabled(hud_gametypeinfo))

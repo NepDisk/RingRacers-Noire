@@ -22,6 +22,8 @@ extern consvar_t cv_colorizedhud;
 extern consvar_t cv_colorizeditembox;
 extern consvar_t cv_darkitembox;
 extern consvar_t cv_colorizedhudcolor;
+extern consvar_t cv_oldinputdisplay;
+extern consvar_t cv_oldpositiondisplay;
 
 //Rings
 extern consvar_t cv_ng_rings;

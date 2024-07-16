@@ -520,8 +520,10 @@ consvar_t stereoreverse = Player("stereoreverse", "Off").on_off();
 consvar_t cv_colorizedhud = Player("colorizedhud", "On").on_off().onchange(ColorHUD_OnChange);
 consvar_t cv_colorizeditembox = Player("colorizeditembox", "On").on_off();
 consvar_t cv_darkitembox = Player("darkitembox", "On").on_off();
-
 consvar_t cv_colorizedhudcolor = Player("colorizedhudcolor", "Skin Color").values(HudColor_cons_t);
+
+consvar_t cv_oldinputdisplay = Player("oldinputdisplay", "On").on_off();
+consvar_t cv_oldpositiondisplay = Player("oldpositiondisplay", "On").on_off();
 
 // HEP2 cvars....
 // Should probably make this profile specific...
