@@ -5621,7 +5621,7 @@ void K_drawKartFreePlay(void)
 	INT32 h_snap = r_splitscreen < 2 ? V_SNAPTORIGHT | V_SLIDEIN : V_HUDTRANS;
 	fixed_t x = ((r_splitscreen > 1 ? BASEVIDWIDTH/4 : BASEVIDWIDTH - (LAPS_X+6)) * FRACUNIT);
 	fixed_t y = ((r_splitscreen ? BASEVIDHEIGHT/2 : BASEVIDHEIGHT) - 20) * FRACUNIT;
-	INT32 xoffs = (cv_oldinputdisplay.value) ? -48*FRACBITS: 0;
+	INT32 xoffs = (cv_oldinputdisplay.value) ? -48*FRACUNIT: 0;
 
 	x -= V_StringScaledWidth(
 		FRACUNIT,

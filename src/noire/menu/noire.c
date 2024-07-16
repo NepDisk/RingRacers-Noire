@@ -60,6 +60,12 @@ menuitem_t OPTIONS_Noire[] =
 
 	{IT_STRING | IT_CVAR, "Hi-res HUD Scale", "Determines the scale of the hud at higher resolutions.",
 		NULL, {.cvar = &cv_highreshudscale}, 0, 0},
+
+	{IT_STRING | IT_CVAR, "Kart Input Display", "Use the input display from SRB2Kart.",
+		NULL, {.cvar = &cv_oldinputdisplay}, 0, 0},
+
+	{IT_STRING | IT_CVAR, "Kart Position Display", "Use the position display from SRB2Kart.",
+		NULL, {.cvar = &cv_oldpositiondisplay}, 0, 0},
 		
 	{IT_HEADER, "Sound/Music...", NULL,
 		NULL, {NULL}, 0, 0},
