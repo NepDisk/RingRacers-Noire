@@ -279,6 +279,11 @@ boolean K_ThunderDome(void);
 
 boolean K_PlayerCanUseItem(player_t *player);
 
+// RadioRacers: This only works for single-player, no splitscreen. But it can be adapted to work WITH splitscreen easily.
+extern boolean localPlayerJustRingBoosted;
+extern boolean localPlayerJustBootyBounced;
+extern boolean localPlayerJustWavedashed;
+
 #ifdef __cplusplus
 } // extern "C"
 #endif
