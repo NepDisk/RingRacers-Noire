@@ -4052,7 +4052,10 @@ static void P_PlayerMobjThinker(mobj_t *mobj)
 	}
 
 	P_SquishThink(mobj);
-	K_UpdateTerrainOverlay(mobj);
+	if (!udmf)
+		mobj->terrain = NULL;
+	else
+		K_UpdateTerrainOverlay(mobj);
 
 animonly:
 	P_CyclePlayerMobjState(mobj);
@@ -10411,7 +10414,10 @@ void P_MobjThinker(mobj_t *mobj)
 	}
 
 	P_SquishThink(mobj);
-	K_UpdateTerrainOverlay(mobj);
+	if (!udmf)
+		mobj->terrain = NULL;
+	else
+		K_UpdateTerrainOverlay(mobj);
 
 	// Crush enemies!
 	if (mobj->ceilingz - mobj->floorz < mobj->height)

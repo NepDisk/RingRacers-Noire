@@ -49,6 +49,7 @@
 // Noire
 #include "noire/n_cvar.h"
 #include "noire/n_legacycheckpoint.h"
+#include "noire/n_control.h"
 
 tm_t g_tm = {0};
 
@@ -359,7 +360,7 @@ P_DoSpringExMaxMin
 		// can only assume is angle 0
 	}
 
-	K_DoPogoSpring(object, 0, 1); //Change to N_DoPogoSpring in case anything feels wrong
+	N_DoPogoSpring(object, 0, 1); //Change to N_DoPogoSpring in case anything feels wrong
 
 	if (object->player)
 	{
@@ -588,7 +589,7 @@ static void P_DoFanAndGasJet(mobj_t *spring, mobj_t *object)
 					object->player->pogoSpringJumped = true;
 					object->player->pogoMinSpeed = 24 * FRACBITS;
 				}
-				K_DoPogoSpring(object, 32<<FRACBITS, 0);
+				N_DoPogoSpring(object, 32<<FRACBITS, 0);
 			}
 			else
 			{

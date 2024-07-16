@@ -4822,7 +4822,8 @@ static void P_ConvertBinaryLinedefTypes(void)
 			lines[i].args[2] = !!(lines[i].flags & ML_MIDSOLID);
 			break;
 		case 4: //Speed pad parameters
-			CONS_Alert(CONS_WARNING, "Speed Pad linedef is deprecated. Use the TERRAIN effect!\n");
+			if (udmf)
+				CONS_Alert(CONS_WARNING, "Speed Pad linedef is deprecated. Use the TERRAIN effect!\n");
 			break;
 		case 7: //Sector flat alignment
 			lines[i].args[0] = tag;

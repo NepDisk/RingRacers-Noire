@@ -59,6 +59,7 @@
 
 // Noire
 #include "noire/n_soc.h"
+#include "noire/n_control.h"
 
 mobj_t *skyboxviewpnts[16]; // array of MT_SKYBOX viewpoint mobjs
 mobj_t *skyboxcenterpnts[16]; // array of MT_SKYBOX centerpoint mobjs
@@ -5415,6 +5416,95 @@ static void P_EvaluateOldSectorSpecial(player_t *player, sector_t *sector, secto
 			break;
 	}
 
+	switch (GETSECSPECIAL(sector->special, 3))
+	{
+		case 1: // SRB2kart: Spring Panel
+		{
+			if (roversector || isTouching)
+			{
+				const fixed_t hscale = mapobjectscale + (mapobjectscale - player->mo->scale);
+				const fixed_t minspeed = 24*hscale;
+				angle_t pushangle = K_MomentumAngle(player->mo);
+
+				if (player->mo->eflags & MFE_SPRUNG)
+					break;
+
+				if (player->speed < minspeed) // Push forward to prevent getting stuck
+					P_InstaThrust(player->mo, pushangle, minspeed);
+
+				player->pogoSpringJumped = true;
+				N_DoPogoSpring(player->mo, 0, 1);
+			}
+			break;
+		}
+		case 3: // SRB2kart: Spring Panel (capped speed)
+		{
+			if (roversector || isTouching)
+			{
+				const fixed_t hscale = mapobjectscale + (mapobjectscale - player->mo->scale);
+				const fixed_t minspeed = 24*hscale;
+				const fixed_t maxspeed = 28*hscale;
+				angle_t pushangle = K_MomentumAngle(player->mo);
+
+				if (player->mo->eflags & MFE_SPRUNG)
+					break;
+
+				if (player->speed > maxspeed) // Prevent overshooting jumps
+					P_InstaThrust(player->mo, pushangle, maxspeed);
+				else if (player->speed < minspeed) // Push forward to prevent getting stuck
+					P_InstaThrust(player->mo, pushangle, minspeed);
+
+				player->pogoSpringJumped = true;
+				N_DoPogoSpring(player->mo, 0, 1);
+			}
+			break;
+		}
+		case 5: // Speed pad
+		{
+			int i;
+			if (player->floorboost != 0)
+			{
+				player->floorboost = 2;
+				break;
+			}
+
+			i = P_FindSpecialLineFromTag(4, Tag_FGet(&sector->tags), -1);
+
+			if (i != -1)
+			{
+				angle_t lineangle = R_PointToAngle2(lines[i].v1->x, lines[i].v1->y, lines[i].v2->x, lines[i].v2->y);
+				fixed_t linespeed = P_AproxDistance(lines[i].v2->x-lines[i].v1->x, lines[i].v2->y-lines[i].v1->y);
+				fixed_t playerspeed = P_AproxDistance(player->mo->momx, player->mo->momy);
+
+				if (linespeed == 0)
+				{
+					CONS_Debug(DBG_GAMELOGIC, "ERROR: Speed pad (tag %d) at zero speed.\n", Tag_FGet(&sector->tags));
+					break;
+				}
+
+				// SRB2Kart: Scale the speed you get from them!
+				// This is scaled differently from other horizontal speed boosts from stuff like springs, because of how this is used for some ramp jumps.
+				if (player->mo->scale > mapobjectscale)
+				{
+					linespeed = FixedMul(linespeed, mapobjectscale + (player->mo->scale - mapobjectscale));
+				}
+
+				lineangle = K_ReflectAngle(
+					K_MomentumAngle(player->mo), lineangle,
+					playerspeed, linespeed
+				);
+
+				P_InstaThrust(player->mo, lineangle, max(linespeed, 2*playerspeed));
+
+				player->dashpadcooldown = TICRATE/3;
+				player->pogoSpringJumped = 0;
+				player->floorboost = 2;
+				S_StartSound(player->mo, sfx_cdfm62);
+			}
+			break;
+		}
+	}
+
 	switch (GETSECSPECIAL(sector->special, 4))
 	{
 		case 1: // cheatcheck Activator
@@ -5425,8 +5515,30 @@ static void P_EvaluateOldSectorSpecial(player_t *player, sector_t *sector, secto
 			P_TouchSpecialThing(post, player->mo, false);
 			break;
 		}
-		case 10: // Finish Line
+			case 5: // Fan sector
+		{
+			player->mo->momz += 5*FRACUNIT/4;
 
+			if (player->mo->momz > 5*FRACUNIT)
+				player->mo->momz = 5*FRACUNIT;
+
+			P_ResetPlayer(player);
+			break;
+		}
+		case 6: // SRB2kart 190117 - Sneaker Panel
+		{
+			if (roversector || isTouching)
+			{
+				if (!player->floorboost)
+					player->floorboost = 3;
+				else
+					player->floorboost = 2;
+				K_DoSneaker(player, 0);
+			}
+			break;
+		}
+		case 10: // Finish Line
+		{
 			if ((gametyperules & GTR_CIRCUIT) && (player->exiting == 0) && !(player->pflags & PF_HITFINISHLINE))
 			{
 					K_HandleLapIncrement(player);
@@ -5435,8 +5547,8 @@ static void P_EvaluateOldSectorSpecial(player_t *player, sector_t *sector, secto
 					//K_HandleLapIncrement(player);
 					player->pflags |= PF_HITFINISHLINE;
 			}
-
-
+			break;
+		}
 	}
 
 }
