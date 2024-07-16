@@ -82,6 +82,9 @@ menuitem_t OPTIONS_NoireGameplayItems[] =
 
 	{IT_STRING | IT_CVAR, "Jawz Behavior", "Toggle between Ring Racers or Kart's Jawz behavior.",
 		NULL, {.cvar = &cv_ng_oldjawz}, 0, 0},
+
+	{IT_STRING | IT_CVAR, "Hyudoro Behavior", "Toggle between Ring Racers or Kart's Hyudoro behavior.",
+		NULL, {.cvar = &cv_ng_oldhyudoro}, 0, 0},
 };
 
 ///////////

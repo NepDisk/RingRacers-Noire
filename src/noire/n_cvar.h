@@ -40,6 +40,8 @@ extern consvar_t cv_ng_capsules;
 //Items
 extern consvar_t cv_ng_oldorbinaut;
 extern consvar_t cv_ng_oldjawz;
+extern consvar_t cv_ng_oldhyudoro;
+extern consvar_t cv_ng_oldballhog;
 
 //Mechanics
 extern consvar_t cv_ng_fastfallbounce;

@@ -75,6 +75,7 @@
 #include "noire/n_object.h"
 #include "noire/n_boosts.h"
 #include "noire/n_soc.h"
+#include "noire/n_items.h"
 
 // SOME IMPORTANT VARIABLES DEFINED IN DOOMDEF.H:
 // gamespeed is cc (0 for easy, 1 for normal, 2 for hard)
@@ -13698,8 +13699,10 @@ void K_MoveKartPlayer(player_t *player, boolean onground)
 							if (ATTACK_IS_DOWN && !HOLDING_ITEM && NO_HYUDORO)
 							{
 								player->itemamount--;
-								//K_DoHyudoroSteal(player); // yes. yes they do.
-								Obj_HyudoroDeploy(player->mo);
+								if (cv_ng_oldhyudoro.value)
+									N_DoHyudoroSteal(player); // yes. yes they do.
+								else
+									Obj_HyudoroDeploy(player->mo);
 								K_PlayAttackTaunt(player->mo);
 								player->botvars.itemconfirm = 0;
 							}

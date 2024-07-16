@@ -89,6 +89,8 @@ typedef enum
 
 	PRNUMSYNCED,
 
+	PR_HYUDORO, // Used for old Hyudoro RNG
+
 	PR_INTERPHUDRANDOM = PRNUMSYNCED, // Interpolation-accomodating HUD randomisation
 
 	PRNUMCLASS
