@@ -73,7 +73,6 @@
 // mapreset is set when enough players fill an empty server
 
 // RadioRacers: Hacky ways of checking for events the exact FRAME that they happen
-boolean localPlayerJustRingBoosted = false; 	// The second your Ring Boost (TM) timer starts
 boolean localPlayerJustBootyBounced = false; 	// The second you start a fastfall bounce
 boolean localPlayerJustWavedashed = false;		// The few seconds or so your wavedash starts
 

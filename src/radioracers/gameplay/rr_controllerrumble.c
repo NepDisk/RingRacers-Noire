@@ -140,10 +140,10 @@ boolean RR_RumbleJustDrifted(const player_t *player)
     const INT32 dsthree = K_GetKartDriftSparkValueForStage(player, 3);
     const INT32 dsfour = K_GetKartDriftSparkValueForStage(player, 4);
 
-    const boolean yellowSparkDrifts = (player->driftcharge >= (dsone - (32*3)) && player-> driftcharge < dsone);
-    const boolean redSparkDrifts = (player->driftcharge >= (dstwo - (32*3)) && player->driftcharge < dstwo);
-    const boolean blueSparkDrifts = (player->driftcharge >= (dsthree - (32*3)) && player->driftcharge < dsthree);
-    const boolean rainbowSparkDrifts = (player->driftcharge >= (dsfour - (32*3)) && player->driftcharge < dsfour);
+    const boolean yellowSparkDrifts = (player->driftcharge >= (dsone - (32*4)) && player-> driftcharge < dsone);
+    const boolean redSparkDrifts = (player->driftcharge >= (dstwo - (32*4)) && player->driftcharge < dstwo);
+    const boolean blueSparkDrifts = (player->driftcharge >= (dsthree - (32*4)) && player->driftcharge < dsthree);
+    const boolean rainbowSparkDrifts = (player->driftcharge >= (dsfour - (32*4)) && player->driftcharge < dsfour);
     
     return (
         player->mo &&
@@ -151,24 +151,28 @@ boolean RR_RumbleJustDrifted(const player_t *player)
         (yellowSparkDrifts || redSparkDrifts || blueSparkDrifts || rainbowSparkDrifts)
     );
 }
+
+boolean RR_RumbleRingConsumed(const player_t *player)
+{
+    ticcmd_t *cmd = &player->cmd;
+    return (
+        player->mo &&
+        (
+            (cmd->buttons & BT_ATTACK) && 
+            
+            (player->rings > 0 && 
+            player->rings > player->rings-1 && 
+            player->rings < player->rings+1)
+        )
+    );
+}
+
 /**
  * These checks are kind of hacky. 
  * But I want the rumble to happen the FRAME that the ringboost timer has started.
  * That way, the player gets feedback immediately and knows when to start adjusting lines
  * and the sort.
  */
-boolean RR_RumbleRingConsumed(const player_t *player)
-{
-    const boolean ringJustConsumed = (
-        player->mo &&
-        localPlayerJustRingBoosted
-    );
-
-    if (ringJustConsumed) 
-        localPlayerJustRingBoosted = false;
-
-    return ringJustConsumed;
-}
 
 boolean RR_RumbleJustFastFallBounced(const player_t *player)
 {
