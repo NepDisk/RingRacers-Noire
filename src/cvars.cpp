@@ -903,7 +903,7 @@ consvar_t cv_initbl[8] = {
 
 consvar_t cv_banitbl[8] = {
 	UnsavedNetVar("BANITBL0", "5").min_max(0, 50),
-	UnsavedNetVar("BANTBL1", "3").min_max(0, 50),
+	UnsavedNetVar("BANITBL1", "3").min_max(0, 50),
 	UnsavedNetVar("BANITBL2", "1").min_max(0, 50),
 	UnsavedNetVar("BANITBL3", "0").min_max(0, 50),
 	UnsavedNetVar("BANITBL4", "0").min_max(0, 50),
@@ -914,7 +914,7 @@ consvar_t cv_banitbl[8] = {
 
 consvar_t cv_eggitbl[8] = {
 	UnsavedNetVar("EGGITBL0", "1").min_max(0, 50),
-	UnsavedNetVar("EGGTBL1", "2").min_max(0, 50),
+	UnsavedNetVar("EGGITBL1", "2").min_max(0, 50),
 	UnsavedNetVar("EGGITBL2", "0").min_max(0, 50),
 	UnsavedNetVar("EGGITBL3", "0").min_max(0, 50),
 	UnsavedNetVar("EGGITBL4", "0").min_max(0, 50),
@@ -925,7 +925,7 @@ consvar_t cv_eggitbl[8] = {
 
 consvar_t cv_orbitbl[8] = {
 	UnsavedNetVar("ORBITBL0", "6").min_max(0, 50),
-	UnsavedNetVar("ORBTBL1", "4").min_max(0, 50),
+	UnsavedNetVar("ORBITBL1", "4").min_max(0, 50),
 	UnsavedNetVar("ORBITBL2", "2").min_max(0, 50),
 	UnsavedNetVar("ORBITBL3", "2").min_max(0, 50),
 	UnsavedNetVar("ORBITBL4", "0").min_max(0, 50),
@@ -936,7 +936,7 @@ consvar_t cv_orbitbl[8] = {
 
 consvar_t cv_jawitbl[8] = {
 	UnsavedNetVar("JAWITBL0", "0").min_max(0, 50),
-	UnsavedNetVar("JAWTBL1", "4").min_max(0, 50),
+	UnsavedNetVar("JAWITBL1", "4").min_max(0, 50),
 	UnsavedNetVar("JAWITBL2", "2").min_max(0, 50),
 	UnsavedNetVar("JAWITBL3", "1").min_max(0, 50),
 	UnsavedNetVar("JAWITBL4", "0").min_max(0, 50),
@@ -947,7 +947,7 @@ consvar_t cv_jawitbl[8] = {
 
 consvar_t cv_minitbl[8] = {
 	UnsavedNetVar("MINITBL0", "0").min_max(0, 50),
-	UnsavedNetVar("MINTBL1", "2").min_max(0, 50),
+	UnsavedNetVar("MINITBL1", "2").min_max(0, 50),
 	UnsavedNetVar("MINITBL2", "3").min_max(0, 50),
 	UnsavedNetVar("MINITBL3", "1").min_max(0, 50),
 	UnsavedNetVar("MINITBL4", "0").min_max(0, 50),
@@ -958,7 +958,7 @@ consvar_t cv_minitbl[8] = {
 
 consvar_t cv_lminitbl[8] = {
 	UnsavedNetVar("LMINITBL0", "3").min_max(0, 50),
-	UnsavedNetVar("LMINTBL1", "0").min_max(0, 50),
+	UnsavedNetVar("LMINITBL1", "0").min_max(0, 50),
 	UnsavedNetVar("LMINITBL2", "0").min_max(0, 50),
 	UnsavedNetVar("LMINITBL3", "0").min_max(0, 50),
 	UnsavedNetVar("LMINITBL4", "0").min_max(0, 50),
