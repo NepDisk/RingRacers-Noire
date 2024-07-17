@@ -10,6 +10,7 @@
 
 
 #include "../n_object.h"
+#include "../n_control.h"
 
 #define jawz_speed(o) ((o)->movefactor)
 #define jawz_selfdelay(o) ((o)->threshold)
@@ -222,6 +223,13 @@ void OBJ_JawzOldThink(mobj_t *mobj)
 		mobj->angle = R_PointToAngle2(0, 0, mobj->momx, mobj->momy);
 
 	K_DriftDustHandling(mobj);
+
+	if (grounded) // Handle pogosprings.
+	{
+		if (P_MobjTouchingSectorSpecial(mobj, 3, 1) || P_MobjTouchingSectorSpecial(mobj, 3, 3) || (mobj->terrain && (mobj->terrain->springDoKartPogo > 0)))
+			N_DoPogoSpring(mobj, 0, 1);
+	}
+
 }
 
 

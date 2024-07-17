@@ -11,6 +11,7 @@
 
 #include "../n_items.h"
 #include "../../m_random.h"
+#include "../n_cvar.h"
 
 void N_DoHyudoroSteal(player_t *player)
 {
@@ -86,3 +87,38 @@ void N_DoHyudoroSteal(player_t *player)
 			S_StartSound(NULL, sfx_s3k92);
 	}
 }
+
+
+UINT8 N_NoireItemOddsRace[NUMKARTRESULTS-1][8] =
+{
+	{ 0, 0, 2, 3, 4, 0, 0, 0 }, // Sneaker
+	{ 0, 0, 0, 0, 0, 3, 5, 6 }, // Rocket Sneaker
+	{ 0, 0, 0, 0, 0, 4, 5, 7 }, // Invincibility
+	{ 5, 3, 1, 0, 0, 0, 0, 0 }, // Banana
+	{ 1, 2, 0, 0, 0, 0, 0, 0 }, // Eggman Monitor
+	{ 6, 4, 2, 2, 0, 0, 0, 0 }, // Orbinaut
+	{ 0, 4, 2, 1, 0, 0, 0, 0 }, // Jawz
+	{ 0, 2, 3, 1, 0, 0, 0, 0 }, // Mine
+	{ 3, 0, 0, 0, 0, 0, 0, 0 }, // Land Mine
+	{ 0, 0, 2, 1, 0, 0, 0, 0 }, // Ballhog
+	{ 0, 1, 2, 3, 4, 2, 2, 0 }, // Self-Propelled Bomb
+	{ 0, 0, 0, 0, 2, 3, 1, 0 }, // Grow
+	{ 0, 0, 0, 0, 0, 0, 2, 0 }, // Shrink
+	{ 1, 2, 0, 0, 0, 0, 0, 0 }, // Lightning Shield
+	{ 0, 1, 2, 1, 0, 0, 0, 0 }, // Bubble Shield
+	{ 0, 0, 0, 0, 0, 1, 3, 5 }, // Flame Shield
+	{ 0, 0, 0, 1, 1, 0, 0, 0 }, // Hyudoro
+	{ 0, 0, 0, 0, 0, 0, 0, 0 }, // Pogo Spring
+	{ 2, 1, 1, 1, 0, 0, 0, 0 }, // Super Ring
+	{ 0, 0, 0, 0, 0, 0, 0, 0 }, // Kitchen Sink
+	{ 3, 0, 0, 0, 0, 0, 0, 0 }, // Drop Target
+	{ 0, 0, 0, 0, 1, 2, 2, 0 }, // Garden Top
+	{ 0, 0, 0, 0, 0, 0, 0, 0 }, // Gachabom
+	{ 0, 0, 1, 2, 2, 1, 0, 0 }, // Sneaker x2
+	{ 0, 0, 0, 1, 4, 4, 5, 0 }, // Sneaker x3
+	{ 0, 1, 1, 0, 0, 0, 0, 0 }, // Banana x3
+	{ 0, 0, 1, 0, 0, 0, 0, 0 }, // Orbinaut x3
+	{ 0, 0, 0, 1, 1, 0, 0, 0 }, // Orbinaut x4
+	{ 0, 0, 1, 2, 1, 0, 0, 0 }, // Jawz x2
+	{ 0, 0, 0, 0, 0, 0, 0, 0 }  // Gachabom x3
+};

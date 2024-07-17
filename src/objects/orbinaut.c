@@ -24,6 +24,10 @@
 #include "../k_waypoint.h"
 #include "../k_respawn.h"
 #include "../k_collide.h"
+#include "../p_spec.h"
+
+// Noire
+#include "../noire/n_control.h"
 
 #define ORBINAUT_MAXTURN (ANGLE_67h)
 #define ORBINAUT_TURNLERP (16)
@@ -144,12 +148,11 @@ void Obj_OrbinautThink(mobj_t *th)
 		orbinaut_spin(th) += ANGLE_22h;
 	}
 
-	/* todo: UDMFify
-	if (P_MobjTouchingSectorSpecialFlag(th, ?))
+	if (grounded) // Handle pogosprings.
 	{
-		K_DoPogoSpring(th, 0, 1);
+		if (P_MobjTouchingSectorSpecial(th, 3, 1) || P_MobjTouchingSectorSpecial(th, 3, 3) || (th->terrain && (th->terrain->springDoKartPogo > 0)))
+			N_DoPogoSpring(th, 0, 1);
 	}
-	*/
 
 	if (orbinaut_selfdelay(th) > 0)
 	{

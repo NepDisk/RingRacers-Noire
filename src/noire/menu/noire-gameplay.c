@@ -77,6 +77,9 @@ menuitem_t OPTIONS_NoireGameplayItems[] =
 	{IT_STRING | IT_CVAR, "Capsules", "Enable or disable Item Capsules appearance in tracks.",
 		NULL, {.cvar = &cv_ng_capsules}, 0, 0},
 
+	{IT_STRING | IT_CVAR, "Item Odds", "Odds to use for race mode. Noire or Custom recommended for revert toggles!",
+		NULL, {.cvar = &cv_ng_noireodds}, 0, 0},
+
 	{IT_STRING | IT_CVAR, "Orbinaut Behavior", "Toggle between Ring Racers or Kart's Orbinaut behavior.",
 		NULL, {.cvar = &cv_ng_oldorbinaut}, 0, 0},
 
@@ -272,11 +275,11 @@ void NG_Generic_OnChange(void)
 void NG_Olditem_OnChange(void)
 {
 	static boolean messageHasBeenDelivered = false;
-	if (gamestate == GS_LEVEL && !messageHasBeenDelivered && menuactive)
+	if (!messageHasBeenDelivered && menuactive)
 	{
 		M_StartMessage(
 			"WARNING!",
-			M_GetText("This may be busted if using default RR item odds.\n Stay Tuned for custom odds!."),
+			M_GetText("This may be busted if using default RR item odds.\n Noire or Custom is highly recommended."),
 			NULL,
 			MM_NOTHING,
 			NULL,

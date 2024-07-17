@@ -25,6 +25,10 @@
 #include "../k_respawn.h"
 #include "../k_collide.h"
 #include "../k_specialstage.h"
+#include "../p_spec.h"
+
+// Noire
+#include "../noire/n_control.h"
 
 #define MAX_JAWZ_TURN (ANGLE_90 / 15) // We can turn a maximum of 6 degrees per frame at regular max speed
 
@@ -230,12 +234,11 @@ void Obj_JawzThink(mobj_t *th)
 	JawzChase(th, grounded);
 	K_DriftDustHandling(th);
 
-	/* todo: UDMFify
-	if (P_MobjTouchingSectorSpecialFlag(th, ?))
+	if (grounded) // Handle pogosprings.
 	{
-		K_DoPogoSpring(th, 0, 1);
+		if (P_MobjTouchingSectorSpecial(th, 3, 1) || P_MobjTouchingSectorSpecial(th, 3, 3) || (th->terrain && (th->terrain->springDoKartPogo > 0)))
+			N_DoPogoSpring(th, 0, 1);
 	}
-	*/
 
 	if (jawz_selfdelay(th) > 0)
 	{

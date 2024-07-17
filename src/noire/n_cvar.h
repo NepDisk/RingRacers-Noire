@@ -45,6 +45,25 @@ extern consvar_t cv_ng_oldjawz;
 extern consvar_t cv_ng_oldhyudoro;
 extern consvar_t cv_ng_oldballhog;
 extern consvar_t cv_ng_oldspb;
+extern consvar_t cv_ng_noireodds;
+
+extern consvar_t cv_distvar;
+// Itemtable hell
+extern consvar_t cv_sitbl[8]; extern consvar_t cv_rsitbl[8];
+extern consvar_t cv_initbl[8]; extern consvar_t cv_banitbl[8];
+extern consvar_t cv_eggitbl[8]; extern consvar_t cv_orbitbl[8];
+extern consvar_t cv_jawitbl[8]; extern consvar_t cv_minitbl[8];
+extern consvar_t cv_lminitbl[8]; extern consvar_t cv_balitbl[8];
+extern consvar_t cv_spbitbl[8]; extern consvar_t cv_groitbl[8];
+extern consvar_t cv_shritbl[8]; extern consvar_t cv_ligitbl[8];
+extern consvar_t cv_bubitbl[8]; extern consvar_t cv_flmitbl[8];
+extern consvar_t cv_hyuitbl[8]; extern consvar_t cv_pogitbl[8];
+extern consvar_t cv_supitbl[8]; extern consvar_t cv_kititbl[8];
+extern consvar_t cv_dtgitbl[8]; extern consvar_t cv_gtpitbl[8];
+extern consvar_t cv_gacitbl[8]; extern consvar_t cv_dsitbl[8];
+extern consvar_t cv_tsitbl[8]; extern consvar_t cv_tbaitbl[8];
+extern consvar_t cv_toritbl[8]; extern consvar_t cv_quoitbl[8];
+extern consvar_t cv_djaitbl[8]; extern consvar_t cv_tgaitbl[8];
 
 //Mechanics
 extern consvar_t cv_ng_fastfallbounce;

@@ -854,11 +854,349 @@ consvar_t cv_ng_ringboxtransform = UnsavedNetVar("ng_ringboxtransform", "On").on
 
 //Items
 consvar_t cv_ng_capsules = UnsavedNetVar("ng_capsules", "On").on_off().onchange_noinit(NG_Generic_OnChange);
-consvar_t cv_ng_oldorbinaut = UnsavedNetVar("ng_oldorbinaut", "Ring Racers").values(rrOrKart_cons_t);
-consvar_t cv_ng_oldjawz = UnsavedNetVar("ng_oldjawz", "Ring Racers").values(rrOrKart_cons_t);
+consvar_t cv_ng_oldorbinaut = UnsavedNetVar("ng_oldorbinaut", "Ring Racers").values(rrOrKart_cons_t).onchange_noinit(NG_Olditem_OnChange);
+consvar_t cv_ng_oldjawz = UnsavedNetVar("ng_oldjawz", "Ring Racers").values(rrOrKart_cons_t).onchange_noinit(NG_Olditem_OnChange);
 consvar_t cv_ng_oldhyudoro = UnsavedNetVar("ng_oldhyudoro", "Ring Racers").values(rrOrKart_cons_t).onchange_noinit(NG_Olditem_OnChange);
-consvar_t cv_ng_oldballhog = UnsavedNetVar("ng_oldballhog", "Ring Racers").values(rrOrKart_cons_t);
-consvar_t cv_ng_oldspb = UnsavedNetVar("ng_oldspb", "Ring Racers").values(rrOrKart_cons_t);
+consvar_t cv_ng_oldballhog = UnsavedNetVar("ng_oldballhog", "Ring Racers").values(rrOrKart_cons_t).onchange_noinit(NG_Olditem_OnChange);
+consvar_t cv_ng_oldspb = UnsavedNetVar("ng_oldspb", "Ring Racers").values(rrOrKart_cons_t).onchange_noinit(NG_Olditem_OnChange);
+consvar_t cv_ng_noireodds = UnsavedNetVar("ng_itemodds", "Ring Racers").values({
+	{0, "Ring Racers"},
+	{1, "Noire"},
+	{2, "Custom"},
+});
+
+consvar_t cv_distvar = UnsavedNetVar("ng_itemoddsdistvar", "2048").min_max(0, INT32_MAX);
+
+// Odds Table Hell
+consvar_t cv_sitbl[8] = {
+	UnsavedNetVar("SITBL0", "0").min_max(0, 50),
+	UnsavedNetVar("SITBL1", "0").min_max(0, 50),
+	UnsavedNetVar("SITBL2", "2").min_max(0, 50),
+	UnsavedNetVar("SITBL3", "3").min_max(0, 50),
+	UnsavedNetVar("SITBL4", "4").min_max(0, 50),
+	UnsavedNetVar("SITBL5", "0").min_max(0, 50),
+	UnsavedNetVar("SITBL6", "0").min_max(0, 50),
+	UnsavedNetVar("SITBL7", "0").min_max(0, 50),
+};
+
+consvar_t cv_rsitbl[8] = {
+	UnsavedNetVar("RSITBL0", "0").min_max(0, 50),
+	UnsavedNetVar("RSITBL1", "0").min_max(0, 50),
+	UnsavedNetVar("RSITBL2", "0").min_max(0, 50),
+	UnsavedNetVar("RSITBL3", "0").min_max(0, 50),
+	UnsavedNetVar("RSITBL4", "0").min_max(0, 50),
+	UnsavedNetVar("RSITBL5", "3").min_max(0, 50),
+	UnsavedNetVar("RSITBL6", "5").min_max(0, 50),
+	UnsavedNetVar("RSITBL7", "6").min_max(0, 50),
+};
+
+consvar_t cv_initbl[8] = {
+	UnsavedNetVar("INITBL0", "0").min_max(0, 50),
+	UnsavedNetVar("INITBL1", "0").min_max(0, 50),
+	UnsavedNetVar("INITBL2", "0").min_max(0, 50),
+	UnsavedNetVar("INITBL3", "0").min_max(0, 50),
+	UnsavedNetVar("INITBL4", "0").min_max(0, 50),
+	UnsavedNetVar("INITBL5", "4").min_max(0, 50),
+	UnsavedNetVar("INITBL6", "5").min_max(0, 50),
+	UnsavedNetVar("INITBL7", "7").min_max(0, 50),
+};
+
+consvar_t cv_banitbl[8] = {
+	UnsavedNetVar("BANITBL0", "5").min_max(0, 50),
+	UnsavedNetVar("BANTBL1", "3").min_max(0, 50),
+	UnsavedNetVar("BANITBL2", "1").min_max(0, 50),
+	UnsavedNetVar("BANITBL3", "0").min_max(0, 50),
+	UnsavedNetVar("BANITBL4", "0").min_max(0, 50),
+	UnsavedNetVar("BANITBL5", "0").min_max(0, 50),
+	UnsavedNetVar("BANITBL6", "0").min_max(0, 50),
+	UnsavedNetVar("BANITBL7", "0").min_max(0, 50),
+};
+
+consvar_t cv_eggitbl[8] = {
+	UnsavedNetVar("EGGITBL0", "1").min_max(0, 50),
+	UnsavedNetVar("EGGTBL1", "2").min_max(0, 50),
+	UnsavedNetVar("EGGITBL2", "0").min_max(0, 50),
+	UnsavedNetVar("EGGITBL3", "0").min_max(0, 50),
+	UnsavedNetVar("EGGITBL4", "0").min_max(0, 50),
+	UnsavedNetVar("EGGITBL5", "0").min_max(0, 50),
+	UnsavedNetVar("EGGITBL6", "0").min_max(0, 50),
+	UnsavedNetVar("EGGITBL7", "0").min_max(0, 50),
+};
+
+consvar_t cv_orbitbl[8] = {
+	UnsavedNetVar("ORBITBL0", "6").min_max(0, 50),
+	UnsavedNetVar("ORBTBL1", "4").min_max(0, 50),
+	UnsavedNetVar("ORBITBL2", "2").min_max(0, 50),
+	UnsavedNetVar("ORBITBL3", "2").min_max(0, 50),
+	UnsavedNetVar("ORBITBL4", "0").min_max(0, 50),
+	UnsavedNetVar("ORBITBL5", "0").min_max(0, 50),
+	UnsavedNetVar("ORBITBL6", "0").min_max(0, 50),
+	UnsavedNetVar("ORBITBL7", "0").min_max(0, 50),
+};
+
+consvar_t cv_jawitbl[8] = {
+	UnsavedNetVar("JAWITBL0", "0").min_max(0, 50),
+	UnsavedNetVar("JAWTBL1", "4").min_max(0, 50),
+	UnsavedNetVar("JAWITBL2", "2").min_max(0, 50),
+	UnsavedNetVar("JAWITBL3", "1").min_max(0, 50),
+	UnsavedNetVar("JAWITBL4", "0").min_max(0, 50),
+	UnsavedNetVar("JAWITBL5", "0").min_max(0, 50),
+	UnsavedNetVar("JAWITBL6", "0").min_max(0, 50),
+	UnsavedNetVar("JAWITBL7", "0").min_max(0, 50),
+};
+
+consvar_t cv_minitbl[8] = {
+	UnsavedNetVar("MINITBL0", "0").min_max(0, 50),
+	UnsavedNetVar("MINTBL1", "2").min_max(0, 50),
+	UnsavedNetVar("MINITBL2", "3").min_max(0, 50),
+	UnsavedNetVar("MINITBL3", "1").min_max(0, 50),
+	UnsavedNetVar("MINITBL4", "0").min_max(0, 50),
+	UnsavedNetVar("MINITBL5", "0").min_max(0, 50),
+	UnsavedNetVar("MINITBL6", "0").min_max(0, 50),
+	UnsavedNetVar("MINITBL7", "0").min_max(0, 50),
+};
+
+consvar_t cv_lminitbl[8] = {
+	UnsavedNetVar("LMINITBL0", "3").min_max(0, 50),
+	UnsavedNetVar("LMINTBL1", "0").min_max(0, 50),
+	UnsavedNetVar("LMINITBL2", "0").min_max(0, 50),
+	UnsavedNetVar("LMINITBL3", "0").min_max(0, 50),
+	UnsavedNetVar("LMINITBL4", "0").min_max(0, 50),
+	UnsavedNetVar("LMINITBL5", "0").min_max(0, 50),
+	UnsavedNetVar("LMINITBL6", "0").min_max(0, 50),
+	UnsavedNetVar("LMINITBL7", "0").min_max(0, 50),
+};
+
+consvar_t cv_balitbl[8] = {
+	UnsavedNetVar("BALITBL0", "0").min_max(0, 50),
+	UnsavedNetVar("BALITBL1", "0").min_max(0, 50),
+	UnsavedNetVar("BALITBL2", "2").min_max(0, 50),
+	UnsavedNetVar("BALITBL3", "1").min_max(0, 50),
+	UnsavedNetVar("BALITBL4", "0").min_max(0, 50),
+	UnsavedNetVar("BALITBL5", "0").min_max(0, 50),
+	UnsavedNetVar("BALITBL6", "0").min_max(0, 50),
+	UnsavedNetVar("BALITBL7", "0").min_max(0, 50),
+};
+
+consvar_t cv_spbitbl[8] = {
+	UnsavedNetVar("SPBITBL0", "0").min_max(0, 50),
+	UnsavedNetVar("SPBITBL1", "1").min_max(0, 50),
+	UnsavedNetVar("SPBITBL2", "2").min_max(0, 50),
+	UnsavedNetVar("SPBITBL3", "3").min_max(0, 50),
+	UnsavedNetVar("SPBITBL4", "4").min_max(0, 50),
+	UnsavedNetVar("SPBITBL5", "2").min_max(0, 50),
+	UnsavedNetVar("SPBITBL6", "2").min_max(0, 50),
+	UnsavedNetVar("SPBITBL7", "0").min_max(0, 50),
+};
+
+consvar_t cv_groitbl[8] = {
+	UnsavedNetVar("GROITBL0", "0").min_max(0, 50),
+	UnsavedNetVar("GROITBL1", "0").min_max(0, 50),
+	UnsavedNetVar("GROITBL2", "0").min_max(0, 50),
+	UnsavedNetVar("GROITBL3", "0").min_max(0, 50),
+	UnsavedNetVar("GROITBL4", "2").min_max(0, 50),
+	UnsavedNetVar("GROITBL5", "3").min_max(0, 50),
+	UnsavedNetVar("GROITBL6", "1").min_max(0, 50),
+	UnsavedNetVar("GROITBL7", "0").min_max(0, 50),
+};
+
+consvar_t cv_shritbl[8] = {
+	UnsavedNetVar("SHRITBL0", "0").min_max(0, 50),
+	UnsavedNetVar("SHRITBL1", "0").min_max(0, 50),
+	UnsavedNetVar("SHRITBL2", "0").min_max(0, 50),
+	UnsavedNetVar("SHRITBL3", "0").min_max(0, 50),
+	UnsavedNetVar("SHRITBL4", "0").min_max(0, 50),
+	UnsavedNetVar("SHRITBL5", "0").min_max(0, 50),
+	UnsavedNetVar("SHRITBL6", "2").min_max(0, 50),
+	UnsavedNetVar("SHRITBL7", "0").min_max(0, 50),
+};
+
+consvar_t cv_ligitbl[8] = {
+	UnsavedNetVar("LIGITBL0", "1").min_max(0, 50),
+	UnsavedNetVar("LIGITBL1", "2").min_max(0, 50),
+	UnsavedNetVar("LIGITBL2", "0").min_max(0, 50),
+	UnsavedNetVar("LIGITBL3", "0").min_max(0, 50),
+	UnsavedNetVar("LIGITBL4", "0").min_max(0, 50),
+	UnsavedNetVar("LIGITBL5", "0").min_max(0, 50),
+	UnsavedNetVar("LIGITBL6", "0").min_max(0, 50),
+	UnsavedNetVar("LIGITBL7", "0").min_max(0, 50),
+};
+
+consvar_t cv_bubitbl[8] = {
+	UnsavedNetVar("BUBITBL0", "0").min_max(0, 50),
+	UnsavedNetVar("BUBITBL1", "1").min_max(0, 50),
+	UnsavedNetVar("BUBITBL2", "2").min_max(0, 50),
+	UnsavedNetVar("BUBITBL3", "1").min_max(0, 50),
+	UnsavedNetVar("BUBITBL4", "0").min_max(0, 50),
+	UnsavedNetVar("BUBITBL5", "0").min_max(0, 50),
+	UnsavedNetVar("BUBITBL6", "0").min_max(0, 50),
+	UnsavedNetVar("BUBITBL7", "0").min_max(0, 50),
+};
+
+consvar_t cv_flmitbl[8] = {
+	UnsavedNetVar("FLMITBL0", "0").min_max(0, 50),
+	UnsavedNetVar("FLMITBL1", "0").min_max(0, 50),
+	UnsavedNetVar("FLMITBL2", "0").min_max(0, 50),
+	UnsavedNetVar("FLMITBL3", "0").min_max(0, 50),
+	UnsavedNetVar("FLMITBL4", "0").min_max(0, 50),
+	UnsavedNetVar("FLMITBL5", "1").min_max(0, 50),
+	UnsavedNetVar("FLMITBL6", "3").min_max(0, 50),
+	UnsavedNetVar("FLMITBL7", "5").min_max(0, 50),
+};
+
+consvar_t cv_hyuitbl[8] = {
+	UnsavedNetVar("HYUITBL0", "0").min_max(0, 50),
+	UnsavedNetVar("HYUITBL1", "0").min_max(0, 50),
+	UnsavedNetVar("HYUITBL2", "0").min_max(0, 50),
+	UnsavedNetVar("HYUITBL3", "1").min_max(0, 50),
+	UnsavedNetVar("HYUITBL4", "1").min_max(0, 50),
+	UnsavedNetVar("HYUITBL5", "0").min_max(0, 50),
+	UnsavedNetVar("HYUITBL6", "0").min_max(0, 50),
+	UnsavedNetVar("HYUITBL7", "0").min_max(0, 50),
+};
+
+consvar_t cv_pogitbl[8] = {
+	UnsavedNetVar("POGITBL0", "0").min_max(0, 50),
+	UnsavedNetVar("POGITBL1", "0").min_max(0, 50),
+	UnsavedNetVar("POGITBL2", "0").min_max(0, 50),
+	UnsavedNetVar("POGITBL3", "0").min_max(0, 50),
+	UnsavedNetVar("POGITBL4", "0").min_max(0, 50),
+	UnsavedNetVar("POGITBL5", "0").min_max(0, 50),
+	UnsavedNetVar("POGITBL6", "0").min_max(0, 50),
+	UnsavedNetVar("POGITBL7", "0").min_max(0, 50),
+};
+
+consvar_t cv_supitbl[8] = {
+	UnsavedNetVar("SUPITBL0", "2").min_max(0, 50),
+	UnsavedNetVar("SUPITBL1", "1").min_max(0, 50),
+	UnsavedNetVar("SUPITBL2", "1").min_max(0, 50),
+	UnsavedNetVar("SUPITBL3", "1").min_max(0, 50),
+	UnsavedNetVar("SUPITBL4", "0").min_max(0, 50),
+	UnsavedNetVar("SUPITBL5", "0").min_max(0, 50),
+	UnsavedNetVar("SUPITBL6", "0").min_max(0, 50),
+	UnsavedNetVar("SUPITBL7", "0").min_max(0, 50),
+};
+
+consvar_t cv_kititbl[8] = {
+	UnsavedNetVar("KITITBL0", "0").min_max(0, 50),
+	UnsavedNetVar("KITITBL1", "0").min_max(0, 50),
+	UnsavedNetVar("KITITBL2", "0").min_max(0, 50),
+	UnsavedNetVar("KITITBL3", "0").min_max(0, 50),
+	UnsavedNetVar("KITITBL4", "0").min_max(0, 50),
+	UnsavedNetVar("KITITBL5", "0").min_max(0, 50),
+	UnsavedNetVar("KITITBL6", "0").min_max(0, 50),
+	UnsavedNetVar("KITITBL7", "0").min_max(0, 50),
+};
+
+consvar_t cv_dtgitbl[8] = {
+	UnsavedNetVar("DTGITBL0", "3").min_max(0, 50),
+	UnsavedNetVar("DTGITBL1", "0").min_max(0, 50),
+	UnsavedNetVar("DTGITBL2", "0").min_max(0, 50),
+	UnsavedNetVar("DTGITBL3", "0").min_max(0, 50),
+	UnsavedNetVar("DTGITBL4", "0").min_max(0, 50),
+	UnsavedNetVar("DTGITBL5", "0").min_max(0, 50),
+	UnsavedNetVar("DTGITBL6", "0").min_max(0, 50),
+	UnsavedNetVar("DTGITBL7", "0").min_max(0, 50),
+};
+
+consvar_t cv_gtpitbl[8] = {
+	UnsavedNetVar("GTPITBL0", "0").min_max(0, 50),
+	UnsavedNetVar("GTPITBL1", "0").min_max(0, 50),
+	UnsavedNetVar("GTPITBL2", "0").min_max(0, 50),
+	UnsavedNetVar("GTPITBL3", "0").min_max(0, 50),
+	UnsavedNetVar("GTPITBL4", "1").min_max(0, 50),
+	UnsavedNetVar("GTPITBL5", "2").min_max(0, 50),
+	UnsavedNetVar("GTPITBL6", "2").min_max(0, 50),
+	UnsavedNetVar("GTPITBL7", "0").min_max(0, 50),
+};
+
+consvar_t cv_gacitbl[8] = {
+	UnsavedNetVar("GACITBL0", "0").min_max(0, 50),
+	UnsavedNetVar("GACITBL1", "0").min_max(0, 50),
+	UnsavedNetVar("GACITBL2", "0").min_max(0, 50),
+	UnsavedNetVar("GACITBL3", "0").min_max(0, 50),
+	UnsavedNetVar("GACITBL4", "0").min_max(0, 50),
+	UnsavedNetVar("GACITBL5", "0").min_max(0, 50),
+	UnsavedNetVar("GACITBL6", "0").min_max(0, 50),
+	UnsavedNetVar("GACITBL7", "0").min_max(0, 50),
+};
+
+consvar_t cv_dsitbl[8] = {
+	UnsavedNetVar("DSITBL0", "0").min_max(0, 50),
+	UnsavedNetVar("DSITBL1", "0").min_max(0, 50),
+	UnsavedNetVar("DSITBL2", "1").min_max(0, 50),
+	UnsavedNetVar("DSITBL3", "2").min_max(0, 50),
+	UnsavedNetVar("DSITBL4", "2").min_max(0, 50),
+	UnsavedNetVar("DSITBL5", "1").min_max(0, 50),
+	UnsavedNetVar("DSITBL6", "0").min_max(0, 50),
+	UnsavedNetVar("DSITBL7", "0").min_max(0, 50),
+};
+
+consvar_t cv_tsitbl[8] = {
+	UnsavedNetVar("TSITBL0", "0").min_max(0, 50),
+	UnsavedNetVar("TSITBL1", "0").min_max(0, 50),
+	UnsavedNetVar("TSITBL2", "0").min_max(0, 50),
+	UnsavedNetVar("TSITBL3", "1").min_max(0, 50),
+	UnsavedNetVar("TSITBL4", "4").min_max(0, 50),
+	UnsavedNetVar("TSITBL5", "4").min_max(0, 50),
+	UnsavedNetVar("TSITBL6", "5").min_max(0, 50),
+	UnsavedNetVar("TSITBL7", "0").min_max(0, 50),
+};
+
+consvar_t cv_tbaitbl[8] = {
+	UnsavedNetVar("TBAITBL0", "0").min_max(0, 50),
+	UnsavedNetVar("TBAITBL1", "1").min_max(0, 50),
+	UnsavedNetVar("TBAITBL2", "1").min_max(0, 50),
+	UnsavedNetVar("TBAITBL3", "0").min_max(0, 50),
+	UnsavedNetVar("TBAITBL4", "0").min_max(0, 50),
+	UnsavedNetVar("TBAITBL5", "0").min_max(0, 50),
+	UnsavedNetVar("TBAITBL6", "0").min_max(0, 50),
+	UnsavedNetVar("TBAITBL7", "0").min_max(0, 50),
+};
+
+consvar_t cv_toritbl[8] = {
+	UnsavedNetVar("TORITBL0", "0").min_max(0, 50),
+	UnsavedNetVar("TORITBL1", "0").min_max(0, 50),
+	UnsavedNetVar("TORITBL2", "1").min_max(0, 50),
+	UnsavedNetVar("TORITBL3", "0").min_max(0, 50),
+	UnsavedNetVar("TORITBL4", "0").min_max(0, 50),
+	UnsavedNetVar("TORITBL5", "0").min_max(0, 50),
+	UnsavedNetVar("TORITBL6", "0").min_max(0, 50),
+	UnsavedNetVar("TORITBL7", "0").min_max(0, 50),
+};
+
+consvar_t cv_quoitbl[8] = {
+	UnsavedNetVar("QUOITBL0", "0").min_max(0, 50),
+	UnsavedNetVar("QUOITBL1", "0").min_max(0, 50),
+	UnsavedNetVar("QUOITBL2", "0").min_max(0, 50),
+	UnsavedNetVar("QUOITBL3", "1").min_max(0, 50),
+	UnsavedNetVar("QUOITBL4", "1").min_max(0, 50),
+	UnsavedNetVar("QUOITBL5", "0").min_max(0, 50),
+	UnsavedNetVar("QUOITBL6", "0").min_max(0, 50),
+	UnsavedNetVar("QUOITBL7", "0").min_max(0, 50),
+};
+
+consvar_t cv_djaitbl[8] = {
+	UnsavedNetVar("DJAITBL0", "0").min_max(0, 50),
+	UnsavedNetVar("DJAITBL1", "0").min_max(0, 50),
+	UnsavedNetVar("DJAITBL2", "1").min_max(0, 50),
+	UnsavedNetVar("DJAITBL3", "2").min_max(0, 50),
+	UnsavedNetVar("DJAITBL4", "1").min_max(0, 50),
+	UnsavedNetVar("DJAITBL5", "0").min_max(0, 50),
+	UnsavedNetVar("DJAITBL6", "0").min_max(0, 50),
+	UnsavedNetVar("DJAITBL7", "0").min_max(0, 50),
+};
+
+consvar_t cv_tgaitbl[8] = {
+	UnsavedNetVar("TGAITBL0", "0").min_max(0, 50),
+	UnsavedNetVar("TGAITBL1", "0").min_max(0, 50),
+	UnsavedNetVar("TGAITBL2", "0").min_max(0, 50),
+	UnsavedNetVar("TGAITBL3", "0").min_max(0, 50),
+	UnsavedNetVar("TGAITBL4", "0").min_max(0, 50),
+	UnsavedNetVar("TGAITBL5", "0").min_max(0, 50),
+	UnsavedNetVar("TGAITBL6", "0").min_max(0, 50),
+	UnsavedNetVar("TGAITBL7", "0").min_max(0, 50),
+};
 
 //Mechanics
 consvar_t cv_ng_fastfallbounce = UnsavedNetVar("ng_fastfallbounce", "On").values({

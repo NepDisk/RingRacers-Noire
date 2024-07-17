@@ -29,6 +29,8 @@ extern "C" {
 
 void N_DoHyudoroSteal(player_t *player);
 
+extern UINT8 N_NoireItemOddsRace[NUMKARTRESULTS-1][8];
+
 #ifdef __cplusplus
 } // extern "C"
 #endif

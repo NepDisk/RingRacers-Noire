@@ -54,9 +54,10 @@
 
 //Noire
 #include "noire/n_cvar.h"
+#include "noire/n_items.h"
 
 // Magic number distance for use with item roulette tiers
-#define DISTVAR (2048)
+#define DISTVAR (cv_distvar.value)
 
 // Distance when SPB can start appearing
 #define SPBSTARTDIST (8*DISTVAR)
@@ -709,6 +710,41 @@ INT32 K_KartGetItemOdds(const player_t *player, itemroulette_t *const roulette, 
 
 	fixed_t newOdds = 0;
 
+	// Hacky Bullshit oh boy :)))))))))))
+	UINT8 N_CustomItemOddsRace[NUMKARTRESULTS-1][8] =
+	{
+	{ cv_sitbl[1].value, cv_sitbl[2].value, cv_sitbl[3].value, cv_sitbl[4].value, cv_sitbl[5].value, cv_sitbl[6].value, cv_sitbl[7].value, cv_sitbl[8].value }, // Sneaker
+	{ cv_rsitbl[1].value, cv_rsitbl[2].value, cv_rsitbl[3].value, cv_rsitbl[4].value, cv_rsitbl[5].value, cv_rsitbl[6].value, cv_rsitbl[7].value, cv_rsitbl[8].value }, // Rocket Sneaker
+	{ cv_initbl[1].value, cv_initbl[2].value, cv_initbl[3].value, cv_initbl[4].value, cv_initbl[5].value, cv_initbl[6].value, cv_initbl[7].value, cv_initbl[8].value }, // Invincibility
+	{ cv_banitbl[1].value, cv_banitbl[2].value, cv_banitbl[3].value, cv_banitbl[4].value, cv_banitbl[5].value, cv_banitbl[6].value, cv_banitbl[7].value, cv_banitbl[8].value }, // Banana
+	{ cv_eggitbl[1].value, cv_eggitbl[2].value, cv_eggitbl[3].value, cv_eggitbl[4].value, cv_eggitbl[5].value, cv_eggitbl[6].value, cv_eggitbl[7].value, cv_eggitbl[8].value }, // Eggman Monitor
+	{ cv_orbitbl[1].value, cv_orbitbl[2].value, cv_orbitbl[3].value, cv_orbitbl[4].value, cv_orbitbl[5].value, cv_orbitbl[6].value, cv_orbitbl[7].value, cv_orbitbl[8].value }, // Orbinaut
+	{ cv_jawitbl[1].value, cv_jawitbl[2].value, cv_jawitbl[3].value, cv_jawitbl[4].value, cv_jawitbl[5].value, cv_jawitbl[6].value, cv_jawitbl[7].value, cv_jawitbl[8].value }, // Jawz
+	{ cv_minitbl[1].value, cv_minitbl[2].value, cv_minitbl[3].value, cv_minitbl[4].value, cv_minitbl[5].value, cv_minitbl[6].value, cv_minitbl[7].value, cv_minitbl[8].value }, // Mine
+	{ cv_lminitbl[1].value, cv_lminitbl[2].value, cv_lminitbl[3].value, cv_lminitbl[4].value, cv_lminitbl[5].value, cv_lminitbl[6].value, cv_lminitbl[7].value, cv_lminitbl[8].value }, // Land Mine
+	{ cv_balitbl[1].value, cv_balitbl[2].value, cv_balitbl[3].value, cv_balitbl[4].value, cv_balitbl[5].value, cv_balitbl[6].value, cv_balitbl[7].value, cv_balitbl[8].value }, // Ballhog
+	{ cv_spbitbl[1].value, cv_spbitbl[2].value, cv_spbitbl[3].value, cv_spbitbl[4].value, cv_spbitbl[5].value, cv_spbitbl[6].value, cv_spbitbl[7].value, cv_spbitbl[8].value }, // Self-Propelled Bomb
+	{ cv_groitbl[1].value, cv_groitbl[2].value, cv_groitbl[3].value, cv_groitbl[4].value, cv_groitbl[5].value, cv_groitbl[6].value, cv_groitbl[7].value, cv_groitbl[8].value }, // Grow
+	{ cv_shritbl[1].value, cv_shritbl[2].value, cv_shritbl[3].value, cv_shritbl[4].value, cv_shritbl[5].value, cv_shritbl[6].value, cv_shritbl[7].value, cv_shritbl[8].value }, // Shrink
+	{ cv_ligitbl[1].value, cv_ligitbl[2].value, cv_ligitbl[3].value, cv_ligitbl[4].value, cv_ligitbl[5].value, cv_ligitbl[6].value, cv_ligitbl[7].value, cv_ligitbl[8].value }, // Lightning Shield
+	{ cv_bubitbl[1].value, cv_bubitbl[2].value, cv_bubitbl[3].value, cv_bubitbl[4].value, cv_bubitbl[5].value, cv_bubitbl[6].value, cv_bubitbl[7].value, cv_bubitbl[8].value }, // Bubble Shield
+	{ cv_flmitbl[1].value, cv_flmitbl[2].value, cv_flmitbl[3].value, cv_flmitbl[4].value, cv_flmitbl[5].value, cv_flmitbl[6].value, cv_flmitbl[7].value, cv_flmitbl[8].value }, // Flame Shield
+	{ cv_hyuitbl[1].value, cv_hyuitbl[2].value, cv_hyuitbl[3].value, cv_hyuitbl[4].value, cv_hyuitbl[5].value, cv_hyuitbl[6].value, cv_hyuitbl[7].value, cv_hyuitbl[8].value }, // Hyudoro
+	{ cv_pogitbl[1].value, cv_pogitbl[2].value, cv_pogitbl[3].value, cv_pogitbl[4].value, cv_pogitbl[5].value, cv_pogitbl[6].value, cv_pogitbl[7].value, cv_pogitbl[8].value }, // Pogo Spring
+	{ cv_supitbl[1].value, cv_supitbl[2].value, cv_supitbl[3].value, cv_supitbl[4].value, cv_supitbl[5].value, cv_supitbl[6].value, cv_supitbl[7].value, cv_supitbl[8].value }, // Super Ring
+	{ cv_kititbl[1].value, cv_kititbl[2].value, cv_kititbl[3].value, cv_kititbl[4].value, cv_kititbl[5].value, cv_kititbl[6].value, cv_kititbl[7].value, cv_kititbl[8].value }, // Kitchen Sink
+	{ cv_dtgitbl[1].value, cv_dtgitbl[2].value, cv_dtgitbl[3].value, cv_dtgitbl[4].value, cv_dtgitbl[5].value, cv_dtgitbl[6].value, cv_dtgitbl[7].value, cv_dtgitbl[8].value }, // Drop Target
+	{ cv_gtpitbl[1].value, cv_gtpitbl[2].value, cv_gtpitbl[3].value, cv_gtpitbl[4].value, cv_gtpitbl[5].value, cv_gtpitbl[6].value, cv_gtpitbl[7].value, cv_gtpitbl[8].value }, // Garden Top
+	{ cv_gacitbl[1].value, cv_gacitbl[2].value, cv_gacitbl[3].value, cv_gacitbl[4].value, cv_gacitbl[5].value, cv_gacitbl[6].value, cv_gacitbl[7].value, cv_gacitbl[8].value }, // Gachabom
+	{ cv_dsitbl[1].value, cv_dsitbl[2].value, cv_dsitbl[3].value, cv_dsitbl[4].value, cv_dsitbl[5].value, cv_dsitbl[6].value, cv_dsitbl[7].value, cv_dsitbl[8].value }, // Sneaker x2
+	{ cv_tsitbl[1].value, cv_tsitbl[2].value, cv_tsitbl[3].value, cv_tsitbl[4].value, cv_tsitbl[5].value, cv_tsitbl[6].value, cv_tsitbl[7].value, cv_tsitbl[8].value }, // Sneaker x3
+	{ cv_tbaitbl[1].value, cv_tbaitbl[2].value, cv_tbaitbl[3].value, cv_tbaitbl[4].value, cv_tbaitbl[5].value, cv_tbaitbl[6].value, cv_tbaitbl[7].value, cv_tbaitbl[8].value }, // Banana x3
+	{ cv_toritbl[1].value, cv_toritbl[2].value, cv_toritbl[3].value, cv_toritbl[4].value, cv_toritbl[5].value, cv_toritbl[6].value, cv_toritbl[7].value, cv_toritbl[8].value }, // Orbinaut x3
+	{ cv_quoitbl[1].value, cv_quoitbl[2].value, cv_quoitbl[3].value, cv_quoitbl[4].value, cv_quoitbl[5].value, cv_quoitbl[6].value, cv_quoitbl[7].value, cv_quoitbl[8].value }, // Orbinaut x4
+	{ cv_djaitbl[1].value, cv_djaitbl[2].value, cv_djaitbl[3].value, cv_djaitbl[4].value, cv_djaitbl[5].value, cv_djaitbl[6].value, cv_djaitbl[7].value, cv_djaitbl[8].value }, // Jawz x2
+	{ cv_tgaitbl[1].value, cv_tgaitbl[2].value, cv_tgaitbl[3].value, cv_tgaitbl[4].value, cv_tgaitbl[5].value, cv_tgaitbl[6].value, cv_tgaitbl[7].value, cv_tgaitbl[8].value }  // Gachabom x3
+	};
+
 	I_Assert(item > KITEM_NONE); // too many off by one scenarioes.
 	I_Assert(item < NUMKARTRESULTS);
 
@@ -774,7 +810,12 @@ INT32 K_KartGetItemOdds(const player_t *player, itemroulette_t *const roulette, 
 	else
 	{
 		I_Assert(pos < 8); // Ditto
-		newOdds = K_KartItemOddsRace[item-1][pos];
+		if (cv_ng_noireodds.value == 2) // TODO: Custom odds not complete yet!
+			newOdds = N_CustomItemOddsRace[item-1][pos];
+		else if (cv_ng_noireodds.value == 1)
+			newOdds = N_NoireItemOddsRace[item-1][pos];
+		else
+			newOdds = K_KartItemOddsRace[item-1][pos];
 	}
 
 	newOdds <<= FRACBITS;
@@ -1234,7 +1275,8 @@ static void K_AddItemToReel(const player_t *player, itemroulette_t *const roulet
 	if (K_ItemEnabled(KITEM_SUPERRING) == true
 		&& player->rings <= 0
 		&& player->position == 1
-		&& (gametyperules & GTR_SPHERES) == 0)
+		&& (gametyperules & GTR_SPHERES) == 0
+		&& cv_ng_ringcap.value > 0)
 	{
 		K_PushToRouletteItemList(roulette, KITEM_SUPERRING);
 	}
