@@ -18,7 +18,7 @@ void N_DoHyudoroSteal(player_t *player)
 	INT32 playerswappable[MAXPLAYERS];
 	INT32 stealplayer = -1; // The player that's getting stolen from
 	INT32 prandom = 0;
-	boolean sink = P_RandomChance(PR_HYUDORO,FRACUNIT/64);
+	boolean sink = P_RandomChance(PR_ITEM_ROULETTE,FRACUNIT/64); // Figure out how to use PR_HYUDORO
 
 	for (i = 0; i < MAXPLAYERS; i++)
 	{
@@ -40,7 +40,7 @@ void N_DoHyudoroSteal(player_t *player)
 		}
 	}
 
-	prandom = P_RandomFixed(PR_HYUDORO);
+	prandom = P_RandomFixed(PR_ITEM_ROULETTE); // Figure out how to use PR_HYUDORO
 	S_StartSound(player->mo, sfx_s3k92);
 
 	if (sink && numplayers > 0 && cv_items[KITEM_KITCHENSINK].value) // BEHOLD THE KITCHEN SINK
