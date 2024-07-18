@@ -337,8 +337,8 @@ void N_GetKartBoostPower(player_t *player)
 
 	if (player->growshrinktimer > 0) // Grow
 	{
-		ADDBOOST(FloatToFixed(0.3),FloatToFixed(0.5),SLIPTIDEHANDLING/2,0);
-		ADDBOOST(0,0,0,FloatToFixed(-0.3));
+		ADDBOOST(FloatToFixed(0.1),FloatToFixed(0.4),2*SLIPTIDEHANDLING/5,0);
+		//ADDBOOST(0,0,0,FloatToFixed(-0.3));
 	}
 
 	if (player->flamedash) // Flame Shield dash
