@@ -43,6 +43,7 @@ extern menu_t OPTIONS_NoireGameplaySpindashDef;
 extern menu_t OPTIONS_NoireGameplayDrivingDef;
 extern menu_t OPTIONS_NoireGameplayBotsDef;
 extern menu_t OPTIONS_NoireGameplayRivalsDef;
+extern menu_t OPTIONS_NoireGameplayAttackDef;
 
 extern menuitem_t OPTIONS_Noire[];
 extern menu_t OPTIONS_NoireDef;

@@ -113,23 +113,20 @@ menuitem_t OPTIONS_NoireGameplayMechanics[] =
 	{IT_STRING | IT_SUBMENU, "Life Options...", "Adjust the behavior of the lives system.",
 		NULL, {.submenu = &OPTIONS_NoireGameplayLivesDef}, 0, 0},
 
+	{IT_STRING | IT_SUBMENU, "Attack Options...", "Adjust the behavior of sending and reciving damage.",
+		NULL, {.submenu = &OPTIONS_NoireGameplayAttackDef}, 0, 0},
+
 	{IT_NOTHING|IT_SPACE, NULL, NULL,
 		NULL, {NULL}, 0, 0},
+
+	{IT_STRING | IT_CVAR, "Fast Fall", "Enable or disable fast-falling.",
+		NULL, {.cvar = &cv_ng_fastfall}, 0, 0},
 
 	{IT_STRING | IT_CVAR, "Fast Fall Bounce", "Enable or disable the short bounce upon landing after fast-falling.",
 		NULL, {.cvar = &cv_ng_fastfallbounce}, 0, 0},
 
 	{IT_STRING | IT_CVAR, "Draft/Tether", "Enable or disable the 'tether' between racers, pulling racers behind.",
 		NULL, {.cvar = &cv_ng_draft}, 0, 0},
-
-	{IT_STRING | IT_CVAR, "Tumble", "Enable or disable tumbling.",
-		NULL, {.cvar = &cv_ng_tumble}, 0, 0},
-
-	{IT_STRING | IT_CVAR, "Stumble", "Enable or disable stumble, a weaker form of tumble where racers just get pushed away.",
-		NULL, {.cvar = &cv_ng_stumble}, 0, 0},
-
-	{IT_STRING | IT_CVAR, "Hitlag", "Enable or disable hitlag.",
-		NULL, {.cvar = &cv_ng_hitlag}, 0, 0},
 
 	{IT_STRING | IT_CVAR, "Map Anger", "Amount of times a map has to be ignored by everyone to vote itself.",
 		NULL, {.cvar = &cv_ng_mapanger}, 0, 0},
@@ -178,6 +175,24 @@ menuitem_t OPTIONS_NoireGameplaySpindash[] =
 
 	{IT_STRING | IT_CVAR, "Overheat", "Enable or disable overcharging spindash hurting racers.",
 		NULL, {.cvar = &cv_ng_spindashoverheat}, 0, 0},
+};
+
+///////////
+// ATTACKS
+///////////
+menuitem_t OPTIONS_NoireGameplayAttack[] =
+{
+	{IT_STRING | IT_CVAR, "Tumble", "Enable or disable tumbling.",
+		NULL, {.cvar = &cv_ng_tumble}, 0, 0},
+
+	{IT_STRING | IT_CVAR, "Stumble", "Enable or disable stumble, a weaker form of tumble where racers just get pushed away.",
+		NULL, {.cvar = &cv_ng_stumble}, 0, 0},
+
+	{IT_STRING | IT_CVAR, "Hitlag", "Enable or disable hitlag.",
+		NULL, {.cvar = &cv_ng_hitlag}, 0, 0},
+
+	{IT_STRING | IT_CVAR, "Combos", "Enable or disable hit combos.",
+		NULL, {.cvar = &cv_ng_combo}, 0, 0},
 };
 
 ///////////
@@ -596,6 +611,24 @@ menu_t OPTIONS_NoireGameplayRivalsDef = {
 	&OPTIONS_NoireGameplayBotsDef,
 	0,
 	OPTIONS_NoireGameplayRivals,
+	48, 80,
+	SKINCOLOR_BLACK, 0,
+	MBF_DRAWBGWHILEPLAYING,
+	NULL,
+	2, 5,
+	M_DrawGenericOptions,
+	M_DrawOptionsCogs,
+	M_OptionsTick,
+	NULL,
+	NULL,
+	NULL,
+};
+
+menu_t OPTIONS_NoireGameplayAttackDef = {
+	sizeof (OPTIONS_NoireGameplayAttack) / sizeof (menuitem_t),
+	&OPTIONS_NoireGameplayMechanicsDef,
+	0,
+	OPTIONS_NoireGameplayAttack,
 	48, 80,
 	SKINCOLOR_BLACK, 0,
 	MBF_DRAWBGWHILEPLAYING,

@@ -67,11 +67,13 @@ extern consvar_t cv_toritbl[8]; extern consvar_t cv_quoitbl[8];
 extern consvar_t cv_djaitbl[8]; extern consvar_t cv_tgaitbl[8];
 
 //Mechanics
+extern consvar_t cv_ng_fastfall;
 extern consvar_t cv_ng_fastfallbounce;
 extern consvar_t cv_ng_draft;
 extern consvar_t cv_ng_tumble;
 extern consvar_t cv_ng_stumble;
 extern consvar_t cv_ng_hitlag;
+extern consvar_t cv_ng_combo;
 extern consvar_t cv_ng_mapanger;
 extern consvar_t cv_ng_tripwires;
 extern consvar_t cv_ng_lives;

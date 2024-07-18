@@ -3142,6 +3142,16 @@ boolean P_DamageMobj(mobj_t *target, mobj_t *inflictor, mobj_t *source, INT32 da
 						}
 					}
 
+					if ((!cv_ng_combo.value) && ((type == DMG_NORMAL) || (type == DMG_WIPEOUT) || (type == DMG_VOLTAGE) || (type == DMG_STING) || (type == DMG_WOMBO))) // No combos pls thx
+					{
+						if (player->spinouttimer > 0)
+						{
+							K_DoInstashield(player);
+							//CONS_Printf("is this shit even working....\n");
+							return false;
+						}
+					}
+
 					if (allowcombo == false && (target->eflags & MFE_PAUSED))
 					{
 						return false;

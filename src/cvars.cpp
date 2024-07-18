@@ -1201,6 +1201,7 @@ consvar_t cv_tgaitbl[8] = {
 };
 
 //Mechanics
+consvar_t cv_ng_fastfall = UnsavedNetVar("ng_fastfall", "On").on_off();
 consvar_t cv_ng_fastfallbounce = UnsavedNetVar("ng_fastfallbounce", "On").values({
 	{0, "Off"},
 	{1, "Bubble Shield"},
@@ -1210,6 +1211,7 @@ consvar_t cv_ng_draft = UnsavedNetVar("ng_draft", "On").on_off();
 consvar_t cv_ng_tumble = UnsavedNetVar("ng_tumble", "On").on_off();
 consvar_t cv_ng_stumble = UnsavedNetVar("ng_stumble", "On").on_off();
 consvar_t cv_ng_hitlag = UnsavedNetVar("ng_hitlag", "On").on_off();
+consvar_t cv_ng_combo = UnsavedNetVar("ng_combo", "On").on_off();
 consvar_t cv_ng_mapanger = UnsavedNetVar("ng_mapanger", "Default (2)").min_max(0, INT32_MAX, {{-1, "Disabled"}, {2, "Default (2)"}});
 consvar_t cv_ng_tripwires = UnsavedNetVar("ng_tripwires", "On").on_off().onchange_noinit(NG_Generic_OnChange);
 void NG_ForceNoPosition_OnChange(void);

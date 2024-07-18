@@ -11924,6 +11924,17 @@ void K_KartEbrakeVisuals(player_t *p)
 	mobj_t *spdl;
 	fixed_t sx, sy;
 
+	if (!cv_ng_fastfall.value && !P_IsObjectOnGround(p->mo))
+	{
+		// remove the bubble instantly unless it's in the !? state
+		if (p->mo->hprev && !P_MobjWasRemoved(p->mo->hprev) && (p->mo->hprev->frame & FF_FRAMEMASK) != 5)
+		{
+			P_RemoveMobj(p->mo->hprev);
+			P_SetTarget(&p->mo->hprev, NULL);
+		}
+		return;
+	}
+
 	if (K_PlayerEBrake(p) == true)
 	{
 		if (p->ebrakefor % 20 == 0)
@@ -12001,7 +12012,7 @@ void K_KartEbrakeVisuals(player_t *p)
 			if (p->mo->hprev && !P_MobjWasRemoved(p->mo->hprev))
 			{
 				const INT16 overcharge = (p->spindash - MAXCHARGETIME);
-				const boolean desperation = (p->rings <= 0); // desperation spindash
+				const boolean desperation = (p->rings <= 0 && (cv_ng_ringcap.value > 0)); // desperation spindash
 
 				UINT8 frame = min(1 + ((p->spindash*3) / MAXCHARGETIME), 4);
 
@@ -12222,6 +12233,12 @@ static void K_KartSpindash(player_t *player)
 
 	}
 
+	if (!cv_ng_fastfall.value)
+	{
+		player->fastfall = 0;
+		player->pflags |= PF_NOFASTFALL;
+	}
+
 	// Handle fast falling behaviors first.
 	if (player->respawn.state != RESPAWNST_NONE)
 	{
@@ -12270,7 +12287,7 @@ static void K_KartSpindash(player_t *player)
 
 			INT16 chargetime = MAXCHARGETIME - ++player->spindash;
 
-			if (player->rings <= 0 && chargetime >= 0) // Desperation spindash
+			if (player->rings <= 0 && chargetime >= 0 && (cv_ng_ringcap.value > 0)) // Desperation spindash
 			{
 				player->spindash++;
 				if (!S_SoundPlaying(player->mo, sfx_kc38))
