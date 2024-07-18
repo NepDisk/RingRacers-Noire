@@ -46,6 +46,7 @@ extern consvar_t cv_ng_oldhyudoro;
 extern consvar_t cv_ng_oldballhog;
 extern consvar_t cv_ng_oldspb;
 extern consvar_t cv_ng_noireodds;
+extern consvar_t cv_ng_forceautoroulette;
 
 extern consvar_t cv_distvar;
 // Itemtable hell
@@ -99,6 +100,9 @@ extern consvar_t cv_ng_turnstyle;
 extern consvar_t cv_ng_oldpogooverride;
 extern consvar_t cv_ng_underwaterhandling;
 extern consvar_t cv_ng_nophysicsflag;
+extern consvar_t cv_ng_oldboostpower;
+extern consvar_t cv_ng_oldspeedcalc;
+extern consvar_t cv_ng_airspeedcap;
 
 //Bots
 extern consvar_t cv_ng_botrubberbandboost;
@@ -119,6 +123,7 @@ void NG_OldPogoOverride_OnChange(void);
 void NG_Rivals_OnChange(void);
 void ColorHUD_OnChange(void);
 void NG_ForceNoPosition_OnChange(void);
+void NG_SRB2KartMovement_OnChange(void);
 
 #ifdef __cplusplus
 } // extern "C"

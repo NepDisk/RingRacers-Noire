@@ -77,6 +77,7 @@
 // Noire
 #include "noire/n_cvar.h"
 #include "noire/n_control.h"
+#include "noire/n_boosts.h"
 #include "noire/n_soc.h"
 
 #ifdef HWRENDER
@@ -2034,70 +2035,159 @@ static void P_3dMovement(player_t *player)
 	// Do not let the player control movement if not onground.
 	onground = P_IsObjectOnGround(player->mo) || player->pogoSpringJumped; //NOIRE: Readd the extra condition that Kart had for springs
 
-	K_AdjustPlayerFriction(player);
+	if (!cv_ng_oldspeedcalc.value)
+		K_AdjustPlayerFriction(player);
 
 	// Forward movement
 	// If the player isn't on the ground, there is no change in speed
 	// Smiley Face
-	if (onground)
+	if (cv_ng_oldspeedcalc.value)
 	{
-		movepushforward = K_3dKartMovement(player);
-
-		if (player->mo->movefactor != FRACUNIT) // Friction-scaled acceleration...
-			movepushforward = FixedMul(movepushforward, player->mo->movefactor);
-
-		if (player->curshield != KSHIELD_TOP)
+		// Forward movement
+		if (!((player->exiting || mapreset) || (P_PlayerInPain(player) && !onground)))
 		{
-			INT32 a = K_GetUnderwaterTurnAdjust(player);
-			INT32 adj = 0;
+			movepushforward = N_3dKartMovement(player);
 
-			if (a)
+			// allow very small movement while in air for gameplay
+			if (!onground)
+				movepushforward >>= 2; // proper air movement
+
+			if (player->mo->movefactor != FRACUNIT) // Friction-scaled acceleration...
+				movepushforward = FixedMul(movepushforward, player->mo->movefactor);
+
+			if (player->cmd.buttons & BT_BRAKE && !K_GetForwardMove(player)) // SRB2kart - braking isn't instant
+				movepushforward /= 64;
+
+			if (K_GetForwardMove(player) > 0)
+				player->brakestop = 0;
+			else if (player->brakestop < 6) // Don't start reversing with brakes until you've made a stop first
 			{
-				const fixed_t maxadj = ANG10/4;
-
-				adj = a / 4;
-
-				if (adj > 0)
-				{
-					if (adj > maxadj)
-						adj = maxadj;
-				}
-				else if (adj < 0)
-				{
-					if (adj < -(maxadj))
-						adj = -(maxadj);
-				}
-
-				if (abs(player->underwatertilt + adj) > abs(a))
-					adj = (a - player->underwatertilt);
-
-				if (abs(a) < abs(player->underwatertilt))
-					adj = 0;
-
-				movepushangle += a;
+				if (player->speed < 8*FRACUNIT)
+					player->brakestop++;
+				movepushforward = 0;
 			}
 
-			if (adj)
+			if (player->curshield != KSHIELD_TOP)
 			{
-				player->underwatertilt += adj;
+				INT32 a = K_GetUnderwaterTurnAdjust(player);
+				INT32 adj = 0;
 
-				if (abs(player->underwatertilt) > ANG30)
+				if (a)
+				{
+					const fixed_t maxadj = ANG10/4;
+
+					adj = a / 4;
+
+					if (adj > 0)
+					{
+						if (adj > maxadj)
+							adj = maxadj;
+					}
+					else if (adj < 0)
+					{
+						if (adj < -(maxadj))
+							adj = -(maxadj);
+					}
+
+					if (abs(player->underwatertilt + adj) > abs(a))
+						adj = (a - player->underwatertilt);
+
+					if (abs(a) < abs(player->underwatertilt))
+						adj = 0;
+
+					movepushangle += a;
+				}
+
+				if (adj)
+				{
+					player->underwatertilt += adj;
+
+					if (abs(player->underwatertilt) > ANG30)
+					{
+						player->underwatertilt =
+							player->underwatertilt > 0 ? ANG30
+							: -(ANG30);
+					}
+				}
+				else
 				{
 					player->underwatertilt =
-						player->underwatertilt > 0 ? ANG30
-						: -(ANG30);
+						FixedMul(player->underwatertilt,
+								7*FRACUNIT/8);
 				}
 			}
-			else
-			{
-				player->underwatertilt =
-					FixedMul(player->underwatertilt,
-							7*FRACUNIT/8);
-			}
-		}
 
-		totalthrust.x += P_ReturnThrustX(player->mo, movepushangle, movepushforward);
-		totalthrust.y += P_ReturnThrustY(player->mo, movepushangle, movepushforward);
+			totalthrust.x += P_ReturnThrustX(player->mo, movepushangle, movepushforward);
+			totalthrust.y += P_ReturnThrustY(player->mo, movepushangle, movepushforward);
+		}
+		else if (!(player->spinouttimer))
+		{
+			K_MomentumToFacing(player);
+		}
+	}
+	else
+	{
+
+		if (onground)
+		{
+			movepushforward = K_3dKartMovement(player);
+
+			if (player->mo->movefactor != FRACUNIT) // Friction-scaled acceleration...
+				movepushforward = FixedMul(movepushforward, player->mo->movefactor);
+
+			if (player->curshield != KSHIELD_TOP)
+			{
+				INT32 a = K_GetUnderwaterTurnAdjust(player);
+				INT32 adj = 0;
+
+				if (a)
+				{
+					const fixed_t maxadj = ANG10/4;
+
+					adj = a / 4;
+
+					if (adj > 0)
+					{
+						if (adj > maxadj)
+							adj = maxadj;
+					}
+					else if (adj < 0)
+					{
+						if (adj < -(maxadj))
+							adj = -(maxadj);
+					}
+
+					if (abs(player->underwatertilt + adj) > abs(a))
+						adj = (a - player->underwatertilt);
+
+					if (abs(a) < abs(player->underwatertilt))
+						adj = 0;
+
+					movepushangle += a;
+				}
+
+				if (adj)
+				{
+					player->underwatertilt += adj;
+
+					if (abs(player->underwatertilt) > ANG30)
+					{
+						player->underwatertilt =
+							player->underwatertilt > 0 ? ANG30
+							: -(ANG30);
+					}
+				}
+				else
+				{
+					player->underwatertilt =
+						FixedMul(player->underwatertilt,
+								7*FRACUNIT/8);
+				}
+			}
+
+			totalthrust.x += P_ReturnThrustX(player->mo, movepushangle, movepushforward);
+			totalthrust.y += P_ReturnThrustY(player->mo, movepushangle, movepushforward);
+		}
 	}
 
 	N_PogoSidemove(player);
@@ -2151,9 +2241,9 @@ static void P_3dMovement(player_t *player)
 		player->topdriftheld = 0;/* reset after release */
 	}
 
-	if (!onground)
+	if (!onground && (cv_ng_airspeedcap.value > 0) && !cv_ng_oldspeedcalc.value)
 	{
-		const fixed_t airspeedcap = (50*mapobjectscale);
+		const fixed_t airspeedcap = (cv_ng_airspeedcap.value*mapobjectscale);
 		const fixed_t speed = R_PointToDist2(0, 0, player->mo->momx, player->mo->momy);
 
 		// If you're going too fast in the air, ease back down to a certain speed.
@@ -2194,14 +2284,14 @@ static void P_3dMovement(player_t *player)
 	// Only do this forced cap of speed when in midair, the kart acceleration code takes into account friction, and
 	// doesn't let you accelerate past top speed, so this is unnecessary on the ground, but in the air is needed to
 	// allow for being able to change direction on spring jumps without being accelerated into the void - Sryder
-	if (!P_IsObjectOnGround(player->mo))
+
+	if (cv_ng_oldspeedcalc.value)
 	{
-		fixed_t topspeed = K_GetKartSpeed(player, true, true);
 		newMagnitude = R_PointToDist2(player->mo->momx - player->cmomx, player->mo->momy - player->cmomy, 0, 0);
-		if (newMagnitude > topspeed)
+		if (newMagnitude > N_GetKartSpeed(player, true, true)) //topspeed)
 		{
 			fixed_t tempmomx, tempmomy;
-			if (oldMagnitude > topspeed)
+			if (oldMagnitude > N_GetKartSpeed(player, true, true) && onground) // SRB2Kart: onground check for air speed cap
 			{
 				if (newMagnitude > oldMagnitude)
 				{
@@ -2214,10 +2304,41 @@ static void P_3dMovement(player_t *player)
 			}
 			else
 			{
-				tempmomx = FixedMul(FixedDiv(player->mo->momx - player->cmomx, newMagnitude), topspeed);
-				tempmomy = FixedMul(FixedDiv(player->mo->momy - player->cmomy, newMagnitude), topspeed);
+				tempmomx = FixedMul(FixedDiv(player->mo->momx - player->cmomx, newMagnitude), N_GetKartSpeed(player, true, true)); //topspeed)
+				tempmomy = FixedMul(FixedDiv(player->mo->momy - player->cmomy, newMagnitude), N_GetKartSpeed(player, true, true)); //topspeed)
 				player->mo->momx = tempmomx + player->cmomx;
 				player->mo->momy = tempmomy + player->cmomy;
+			}
+		}
+	}
+	else
+	{
+
+		if (!P_IsObjectOnGround(player->mo))
+		{
+			fixed_t topspeed = K_GetKartSpeed(player, true, true);
+			newMagnitude = R_PointToDist2(player->mo->momx - player->cmomx, player->mo->momy - player->cmomy, 0, 0);
+			if (newMagnitude > topspeed)
+			{
+				fixed_t tempmomx, tempmomy;
+				if (oldMagnitude > topspeed)
+				{
+					if (newMagnitude > oldMagnitude)
+					{
+						tempmomx = FixedMul(FixedDiv(player->mo->momx - player->cmomx, newMagnitude), oldMagnitude);
+						tempmomy = FixedMul(FixedDiv(player->mo->momy - player->cmomy, newMagnitude), oldMagnitude);
+						player->mo->momx = tempmomx + player->cmomx;
+						player->mo->momy = tempmomy + player->cmomy;
+					}
+					// else do nothing
+				}
+				else
+				{
+					tempmomx = FixedMul(FixedDiv(player->mo->momx - player->cmomx, newMagnitude), topspeed);
+					tempmomy = FixedMul(FixedDiv(player->mo->momy - player->cmomy, newMagnitude), topspeed);
+					player->mo->momx = tempmomx + player->cmomx;
+					player->mo->momy = tempmomy + player->cmomy;
+				}
 			}
 		}
 	}
@@ -2594,6 +2715,8 @@ void P_MovePlayer(player_t *player)
 
 		player->mo->rollangle = 0;
 	}
+	if (cv_ng_oldspeedcalc.value)
+		player->mo->movefactor = FRACUNIT; // We're not going to do any more with this, so let's change it back for the next frame.
 
 	//{ SRB2kart
 

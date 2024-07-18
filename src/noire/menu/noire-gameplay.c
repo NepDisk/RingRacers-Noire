@@ -77,6 +77,9 @@ menuitem_t OPTIONS_NoireGameplayItems[] =
 	{IT_STRING | IT_CVAR, "Capsules", "Enable or disable Item Capsules appearance in tracks.",
 		NULL, {.cvar = &cv_ng_capsules}, 0, 0},
 
+	{IT_STRING | IT_CVAR, "Force Autoroulette", "Forces everyone regardless of profile settings to use Autoroulette.",
+		NULL, {.cvar = &cv_ng_forceautoroulette}, 0, 0},
+
 	{IT_STRING | IT_CVAR, "Item Odds", "Odds to use for race mode. Noire or Custom recommended for revert toggles!",
 		NULL, {.cvar = &cv_ng_noireodds}, 0, 0},
 
@@ -199,6 +202,15 @@ menuitem_t OPTIONS_NoireGameplayDriving[] =
 
 	{IT_STRING | IT_CVAR, "No Physics Flag SLope Launch", "Consider the 'No Physics' flag on slopes, launching racers or not.",
 		NULL, {.cvar = &cv_ng_nophysicsflag}, 0, 0},
+
+	{IT_STRING | IT_CVAR, "Air-speed cap", "Modify the air-speed cap. 75 is recommended for SRB2Kart Movement",
+		NULL, {.cvar = &cv_ng_airspeedcap}, 0, 0},
+
+	{IT_STRING | IT_CVAR, "SRB2Kart Movement", "Use the SRB2Kart speed calcs and the speed-cap. Gear speeds are like SRB2Kart.",
+		NULL, {.cvar = &cv_ng_oldspeedcalc}, 0, 0},
+
+	{IT_STRING | IT_CVAR, "Neptune Boostpower", "Use speed values for boosts inspired by SRB2Kart Neptune.",
+		NULL, {.cvar = &cv_ng_oldboostpower}, 0, 0},
 
 	/*{IT_STRING | IT_CVAR, "Old Pogo Override", "Should flat spring objects/panels act like SRB2Kart pogo springs?",
 		NULL, {.cvar = &cv_ng_oldpogooverride}, 0, 0},*/ // TODO: Fix this, its currently broken but the pogo springs terrain is fine?
@@ -380,6 +392,23 @@ void NG_ForceNoPosition_OnChange(void)
 		M_StartMessage(
 			"WARNING!",
 			M_GetText("It is recommended to use SOC value\n\"LegacyStart = True\" instead of this convar.\nSome maps may break.\n\nEnable at your own risk!"),
+			NULL,
+			MM_NOTHING,
+			NULL,
+			NULL
+		);
+		displayedWarning = true;
+	}
+}
+
+void NG_SRB2KartMovement_OnChange(void)
+{
+	static boolean displayedWarning = false;
+	if (!displayedWarning && menuactive)
+	{
+		M_StartMessage(
+			"WARNING!",
+			M_GetText("This changes how the air-speed and ground-speed caps works.\nGround thrusts will be slower and max speed is handled by the cap.\nSome maps may break and the Garden Top will be slower.\n\nEnable at your own risk!"),
 			NULL,
 			MM_NOTHING,
 			NULL,

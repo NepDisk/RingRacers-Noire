@@ -27,10 +27,13 @@
 extern "C" {
 #endif
 
-fixed_t N_GetKartSpeed(player_t *player, boolean doboostpower);
-fixed_t N_GetKartAccel(player_t *player);
+fixed_t N_GetKartSpeedFromStat(UINT8 kartspeed);
+fixed_t N_GetKartSpeed(const player_t *player, boolean doboostpower, boolean notused);
+fixed_t N_GetKartAccel(const player_t *player);
 void N_GetKartBoostPower(player_t *player);
-fixed_t N_3dKartMovement(const player_t *player, fixed_t forwardmove);
+fixed_t N_GetNewSpeed(const player_t *player);
+fixed_t N_3dKartMovement(const player_t *player);
+void N_AdjustPlayerFriction(player_t *player, boolean onground);
 
 #ifdef __cplusplus
 } // extern "C"

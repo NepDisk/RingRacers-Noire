@@ -18,6 +18,7 @@
 // too short than one file that's too massive.
 
 #include "k_kart.h"
+#include "d_player.h"
 #include "k_battle.h"
 #include "k_pwrlv.h"
 #include "k_color.h"
@@ -3717,6 +3718,9 @@ fixed_t K_GetKartSpeedFromStat(UINT8 kartspeed)
 	fixed_t k_speed = 148;
 	fixed_t finalspeed;
 
+	if (cv_ng_oldspeedcalc.value)
+		return N_GetKartSpeedFromStat(kartspeed);
+
 	k_speed += kartspeed*4; // 152 - 184
 
 	finalspeed = FixedMul(k_speed<<14, g_cc);
@@ -3728,6 +3732,9 @@ fixed_t K_GetKartSpeed(const player_t *player, boolean doboostpower, boolean dor
 	const boolean mobjValid = (player->mo != NULL && P_MobjWasRemoved(player->mo) == false);
 	const fixed_t physicsScale = mobjValid ? K_GrowShrinkSpeedMul(player) : FRACUNIT;
 	fixed_t finalspeed = 0;
+
+	if (cv_ng_oldspeedcalc.value)
+		return N_GetKartSpeed(player, doboostpower, dorubberband);
 
 	if (K_PodiumSequence() == true)
 	{
@@ -3792,6 +3799,9 @@ fixed_t K_GetKartAccel(const player_t *player)
 {
 	fixed_t k_accel = 121;
 	UINT8 stat = (9 - player->kartspeed);
+
+	if (cv_ng_oldspeedcalc.value)
+		return N_GetKartAccel(player);
 
 	if (K_PodiumSequence() == true)
 	{
@@ -3944,6 +3954,9 @@ fixed_t K_GetNewSpeed(const player_t *player)
 
 	fixed_t newspeed, oldspeed, finalspeed;
 
+	if (cv_ng_oldspeedcalc.value)
+		return N_GetNewSpeed(player);
+
 	if (player->curshield == KSHIELD_TOP)
 	{
 		p_speed = 15 * p_speed / 10;
@@ -3994,6 +4007,9 @@ fixed_t K_3dKartMovement(const player_t *player)
 
 	fixed_t movemul = FRACUNIT;
 	SINT8 forwardmove = K_GetForwardMove(player);
+
+	if (cv_ng_oldspeedcalc.value)
+		return N_3dKartMovement(player);
 
 	movemul = abs(forwardmove * FRACUNIT) / 50;
 
@@ -8779,7 +8795,11 @@ void K_KartPlayerThink(player_t *player, ticcmd_t *cmd)
 	if (!player->spinouttimer && !player->wipeoutslow)
 		player->boostangle = player->mo->angle;
 
-	K_GetKartBoostPower(player);
+
+	if (cv_ng_oldboostpower.value)
+		N_GetKartBoostPower(player);
+	else
+		K_GetKartBoostPower(player);
 
 	// Special effect objects!
 	if (player->mo && !player->spectator)
@@ -9379,6 +9399,9 @@ void K_KartPlayerThink(player_t *player, ticcmd_t *cmd)
 	if (player->hyudorotimer)
 		player->hyudorotimer--;
 
+	if (cv_ng_oldspeedcalc.value)
+		N_AdjustPlayerFriction(player, onground);
+
 	if (player->bumpUnstuck > 30*5)
 	{
 		player->bumpUnstuck = 0;
@@ -9767,6 +9790,9 @@ void K_KartPlayerThink(player_t *player, ticcmd_t *cmd)
 
 	// Roulette Code
 	K_KartItemRoulette(player, cmd);
+
+	if (cv_ng_forceautoroulette.value)
+		player->pflags |= PF_AUTOROULETTE;
 
 	// Handle invincibility sfx
 	K_UpdateInvincibilitySounds(player); // Also thanks, VAda!

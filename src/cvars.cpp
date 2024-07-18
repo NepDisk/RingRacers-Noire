@@ -865,6 +865,8 @@ consvar_t cv_ng_noireodds = UnsavedNetVar("ng_itemodds", "Ring Racers").values({
 	{2, "Custom"},
 });
 
+consvar_t cv_ng_forceautoroulette = UnsavedNetVar("ng_forceautoroulette", "Off").on_off();
+
 consvar_t cv_distvar = UnsavedNetVar("ng_itemoddsdistvar", "2048").min_max(0, INT32_MAX);
 
 // Odds Table Hell
@@ -1252,6 +1254,9 @@ consvar_t cv_ng_turnstyle = UnsavedNetVar("ng_turnstyle", "Vanilla").values({
 consvar_t cv_ng_underwaterhandling = UnsavedNetVar("ng_underwaterhandling", "On").on_off();
 consvar_t cv_ng_oldpogooverride = UnsavedNetVar("ng_oldpogooverride", "Off").on_off().onchange_noinit(NG_OldPogoOverride_OnChange);
 consvar_t cv_ng_nophysicsflag = UnsavedNetVar("ng_nophysicsflag", "Off").on_off();
+consvar_t cv_ng_oldboostpower = UnsavedNetVar("ng_neptuneboostpower", "Off").on_off();
+consvar_t cv_ng_oldspeedcalc = UnsavedNetVar("ng_srb2kartmovement", "Off").on_off().onchange_noinit(NG_SRB2KartMovement_OnChange);
+consvar_t cv_ng_airspeedcap = UnsavedNetVar("cv_ng_airspeedcap", "Default (50)").min_max(0, 100, {{0, "Off"}, {50, "Default (50)"}, {75, "SRB2Kart (75)"}});
 
 //Bots
 consvar_t cv_ng_botrubberbandboost = UnsavedNetVar("ng_botrubberbandboost", "On").on_off();
