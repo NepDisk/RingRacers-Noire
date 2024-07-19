@@ -42,6 +42,7 @@
 
 // Noire
 #include "noire/n_cvar.h"
+#include "noire/n_control.h"
 
 extern "C" consvar_t cv_1pswap;
 
@@ -199,12 +200,12 @@ class TiccmdBuilder
 
 		while (realtics > 0)
 		{
-			INT32& steering = localsteering[forplayer()];
+				INT32& steering = localsteering[forplayer()];
 
-			steering = K_UpdateSteeringValue(steering, cmd->turning);
-			angleChange = K_GetKartTurnValue(player(), steering) << TICCMD_REDUCE;
+				steering = K_UpdateSteeringValue(steering, cmd->turning);
+				angleChange = K_GetKartTurnValue(player(), steering) << TICCMD_REDUCE;
 
-			realtics--;
+				realtics--;
 		}
 
 #if 0
@@ -222,7 +223,10 @@ class TiccmdBuilder
 			{
 				if (displayplayers[i] == p)
 				{
-					localangle[i] += angleChange;
+					/*if (cv_ng_turnstyle.value == 0)
+						localangle[i] += (angleChange<<16);
+					else*/
+						localangle[i] += angleChange;
 				}
 			}
 		}
@@ -477,7 +481,7 @@ public:
 
 		hook();
 
-		if (cv_ng_turnstyle.value != 0)
+		if (!(cv_ng_turnstyle.value == 0 || cv_ng_turnstyle.value == 1))
 			angle_prediction();
 	}
 };

@@ -12595,16 +12595,19 @@ void K_AdjustPlayerFriction(player_t *player)
 	}
 	*/
 
-	// Water gets ice physics too
-	if ((player->mo->eflags & MFE_TOUCHWATER) &&
-			!player->offroad)
+	if (cv_ng_underwaterhandling.value)
 	{
-		player->mo->friction += 614;
-	}
-	else if ((player->mo->eflags & MFE_UNDERWATER))
-	{
-		if (!K_Sliptiding(player))
-			player->mo->friction += 312;
+		// Water gets ice physics too
+		if ((player->mo->eflags & MFE_TOUCHWATER) &&
+				!player->offroad)
+		{
+			player->mo->friction += 614;
+		}
+		else if ((player->mo->eflags & MFE_UNDERWATER))
+		{
+			if (!K_Sliptiding(player))
+				player->mo->friction += 312;
+		}
 	}
 
 	// Wipeout slowdown

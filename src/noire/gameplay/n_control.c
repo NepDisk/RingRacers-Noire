@@ -44,50 +44,130 @@ void N_UpdatePlayerAngle(player_t* player)
 	}
 }
 
-void KV1_UpdatePlayerAngle(player_t *player)
+/*void KV1_UpdatePlayerAngle(player_t *player)
 {
 	INT16 angle_diff, max_left_turn, max_right_turn;
 	boolean add_delta = true;
-
+	fixed_t currentSpeed = 0;
 	ticcmd_t *cmd = &player->cmd;
-	player->steering = cmd->turning;
-	int i;
+	UINT8 i, p = UINT8_MAX;
 
-	player->angleturn = N_GetKartTurnValue(player, cmd->turning);
-
-	for (i = 0; i <= r_splitscreen; i++)
+	for (i = 0; i <= splitscreen; i++)
 	{
-		if (player == &players[displayplayers[i]])
+		if (player == &players[g_localplayers[i]])
 		{
-			localangle[i] += (player->angleturn<<TICCMD_REDUCE);
-			player->angleturn = (INT16)(localangle[i] >> TICCMD_REDUCE);
-
-			D_ResetTiccmdAngle(i, player->angleturn<<TICCMD_REDUCE);
-			localsteering[i] = localangle[i];
+			p = i;
 			break;
 		}
 	}
 
+	player->steering = cmd->turning; // Set this so functions that rely on steering still work.
+	currentSpeed = R_PointToDist2(0, 0, player->mo->momx, player->mo->momy);
+
 	// Kart: store the current turn range for later use
-	if (((player->mo && player->speed > 0) // Moving
-		|| (leveltime > starttime && (cmd->buttons & BT_ACCELERATE && cmd->buttons & BT_BRAKE)) // Rubber-burn turn
-		|| (player->respawn.state == RESPAWNST_DROP) // Respawning
-		|| (player->spectator || objectplacing)) // Not a physical player
-		)
+	if ((currentSpeed <= 0) // Not moving
+	&& (K_PressingEBrake(player) == false) // Not e-braking
+	&& (player->respawn.state == RESPAWNST_NONE) // Not respawning
+	&& (player->curshield != KSHIELD_TOP) // Not riding a Top
+	&& (P_IsObjectOnGround(player->mo) == true)) // On the ground
+	{
+		player->lturn_max[leveltime%MAXPREDICTTICS] = player->rturn_max[leveltime%MAXPREDICTTICS] = 0;
+	}
+	else
 	{
 		player->lturn_max[leveltime%MAXPREDICTTICS] = N_GetKartTurnValue(player, KART_FULLTURN)+1;
 		player->rturn_max[leveltime%MAXPREDICTTICS] = N_GetKartTurnValue(player, -KART_FULLTURN)-1;
-	} else {
-		player->lturn_max[leveltime%MAXPREDICTTICS] = player->rturn_max[leveltime%MAXPREDICTTICS] = 0;
 	}
 
-	// KART: Don't directly apply angleturn! It may have been either A) forged by a malicious client, or B) not be a smooth turn due to a player dropping frames.
-	// Instead, turn the player only up to the amount they're supposed to turn accounting for latency. Allow exactly 1 extra turn unit to try to keep old replays synced.
-	angle_diff = player->angleturn - (player->mo->angle>>16);
+
+	// KART: Don't directly apply angle! It may have been either A) forged by a malicious client, or B) not be a smooth turn due to a player dropping frames.
+	// Instead, turn the player only up to the amount they're supposed to turn accounting for latency. Allow exactly 1 extra turn unit
+	angle_diff = cmd->angle - (player->mo->angle>>TICCMD_REDUCE);
 	max_left_turn = player->lturn_max[(leveltime + MAXPREDICTTICS - cmd->latency) % MAXPREDICTTICS];
 	max_right_turn = player->rturn_max[(leveltime + MAXPREDICTTICS - cmd->latency) % MAXPREDICTTICS];
 
-	//CONS_Printf("----------------\nangle diff: %d - turning options: %d to %d - ", angle_diff, max_left_turn, max_right_turn);
+	CONS_Printf("----------------\nangle diff: %d - turning options: %d to %d - ", angle_diff, max_left_turn, max_right_turn);
+
+	if (angle_diff > max_left_turn)
+		angle_diff = max_left_turn;
+	else if (angle_diff < max_right_turn)
+		angle_diff = max_right_turn;
+	else
+	{
+		// Try to keep normal turning as accurate to 1.0.1.
+		player->angleturn = cmd->angle<<TICCMD_REDUCE;
+		add_delta = false;
+	}
+	CONS_Printf("applied turn: %d\n", angle_diff);
+
+	if (add_delta) {
+		player->angleturn += angle_diff<<TICCMD_REDUCE;
+		player->angleturn &= ~0xFFFF; // Try to keep the turning somewhat similar to how it was before?
+		CONS_Printf("leftover turn (%s): %5d or %4d%%\n",
+						player_names[player-players],
+						(INT16) (cmd->angle - (player->angleturn>>TICCMD_REDUCE)),
+						(INT16) (cmd->angle - (player->angleturn>>TICCMD_REDUCE)) * 100 / (angle_diff ? angle_diff : 1));
+	}
+
+	if (p == UINT8_MAX)
+	{
+		// When F12ing players, set local angle directly.
+		P_SetPlayerAngle(player, player->angleturn + (angle_diff<<TICCMD_REDUCE));
+		player->mo->angle = player->angleturn;
+	}
+	else
+	{
+		player->mo->angle = player->angleturn;
+	}
+
+	if (!cv_allowmlook.value || player->spectator == false)
+	{
+		player->aiming = 0;
+	}
+	else
+	{
+		player->aiming += (player->cmd.aiming << TICCMD_REDUCE);
+		player->aiming = G_ClipAimingPitch((INT32 *)&player->aiming);
+	}
+
+	if (p != UINT8_MAX)
+	{
+		localaiming[p] = player->aiming;
+	}
+}*/
+
+void KV1_UpdatePlayerAngle(player_t *player)
+{
+	INT16 angle_diff, max_left_turn, max_right_turn;
+	boolean add_delta = true;
+	fixed_t currentSpeed = 0;
+	ticcmd_t *cmd = &player->cmd;
+	UINT8 i, p = UINT8_MAX;
+
+
+	for (i = 0; i <= splitscreen; i++)
+	{
+		if (player == &players[displayplayers[i]])
+		{
+			localangle[i] += (N_GetKartTurnValue(player, cmd->turning)<<TICCMD_REDUCE);
+			p = i;
+			break;
+		}
+	}
+
+	player->steering = cmd->turning; // Set this so functions that rely on steering still work.
+
+	// Kart: store the current turn range for later use
+	player->lturn_max[leveltime%MAXPREDICTTICS] = N_GetKartTurnValue(player, KART_FULLTURN)+1;
+	player->rturn_max[leveltime%MAXPREDICTTICS] = N_GetKartTurnValue(player, -KART_FULLTURN)-1;
+
+	// KART: Don't directly apply angleturn! It may have been either A) forged by a malicious client, or B) not be a smooth turn due to a player dropping frames.
+	// Instead, turn the player only up to the amount they're supposed to turn accounting for latency. Allow exactly 1 extra turn unit to try to keep old replays synced.
+	angle_diff = (localangle[p] >> TICCMD_REDUCE) - (player->mo->angle>>16);
+	max_left_turn = player->lturn_max[(leveltime + MAXPREDICTTICS - cmd->latency) % MAXPREDICTTICS];
+	max_right_turn = player->rturn_max[(leveltime + MAXPREDICTTICS - cmd->latency) % MAXPREDICTTICS];
+
+	CONS_Printf("----------------\nangle diff: %d - turning options: %d to %d - ", angle_diff, max_left_turn, max_right_turn);
 
 	if (angle_diff > max_left_turn)
 		angle_diff = max_left_turn;
@@ -96,21 +176,44 @@ void KV1_UpdatePlayerAngle(player_t *player)
 	else
 	{
 		// Try to keep normal turning as accurate to 1.0.1 as possible to reduce replay desyncs.
-		//P_ForceLocalAngle(player,player->angleturn<<16);
-		player->mo->angle = player->angleturn<<TICCMD_REDUCE;
+		player->angleturn = localangle[p];
 		add_delta = false;
 	}
-	//CONS_Printf("applied turn: %d\n", angle_diff);
+	CONS_Printf("applied turn: %d\n", angle_diff);
 
 	if (add_delta) {
-		//P_ForceLocalAngle(player,(player->mo->angle + angle_diff)<<16);
-		player->mo->angle += angle_diff<<TICCMD_REDUCE;
-		player->mo->angle &= ~0xFFFF; // Try to keep the turning somewhat similar to how it was before?
-		//P_ForceLocalAngle(player,player->mo->angle &= ~0xFFFF);
-		/*CONS_Printf("leftover turn (%s): %5d or %4d%%\n",
+		player->angleturn += angle_diff<<TICCMD_REDUCE;
+		player->angleturn &= ~0xFFFF; // Try to keep the turning somewhat similar to how it was before?
+		CONS_Printf("leftover turn (%s): %5d or %4d%%\n",
 						player_names[player-players],
-						(INT16) (player->angleturn - (player->mo->angle>>TICCMD_REDUCE)),
-						(INT16) (player->angleturn - (player->mo->angle>>TICCMD_REDUCE)) * 100 / (angle_diff ? angle_diff : 1));*/
+						(INT16) (localangle[p] - (player->mo->angle>>TICCMD_REDUCE)),
+						(INT16) (localangle[p] - (player->mo->angle>>TICCMD_REDUCE)) * 100 / (angle_diff ? angle_diff : 1));
+	}
+
+	if (p == UINT8_MAX)
+	{
+		// When F12ing players, set local angle directly.
+		P_SetPlayerAngle(player, player->angleturn + (angle_diff<<TICCMD_REDUCE));
+		player->mo->angle = player->angleturn;
+	}
+	else
+	{
+		player->mo->angle = player->angleturn;
+	}
+
+	if (!cv_allowmlook.value || player->spectator == false)
+	{
+		player->aiming = 0;
+	}
+	else
+	{
+		player->aiming += (player->cmd.aiming << TICCMD_REDUCE);
+		player->aiming = G_ClipAimingPitch((INT32 *)&player->aiming);
+	}
+
+	if (p != UINT8_MAX)
+	{
+		localaiming[p] = player->aiming;
 	}
 
 }
@@ -205,9 +308,11 @@ INT16 N_GetKartTurnValue(player_t* player, INT16 turnvalue)
 
 	currentSpeed = R_PointToDist2(0, 0, player->mo->momx, player->mo->momy);
 
-	if ((currentSpeed <= 0)											// Not moving
-		&& ((player->cmd.buttons & BT_EBRAKEMASK) != BT_EBRAKEMASK) // not e-braking
-		&& (player->respawn.state == RESPAWNST_NONE))				// Not respawning
+	if ((currentSpeed <= 0) // Not moving
+	&& (K_PressingEBrake(player) == false) // Not e-braking
+	&& (player->respawn.state == RESPAWNST_NONE) // Not respawning
+	&& (player->curshield != KSHIELD_TOP) // Not riding a Top
+	&& (P_IsObjectOnGround(player->mo) == true)) // On the ground
 	{
 		return 0;
 	}
@@ -444,52 +549,6 @@ void N_DoPogoSpring(mobj_t* mo, fixed_t vertispeed, UINT8 sound)
 	if (sound)
 		S_StartSound(mo, (sound == 1 ? sfx_kc2f : sfx_kpogos));
 }*/
-
-void N_PogoSidemove(player_t *player)
-{
-	fixed_t movepushside = 0;
-	angle_t movepushangle = 0, movepushsideangle = 0;
-	fixed_t sidemove[2] = {2<<FRACBITS>>16, 4<<FRACBITS>>16};
-	fixed_t side = player->pogosidemove;
-
-	if (player->drift != 0)
-		movepushangle = player->mo->angle-(ANGLE_45/5)*player->drift;
-	else
-		movepushangle = player->mo->angle;
-
-	movepushsideangle = movepushangle-ANGLE_90;
-
-	// let movement keys cancel each other out
-	if (player->cmd.turning < 0)
-	{;
-		side += sidemove[1];
-	}
-	else if (player->cmd.turning > 0 )
-	{
-		side -= sidemove[1];
-	}
-
-	if (side > MAXPLMOVE)
-		side = MAXPLMOVE;
-	else if (side < -MAXPLMOVE)
-		side = -MAXPLMOVE;
-
-	if (side !=0 && (!player->pogoSpringJumped))
-		side = 0;
-
-	// Sideways movement
-	if (side != 0 && !((player->exiting || mapreset)))
-	{
-		if (side > 0)
-			movepushside = (side * FRACUNIT/128) + FixedDiv(player->speed, K_GetKartSpeed(player, true, false));
-		else
-			movepushside = (side * FRACUNIT/128) - FixedDiv(player->speed, K_GetKartSpeed(player, true, false));
-
-		player->mo->momx += P_ReturnThrustX(player->mo, movepushsideangle, movepushside);
-		player->mo->momy += P_ReturnThrustY(player->mo, movepushsideangle, movepushside);
-	}
-
-}
 
 void N_LegacyStart(player_t *player)
 {

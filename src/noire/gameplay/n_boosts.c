@@ -427,7 +427,7 @@ void N_GetKartBoostPower(player_t *player)
 		// (We compensate when decrementing ringboost to avoid runaway exponential scaling hell.)
 		fixed_t rb = FixedDiv(player->ringboost * FRACUNIT, max(FRACUNIT, K_RingDurationBoost(player)));
 		ADDBOOST(
-			FRACUNIT/4 + FixedMul(FRACUNIT / 1750, rb),
+			FRACUNIT/5 + FixedMul(FRACUNIT / 1750, rb),
 			4*FRACUNIT,
 			Easing_InCubic(min(FRACUNIT, rb / (TICRATE*12)), 0, 0),
 			0
@@ -514,10 +514,13 @@ void N_GetKartBoostPower(player_t *player)
 //
 void N_AdjustPlayerFriction(player_t *player, boolean onground)
 {
+	const fixed_t prevfriction = K_PlayerBaseFriction(player, player->mo->friction);
 	// JugadorXEI: Do *not* calculate friction when a player is pogo'd
 	// because they'll be in the air and friction will not reset!
 	if (onground && !player->pogoSpringJumped)
 	{
+		player->mo->friction = prevfriction;
+
 		// Friction
 		if (!player->offroad)
 		{
@@ -525,8 +528,37 @@ void N_AdjustPlayerFriction(player_t *player, boolean onground)
 				player->mo->friction += 4608;
 		}
 
+		// Reduce friction after hitting a spring
+		if (player->tiregrease)
+		{
+			player->mo->friction += ((FRACUNIT - prevfriction) / greasetics) * player->tiregrease;
+		}
+
+		// Less friction on Top unless grinding
+		if (player->curshield == KSHIELD_TOP &&
+				K_GetForwardMove(player) > 0 &&
+				player->speed < 2 * K_GetKartSpeed(player, false, false))
+		{
+			player->mo->friction += 1024;
+		}
+
 		if (player->speed > 0 && player->cmd.forwardmove < 0)	// change friction while braking no matter what, otherwise it's not any more effective than just letting go off accel
 			player->mo->friction -= 2048;
+
+		if (cv_ng_underwaterhandling.value)
+		{
+			// Water gets ice physics too
+			if ((player->mo->eflags & MFE_TOUCHWATER) &&
+					!player->offroad)
+			{
+				player->mo->friction += 614;
+			}
+			else if ((player->mo->eflags & MFE_UNDERWATER))
+			{
+				if (!K_Sliptiding(player))
+					player->mo->friction += 312;
+			}
+		}
 
 		// Wipeout slowdown
 		if (player->speed > 0 && player->spinouttimer && player->wipeoutslow)
@@ -536,5 +568,28 @@ void N_AdjustPlayerFriction(player_t *player, boolean onground)
 			if (player->wipeoutslow == 1)
 				player->mo->friction -= 9824;
 		}
+
+		if (player->icecube.frozen)
+		{
+			player->mo->friction = FRACUNIT;
+		}
+
+		// Cap between intended values
+		if (player->mo->friction > FRACUNIT)
+			player->mo->friction = FRACUNIT;
+		if (player->mo->friction < 0)
+			player->mo->friction = 0;
+
+		// Friction was changed, so we must recalculate movefactor
+		if (player->mo->friction != prevfriction)
+		{
+			player->mo->movefactor = FixedDiv(ORIG_FRICTION, player->mo->friction);
+
+			if (player->mo->movefactor < FRACUNIT)
+				player->mo->movefactor = 19*player->mo->movefactor - 18*FRACUNIT;
+			else
+				player->mo->movefactor = FRACUNIT;
+		}
+
 	}
 }

@@ -8741,9 +8741,12 @@ boolean P_LoadLevel(boolean fromnetsave, boolean reloadinggamestate)
 	// Load the waypoints please!
 	if (gametyperules & GTR_CIRCUIT && gamestate != GS_TITLESCREEN)
 	{
-		if (K_SetupWaypointList() == false && numbosswaypoints == 0)
+		if (numbosswaypoints == 0 )
 		{
-			CONS_Alert(CONS_ERROR, "Waypoints were not able to be setup! Player positions will not work correctly.\n");
+			if (K_SetupWaypointList() == false)
+			{
+				CONS_Alert(CONS_ERROR, "Waypoints were not able to be setup! Player positions will not work correctly.\n");
+			}
 		}
 
 		if (K_GenerateFinishBeamLine() == false)

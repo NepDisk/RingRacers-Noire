@@ -1072,7 +1072,7 @@ struct player_t
 	boolean pogoSpringJumped; //Replication of Kart's pogoSpring, but just a boolean as most of the logic is now in k_terrain.c. Will be set to false in the same places as pogoSpring did, and when grounded.
 	fixed_t pogoMaxSpeed; // Maximum speed to use when pogoSpringJumped is true. ( Zero to not apply )
 	fixed_t pogoMinSpeed; // Minimum speed to use when pogoSpringJumped is true. ( Zero to not apply )
-	fixed_t pogosidemove;		// Used to store sidemove for pogo
+	SINT8 pogosidemove;		// Used to store sidemove for pogo
 
 	UINT8 brakestop; // Brake stop
 };

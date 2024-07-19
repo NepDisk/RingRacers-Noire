@@ -1930,8 +1930,8 @@ static inline boolean P_IsMomentumAngleLocked(player_t *player)
 //#define OLD_MOVEMENT_CODE 1
 static void P_3dMovement(player_t *player)
 {
-	angle_t movepushangle; // Analog
-	fixed_t movepushforward = 0;
+	angle_t movepushangle, movepushsideangle; // Analog
+	fixed_t movepushforward = 0, movepushside = 0;
 	angle_t dangle; // replaces old quadrants bits
 	fixed_t oldMagnitude, newMagnitude;
 	vector3_t totalthrust;
@@ -1951,6 +1951,56 @@ static void P_3dMovement(player_t *player)
 	// Get the old momentum; this will be needed at the end of the function! -SH
 	oldMagnitude = R_PointToDist2(player->mo->momx - player->cmomx, player->mo->momy - player->cmomy, 0, 0);
 
+	// emulate cmd->sidemove for pogospring using player value
+	{
+		fixed_t sidemove[2] = {2<<FRACBITS>>16, 4<<FRACBITS>>16};
+		INT32 side = 0;
+		//INT32 mathdata;
+
+		player->pogosidemove = 0;
+		// Joyaxis range is 1023
+		// JOYAXISRANGE should be 1023 (divide by 1024)
+
+		// let movement keys cancel each other out
+		if (player->cmd.turning < 0)
+		{
+			side += sidemove[1];
+		}
+		else if (player->cmd.turning > 0 )
+		{
+			side -= sidemove[1];
+		}
+
+		/*
+		// Commented out code that was used for analog control
+		//mathdata = (player->cmd.turning << 10)/800;
+		//CONS_Printf("mathdata: %d\n", mathdata);
+		//side += ((mathdata * sidemove[0]) >> 10);
+		*/
+
+		if (side > MAXPLMOVE)
+			side = MAXPLMOVE;
+		else if (side < -MAXPLMOVE)
+			side = -MAXPLMOVE;
+
+		if (side)
+		{
+			player->pogosidemove = (SINT8)(player->pogosidemove + side);
+			//CONS_Printf("side: %d\n", side);
+		}
+
+		if (player->pogosidemove > MAXPLMOVE)
+			player->pogosidemove = MAXPLMOVE;
+		else if (player->pogosidemove < -MAXPLMOVE)
+			player->pogosidemove = -MAXPLMOVE;
+
+	}
+
+	if (player->pogoSpringJumped == false) // Pogosidemove
+		player->pogosidemove = 0;
+
+	//CONS_Printf("pogosidemove: %d\n", player->pogosidemove);
+
 	if (P_IsMomentumAngleLocked(player))
 	{
 		movepushangle = K_MomentumAngle(player->mo);
@@ -1967,6 +2017,7 @@ static void P_3dMovement(player_t *player)
 	{
 		movepushangle = player->mo->angle;
 	}
+	movepushsideangle = movepushangle-ANGLE_90; // pogosidemove
 
 	// cmomx/cmomy stands for the conveyor belt speed.
 	if (player->onconveyor == 2) // Wind/Current
@@ -2033,7 +2084,7 @@ static void P_3dMovement(player_t *player)
 	//}
 
 	// Do not let the player control movement if not onground.
-	onground = P_IsObjectOnGround(player->mo) || player->pogoSpringJumped; //NOIRE: Readd the extra condition that Kart had for springs
+	onground = (P_IsObjectOnGround(player->mo) || player->pogoSpringJumped); //NOIRE: Readd the extra condition that Kart had for springs
 
 	if (!cv_ng_oldspeedcalc.value)
 		K_AdjustPlayerFriction(player);
@@ -2190,7 +2241,23 @@ static void P_3dMovement(player_t *player)
 		}
 	}
 
-	N_PogoSidemove(player);
+	// Sideways movement for pogo
+	if (player->pogosidemove != 0 && !((player->exiting || mapreset) || player->spinouttimer))
+	{
+		fixed_t kartspeed = cv_ng_oldspeedcalc.value ? N_GetKartSpeed(player, true, true) : K_GetKartSpeed(player, true, true);
+		if (player->pogosidemove > 0)
+			movepushside = (player->pogosidemove * FRACUNIT/128) + FixedDiv(player->speed, kartspeed);
+		else
+			movepushside = (player->pogosidemove * FRACUNIT/128) - FixedDiv(player->speed, kartspeed);
+
+		totalthrust.x += P_ReturnThrustX(player->mo, movepushsideangle, movepushside);
+		totalthrust.y += P_ReturnThrustY(player->mo, movepushsideangle, movepushside);
+		CONS_Printf("totalthrust.x: %d\n", totalthrust.x);
+		CONS_Printf("totalthrust.y: %d\n", totalthrust.y);
+		CONS_Printf("P_ReturnThrustX: %d\n", P_ReturnThrustX(player->mo, movepushsideangle, movepushside));
+		CONS_Printf("P_ReturnThrustY: %d\n", P_ReturnThrustY(player->mo, movepushsideangle, movepushside));
+	}
+
 
 	if ((totalthrust.x || totalthrust.y)
 		&& player->mo->standingslope != NULL
@@ -2607,6 +2674,7 @@ void P_MovePlayer(player_t *player)
 		KV1_UpdatePlayerAngle(player);
 
 	ticruned++;
+
 	if (!(cmd->flags & TICCMD_RECEIVED))
 		ticmiss++;
 
