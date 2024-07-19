@@ -223,10 +223,7 @@ class TiccmdBuilder
 			{
 				if (displayplayers[i] == p)
 				{
-					/*if (cv_ng_turnstyle.value == 0)
-						localangle[i] += (angleChange<<16);
-					else*/
-						localangle[i] += angleChange;
+					localangle[i] += angleChange;
 				}
 			}
 		}
@@ -477,7 +474,20 @@ public:
 			regular_input();
 		}
 
-		cmd->angle = localangle[viewnum] >> TICCMD_REDUCE;
+		if (!(cv_ng_turnstyle.value == 0))
+			cmd->angle = localangle[viewnum] >> TICCMD_REDUCE;
+
+		if (cv_ng_turnstyle.value == 0) // Most similar spot to v1 for where to put this thing
+		{
+			if (player()->mo)
+				cmd->angle = N_GetKartTurnValue(player(), cmd->turning);
+
+			cmd->angle *= realtics;
+
+			localangle[ssplayer-1] += (cmd->angle<<TICCMD_REDUCE);
+
+			cmd->angle = (INT16)(localangle[ssplayer-1] >> TICCMD_REDUCE);
+		}
 
 		hook();
 

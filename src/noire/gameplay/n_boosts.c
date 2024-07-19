@@ -284,7 +284,7 @@ static fixed_t K_FlameShieldDashVar(INT32 val)
 void N_GetKartBoostPower(player_t *player)
 {
 	fixed_t boostpower = FRACUNIT;
-	fixed_t speedboost = 0, accelboost = 0, handleboost = 0;
+	fixed_t speedboost = 0, accelboost = 0, handleboost = 0, nonspeedboost = 0;
 	fixed_t intermediate = 0;
 	fixed_t harddiminish = 0;
 	fixed_t boostmult = FRACUNIT;
@@ -303,11 +303,12 @@ void N_GetKartBoostPower(player_t *player)
 	if (player->bananadrag > TICRATE)
 		boostpower = (4*boostpower)/5;
 
-#define ADDBOOST(s,a,h,b) { \
+#define ADDBOOST(s,a,h,b,ns) { \
 	numboosts++; \
 	speedboost += max(s, speedboost); \
-	accelboost += max(a, accelboost); \
+	accelboost = max(a, accelboost); \
 	handleboost = max(h, handleboost); \
+	nonspeedboost = max(ns, nonspeedboost); \
 	boostmult += b; \
 }
 
@@ -327,18 +328,17 @@ void N_GetKartBoostPower(player_t *player)
 				sneakerspeedboost = 32768;
 				break;
 		}
-		ADDBOOST(sneakerspeedboost * (player->numsneakers ? player->numsneakers : 1),8*FRACUNIT,SLIPTIDEHANDLING,0)
+		ADDBOOST(sneakerspeedboost * (player->numsneakers ? player->numsneakers : 1),8*FRACUNIT,SLIPTIDEHANDLING,0,0)
 	}
 
 	if (player->invincibilitytimer) // Invincibility
 	{
-		ADDBOOST(3*FRACUNIT/8,3*FRACUNIT,SLIPTIDEHANDLING/2,0)
+		ADDBOOST(3*FRACUNIT/8,3*FRACUNIT,SLIPTIDEHANDLING/2,0,0)
 	}
 
 	if (player->growshrinktimer > 0) // Grow
 	{
-		ADDBOOST(FloatToFixed(0.1),FloatToFixed(0.4),2*SLIPTIDEHANDLING/5,0);
-		//ADDBOOST(0,0,0,FloatToFixed(-0.3));
+		ADDBOOST(0,FloatToFixed(0.4),2*SLIPTIDEHANDLING/5,FloatToFixed(-0.3),FloatToFixed(0.3));
 	}
 
 	if (player->flamedash) // Flame Shield dash
@@ -349,6 +349,7 @@ void N_GetKartBoostPower(player_t *player)
 			3*FRACUNIT, // + 300% acceleration
 			FixedMul(FixedDiv(dash, FRACUNIT/2), SLIPTIDEHANDLING/2) // + infinite handling
 			,0  // No boostmult
+			,0
 		);
 	}
 
@@ -360,6 +361,7 @@ void N_GetKartBoostPower(player_t *player)
 			3*FRACUNIT, // + 300% acceleration
 			FixedMul(FixedDiv(dash, FRACUNIT/2), SLIPTIDEHANDLING/2) // + infinite handling
 			,0 // No boostmult
+			,0
 		);
 	}
 
@@ -379,6 +381,7 @@ void N_GetKartBoostPower(player_t *player)
 			),
 			2*SLIPTIDEHANDLING/5
 			,0
+			,0
 		);  // + 80% top speed (peak), +400% acceleration (peak), +20% handling, No bootmult
 	}
 
@@ -392,33 +395,34 @@ void N_GetKartBoostPower(player_t *player)
 			FixedMul(MAXCHARGESPEED, exponent), // + 0 to K_GetSpindashChargeSpeed()% top speed
 			(40 * exponent), // + 0% to 4000% acceleration
 			0, // + 0% handling
-			0 // No Boost Mult
+			0, // No Boost Mult
+			0
 		);
 	}
 
 	if (player->startboost) // Startup Boost
 	{
-		ADDBOOST(FRACUNIT, 4*FRACUNIT, SLIPTIDEHANDLING,0);
+		ADDBOOST(FRACUNIT, 4*FRACUNIT, SLIPTIDEHANDLING,0,0);
 	}
 
 	if (player->dropdashboost) // Drop dash
 	{
-		ADDBOOST(FRACUNIT/4, 6*FRACUNIT, SLIPTIDEHANDLING,0);
+		ADDBOOST(FRACUNIT/4, 6*FRACUNIT, SLIPTIDEHANDLING,0,0);
 	}
 
 	if (player->driftboost) // Drift Boost
 	{
-		ADDBOOST(FRACUNIT/4,4*FRACUNIT,0,0)
+		ADDBOOST(FRACUNIT/4,4*FRACUNIT,0,0,0)
 	}
 
 	if (player->trickboost)	// Trick pannel up-boost
 	{
-		ADDBOOST(player->trickboostpower, 5*FRACUNIT, 0,0);	// <trickboostpower>% speed, 500% accel, 0% handling
+		ADDBOOST(player->trickboostpower, 5*FRACUNIT, 0,0,0);	// <trickboostpower>% speed, 500% accel, 0% handling
 	}
 
 	if (player->gateBoost) // SPB Juicebox boost
 	{
-		ADDBOOST(3*FRACUNIT/4, 4*FRACUNIT, SLIPTIDEHANDLING/2,0); // + 75% top speed, + 400% acceleration, +25% handling
+		ADDBOOST(3*FRACUNIT/4, 4*FRACUNIT, SLIPTIDEHANDLING/2,0,0); // + 75% top speed, + 400% acceleration, +25% handling
 	}
 
 	if (player->ringboost) // Ring Boost
@@ -430,26 +434,27 @@ void N_GetKartBoostPower(player_t *player)
 			FRACUNIT/5 + FixedMul(FRACUNIT / 1750, rb),
 			4*FRACUNIT,
 			Easing_InCubic(min(FRACUNIT, rb / (TICRATE*12)), 0, 0),
+			0,
 			0
 		); // + 20% + ???% top speed, + 400% acceleration, +???% handling, No boostmult
 	}
 
 	if (player->eggmanexplode) // Ready-to-explode
 	{
-		ADDBOOST(6*FRACUNIT/20, FRACUNIT, 0, 0); // + 30% top speed, + 100% acceleration, +0% handling, No Boost Mult
+		ADDBOOST(6*FRACUNIT/20, FRACUNIT, 0, 0,0); // + 30% top speed, + 100% acceleration, +0% handling, No Boost Mult
 	}
 
 	if (player->trickcharge)
 	{
 		// NB: This is an acceleration-only boost.
 		// If this is applied earlier in the chain, it will diminish real speed boosts.
-		ADDBOOST(0, FRACUNIT,  2*SLIPTIDEHANDLING/10, 0); // 0% speed 100% accel 20% handle, No Boost Mult
+		ADDBOOST(0, FRACUNIT,  2*SLIPTIDEHANDLING/10, 0,0); // 0% speed 100% accel 20% handle, No Boost Mult
 	}
 
 	// This should always remain the last boost stack before tethering
 	if (player->botvars.rubberband > FRACUNIT && K_PlayerUsesBotMovement(player) == true && cv_ng_botrubberbandboost.value)
 	{
-		ADDBOOST(player->botvars.rubberband - FRACUNIT, 0, 0,0);
+		ADDBOOST(player->botvars.rubberband - FRACUNIT, 0, 0,0,0);
 	}
 
 	if (player->draftpower > 0) // Drafting
@@ -472,25 +477,23 @@ void N_GetKartBoostPower(player_t *player)
 		numboosts++;
 	}
 
-
-	//This here is the boostmult, its implemented as an adjustment to boostpower
-	player->boostpower = boostpower + (FixedMul(speedboost, boostmult) - speedboost);
+	speedboost = max(speedboost,nonspeedboost);
 
 	// Diminish Speed for controlability
 	if (gamespeed <= 1 && speedboost > FRACUNIT/2)
 	{
-		intermediate = FixedDiv(FixedMul(FloatToFixed(1.20),FRACUNIT*-1/2) - FRACUNIT/4,-FloatToFixed(1.20)+FRACUNIT/2);
-		speedboost = FixedMul(FloatToFixed(1.20),(FRACUNIT-FixedDiv(FRACUNIT,(speedboost+intermediate))));
+		intermediate = FixedDiv(FixedMul(FloatToFixed(1.25),FRACUNIT*-1/2) - FRACUNIT/4,-FloatToFixed(1.25)+FRACUNIT/2);
+		speedboost = FixedMul(FloatToFixed(1.25),(FRACUNIT-FixedDiv(FRACUNIT,(speedboost+intermediate))));
 	}
 	else if (gamespeed == 2 && speedboost > FRACUNIT*375/1000)
 	{
-		harddiminish = K_BoostRescale(FloatToFixed(1.20), FRACUNIT, 2*FRACUNIT, FRACUNIT*95/100, FRACUNIT*180/100);
+		harddiminish = K_BoostRescale(FloatToFixed(1.25), FRACUNIT, 2*FRACUNIT, FRACUNIT*95/100, FRACUNIT*180/100);
 		intermediate = FixedDiv(FixedMul(harddiminish,FRACUNIT*-625/1000) - 9216,-harddiminish+FRACUNIT*375/1000);
 		speedboost = FixedMul(harddiminish,(FRACUNIT-FixedDiv(FRACUNIT,(speedboost+intermediate))));
 	}
 	else if (gamespeed == 3 && speedboost > FRACUNIT*375/1000)
 	{
-		harddiminish = K_BoostRescale(FloatToFixed(1.20), FRACUNIT, 2*FRACUNIT, FRACUNIT*95/100, FRACUNIT*180/100);
+		harddiminish = K_BoostRescale(FloatToFixed(1.25), FRACUNIT, 2*FRACUNIT, FRACUNIT*95/100, FRACUNIT*180/100);
 		intermediate = FixedDiv(FixedMul(harddiminish,FRACUNIT*-625/1000) - 9216,-harddiminish+FRACUNIT*375/1000);
 		speedboost = FixedMul(harddiminish,(FRACUNIT-FixedDiv(FRACUNIT,(speedboost+intermediate))));
 	}
@@ -500,9 +503,12 @@ void N_GetKartBoostPower(player_t *player)
 		player->speedboost = speedboost;
 	//brakemod. slowdown on braking or sliptide (based on version from booststack)
 	else if ((player->aizdriftstrat && abs(player->drift) < 5) || (player->cmd.buttons & BT_BRAKE))
-		player->speedboost = max(speedboost - FloatToFixed(0.05), min(speedboost, 3*FRACUNIT/8));
+		player->speedboost = max(speedboost - FloatToFixed(1.25), min(speedboost, 3*FRACUNIT/8));
 	else
 		player->speedboost += (speedboost - player->speedboost)/(TICRATE/2);
+
+	//This here is the boostmult, its implemented as an adjustment to boostpower
+	player->boostpower = boostpower + (FixedMul(player->speedboost, boostmult) - player->speedboost);
 
 	player->accelboost = accelboost;
 	player->handleboost = handleboost;
