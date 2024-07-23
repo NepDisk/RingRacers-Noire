@@ -229,6 +229,35 @@ class TiccmdBuilder
 		}
 	}
 
+	void KV1_angle_prediction()
+	{
+		// Chasecam stops in these situations, so local cam should stop too.
+		// Otherwise it'll jerk when it resumes.
+		if (player()->playerstate == PST_DEAD)
+		{
+			return;
+		}
+
+		if (player()->mo != NULL && !P_MobjWasRemoved(player()->mo) && player()->mo->hitlag > 0)
+		{
+			return;
+		}
+
+		if (player()->mo != NULL && P_MobjIsFrozen(player()->mo))
+		{
+			return;
+		}
+
+		if (player()->mo)
+			cmd->angle = N_GetKartTurnValue(player(), cmd->turning);
+
+		cmd->angle *= realtics;
+
+		localangle[ssplayer-1] += (cmd->angle<<TICCMD_REDUCE);
+
+		cmd->angle = (INT16)(localangle[ssplayer-1] >> TICCMD_REDUCE);
+	}
+
 	bool typing_input()
 	{
 		if (!menuactive && !chat_on && !CON_Ready())
@@ -478,16 +507,7 @@ public:
 			cmd->angle = localangle[viewnum] >> TICCMD_REDUCE;
 
 		if (cv_ng_turnstyle.value == 0) // Most similar spot to v1 for where to put this thing
-		{
-			if (player()->mo)
-				cmd->angle = N_GetKartTurnValue(player(), cmd->turning);
-
-			cmd->angle *= realtics;
-
-			localangle[ssplayer-1] += (cmd->angle<<TICCMD_REDUCE);
-
-			cmd->angle = (INT16)(localangle[ssplayer-1] >> TICCMD_REDUCE);
-		}
+			KV1_angle_prediction();
 
 		hook();
 
