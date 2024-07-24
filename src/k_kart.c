@@ -11372,7 +11372,7 @@ static void K_KartDrift(player_t *player, boolean onground)
 	|| (!player->aizdriftstrat)
 	|| (player->steering > 0) != (player->aizdriftstrat > 0))
 	{
-		if (!player->drift && player->steering && player->aizdriftextend // If we were sliptiding last tic,
+		if (cv_ng_wavedash.value && !player->drift && player->steering && player->aizdriftextend // If we were sliptiding last tic,
 			&& (player->steering > 0) == (player->aizdriftextend > 0) // we're steering in the right direction,
 			&& player->speed >= K_GetKartSpeed(player, false, true)) // and we're above the threshold to spawn dust...
 		{
@@ -11405,37 +11405,44 @@ static void K_KartDrift(player_t *player, boolean onground)
 	{
 		K_SpawnAIZDust(player);
 
-		if (!extendedSliptide)
+		if (cv_ng_wavedash.value)
 		{
-			// Give charge proportional to your angle. Sharp turns are rewarding, slow analog slides are not—remember, this is giving back the speed you gave up.
-			UINT16 addCharge = FixedInt(
-				FixedMul(10*FRACUNIT,
-					FixedDiv(abs(player->steering)*FRACUNIT, (9*KART_FULLTURN/10)*FRACUNIT)
-				));
-			addCharge = min(10, max(addCharge, 1));
-			// "Why 9*KART_FULLTURN/10?" For bullshit turn solver reasons, it's extremely common to steer at like 99% of FULLTURN even when at the edge of your analog range.
-			// This makes wavedash charge noticeably slower on even modest delay, despite the magnitude of the turn seeming the same.
-			// So we only require 90% of a turn to get full charge strength.
 
-			player->wavedash += addCharge;
 
-			if (player->wavedash >= MIN_WAVEDASH_CHARGE && (player->wavedash - addCharge) < MIN_WAVEDASH_CHARGE)
-				S_StartSound(player->mo, sfx_waved5);
+			if (!extendedSliptide)
+			{
+				// Give charge proportional to your angle. Sharp turns are rewarding, slow analog slides are not—remember, this is giving back the speed you gave up.
+				UINT16 addCharge = FixedInt(
+					FixedMul(10*FRACUNIT,
+						FixedDiv(abs(player->steering)*FRACUNIT, (9*KART_FULLTURN/10)*FRACUNIT)
+					));
+				addCharge = min(10, max(addCharge, 1));
+				// "Why 9*KART_FULLTURN/10?" For bullshit turn solver reasons, it's extremely common to steer at like 99% of FULLTURN even when at the edge of your analog range.
+				// This makes wavedash charge noticeably slower on even modest delay, despite the magnitude of the turn seeming the same.
+				// So we only require 90% of a turn to get full charge strength.
+
+				player->wavedash += addCharge;
+
+				if (player->wavedash >= MIN_WAVEDASH_CHARGE && (player->wavedash - addCharge) < MIN_WAVEDASH_CHARGE)
+					S_StartSound(player->mo, sfx_waved5);
+			}
+
 		}
 
-		if (abs(player->aizdrifttilt) < ANGLE_22h)
-		{
-			player->aizdrifttilt =
-				(abs(player->aizdrifttilt) + ANGLE_11hh / 4) *
-				player->aizdriftstrat;
-		}
+			if (abs(player->aizdrifttilt) < ANGLE_22h)
+			{
+				player->aizdrifttilt =
+					(abs(player->aizdrifttilt) + ANGLE_11hh / 4) *
+					player->aizdriftstrat;
+			}
 
-		if (abs(player->aizdriftturn) < ANGLE_112h)
-		{
-			player->aizdriftturn =
-				(abs(player->aizdriftturn) + ANGLE_11hh) *
-				player->aizdriftstrat;
-		}
+			if (abs(player->aizdriftturn) < ANGLE_112h)
+			{
+				player->aizdriftturn =
+					(abs(player->aizdriftturn) + ANGLE_11hh) *
+					player->aizdriftstrat;
+			}
+
 	}
 
 	/*
@@ -11443,87 +11450,103 @@ static void K_KartDrift(player_t *player, boolean onground)
 		player->aizdriftstrat = 0;
 	*/
 
-	if (!K_Sliptiding(player) || extendedSliptide)
+	if (cv_ng_wavedash.value)
 	{
-		if (!extendedSliptide && K_IsLosingWavedash(player) && player->wavedash > 0)
+		if (!K_Sliptiding(player) || extendedSliptide)
 		{
-			if (player->wavedash > HIDEWAVEDASHCHARGE && !S_SoundPlaying(player->mo, sfx_waved2))
-				S_StartSoundAtVolume(player->mo, sfx_waved2,
-					Easing_InSine(
-						min(FRACUNIT, FRACUNIT * player->wavedash / MIN_WAVEDASH_CHARGE),
-						120,
-						255
-					)
-				); // Losing combo time, going to boost
-			S_StopSoundByID(player->mo, sfx_waved1);
-			S_StopSoundByID(player->mo, sfx_waved4);
-			player->wavedashdelay++;
-			if (player->wavedashdelay > TICRATE/2)
+			if (!extendedSliptide && K_IsLosingWavedash(player) && player->wavedash > 0)
 			{
-				if (player->wavedash > HIDEWAVEDASHCHARGE)
-				{
-					fixed_t maxZipPower = 2*FRACUNIT;
-					fixed_t minZipPower = 1*FRACUNIT;
-					fixed_t powerSpread = maxZipPower - minZipPower;
-
-					int minPenalty = 2*1 + (9-9); // Kinda doing a similar thing to driftspark stage timers here.
-					int maxPenalty = 2*9 + (9-1); // 1/9 gets max, 9/1 gets min, everyone else gets something in between.
-					int penaltySpread = maxPenalty - minPenalty;
-					int yourPenalty = 2*player->kartspeed + (9 - player->kartweight); // And like driftsparks, speed hurts double.
-
-					yourPenalty -= minPenalty; // Normalize; minimum penalty should take away 0 power.
-
-					fixed_t yourPowerReduction = FixedDiv(yourPenalty * FRACUNIT, penaltySpread * FRACUNIT);
-					fixed_t yourPower = maxZipPower - FixedMul(yourPowerReduction, powerSpread);
-					int yourBoost = FixedInt(FixedMul(yourPower, player->wavedash/10 * FRACUNIT));
-
-					// Award boost.
-					player->wavedashboost += yourBoost;
-
-					// Set power of the resulting boost.
-					player->wavedashpower = min(FRACUNIT, FRACUNIT * player->wavedash / MIN_WAVEDASH_CHARGE);
-
-					// Scale boost sound to power.
-					S_StartSoundAtVolume(player->mo, sfx_waved3,
+				if (player->wavedash > HIDEWAVEDASHCHARGE && !S_SoundPlaying(player->mo, sfx_waved2))
+					S_StartSoundAtVolume(player->mo, sfx_waved2,
 						Easing_InSine(
-							player->wavedashpower,
+							min(FRACUNIT, FRACUNIT * player->wavedash / MIN_WAVEDASH_CHARGE),
 							120,
 							255
 						)
-					);
+					); // Losing combo time, going to boost
+				S_StopSoundByID(player->mo, sfx_waved1);
+				S_StopSoundByID(player->mo, sfx_waved4);
+				player->wavedashdelay++;
+				if (player->wavedashdelay > TICRATE/2)
+				{
+					if (player->wavedash > HIDEWAVEDASHCHARGE)
+					{
+						fixed_t maxZipPower = 2*FRACUNIT;
+						fixed_t minZipPower = 1*FRACUNIT;
+						fixed_t powerSpread = maxZipPower - minZipPower;
 
-					K_SpawnDriftBoostExplosion(player, 0);
+						int minPenalty = 2*1 + (9-9); // Kinda doing a similar thing to driftspark stage timers here.
+						int maxPenalty = 2*9 + (9-1); // 1/9 gets max, 9/1 gets min, everyone else gets something in between.
+						int penaltySpread = maxPenalty - minPenalty;
+						int yourPenalty = 2*player->kartspeed + (9 - player->kartweight); // And like driftsparks, speed hurts double.
+
+						yourPenalty -= minPenalty; // Normalize; minimum penalty should take away 0 power.
+
+						fixed_t yourPowerReduction = FixedDiv(yourPenalty * FRACUNIT, penaltySpread * FRACUNIT);
+						fixed_t yourPower = maxZipPower - FixedMul(yourPowerReduction, powerSpread);
+						int yourBoost = FixedInt(FixedMul(yourPower, player->wavedash/10 * FRACUNIT));
+
+						// Award boost.
+						player->wavedashboost += yourBoost;
+
+						// Set power of the resulting boost.
+						player->wavedashpower = min(FRACUNIT, FRACUNIT * player->wavedash / MIN_WAVEDASH_CHARGE);
+
+						// Scale boost sound to power.
+						S_StartSoundAtVolume(player->mo, sfx_waved3,
+							Easing_InSine(
+								player->wavedashpower,
+								120,
+								255
+							)
+						);
+
+						K_SpawnDriftBoostExplosion(player, 0);
+					}
+					S_StopSoundByID(player->mo, sfx_waved1);
+					S_StopSoundByID(player->mo, sfx_waved2);
+					S_StopSoundByID(player->mo, sfx_waved4);
+					player->wavedash = 0;
+					player->wavedashdelay = 0;
 				}
+			}
+			else
+			{
 				S_StopSoundByID(player->mo, sfx_waved1);
 				S_StopSoundByID(player->mo, sfx_waved2);
-				S_StopSoundByID(player->mo, sfx_waved4);
-				player->wavedash = 0;
-				player->wavedashdelay = 0;
+				if (player->wavedash > 0 && !S_SoundPlaying(player->mo, sfx_waved4))
+					S_StartSoundAtVolume(player->mo, sfx_waved4, 255); // Passive woosh
 			}
+
+			player->aizdrifttilt -= player->aizdrifttilt / 4;
+			player->aizdriftturn -= player->aizdriftturn / 4;
+
+			if (abs(player->aizdrifttilt) < ANGLE_11hh / 4)
+				player->aizdrifttilt = 0;
+			if (abs(player->aizdriftturn) < ANGLE_11hh)
+				player->aizdriftturn = 0;
 		}
 		else
 		{
-			S_StopSoundByID(player->mo, sfx_waved1);
+			player->wavedashdelay = 0;
 			S_StopSoundByID(player->mo, sfx_waved2);
-			if (player->wavedash > 0 && !S_SoundPlaying(player->mo, sfx_waved4))
-				S_StartSoundAtVolume(player->mo, sfx_waved4, 255); // Passive woosh
+			S_StopSoundByID(player->mo, sfx_waved4);
+			if (player->wavedash > HIDEWAVEDASHCHARGE && !S_SoundPlaying(player->mo, sfx_waved1))
+				S_StartSoundAtVolume(player->mo, sfx_waved1, 255); // Charging
 		}
-
-		player->aizdrifttilt -= player->aizdrifttilt / 4;
-		player->aizdriftturn -= player->aizdriftturn / 4;
-
-		if (abs(player->aizdrifttilt) < ANGLE_11hh / 4)
-			player->aizdrifttilt = 0;
-		if (abs(player->aizdriftturn) < ANGLE_11hh)
-			player->aizdriftturn = 0;
 	}
 	else
 	{
-		player->wavedashdelay = 0;
-		S_StopSoundByID(player->mo, sfx_waved2);
-		S_StopSoundByID(player->mo, sfx_waved4);
-		if (player->wavedash > HIDEWAVEDASHCHARGE && !S_SoundPlaying(player->mo, sfx_waved1))
-			S_StartSoundAtVolume(player->mo, sfx_waved1, 255); // Charging
+		if (!K_Sliptiding(player) || extendedSliptide)
+		{
+			player->aizdrifttilt -= player->aizdrifttilt / 4;
+			player->aizdriftturn -= player->aizdriftturn / 4;
+
+			if (abs(player->aizdrifttilt) < ANGLE_11hh / 4)
+				player->aizdrifttilt = 0;
+			if (abs(player->aizdriftturn) < ANGLE_11hh)
+				player->aizdriftturn = 0;
+		}
 	}
 
 	if (player->drift

@@ -528,11 +528,11 @@ void N_AdjustPlayerFriction(player_t *player, boolean onground)
 		player->mo->friction = prevfriction;
 
 		// Friction
-		if (!player->offroad)
+		/*if (!player->offroad)
 		{
 			if (player->speed > 0 && player->cmd.forwardmove == 0 && player->mo->friction == 59392)
 				player->mo->friction += 4608;
-		}
+		}*/
 
 		// Reduce friction after hitting a spring
 		if (player->tiregrease)

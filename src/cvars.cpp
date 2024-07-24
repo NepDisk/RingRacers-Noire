@@ -1208,6 +1208,7 @@ consvar_t cv_ng_fastfallbounce = UnsavedNetVar("ng_fastfallbounce", "On").values
 	{2, "On"},
 });
 consvar_t cv_ng_draft = UnsavedNetVar("ng_draft", "On").on_off();
+consvar_t cv_ng_wavedash = UnsavedNetVar("ng_wavedash", "On").on_off();
 consvar_t cv_ng_tumble = UnsavedNetVar("ng_tumble", "On").on_off();
 consvar_t cv_ng_stumble = UnsavedNetVar("ng_stumble", "On").on_off();
 consvar_t cv_ng_hitlag = UnsavedNetVar("ng_hitlag", "On").on_off();
@@ -1258,7 +1259,7 @@ consvar_t cv_ng_oldpogooverride = UnsavedNetVar("ng_oldpogooverride", "Off").on_
 consvar_t cv_ng_nophysicsflag = UnsavedNetVar("ng_nophysicsflag", "Off").on_off();
 consvar_t cv_ng_oldboostpower = UnsavedNetVar("ng_neptuneboostpower", "Off").on_off();
 consvar_t cv_ng_oldspeedcalc = UnsavedNetVar("ng_srb2kartmovement", "Off").on_off().onchange_noinit(NG_SRB2KartMovement_OnChange);
-consvar_t cv_ng_airspeedcap = UnsavedNetVar("cv_ng_airspeedcap", "Default (50)").min_max(0, 100, {{0, "Off"}, {50, "Default (50)"}, {75, "SRB2Kart (75)"}});
+consvar_t cv_ng_airspeedcap = UnsavedNetVar("ng_airspeedcap", "Default (50)").min_max(0, 100, {{0, "Off"}, {50, "Default (50)"}, {75, "SRB2Kart (75)"}});
 
 //Bots
 consvar_t cv_ng_botrubberbandboost = UnsavedNetVar("ng_botrubberbandboost", "On").on_off();

@@ -10423,10 +10423,10 @@ void P_MobjThinker(mobj_t *mobj)
 		|| mobj->type == MT_LITTLETUMBLEWEED
 		|| mobj->type == MT_CANNONBALLDECOR
 		|| mobj->type == MT_FALLINGROCK
-		|| (mobj->type == MT_ORBINAUT) && !cv_ng_oldorbinaut.value
-		|| mobj->type == MT_GACHABOM && !cv_ng_oldorbinaut.value
-		|| mobj->type == MT_JAWZ && !cv_ng_oldjawz.value
-		|| (mobj->type == MT_DROPTARGET && mobj->reactiontime))
+		|| ((mobj->type == MT_ORBINAUT) && !cv_ng_oldorbinaut.value)
+		|| ((mobj->type == MT_GACHABOM) && !cv_ng_oldorbinaut.value)
+		|| ((mobj->type == MT_JAWZ) && !cv_ng_oldjawz.value)
+		|| ((mobj->type == MT_DROPTARGET) && mobj->reactiontime))
 	{
 		P_TryMove(mobj, mobj->x, mobj->y, true, NULL); // Sets mo->standingslope correctly
 

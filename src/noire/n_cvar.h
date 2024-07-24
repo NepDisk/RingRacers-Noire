@@ -70,6 +70,7 @@ extern consvar_t cv_djaitbl[8]; extern consvar_t cv_tgaitbl[8];
 extern consvar_t cv_ng_fastfall;
 extern consvar_t cv_ng_fastfallbounce;
 extern consvar_t cv_ng_draft;
+extern consvar_t cv_ng_wavedash;
 extern consvar_t cv_ng_tumble;
 extern consvar_t cv_ng_stumble;
 extern consvar_t cv_ng_hitlag;

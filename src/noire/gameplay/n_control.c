@@ -54,7 +54,7 @@ void KV1_UpdatePlayerAngle(player_t *player)
 
 	for (i = 0; i <= splitscreen; i++)
 	{
-		if (player == &players[displayplayers[i]])
+		if (player == &players[g_localplayers[i]])
 		{
 			p = i;
 			break;
@@ -105,7 +105,7 @@ void KV1_UpdatePlayerAngle(player_t *player)
 	if (p == UINT8_MAX)
 	{
 		angle_t anglechange = 0;
-		anglechange = N_GetKartTurnValue(player, player->steering) << TICCMD_REDUCE;
+		anglechange = N_GetKartTurnValue(player, cmd->turning) << TICCMD_REDUCE;
 		// When F12ing players, set local angle directly.
 		P_SetPlayerAngle(player, player->angleturn + anglechange);
 		player->mo->angle = player->angleturn;
