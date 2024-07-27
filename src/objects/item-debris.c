@@ -17,6 +17,9 @@
 #include "../r_main.h"
 #include "../s_sound.h"
 
+// Noire
+#include "../noire/n_soc.h"
+
 // TODO: general function
 static fixed_t K_GetPlayerSpeedRatio(player_t *player)
 {
@@ -171,6 +174,7 @@ Obj_SpawnItemDebrisEffects
 	config.origin = collectible;
 	config.angle = K_MomentumAngle(collector);
 	config.speed = max(base_speed, min_speed);
+
 	config.scale = FixedDiv(config.speed, min_speed);
 
 	config.type = DEBRIS_ALPHA;

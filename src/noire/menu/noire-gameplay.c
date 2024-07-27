@@ -74,6 +74,9 @@ menuitem_t OPTIONS_NoireGameplayRings[] =
 ///////////
 menuitem_t OPTIONS_NoireGameplayItems[] =
 {
+	{IT_STRING | IT_CVAR, "Force Small Itemboxes", "Force enable small Itemboxes on all maps regardless of mapheader.",
+		NULL, {.cvar = &cv_ng_forceoldboxscale}, 0, 0},
+
 	{IT_STRING | IT_CVAR, "Capsules", "Enable or disable Item Capsules appearance in tracks.",
 		NULL, {.cvar = &cv_ng_capsules}, 0, 0},
 
@@ -137,7 +140,7 @@ menuitem_t OPTIONS_NoireGameplayMechanics[] =
 	{IT_STRING | IT_CVAR, "Tripwires", "Enable or disable terrain recognized as tripwire.",
 		NULL, {.cvar = &cv_ng_tripwires}, 0, 0},
 
-	{IT_STRING | IT_CVAR, "Force Disable Position", "Force disable Position on all maps regardless of SOC",
+	{IT_STRING | IT_CVAR, "Force Disable Position", "Force disable Position on all maps regardless of mapheader.",
 		NULL, {.cvar = &cv_ng_forcenoposition}, 0, 0},
 
 	{IT_STRING | IT_CVAR, "Special Stages", "Enable or disable special stages in Intense or higher GPs.",
@@ -409,7 +412,24 @@ void NG_ForceNoPosition_OnChange(void)
 	{
 		M_StartMessage(
 			"WARNING!",
-			M_GetText("It is recommended to use SOC value\n\"LegacyStart = True\" instead of this convar.\nSome maps may break.\n\nEnable at your own risk!"),
+			M_GetText("It is recommended to use mapheader value\n\"LegacyStart = True\" instead of this convar.\nSome maps may break.\n\nEnable at your own risk!"),
+			NULL,
+			MM_NOTHING,
+			NULL,
+			NULL
+		);
+		displayedWarning = true;
+	}
+}
+
+void NG_ForceSmallBoxScale_OnChange(void)
+{
+	static boolean displayedWarning = false;
+	if (!displayedWarning && menuactive)
+	{
+		M_StartMessage(
+			"WARNING!",
+			M_GetText("It is recommended to use mapheader value\n\"LegacyBoxScale = True\" instead of this convar.\nThis may make some maps harder.\n\nEnable at your own risk!"),
 			NULL,
 			MM_NOTHING,
 			NULL,

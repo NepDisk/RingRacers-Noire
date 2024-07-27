@@ -21,6 +21,7 @@ extern "C" {
 #endif
 
 boolean N_UseLegacyStart(void);
+boolean N_UseLegacyItemboxScale(void);
 
 #ifdef __cplusplus
 } // extern "C"

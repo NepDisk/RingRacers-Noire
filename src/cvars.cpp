@@ -853,6 +853,7 @@ consvar_t cv_ng_mapringboxes = UnsavedNetVar("ng_mapringboxes", "On").on_off();
 consvar_t cv_ng_ringboxtransform = UnsavedNetVar("ng_ringboxtransform", "On").on_off();
 
 //Items
+consvar_t cv_ng_forceoldboxscale = UnsavedNetVar("ng_forceoldboxscale", "Off").on_off().onchange(NG_ForceSmallBoxScale_OnChange);
 consvar_t cv_ng_capsules = UnsavedNetVar("ng_capsules", "On").on_off().onchange_noinit(NG_Generic_OnChange);
 consvar_t cv_ng_oldorbinaut = UnsavedNetVar("ng_oldorbinaut", "Ring Racers").values(rrOrKart_cons_t).onchange_noinit(NG_Olditem_OnChange);
 consvar_t cv_ng_oldjawz = UnsavedNetVar("ng_oldjawz", "Ring Racers").values(rrOrKart_cons_t).onchange_noinit(NG_Olditem_OnChange);

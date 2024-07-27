@@ -23,6 +23,7 @@
 
 // Noire
 #include "../noire/n_cvar.h"
+#include "../noire/n_soc.h"
 
 #define FLOAT_HEIGHT ( 12 * FRACUNIT )
 #define FLOAT_TIME ( 2 * TICRATE )
@@ -112,7 +113,8 @@ void Obj_RandomItemVisuals(mobj_t *mobj)
 {
 	ItemBoxColor(mobj);
 	ItemBoxBob(mobj);
-	ItemBoxScaling(mobj);
+	if (!N_UseLegacyItemboxScale())
+		ItemBoxScaling(mobj);
 	item_vfxtimer(mobj)++;
 
 	if (mobj->type != MT_RANDOMITEM)
@@ -208,7 +210,13 @@ boolean Obj_RandomItemSpawnIn(mobj_t *mobj)
 
 fixed_t Obj_RandomItemScale(fixed_t oldScale)
 {
-	const fixed_t intendedScale = oldScale * 3;
+	fixed_t intendedScale;
+
+	if (N_UseLegacyItemboxScale())
+		intendedScale = oldScale;
+	else
+		intendedScale = oldScale * 3;
+
 	const fixed_t maxScale = FixedDiv(MAPBLOCKSIZE, mobjinfo[MT_RANDOMITEM].radius); // don't make them larger than the blockmap can handle
 
 	return min(intendedScale, maxScale);

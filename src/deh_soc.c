@@ -1380,6 +1380,13 @@ void readlevelheader(MYFILE *f, char * name)
 				else
 					mapheaderinfo[num]->legacystart = false;
 			}
+			else if (fastcmp(word, "LEGACYBOXSCALE"))
+			{
+				if (i || word2[0] == 'T' || word2[0] == 'Y')
+					mapheaderinfo[num]->legacyboxscale = true;
+				else
+					mapheaderinfo[num]->legacyboxscale = false;
+			}
 			else if (fastcmp(word, "SKYBOXSCALE"))
 				mapheaderinfo[num]->skybox_scalex = mapheaderinfo[num]->skybox_scaley = mapheaderinfo[num]->skybox_scalez = (INT16)i;
 			else if (fastcmp(word, "SKYBOXSCALEX"))

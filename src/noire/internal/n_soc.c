@@ -25,5 +25,20 @@ boolean N_UseLegacyStart(void)
 	return false;
 }
 
+boolean N_UseLegacyItemboxScale(void)
+{
+    const mapheader_t *mapheader = mapheaderinfo[gamemap - 1];
+
+	if (cv_ng_forceoldboxscale.value)
+		return true;
+
+	if (mapheader->legacyboxscale == true)
+		return true;
+
+	if (mapheader->legacyboxscale == false)
+		return false;
+
+	return false;
+}
 
 

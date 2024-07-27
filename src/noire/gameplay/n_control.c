@@ -105,11 +105,10 @@ void KV1_UpdatePlayerAngle(player_t *player)
 	}
 
 
-	//CONS_Printf("Playerid:%d",p);
+	// CONS_Printf("Playerid:%d\n",p);
 
 	if (p == UINT8_MAX)
 	{
-		CONS_Printf("This shit don't work");
 		// When F12ing players, set local angle directly.
 		P_SetPlayerAngle(player, anglechange + (N_GetKartTurnValue(player, cmd->turning) << TICCMD_REDUCE));
 		player->angleturn = anglechange;

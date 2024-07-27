@@ -285,7 +285,7 @@ class TiccmdBuilder
 
 	bool director_input()
 	{
-		if (freecam() || !K_DirectorIsAvailable(viewnum) || (spymode == true))
+		if (freecam() || !K_DirectorIsAvailable(viewnum))
 		{
 			return false;
 		}
@@ -320,24 +320,6 @@ class TiccmdBuilder
 
 		return true;
 	}
-
-	void handlespymode()
-	{
-		if (spymode == false)
-			return;
-
-		// Reset away view if a command is given.
-		if ((cmd->forwardmove || cmd->buttons)
-			&& !r_splitscreen && displayplayers[0] != consoleplayer && ssplayer == 1)
-		{
-			// Call ViewpointSwitch hooks here.
-			// The viewpoint was forcibly changed.
-			LUA_HookViewpointSwitch(player(), &players[consoleplayer], true);
-			displayplayers[0] = consoleplayer;
-			spymode = false;
-		}
-	}
-
 
 	bool spectator_analog_input()
 	{
@@ -526,8 +508,6 @@ public:
 
 		if (cv_ng_turnstyle.value == 0) // Most similar spot to v1 for where to put this thing
 			KV1_angle_prediction();
-
-		handlespymode();
 
 		hook();
 
