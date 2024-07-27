@@ -1397,7 +1397,10 @@ boolean G_Responder(event_t *ev)
 			&& (ev->data1 == KEY_F12 /*|| ev->data1 == gamecontrol[0][gc_viewpoint][0] || ev->data1 == gamecontrol[0][gc_viewpoint][1]*/))
 		{
 			if (!demo.playback && (r_splitscreen))
+			{
 				g_localplayers[0] = consoleplayer;
+				spymode = false;
+			}
 			else
 			{
 				spymode = true;
