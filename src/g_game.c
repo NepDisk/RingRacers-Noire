@@ -154,6 +154,8 @@ boolean usedTourney = false; // Entered the "Tournament Mode" cheat.
 UINT8 paused;
 UINT8 modeattacking = ATTACKING_NONE;
 boolean imcontinuing = false;
+// Noire Spymode
+boolean spymode = false;
 
 // menu demo things
 UINT8  numDemos      = 0;
@@ -1389,6 +1391,25 @@ boolean G_Responder(event_t *ev)
 			return true; // chat ate the event
 		}
 	}
+
+		// allow spy mode changes even during the demo
+		if (gamestate == GS_LEVEL && ev->type == ev_keydown
+			&& (ev->data1 == KEY_F12 /*|| ev->data1 == gamecontrol[0][gc_viewpoint][0] || ev->data1 == gamecontrol[0][gc_viewpoint][1]*/))
+		{
+			if (!demo.playback && (r_splitscreen))
+				g_localplayers[0] = consoleplayer;
+			else
+			{
+				spymode = true;
+				G_AdjustView(1, 1, true);
+
+				// change statusbar also if playing back demo
+				if (demo.quitafterplaying)
+					ST_changeDemoView();
+
+				return true;
+			}
+		}
 
 	if (gamestate == GS_LEVEL)
 	{

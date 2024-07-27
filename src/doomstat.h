@@ -231,6 +231,8 @@ extern int r_splitscreen;
 
 extern boolean forceresetplayers, deferencoremode, forcespecialstage;
 
+extern boolean spymode;
+
 // ========================================
 // Internal parameters for sound rendering.
 // ========================================

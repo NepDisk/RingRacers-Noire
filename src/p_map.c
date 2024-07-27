@@ -1554,9 +1554,24 @@ static BlockItReturn_t PIT_CheckThing(mobj_t *thing)
 				P_DamageMobj(g_tm.thing, thing, thing, 1, DMG_TUMBLE);
 			}
 
-			if (K_KartBouncing(g_tm.thing, thing) == true)
+			if (!cv_ng_tumble.value || !cv_ng_stumble.value)
 			{
-				K_PvPTouchDamage(g_tm.thing, thing);
+				if (g_tm.thing->hitlag == 0)
+				{
+
+					if (K_PvPTouchDamage(g_tm.thing, thing) == true)
+						K_KartBouncing(g_tm.thing, thing);
+					else
+						K_KartBouncing(g_tm.thing, thing);
+				}
+			}
+			else
+			{
+
+				if (K_KartBouncing(g_tm.thing, thing) == true)
+				{
+					K_PvPTouchDamage(g_tm.thing, thing);
+				}
 			}
 
 			return BMIT_CONTINUE;

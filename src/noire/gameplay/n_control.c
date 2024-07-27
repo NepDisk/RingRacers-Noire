@@ -50,7 +50,9 @@ void KV1_UpdatePlayerAngle(player_t *player)
 	boolean add_delta = true;
 	fixed_t currentSpeed = 0;
 	ticcmd_t *cmd = &player->cmd;
-	UINT8 i, p = UINT8_MAX;
+	angle_t anglechange = player->angleturn;
+	int i;
+	UINT8 p = UINT8_MAX;
 
 	for (i = 0; i <= splitscreen; i++)
 	{
@@ -88,30 +90,34 @@ void KV1_UpdatePlayerAngle(player_t *player)
 	else
 	{
 		// Try to keep normal turning as accurate to 1.0.1 as possible to reduce replay desyncs.
-		player->angleturn = cmd->angle<<TICCMD_REDUCE;
+		anglechange = cmd->angle<<TICCMD_REDUCE;
 		add_delta = false;
 	}
 	CONS_Printf("applied turn: %d\n", angle_diff);
 
 	if (add_delta) {
-		player->angleturn += angle_diff<<TICCMD_REDUCE;
-		player->angleturn &= ~0xFFFF; // Try to keep the turning somewhat similar to how it was before?
+		anglechange += angle_diff<<TICCMD_REDUCE;
+		anglechange &= ~0xFFFF; // Try to keep the turning somewhat similar to how it was before?
 		CONS_Printf("leftover turn (%s): %5d or %4d%%\n",
 						player_names[player-players],
 						(INT16) (cmd->angle - (player->mo->angle>>TICCMD_REDUCE)),
 						(INT16) (cmd->angle - (player->mo->angle>>TICCMD_REDUCE)) * 100 / (angle_diff ? angle_diff : 1));
 	}
 
+
+	//CONS_Printf("Playerid:%d",p);
+
 	if (p == UINT8_MAX)
 	{
-		angle_t anglechange = 0;
-		anglechange = N_GetKartTurnValue(player, cmd->turning) << TICCMD_REDUCE;
+		CONS_Printf("This shit don't work");
 		// When F12ing players, set local angle directly.
-		P_SetPlayerAngle(player, player->angleturn + anglechange);
+		P_SetPlayerAngle(player, anglechange + (N_GetKartTurnValue(player, cmd->turning) << TICCMD_REDUCE));
+		player->angleturn = anglechange;
 		player->mo->angle = player->angleturn;
 	}
 	else
 	{
+		player->angleturn = anglechange;
 		player->mo->angle = player->angleturn;
 	}
 
@@ -122,12 +128,16 @@ void KV1_UpdatePlayerAngle(player_t *player)
 	else
 	{
 		player->aiming += (player->cmd.aiming << TICCMD_REDUCE);
-		player->aiming = G_ClipAimingPitch((INT32 *)&player->aiming);
+		player->aiming = G_ClipAimingPitch((INT32*) &player->aiming);
 	}
 
-	if (p != UINT8_MAX)
+	for (i = 0; i <= r_splitscreen; i++)
 	{
-		localaiming[p] = player->aiming;
+		if (player == &players[displayplayers[i]])
+		{
+			localaiming[i] = player->aiming;
+			break;
+		}
 	}
 
 }

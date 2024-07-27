@@ -146,6 +146,9 @@ void K_drawSpectatorHUD(boolean director)
 
 	UINT8 numingame = 0;
 
+	if (spymode == true)
+		return;
+
 	for (UINT8 i = 0; i < MAXPLAYERS; i++)
 	{
 		if (playeringame[i] && !players[i].spectator)
