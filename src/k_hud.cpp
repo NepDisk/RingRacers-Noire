@@ -55,6 +55,8 @@
 #include "f_finale.h"
 #include "m_easing.h"
 
+#include "radioracers/rr_cvar.h"
+
 //{ 	Patch Definitions
 static patch_t *kp_nodraw;
 
@@ -2998,7 +3000,7 @@ static void K_drawRingCounter(boolean gametypeinfoshown)
 	INT32 ringflip = 0;
 	UINT8 *ringmap = NULL;
 	boolean colorring = false;
-	INT32 ringx = 0, fy = 0;
+	INT32 ringx = 0, fy = 0, lives_y = 0;
 
 	rn[0] = ((abs(stplyr->hudrings) / 10) % 10);
 	rn[1] = (abs(stplyr->hudrings) % 10);
@@ -3104,37 +3106,82 @@ static void K_drawRingCounter(boolean gametypeinfoshown)
 	}
 	else
 	{
+		const boolean DRAW_RINGS_ON_PLAYER = cv_ringsonplayer.value;
+		INT32 ringcounterflags = V_HUDTRANS|V_SLIDEIN|splitflags;
+		INT32 RINGC_X = LAPS_X;
+
 		fy = LAPS_Y;
+		lives_y = LAPS_Y;
+
+		// RadioRacers: Copying driftgauge here
+		if (DRAW_RINGS_ON_PLAYER) {
+			vector3_t v;
+			trackingResult_t result;
+
+			ringcounterflags &= ~V_SLIDEIN;
+			ringcounterflags &= ~splitflags;
+
+			const boolean doesPlayerHaveMo = !((stplyr->mo == NULL || P_MobjWasRemoved(stplyr->mo)));
+			if (doesPlayerHaveMo)
+			{
+				v.x = R_InterpolateFixed(stplyr->mo->old_x, stplyr->mo->x);
+				v.y = R_InterpolateFixed(stplyr->mo->old_y, stplyr->mo->y);
+				v.z = R_InterpolateFixed(stplyr->mo->old_z, stplyr->mo->z);
+
+				// Legacy GL perspective
+				v.z += FixedMul(-15*FRACUNIT, stplyr->mo->scale);
+				/*
+				* Many thanks to Nev3r for figuring out the math for this functionality, opens up a lot of
+				possiblities.
+				*/
+				K_ObjectTracking(&result, &v, false);
+
+				// Add some offset so it's directly below the player (in Software)
+				fy = (result.y / FRACUNIT); 
+				RINGC_X = (result.x / FRACUNIT) - 20;
+			} 
+		}
 
 		if (gametypeinfoshown)
 		{
-			fy -= 11;
+			lives_y -= 11;
+			if (!DRAW_RINGS_ON_PLAYER)
+				fy -= 11;
 
 			if ((gametyperules & (GTR_BUMPERS|GTR_CIRCUIT)) == GTR_BUMPERS)
-				fy -= 4;
+			{
+				lives_y -= 4;
+				if (!DRAW_RINGS_ON_PLAYER)
+					fy -= 4;
+			}
 		}
 		else
 		{
-			fy += 9;
+			lives_y += 9;
+			if (!DRAW_RINGS_ON_PLAYER)
+				fy += 9;
 		}
+
+		// If the cvar isn't active AND we're using lives..
+		INT32 ringstickerwidth = (uselives && !DRAW_RINGS_ON_PLAYER) ? (stplyr->lives >= 10 ? 70 : 64) : 33;
 
 		// Rings
 		using srb2::Draw;
-		Draw(LAPS_X+7, fy+1)
-			.flags(V_HUDTRANS|V_SLIDEIN|splitflags)
+		Draw(RINGC_X+7, fy+1)
+			.flags(ringcounterflags)
 			.align(Draw::Align::kCenter)
-			.width(uselives ? (stplyr->lives >= 10 ? 70 : 64) : 33)
+			.width(ringstickerwidth)
 			.small_sticker();
 
-		V_DrawMappedPatch(LAPS_X+ringx+7, fy-5, V_HUDTRANS|V_SLIDEIN|splitflags|ringflip, kp_ring[ringanim_realframe], (colorring ? ringmap : NULL));
+		V_DrawMappedPatch(RINGC_X+ringx+7, fy-5, ringcounterflags|ringflip, kp_ring[ringanim_realframe], (colorring ? ringmap : NULL));
 
 		// "Why fy-4? Why LAPS_X+29+1?"
 		// "use magic numbers" - jartha 2024-03-05
 		if (stplyr->hudrings < 0) // Draw the minus for ring debt
 		{
-			V_DrawMappedPatch(LAPS_X+23-1, fy, V_HUDTRANS|V_SLIDEIN|splitflags, kp_ringdebtminus, ringmap);
+			V_DrawMappedPatch(RINGC_X+23-1, fy, ringcounterflags, kp_ringdebtminus, ringmap);
 			using srb2::Draw;
-			Draw row = Draw(LAPS_X+29+0, fy-4).flags(V_HUDTRANS|V_SLIDEIN|splitflags).font(Draw::Font::kThinTimer).colormap(ringmap);
+			Draw row = Draw(RINGC_X+29+0, fy-4).flags(ringcounterflags).font(Draw::Font::kThinTimer).colormap(ringmap);
 			row.text("{:02}", abs(stplyr->hudrings));
 			// V_DrawMappedPatch(LAPS_X+29, fy, V_HUDTRANS|V_SLIDEIN|splitflags, fontv[TALLNUM_FONT].font[rn[0]], ringmap);
 			// V_DrawMappedPatch(LAPS_X+35, fy, V_HUDTRANS|V_SLIDEIN|splitflags, fontv[TALLNUM_FONT].font[rn[1]], ringmap);
@@ -3142,7 +3189,7 @@ static void K_drawRingCounter(boolean gametypeinfoshown)
 		else
 		{
 			using srb2::Draw;
-			Draw row = Draw(LAPS_X+23+3, fy-4).flags(V_HUDTRANS|V_SLIDEIN|splitflags).font(Draw::Font::kThinTimer).colormap(ringmap);
+			Draw row = Draw(RINGC_X+23+3, fy-4).flags(ringcounterflags).font(Draw::Font::kThinTimer).colormap(ringmap);
 			row.text("{:02}", abs(stplyr->hudrings));
 			// V_DrawMappedPatch(LAPS_X+23, fy, V_HUDTRANS|V_SLIDEIN|splitflags, fontv[TALLNUM_FONT].font[rn[0]], ringmap);
 			// V_DrawMappedPatch(LAPS_X+29, fy, V_HUDTRANS|V_SLIDEIN|splitflags, fontv[TALLNUM_FONT].font[rn[1]], ringmap);
@@ -3150,13 +3197,28 @@ static void K_drawRingCounter(boolean gametypeinfoshown)
 
 		// SPB ring lock
 		if (stplyr->pflags & PF_RINGLOCK)
-			V_DrawScaledPatch(LAPS_X-5, fy-17, V_HUDTRANS|V_SLIDEIN|splitflags, kp_ringspblock[stplyr->karthud[khud_ringspblock]]);
+			V_DrawScaledPatch(RINGC_X-5, fy-17, ringcounterflags, kp_ringspblock[stplyr->karthud[khud_ringspblock]]);
 
 		// Lives
 		if (uselives)
 		{
+			INT32 facerank_x = 46;
+			INT32 lifecount_x = 65;
+
+			if (DRAW_RINGS_ON_PLAYER) {
+				facerank_x = 13;
+				lifecount_x = 32;
+
+				using srb2::Draw;
+				Draw(LAPS_X+7, lives_y+1)
+					.flags(V_HUDTRANS|V_SLIDEIN|splitflags)
+					.align(Draw::Align::kCenter)
+					.width(stplyr->lives >= 10 ? 37 : 31)
+					.small_sticker();
+			}
+
 			UINT8 *colormap = R_GetTranslationColormap(stplyr->skin, static_cast<skincolornum_t>(stplyr->skincolor), GTC_CACHE);
-			V_DrawMappedPatch(LAPS_X+46, fy-5, V_HUDTRANS|V_SLIDEIN|splitflags, faceprefix[stplyr->skin][FACE_RANK], colormap);
+			V_DrawMappedPatch(LAPS_X+facerank_x, lives_y-5, V_HUDTRANS|V_SLIDEIN|splitflags, faceprefix[stplyr->skin][FACE_RANK], colormap);
 			SINT8 livescount = 0;
 			if (stplyr->lives > 0)
 			{
@@ -3165,7 +3227,7 @@ static void K_drawRingCounter(boolean gametypeinfoshown)
 					livescount = 10;
 			}
 			using srb2::Draw;
-			Draw row = Draw(LAPS_X+65, fy-4).flags(V_HUDTRANS|V_SLIDEIN|splitflags).font(Draw::Font::kThinTimer);
+			Draw row = Draw(LAPS_X+lifecount_x, lives_y-4).flags(V_HUDTRANS|V_SLIDEIN|splitflags).font(Draw::Font::kThinTimer);
 			row.text("{}", livescount);
 		}
 	}
@@ -3175,7 +3237,8 @@ static void K_drawRingCounter(boolean gametypeinfoshown)
 
 static void K_drawKartAccessibilityIcons(boolean gametypeinfoshown, INT32 fx)
 {
-    INT32 fy = LAPS_Y-14;
+	boolean showbluespheres = (gametyperules & GTR_SPHERES);
+	INT32 fy = LAPS_Y - ((cv_ringsonplayer.value && !showbluespheres && !G_GametypeUsesLives()) ? 0 : 14);
     INT32 splitflags = V_SNAPTOLEFT|V_SNAPTOBOTTOM|V_SPLITSCREEN;
 
     boolean mirror = false;
@@ -3287,7 +3350,9 @@ static void K_drawKartSpeedometer(boolean gametypeinfoshown)
 	UINT8 labeln = 0;
 	UINT8 numbers[3];
 	INT32 splitflags = V_SNAPTOBOTTOM|V_SNAPTOLEFT|V_SPLITSCREEN;
-	INT32 fy = LAPS_Y-14;
+
+	boolean showbluespheres = (gametyperules & GTR_SPHERES);
+	INT32 fy = LAPS_Y - ((cv_ringsonplayer.value && !showbluespheres && !G_GametypeUsesLives()) ? 0 : 14);
 
 	if (battleprisons)
 	{

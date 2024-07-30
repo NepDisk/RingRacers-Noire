@@ -503,6 +503,8 @@ consvar_t stereoreverse = Player("stereoreverse", "Off").on_off();
 consvar_t cv_votesnitch = Player("votesnitch", "On").on_off();
 // More Rumble Events
 consvar_t cv_morerumbleevents = Player("morerumbleevents", "On").on_off();
+// Rings drawn on player (akin to driftgauge)
+consvar_t cv_ringsonplayer = Player("ringsonplayer", "On").on_off();
 
 //
 // Server local, also available on dedicated servers.
