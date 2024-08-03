@@ -140,10 +140,10 @@ boolean RR_RumbleJustDrifted(const player_t *player)
     const INT32 dsthree = K_GetKartDriftSparkValueForStage(player, 3);
     const INT32 dsfour = K_GetKartDriftSparkValueForStage(player, 4);
 
-    const boolean yellowSparkDrifts = (player->driftcharge >= (dsone - (32*4)) && player-> driftcharge < dsone);
-    const boolean redSparkDrifts = (player->driftcharge >= (dstwo - (32*4)) && player->driftcharge < dstwo);
-    const boolean blueSparkDrifts = (player->driftcharge >= (dsthree - (32*4)) && player->driftcharge < dsthree);
-    const boolean rainbowSparkDrifts = (player->driftcharge >= (dsfour - (32*4)) && player->driftcharge < dsfour);
+    const boolean yellowSparkDrifts = (player->driftcharge >= (dsone - (32*2)) && player-> driftcharge < dsone);
+    const boolean redSparkDrifts = (player->driftcharge >= (dstwo - (32*2)) && player->driftcharge < dstwo);
+    const boolean blueSparkDrifts = (player->driftcharge >= (dsthree - (32*2)) && player->driftcharge < dsthree);
+    const boolean rainbowSparkDrifts = (player->driftcharge >= (dsfour - (32*2)) && player->driftcharge < dsfour);
     
     return (
         player->mo &&
