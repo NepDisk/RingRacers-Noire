@@ -514,6 +514,20 @@ consvar_t cv_rr_rumble_rings = Player("rr_rumble_rings", "On").on_off();
 consvar_t cv_rr_rumble_wavedash = Player("rr_rumble_wavedash", "On").on_off();
 
 // Rings drawn on player (akin to driftgauge)
+// Item/Ringbox Roulette drawn on player
+consvar_t cv_rouletteonplayer = Player("rouletteonplayer", "On").on_off();
+
+// Rumble Events
+consvar_t cv_morerumbleevents = Player("morerumbleevents", "On").on_off().onchange(RumbleEvents_OnChange);
+consvar_t cv_rr_rumble_wall_bump = Player("rr_rumble_wall_bump", "On").on_off();
+consvar_t cv_rr_rumble_fastfall_bounce = Player("rr_rumble_fastfall_bounce", "On").on_off();
+consvar_t cv_rr_rumble_drift = Player("rr_rumble_drift", "On").on_off();
+consvar_t cv_rr_rumble_spindash = Player("rr_rumble_spindash", "On").on_off();
+consvar_t cv_rr_rumble_tailwhip = Player("rr_rumble_tailwhip", "On").on_off();
+consvar_t cv_rr_rumble_rings = Player("rr_rumble_rings", "On").on_off();
+consvar_t cv_rr_rumble_wavedash = Player("rr_rumble_wavedash", "On").on_off();
+
+// Rings drawn on player (akin to driftgauge)
 consvar_t cv_ringsonplayer = Player("ringsonplayer", "Vanilla").values({
 	{0, "Vanilla"}, 
 	{1, "Custom"}
