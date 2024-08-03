@@ -505,6 +505,8 @@ consvar_t cv_votesnitch = Player("votesnitch", "On").on_off();
 consvar_t cv_morerumbleevents = Player("morerumbleevents", "On").on_off();
 // Rings drawn on player (akin to driftgauge)
 consvar_t cv_ringsonplayer = Player("ringsonplayer", "On").on_off();
+// Item/Ringbox Roulette drawn on player
+consvar_t cv_rouletteonplayer = Player("rouletteonplayer", "On").on_off();
 
 //
 // Server local, also available on dedicated servers.

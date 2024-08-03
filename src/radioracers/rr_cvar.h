@@ -25,6 +25,7 @@ extern "C" {
 extern consvar_t cv_votesnitch;         // Vote Snitch
 extern consvar_t cv_morerumbleevents;   // Extra gameplay events considered for controller rumble
 extern consvar_t cv_ringsonplayer;      // Rings drawn on player
+extern consvar_t cv_rouletteonplayer;   // Item/Ring Roulette drawn on player
 
 #ifdef __cplusplus
 } // extern "C"
