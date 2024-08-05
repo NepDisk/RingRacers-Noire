@@ -1,0 +1,9 @@
+{
+    "files.associations": {
+        "d_main.h": "c",
+        "rr_menu.h": "c",
+        "command.h": "c",
+        "rr_cvar.h": "c",
+        "i_time.h": "c"
+    }
+}

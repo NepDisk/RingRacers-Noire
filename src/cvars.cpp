@@ -502,8 +502,17 @@ consvar_t stereoreverse = Player("stereoreverse", "Off").on_off();
 consvar_t cv_translucenthud = Player("translucenthud", "10").min_max(0, 10);
 // Vote Snitch
 consvar_t cv_votesnitch = Player("votesnitch", "On").on_off();
-// More Rumble Events
-consvar_t cv_morerumbleevents = Player("morerumbleevents", "On").on_off();
+
+// Rumble Events
+consvar_t cv_morerumbleevents = Player("morerumbleevents", "On").on_off().onchange(RumbleEvents_OnChange);
+consvar_t cv_rr_rumble_wall_bump = Player("rr_rumble_wall_bump", "On").on_off();
+consvar_t cv_rr_rumble_fastfall_bounce = Player("rr_rumble_fastfall_bounce", "On").on_off();
+consvar_t cv_rr_rumble_drift = Player("rr_rumble_drift", "On").on_off();
+consvar_t cv_rr_rumble_spindash = Player("rr_rumble_spindash", "On").on_off();
+consvar_t cv_rr_rumble_tailwhip = Player("rr_rumble_tailwhip", "On").on_off();
+consvar_t cv_rr_rumble_rings = Player("rr_rumble_rings", "On").on_off();
+consvar_t cv_rr_rumble_wavedash = Player("rr_rumble_wavedash", "On").on_off();
+
 // Rings drawn on player (akin to driftgauge)
 consvar_t cv_ringsonplayer = Player("ringsonplayer", "Vanilla").values({
 	{0, "Vanilla"}, 

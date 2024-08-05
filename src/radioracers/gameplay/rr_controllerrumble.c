@@ -85,11 +85,17 @@ uint16_t RR_GetRumbleStrength(const rumbleevent_e event)
 
 boolean RR_RumbleJustBumpedWall(const player_t *player)
 {
+    if (!cv_rr_rumble_wall_bump.value)
+        return false;
+    
     return (player->mo->eflags & MFE_JUSTBOUNCEDWALL);
 }
 
 boolean RR_RumbleIsSpindashingGently(const player_t *player)
 {
+    if (!cv_rr_rumble_spindash.value)
+        return false;
+    
     return (
             P_IsObjectOnGround(player->mo) &&
             player-> spindash && 
@@ -99,6 +105,9 @@ boolean RR_RumbleIsSpindashingGently(const player_t *player)
 
 boolean RR_RumbleIsSpindashingViolently(const player_t *player)
 {
+    if (!cv_rr_rumble_spindash.value)
+        return false;
+
     return (
             P_IsObjectOnGround(player->mo) &&
             player-> spindash && 
@@ -108,6 +117,8 @@ boolean RR_RumbleIsSpindashingViolently(const player_t *player)
 
 boolean RR_RumbleRingCollected(const player_t *player)
 {
+    if (!cv_rr_rumble_rings.value)
+        return false;
     return (
         player->mo && 
         player->rings < 20 &&
@@ -117,6 +128,8 @@ boolean RR_RumbleRingCollected(const player_t *player)
 
 boolean RR_RumbleChargingTailWhip(const player_t *player)
 {
+    if (!cv_rr_rumble_tailwhip.value)
+        return false;
     return (
         (player->mo) &&
         player->instaWhipCharge != 0 &&
@@ -126,6 +139,8 @@ boolean RR_RumbleChargingTailWhip(const player_t *player)
 
 boolean RR_RumbleOverchargingTailWhip(const player_t *player)
 {
+    if (!cv_rr_rumble_tailwhip.value)
+        return false;   
     return (
         (player->mo) &&
         player->instaWhipCharge >= INSTAWHIP_CHARGETIME
@@ -134,6 +149,9 @@ boolean RR_RumbleOverchargingTailWhip(const player_t *player)
 
 boolean RR_RumbleJustDrifted(const player_t *player)
 {
+    if (!cv_rr_rumble_drift.value)
+        return false;
+    
     // Charlie, Charlie! Have I told you how much I LOVE repeated code?!
     const INT32 dsone = K_GetKartDriftSparkValueForStage(player, 1);
     const INT32 dstwo = K_GetKartDriftSparkValueForStage(player, 2);
@@ -154,7 +172,10 @@ boolean RR_RumbleJustDrifted(const player_t *player)
 
 boolean RR_RumbleRingConsumed(const player_t *player)
 {
-    ticcmd_t *cmd = &player->cmd;
+    if (!cv_rr_rumble_rings.value)
+        return false;
+    
+    const ticcmd_t *cmd = &player->cmd;
     return (
         player->mo &&
         (
@@ -170,12 +191,13 @@ boolean RR_RumbleRingConsumed(const player_t *player)
 /**
  * These checks are kind of hacky. 
  * But I want the rumble to happen the FRAME that the ringboost timer has started.
- * That way, the player gets feedback immediately and knows when to start adjusting lines
- * and the sort.
+ * That way, the player gets feedback immediately and knows when to start adjusting lines and the sort.
  */
 
 boolean RR_RumbleJustFastFallBounced(const player_t *player)
 {
+    if (!cv_rr_rumble_fastfall_bounce.value)
+        return false;
     return (
         (player-> mo) &&
         player->fastfall !=0 &&
@@ -186,6 +208,8 @@ boolean RR_RumbleJustFastFallBounced(const player_t *player)
 
 boolean RR_RumbleJustWaveDashed(const player_t *player)
 {
+    if (!cv_rr_rumble_wavedash.value)
+        return false;
     return (
         (player->mo) &&
         P_IsObjectOnGround(player->mo) &&
