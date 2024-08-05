@@ -106,20 +106,13 @@ static void M_ProfileEditApply(void)
 	// Don't apply the profile itself as that would lead to issues mid-game.
 	if (belongsto > -1 && belongsto < MAXSPLITSCREENPLAYERS)
 	{
-		// extern consvar_t cv_fov[MAXSPLITSCREENPLAYERS];
+		extern consvar_t cv_fov[MAXSPLITSCREENPLAYERS];
 		CV_SetValue(&cv_kickstartaccel[belongsto], cv_dummyprofilekickstart.value);
 		CV_SetValue(&cv_autoroulette[belongsto], cv_dummyprofileautoroulette.value);
 		CV_SetValue(&cv_litesteer[belongsto], cv_dummyprofilelitesteer.value);
 		CV_SetValue(&cv_autoring[belongsto], cv_dummyprofileautoring.value);
 		CV_SetValue(&cv_rumble[belongsto], cv_dummyprofilerumble.value);
-		
-
-		/**
-		 * RadioRacers - FOV CVAR INFO
-		 * 
-		 * Check cvars.cpp for information.
-		 */
-		// CV_SetValue(&cv_fov[belongsto], cv_dummyprofilefov.value);
+		CV_SetValue(&cv_fov[belongsto], cv_dummyprofilefov.value);
 	}
 
 	// Reapply player 1's real profile.

@@ -13,22 +13,11 @@
 #include "../r_main.h"	// cv_showhud
 #include "../v_video.h" // cv_constextsize
 
-#include "../radioracers/rr_menu.h" // RadioRacers
-
 menuitem_t OPTIONS_HUD[] =
 {
 
 	{IT_STRING | IT_CVAR, "Show HUD (F3)", "Toggles the Heads-Up display. Great for taking screenshots!",
 		NULL, {.cvar = &cv_showhud}, 0, 0},
-
-	{IT_SPACE | IT_NOTHING, NULL,  NULL,
-		NULL, {NULL}, 0, 0},
-
-	{IT_STRING | IT_CVAR | IT_CV_SLIDER, "HUD Translucency", "Self-explanatory. What are you, stupid?",
-		NULL, {.cvar = &cv_translucenthud}, 0, 0},
-
-	{IT_STRING | IT_SUBMENU, "RadioRacers HUD...", "Extended visual options for the HUD.",
-		NULL, {.submenu = &OPTIONS_RadioRacersHudDef}, 0, 0},
 
 	{IT_SPACE | IT_NOTHING, NULL,  NULL,
 		NULL, {NULL}, 0, 0},

@@ -138,7 +138,6 @@ extern consvar_t cv_drawpickups;
 extern consvar_t cv_debugfinishline;
 extern consvar_t cv_drawinput;
 
-extern consvar_t cv_translucenthud;
 // debugging
 
 typedef enum {
