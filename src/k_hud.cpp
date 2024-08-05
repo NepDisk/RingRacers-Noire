@@ -2213,7 +2213,7 @@ void K_DrawKartPositionNumXY(
 	{
 		fx = K_DrawKartPositionNumPatch(
 			(num % 10), splitIndex, color,
-			fx, fy, scale, V_SPLITSCREEN|fflags
+			fx, fy, scale, V_SPLITSCREEN|V_HUDTRANS|fflags
 		);
 		num /= 10;
 	} while (num);
@@ -3106,7 +3106,7 @@ static void K_drawRingCounter(boolean gametypeinfoshown)
 	}
 	else
 	{
-		const boolean DRAW_RINGS_ON_PLAYER = cv_ringsonplayer.value;
+		const boolean DRAW_RINGS_ON_PLAYER = cv_ringsonplayer.value == 1;
 		INT32 ringcounterflags = V_HUDTRANS|V_SLIDEIN|splitflags;
 		INT32 RINGC_X = LAPS_X;
 
@@ -3238,7 +3238,7 @@ static void K_drawRingCounter(boolean gametypeinfoshown)
 static void K_drawKartAccessibilityIcons(boolean gametypeinfoshown, INT32 fx)
 {
 	boolean showbluespheres = (gametyperules & GTR_SPHERES);
-	INT32 fy = LAPS_Y - ((cv_ringsonplayer.value && !showbluespheres && !G_GametypeUsesLives()) ? 0 : 14);
+	INT32 fy = LAPS_Y - ((cv_ringsonplayer.value == 1 && !showbluespheres && !G_GametypeUsesLives()) ? 0 : 14);
     INT32 splitflags = V_SNAPTOLEFT|V_SNAPTOBOTTOM|V_SPLITSCREEN;
 
     boolean mirror = false;
@@ -3352,7 +3352,7 @@ static void K_drawKartSpeedometer(boolean gametypeinfoshown)
 	INT32 splitflags = V_SNAPTOBOTTOM|V_SNAPTOLEFT|V_SPLITSCREEN;
 
 	boolean showbluespheres = (gametyperules & GTR_SPHERES);
-	INT32 fy = LAPS_Y - ((cv_ringsonplayer.value && !showbluespheres && !G_GametypeUsesLives()) ? 0 : 14);
+	INT32 fy = LAPS_Y - ((cv_ringsonplayer.value == 1 && !showbluespheres && !G_GametypeUsesLives()) ? 0 : 14);
 
 	if (battleprisons)
 	{
@@ -4954,7 +4954,7 @@ static void K_drawKartMinimap(void)
 
 static void K_drawKartFinish(boolean finish)
 {
-	INT32 timer, minsplitstationary, pnum = 0, splitflags = V_SPLITSCREEN;
+	INT32 timer, minsplitstationary, pnum = 0, splitflags = V_SPLITSCREEN|V_HUDTRANS;
 	patch_t **kptodraw;
 
 	if (finish)
@@ -5137,7 +5137,7 @@ static void K_drawKartStartBulbs(void)
 			}
 		}
 
-		V_DrawFixedPatch(x, y, FRACUNIT, V_SNAPTOTOP|V_SPLITSCREEN,
+		V_DrawFixedPatch(x, y, FRACUNIT, V_SNAPTOTOP|V_SPLITSCREEN|V_HUDTRANS,
 			(r_splitscreen ? kp_prestartbulb_split[patchnum] : kp_prestartbulb[patchnum]), NULL);
 		x += spacing;
 	}
@@ -5193,11 +5193,17 @@ static void K_drawKartStartCountdown(void)
 
 	if (leveltime >= introtime && leveltime < starttime-(3*TICRATE))
 	{
+		if (cv_hud_hideposition.value)
+			return;
+		
 		if (numbulbs > 1)
 			K_drawKartStartBulbs();
 	}
 	else
 	{
+
+		if (cv_hud_hidecountdown.value)
+			return;
 
 		if (leveltime >= starttime-(2*TICRATE)) // 2
 			pnum++;
@@ -5231,7 +5237,7 @@ static void K_drawKartStartCountdown(void)
 		if (r_splitscreen) // splitscreen
 			pnum += 10;
 
-		V_DrawScaledPatch(STCD_X - (SHORT(kp_startcountdown[pnum]->width)/2), STCD_Y - (SHORT(kp_startcountdown[pnum]->height)/2), V_SPLITSCREEN, kp_startcountdown[pnum]);
+		V_DrawScaledPatch(STCD_X - (SHORT(kp_startcountdown[pnum]->width)/2), STCD_Y - (SHORT(kp_startcountdown[pnum]->height)/2), V_SPLITSCREEN|V_HUDTRANS, kp_startcountdown[pnum]);
 	}
 }
 
@@ -5643,7 +5649,7 @@ void K_drawKartFreePlay(void)
 		FRACUNIT,
 		FRACUNIT,
 		FRACUNIT,
-		V_SNAPTOBOTTOM|h_snap|V_SPLITSCREEN,
+		V_SNAPTOBOTTOM|h_snap|V_SPLITSCREEN|V_HUDTRANS,
 		NULL,
 		KART_FONT,
 		"FREE PLAY"
@@ -6470,7 +6476,7 @@ void K_drawKartHUD(void)
 			K_drawKartFinish(true);
 		else if (!(gametyperules & GTR_CIRCUIT))
 			;
-		else if (stplyr->karthud[khud_lapanimation] && !r_splitscreen)
+		else if (stplyr->karthud[khud_lapanimation] && !r_splitscreen && !cv_hud_hidelapemblem.value)
 			K_drawLapStartAnim();
 	}
 
