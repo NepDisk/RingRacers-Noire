@@ -26,6 +26,11 @@ extern consvar_t cv_votesnitch;         // Vote Snitch
 extern consvar_t cv_morerumbleevents;   // Extra gameplay events considered for controller rumble
 extern consvar_t cv_ringsonplayer;      // Rings drawn on player
 
+// HUD
+extern consvar_t cv_hud_hidecountdown; // Hide the bigass letters at the start of the race
+extern consvar_t cv_hud_hideposition;  // Hide the bigass position bulbs at the start of the race
+extern consvar_t cv_hud_hidelapemblem; // Hide the bigass lap emblem when you start a new lap
+
 #ifdef __cplusplus
 } // extern "C"
 #endif
