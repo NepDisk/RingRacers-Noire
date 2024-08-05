@@ -751,15 +751,15 @@ static inline UINT8 transmappedpdraw(const UINT8 *dest, const UINT8 *source, fix
 
 UINT32 V_GetHUDTranslucency(INT32 scrn)
 {
-	// if (scrn & V_SLIDEIN)
-	// {
-	// 	return cv_translucenthud.value;
-	// }
+	if (scrn & V_SLIDEIN)
+	{
+		return 10;
+	}
 
-	// if (scrn & V_SPLITSCREEN)
-	// {
-	// 	return FixedMul(cv_translucenthud.value, st_fadein);
-	// }
+	if (scrn & V_SPLITSCREEN)
+	{
+		return FixedMul(10, st_fadein);
+	}
 
 	return st_translucency;
 }

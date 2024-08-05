@@ -498,24 +498,14 @@ consvar_t stereoreverse = Player("stereoreverse", "Off").on_off();
 /**
  * RadioRacers: cvars for custom miscellanous functionalities
  */
-// How is this basic accessibility option missing from the game? Apalling.
-consvar_t cv_translucenthud = Player("translucenthud", "10").min_max(0, 10);
+
 // Vote Snitch
 consvar_t cv_votesnitch = Player("votesnitch", "On").on_off();
 // More Rumble Events
 consvar_t cv_morerumbleevents = Player("morerumbleevents", "On").on_off();
 // Rings drawn on player (akin to driftgauge)
-consvar_t cv_ringsonplayer = Player("ringsonplayer", "Vanilla").values({
-	{0, "Vanilla"}, 
-	{1, "Custom"}
-});
+consvar_t cv_ringsonplayer = Player("ringsonplayer", "On").on_off();
 
-// Hide the giant big ass letters at the start of the race
-consvar_t cv_hud_hidecountdown = Player("hidecountdown", "No").yes_no();
-// Hide the bigass position bulbs at the start of the race
-consvar_t cv_hud_hideposition = Player("hideposition", "No").yes_no();
-// Hide the bigass lap emblem when you start a new lap
-consvar_t cv_hud_hidelapemblem = Player("hidelapemblem", "No").yes_no();
 //
 // Server local, also available on dedicated servers.
 // Usually saved, not sycned though...
@@ -1205,26 +1195,9 @@ consvar_t cv_followercolor[MAXSPLITSCREENPLAYERS] = {
 	Player("followercolor4", "Match").values(Followercolor_cons_t).onchange_noinit(Followercolor4_OnChange),
 };
 
-/**
- * RadioRacers - FOV CVAR INFO
- * 
- * Leaivng this here for future work. What I changed here is remove
- * ".dont_save()" from the CVAR builder for the fov cvar.
- * 
- * The ideal change here is to remove the 110 MAX limit on the profile menu.
- * However, I'm worried about cross-compatability with the vanilla build ..
- * .. and if the game will say your profile is corrupt if you swap back to 
- * the vanilla build after using this one.
- * 
- * Check 
- * 	M_ProfileEditApply in options-profiles-edit-1.c 
- * 	PR_ApplyProfile_Settings in k_profiles.cpp
- * for more information
- * 
- */
 void Fov_OnChange(void);
 consvar_t cv_fov[MAXSPLITSCREENPLAYERS] = {
-	Player("fov", "100").floating_point().min_max(60*FRACUNIT, 179*FRACUNIT).onchange(Fov_OnChange),
+	Player("fov", "100").floating_point().min_max(60*FRACUNIT, 179*FRACUNIT).onchange(Fov_OnChange).dont_save(),
 	Player("fov2", "100").floating_point().min_max(60*FRACUNIT, 179*FRACUNIT).onchange(Fov_OnChange).dont_save(),
 	Player("fov3", "100").floating_point().min_max(60*FRACUNIT, 179*FRACUNIT).onchange(Fov_OnChange).dont_save(),
 	Player("fov4", "100").floating_point().min_max(60*FRACUNIT, 179*FRACUNIT).onchange(Fov_OnChange).dont_save(),
