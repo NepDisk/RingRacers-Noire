@@ -23,9 +23,25 @@ extern "C" {
 
 // Player (Clientside)
 extern consvar_t cv_votesnitch;         // Vote Snitch
-extern consvar_t cv_morerumbleevents;   // Extra gameplay events considered for controller rumble
 extern consvar_t cv_ringsonplayer;      // Rings drawn on player
 
+// Controller Rumble Toggles
+extern consvar_t cv_morerumbleevents;           // Extra gameplay events considered for controller rumble
+extern consvar_t cv_rr_rumble_wall_bump;        // Wall Bump
+extern consvar_t cv_rr_rumble_fastfall_bounce;  // Fastfall Bounce
+extern consvar_t cv_rr_rumble_drift;            // Drift
+extern consvar_t cv_rr_rumble_spindash;         // Spindash
+extern consvar_t cv_rr_rumble_tailwhip;         // Tailwhip
+extern consvar_t cv_rr_rumble_rings;            // Rings
+extern consvar_t cv_rr_rumble_wavedash;         // Wavedash
+
+// HUD
+extern consvar_t cv_translucenthud;    // Self-explanatory; controls HUD translucency 
+extern consvar_t cv_hud_hidecountdown; // Hide the bigass letters at the start of the race
+extern consvar_t cv_hud_hideposition;  // Hide the bigass position bulbs at the start of the race
+extern consvar_t cv_hud_hidelapemblem; // Hide the bigass lap emblem when you start a new lap
+
+void RumbleEvents_OnChange(void);
 #ifdef __cplusplus
 } // extern "C"
 #endif

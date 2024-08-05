@@ -56,6 +56,8 @@
 #include "k_dialogue.h"
 #include "m_easing.h"
 
+#include "radioracers/rr_cvar.h"
+
 UINT16 objectsdrawn = 0;
 
 //
@@ -1580,7 +1582,12 @@ void ST_Drawer(void)
 			}
 		}
 
-		st_translucency = FixedMul(10, maxFade);
+		if (maxFade == FRACUNIT)
+			st_translucency = cv_translucenthud.value;
+		else
+			st_translucency = FixedMul(cv_translucenthud.value, maxFade);
+
+		st_translucency = min(max((st_translucency), 0), 10);
 	}
 
 	// Check for a valid level title
