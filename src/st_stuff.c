@@ -56,6 +56,8 @@
 #include "k_dialogue.h"
 #include "m_easing.h"
 
+#include "radioracers/rr_cvar.h"
+
 UINT16 objectsdrawn = 0;
 
 //

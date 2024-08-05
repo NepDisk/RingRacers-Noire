@@ -26,6 +26,9 @@ extern "C" {
 extern menuitem_t OPTIONS_RadioRacersHud[];
 extern menu_t OPTIONS_RadioRacersHudDef;
 
+extern menuitem_t OPTIONS_RadioRacersMenu[];
+extern menu_t OPTIONS_RadioRacersMenuDef;
+
 #ifdef __cplusplus
 } // extern "C"
 #endif
