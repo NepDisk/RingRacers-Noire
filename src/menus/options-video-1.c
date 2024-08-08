@@ -52,9 +52,6 @@ menuitem_t OPTIONS_Video[] =
 	{IT_NOTHING|IT_SPACE, NULL, NULL,
 		NULL, {NULL}, 0, 0},
 
-	{IT_NOTHING|IT_SPACE, NULL, NULL,
-		NULL, {NULL}, 0, 0},
-
 	{IT_STRING | IT_SUBMENU, "Advanced...", "Advanced performance options and experimental rendering features.",
 		NULL, {.submenu = &OPTIONS_VideoAdvancedDef}, 0, 0},
 

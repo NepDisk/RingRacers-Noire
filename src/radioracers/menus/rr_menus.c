@@ -6,17 +6,23 @@
 // terms of the GNU General Public License, version 2.
 // See the 'LICENSE' file for more details.
 //-----------------------------------------------------------------------------
-/// \file radioracers/menu/rr_menus_hud.c
+/// \file radioracers/menu/rr_menus.c
 
 #include "../rr_menu.h"
 #include "../rr_cvar.h"
 
 #include "../../d_main.h"
 #include "../../v_video.h"
+#include "../../k_kart.h"
 
 // Main
 menuitem_t OPTIONS_RadioRacersMenu[] =
 {
+	{IT_HEADER, "Netplay", NULL,
+		NULL, {NULL}, 0, 0},
+
+	{IT_STRING | IT_CVAR, "Vote Snitch", "Show players who initiated and cast votes in the chatbox.",
+		NULL, {.cvar = &cv_votesnitch}, 0, 0},
 
 	{IT_HEADER, "Controller Rumble", NULL,
 		NULL, {NULL}, 0, 0},
@@ -42,7 +48,7 @@ menuitem_t OPTIONS_RadioRacersMenu[] =
 	{IT_STRING | IT_CVAR, "Tailwhip", "Toggle controller rumble when you charge a tailwhip.",
 		NULL, {.cvar = &cv_rr_rumble_tailwhip}, 0, 0},
 
-	{IT_STRING | IT_CVAR, "Wavedash", "Toggle controller rumble when your wavedash boost starts.",
+	{IT_STRING | IT_CVAR, "Wavedash", "Toggle controller rumble when your wavedash charge passes the minimum threshold.",
 		NULL, {.cvar = &cv_rr_rumble_wavedash}, 0, 0},
 };
 
@@ -52,9 +58,25 @@ menuitem_t OPTIONS_RadioRacersHud[] =
 	{IT_HEADER, "Custom HUD Options", NULL,
 		NULL, {NULL}, 0, 0},
 	
-	{IT_STRING | IT_CVAR, "Ring Counter Position", "Toggle between the Vanilla and Custom HUD layout.",
+
+	{IT_STRING | IT_CVAR, "Ring Counter Position", "Toggle the RING COUNTER's HUD position.",
 		NULL, {.cvar = &cv_ringsonplayer}, 0, 0},
 
+	{IT_STRING | IT_CVAR, "Item/Ring Roulette Position", "Toggle the ITEM/RING ROULETTE HUD position.",
+		NULL, {.cvar = &cv_rouletteonplayer}, 0, 0},
+
+	{IT_STRING | IT_CVAR, "Ring Roulette Scale", "Choose a scale to draw the RING ROULETTE at.",
+		NULL, {.cvar = &cv_ringbox_roulette_player_scale}, 0, 0},
+
+	{IT_STRING | IT_CVAR, "Ring Roulette Position", "Choose where the RING ROULETTE should be positioned.",
+		NULL, {.cvar = &cv_ringbox_roulette_player_position}, 0, 0},
+
+	{IT_STRING | IT_CVAR, "Item Roulette Scale", "Choose a scale to draw the ITEM ROULETTE at.",
+		NULL, {.cvar = &cv_item_roulette_player_scale}, 0, 0},
+
+	{IT_STRING | IT_CVAR, "Item Roulette Position", "Choose where the ITEM ROULETTE should be positioned.",
+		NULL, {.cvar = &cv_item_roulette_player_position}, 0, 0},
+  
 	{IT_HEADER, "Hide HUD Elements", NULL,
 		NULL, {NULL}, 0, 0},
     
@@ -82,7 +104,7 @@ menu_t OPTIONS_RadioRacersHudDef = {
 	M_DrawGenericOptions,
 	M_DrawOptionsCogs,
 	M_OptionsTick,
-	NULL,
+	Roulette_OnChange,
 	NULL,
 	NULL,
 };
@@ -93,8 +115,28 @@ void RumbleEvents_OnChange(void)
 
 	UINT16 newstatus = (cv_morerumbleevents.value) ? IT_STRING | IT_CVAR : IT_GRAYEDOUT;
 
-	for (int i = 2; i < 9; i++) {
+	for (int i = 4; i < 11; i++) {
 		OPTIONS_RadioRacersMenu[i].status = newstatus;
+	}
+
+	if (!cv_morerumbleevents.value)
+	{
+		if (localPlayerWavedashClickTimer > 0)
+			localPlayerWavedashClickTimer = 0;
+
+		if (localPlayerJustBootyBounced)
+			localPlayerJustBootyBounced = false;
+	}
+}
+
+void Roulette_OnChange(void)
+{
+	if (con_startup) return;
+
+	UINT16 newstatus = (cv_rouletteonplayer.value) ? IT_STRING | IT_CVAR : IT_GRAYEDOUT;
+
+	for (int i = 3; i < 7; i++) {
+		OPTIONS_RadioRacersHud[i].status = newstatus;
 	}
 }
 
