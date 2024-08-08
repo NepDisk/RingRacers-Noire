@@ -31,7 +31,6 @@ extern consvar_t cv_ringbox_roulette_player_scale;
 extern consvar_t cv_ringbox_roulette_player_position;
 extern consvar_t cv_item_roulette_player_scale;
 extern consvar_t cv_item_roulette_player_position;
-
 // Controller Rumble Toggles
 extern consvar_t cv_morerumbleevents;           // Extra gameplay events considered for controller rumble
 extern consvar_t cv_rr_rumble_wall_bump;        // Wall Bump
@@ -50,6 +49,7 @@ extern consvar_t cv_hud_hidelapemblem; // Hide the bigass lap emblem when you st
 
 void RumbleEvents_OnChange(void);
 void Roulette_OnChange(void);
+  
 #ifdef __cplusplus
 } // extern "C"
 #endif

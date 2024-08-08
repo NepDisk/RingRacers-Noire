@@ -38,6 +38,17 @@ menuitem_t OPTIONS_Video[] =
 	{IT_STRING | IT_CVAR, "Screen Effect", "Uses a special effect when displaying the game.",
 		NULL, {.cvar = &cv_scr_effect}, 0, 0},
 
+	/**
+	 * RadioRacers - FOV CVAR INFO
+	 * 
+	 * Pause Button -> Options -> Video Options -> Field of View
+	 * compared to
+	 * Pause Button -> Options -> Profile Setup -> Scroll to Profile -> Accessibility -> Field of View ....
+	 * 
+	 */
+	{IT_STRING | IT_CVAR, "Field of View", "Tweak the FOV for the first player (i.e. you).",
+		NULL, {.cvar = &cv_fov[0]}, 0, 0},
+
 	{IT_NOTHING|IT_SPACE, NULL, NULL,
 		NULL, {NULL}, 0, 0},
 

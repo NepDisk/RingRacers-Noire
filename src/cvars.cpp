@@ -1244,9 +1244,26 @@ consvar_t cv_followercolor[MAXSPLITSCREENPLAYERS] = {
 	Player("followercolor4", "Match").values(Followercolor_cons_t).onchange_noinit(Followercolor4_OnChange),
 };
 
+/**
+ * RadioRacers - FOV CVAR INFO
+ * 
+ * Leaivng this here for future work. What I changed here is remove
+ * ".dont_save()" from the CVAR builder for the fov cvar.
+ * 
+ * The ideal change here is to remove the 110 MAX limit on the profile menu.
+ * However, I'm worried about cross-compatability with the vanilla build ..
+ * .. and if the game will say your profile is corrupt if you swap back to 
+ * the vanilla build after using this one.
+ * 
+ * Check 
+ * 	M_ProfileEditApply in options-profiles-edit-1.c 
+ * 	PR_ApplyProfile_Settings in k_profiles.cpp
+ * for more information
+ * 
+ */
 void Fov_OnChange(void);
 consvar_t cv_fov[MAXSPLITSCREENPLAYERS] = {
-	Player("fov", "100").floating_point().min_max(60*FRACUNIT, 179*FRACUNIT).onchange(Fov_OnChange).dont_save(),
+	Player("fov", "100").floating_point().min_max(60*FRACUNIT, 179*FRACUNIT).onchange(Fov_OnChange),
 	Player("fov2", "100").floating_point().min_max(60*FRACUNIT, 179*FRACUNIT).onchange(Fov_OnChange).dont_save(),
 	Player("fov3", "100").floating_point().min_max(60*FRACUNIT, 179*FRACUNIT).onchange(Fov_OnChange).dont_save(),
 	Player("fov4", "100").floating_point().min_max(60*FRACUNIT, 179*FRACUNIT).onchange(Fov_OnChange).dont_save(),

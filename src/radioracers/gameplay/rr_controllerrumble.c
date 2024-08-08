@@ -214,7 +214,7 @@ boolean RR_RumbleJustWaveDashed(const player_t *player)
 {
     if (!cv_rr_rumble_wavedash.value)
         return false;
-
+  
     return (
         (player->mo) &&
         P_IsObjectOnGround(player->mo) &&

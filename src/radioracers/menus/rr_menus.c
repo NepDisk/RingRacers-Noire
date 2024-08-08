@@ -58,6 +58,7 @@ menuitem_t OPTIONS_RadioRacersHud[] =
 	{IT_HEADER, "Custom HUD Options", NULL,
 		NULL, {NULL}, 0, 0},
 	
+
 	{IT_STRING | IT_CVAR, "Ring Counter Position", "Toggle the RING COUNTER's HUD position.",
 		NULL, {.cvar = &cv_ringsonplayer}, 0, 0},
 
@@ -75,7 +76,7 @@ menuitem_t OPTIONS_RadioRacersHud[] =
 
 	{IT_STRING | IT_CVAR, "Item Roulette Position", "Choose where the ITEM ROULETTE should be positioned.",
 		NULL, {.cvar = &cv_item_roulette_player_position}, 0, 0},
-
+  
 	{IT_HEADER, "Hide HUD Elements", NULL,
 		NULL, {NULL}, 0, 0},
     
