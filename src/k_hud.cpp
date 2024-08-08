@@ -56,6 +56,7 @@
 #include "m_easing.h"
 
 #include "radioracers/rr_cvar.h"
+#include "radioracers/rr_hud.h"
 
 //{ 	Patch Definitions
 static patch_t *kp_nodraw;
@@ -1370,35 +1371,6 @@ void K_DrawLikeMapThumbnail(fixed_t x, fixed_t y, fixed_t width, UINT32 flags, p
 	);
 }
 
-// RadioRacers
-static trackingResult_t K_getRoulettePositionForTrackingPlayer(void)
-{
-	trackingResult_t result;
-
-	// No player object? Not bothering.
-	const boolean doesPlayerHaveMo = !((stplyr->mo == NULL || P_MobjWasRemoved(stplyr->mo)));
-	if (!doesPlayerHaveMo)
-		return result;
-
-	vector3_t v = {
-		R_InterpolateFixed(stplyr->mo->old_x, stplyr->mo->x) + stplyr->mo->sprxoff,
-		R_InterpolateFixed(stplyr->mo->old_y, stplyr->mo->y) + stplyr->mo->spryoff,
-		R_InterpolateFixed(stplyr->mo->old_z, stplyr->mo->z) + stplyr->mo->sprzoff + (stplyr->mo->height >> 1),
-	};
-
-	vector3_t v2 = {
-		0, 
-		0, 
-		64 * stplyr->mo->scale * P_MobjFlip(stplyr->mo)
-	};
-
-	FV3_Add(&v,&v2);
-	
-	K_ObjectTracking(&result, &v, false);
-
-	return result;
-}
-
 // see also K_DrawNameTagItemSpy
 static void K_drawKartItem(void)
 {
@@ -1430,6 +1402,7 @@ static void K_drawKartItem(void)
 	boolean flashOnTwo = false;
 
 	// RadioRacers
+	const boolean isHudTranslucencyAlreadyLow = (cv_translucenthud.value << V_ALPHASHIFT) <= V_TRANSLUCENT;
 	boolean shouldDrawOnPlayer = false;
 	INT32 baseVideoFlags = V_HUDTRANS|V_SLIDEIN;
 	fixed_t baseHudScale = FRACUNIT;
@@ -1623,52 +1596,37 @@ static void K_drawKartItem(void)
 		fy = ITEM_Y;
 
 		// We are NOT supporting this for splitscreen, the vanilla layout is easier to read.
-		if (cv_rouletteonplayer.value && r_splitscreen == 0)
+		if (cv_rouletteonplayer.value == 1 && r_splitscreen == 0)
 		{
-			trackingResult_t result = K_getRoulettePositionForTrackingPlayer();
+			itembox_tracking_coordinates_t coords = RR_getRouletteCoordinatesForKartItem();
 
-			if(result.x != 0 && result.y != 0)
+			// if(result.x != 0 && result.y != 0)
+			if(coords.valid_coords)
 			{
 				shouldDrawOnPlayer = true;
 				const boolean rouletteIsActive = (stplyr->itemRoulette.active == true);
-
 				/**
 				 * This solution WILL obscure the player's view.
 				 * The item roulette background is transparent .. but some items are pretty loud visually (e.g. flame shield)
 				 * Making it scale any smaller than 75% is unreasonable (it spins pretty fast towards the end of a race)..
 				 * so we'll just make it a bit translucent.
 				 */
-				baseVideoFlags = rouletteIsActive ? V_HUDTRANS : V_60TRANS; 
-				baseHudScale = (3*FRACUNIT)/5; // 60%
-				baseHudScaleFloat = (float)((float)(baseHudScale) / (FRACUNIT));
+				baseVideoFlags = rouletteIsActive ? V_HUDTRANS : V_TRANSLUCENT; 
 
-				rouletteCrop.x = rouletteCrop.y = (int)(7 * baseHudScaleFloat);
-				
-				// Upside down?
-				const boolean isupsidedown = (stplyr->mo->eflags & MFE_VERTICALFLIP);	
+				baseHudScale = RR_getItemBoxHudScale();
+				baseHudScaleFloat = RR_getItemBoxHudScaleFloat();
+				rouletteCrop = RR_getRouletteCroppingForKartItem(rouletteCrop);
 
-				/**
-				 * Offset it horizontally so it's closer to the center of the player.
-				 * Offset it vertically so it's floating above the player.
-				 */
-				INT32 base_x = 22;
-				INT32 base_y = 18;
-				INT32 baseUpsideDown_y = 18;
+				fx = coords.x;
+				fy = coords.y;
 
-				base_x = (int) (22 * baseHudScaleFloat);
-				base_y = (int) ((35 * baseHudScaleFloat) + 2);
-				baseUpsideDown_y = (int) ((18 * baseHudScaleFloat) + 2);
+				roulette_offset_spacing_t roulette_offset_spacing = RR_getRouletteSpacingOffsetForKartItem(
+					rouletteOffset
+				);
+				rouletteSpace = roulette_offset_spacing.space;
+				rouletteOffset = roulette_offset_spacing.offset;
 
-				fx = (result.x / FRACUNIT) - base_x; // 18 (+2)
-				fy = (result.y / FRACUNIT) - (isupsidedown ? baseUpsideDown_y : base_y); // 15, 28
-				
-				// In case I forget the math.. 
-				// ROULETTE_SPACING (36) * baseHudScale
-				// If we're drawing the item box at 75% scale, then it's 36 * 75%;
-				rouletteSpace = ((int)((36 * baseHudScaleFloat)) << FRACBITS); 
-				rouletteOffset = FixedMul(rouletteOffset, FixedDiv(rouletteSpace, ROULETTE_SPACING));
-
-				if (stplyr->exiting)
+				if (isHudTranslucencyAlreadyLow || stplyr->exiting)
 					baseVideoFlags = V_HUDTRANS;
 			}
 		} else {	
@@ -1682,9 +1640,22 @@ static void K_drawKartItem(void)
 	}
 
 	// V_DrawScaledPatch(fx, fy, V_TRANSLUCENT|V_SLIDEIN|fflags, localbg);
+
+	/**
+	 * Normally, this would just follow the V_HUDTRANS flag from the get-go.
+	 * But if you're playing with the HUD 100% opaque, it's gonna block vision easily. 
+	 * At the very least, I'll enforce a slightly lower translucency.. until their hud transluency is low enough.
+	 */
+	INT32 itemBackgroundFlags = baseVideoFlags|fflags;
+	if (shouldDrawOnPlayer) 
+	{
+		itemBackgroundFlags = V_70TRANS|fflags;
+		if (isHudTranslucencyAlreadyLow || stplyr->exiting)
+			itemBackgroundFlags = V_HUDTRANS;
+	}
 	V_DrawFixedPatch(
 		(fx<<FRACBITS), (fy<<FRACBITS), 
-		baseHudScale, baseVideoFlags|fflags,
+		baseHudScale, itemBackgroundFlags,
 		localbg, 0
 	);
 
@@ -1747,7 +1718,7 @@ static void K_drawKartItem(void)
 		// RadioRacers
 		if (shouldDrawOnPlayer)
 		{
-			transflag = V_30TRANS;
+			transflag = V_40TRANS;
 			/**
 			 * RadioRacers
 			 * 
@@ -1763,7 +1734,7 @@ static void K_drawKartItem(void)
 				transflag = V_60TRANS;
 			} 
 
-			if (stplyr->exiting)
+			if (isHudTranslucencyAlreadyLow || stplyr->exiting)
 				transflag = V_HUDTRANS;
 		}
 
@@ -1804,7 +1775,7 @@ static void K_drawKartItem(void)
 			INT32 itemAmountFlags = V_HUDTRANS|V_SLIDEIN;
 			
 			if (shouldDrawOnPlayer)
-				itemAmountFlags = (stplyr->exiting) ? V_HUDTRANS : V_30TRANS;
+				itemAmountFlags = (stplyr->exiting || isHudTranslucencyAlreadyLow) ? V_HUDTRANS : V_40TRANS;
 
 			if (offset)
 			{
@@ -1865,8 +1836,8 @@ static void K_drawKartItem(void)
 
 		INT32 itemTimerFlags = V_HUDTRANS|V_SLIDEIN|fflags;
 		if (shouldDrawOnPlayer) {
-			x = (int) (11 * baseHudScaleFloat) - 3;
-			y = (int) (35 * baseHudScaleFloat);
+			x = (int) (11 * baseHudScaleFloat) - 5;
+			y = (int) (35 * baseHudScaleFloat) + 5;
 
 			itemTimerFlags = V_HUDTRANS|fflags;
 		}
@@ -1922,7 +1893,7 @@ static void K_drawKartItem(void)
 		{
 			xo = (int) (xo * baseHudScaleFloat);
 			yo = (int) (yo * baseHudScaleFloat);
-			if(stplyr->exiting)
+			if(stplyr->exiting || isHudTranslucencyAlreadyLow)
 			{
 				flameMeterFlags |= V_HUDTRANS;
 			} else {
@@ -2097,51 +2068,29 @@ static void K_drawKartSlotMachine(void)
 		fy = ITEM_Y;
 
 		// We are NOT supporting this for splitscreen, the vanilla layout is easier to read.
-		if (cv_rouletteonplayer.value && r_splitscreen == 0 && !stplyr->exiting)
+		if (cv_rouletteonplayer.value == 1 && r_splitscreen == 0)
 		{
-			trackingResult_t result = K_getRoulettePositionForTrackingPlayer();
+			itembox_tracking_coordinates_t coords = RR_getRouletteCoordinatesForRingBox();
 
-			if(result.x != 0 && result.y != 0)
+			// if(result.x != 0 && result.y != 0)
+			if(coords.valid_coords)
 			{
+				baseVideoFlags = V_HUDTRANS;
 				shouldDrawOnPlayer = true;
-				baseHudScale = (3*FRACUNIT)/5; // 60% the size the item slot is usually drawn at
-				float baseHudScaleFloat = (float)((float)(baseHudScale) / (FRACUNIT));
 
-				// Upside down?
-				const boolean isupsidedown = (stplyr->mo->eflags & MFE_VERTICALFLIP);	
+				baseHudScale = RR_getRingBoxHudScale();
+				float baseHudScaleFloat = RR_getRingBoxHudScaleFloat();
 
-				/**
-				 * Offset it horizontally so it's closer to the center of the player.
-				 * Offset it vertically so it's floating above the player.
-				 */
-				INT32 base_x = (int) ((25 * baseHudScaleFloat) + 2);
-				INT32 base_y = (int) ((18 * baseHudScaleFloat) + 8);
-				INT32 baseUpsideDown_y = (int) ((15 * baseHudScaleFloat) + 5);
+				fx = coords.x;
+				fy = coords.y;
 
-				fx = (result.x / FRACUNIT) - base_x; 
-				fy = (result.y / FRACUNIT) - (isupsidedown ? baseUpsideDown_y : base_y);
-
-				// In case I forget the math.. 
-				// SLOT_SPACING (40) * baseHudScale
-				// If we're drawing the item box at 75% scale, then it's 40 * 75%;
-				rouletteSpace = ((int)((40 * baseHudScaleFloat) + 1) << FRACBITS);
-				rouletteCrop.x = (int)(10 * baseHudScaleFloat);
-
-				// Can't figure out the math to get this to scale alongside the base hud scale
-				rouletteCrop.y = 8;
-
-				rouletteOffset = FixedMul(rouletteOffset, FixedDiv(rouletteSpace, SLOT_SPACING));
-
-				/**
-				 * This solution WILL obscure the player's view.
-				 * Especially since the ring roulette has a solid white background.
-				 * Making it scale any smaller than 60% is unreasonable (it spins pretty fast towards the end of a race)..
-				 * so we'll just make it a bit translucent.
-				 */
-				baseVideoFlags = (stplyr->itemRoulette.active == true) ? V_40TRANS : V_TRANSLUCENT;
-
-				if (stplyr->exiting)
-					baseVideoFlags = V_HUDTRANS;
+				roulette_offset_spacing_t roulette_offset_spacing = RR_getRouletteSpacingOffsetForRingBox(
+					rouletteOffset
+				);
+				boxoffy += abs((boxoffy) - (int)(boxoffy*baseHudScaleFloat));
+				rouletteCrop = RR_getRouletteCroppingForRingBox(rouletteCrop);
+				rouletteSpace = roulette_offset_spacing.space;
+				rouletteOffset = roulette_offset_spacing.offset;
 			}
 		} else {
 			fflags = V_SNAPTOTOP|V_SNAPTOLEFT|V_SPLITSCREEN;

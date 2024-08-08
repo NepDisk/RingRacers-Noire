@@ -16,6 +16,10 @@
 #include "../../p_mobj.h"
 #include "../../d_player.h"
 #include "../../k_kart.h"
+#include "../../s_sound.h"
+
+int16_t localPlayerWavedashClickTimer = 0;
+boolean localPlayerJustBootyBounced = false;
 
 boolean RR_ShouldUseMoreRumbleEvents(void)
 {
@@ -73,7 +77,7 @@ uint16_t RR_GetRumbleStrength(const rumbleevent_e event)
         case EVT_SPINDASH_VIOLENT:
             return (65536 / 10);
         case EVT_WAVEDASHED:
-            return (65536 / 8);
+            return (65536 / 3);
         case EVT_DRIFT:
             return (65536 / 100);
         case EVT_RING:
@@ -210,9 +214,10 @@ boolean RR_RumbleJustWaveDashed(const player_t *player)
 {
     if (!cv_rr_rumble_wavedash.value)
         return false;
+
     return (
         (player->mo) &&
         P_IsObjectOnGround(player->mo) &&
-        localPlayerJustWavedashed
+        localPlayerWavedashClickTimer > 0
     );
 }

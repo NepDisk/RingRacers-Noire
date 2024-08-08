@@ -65,16 +65,15 @@
 #include "m_easing.h"
 #include "k_endcam.h"
 
+#include "radioracers/rr_cvar.h"
+#include "radioracers/rr_controller.h"
+
 // SOME IMPORTANT VARIABLES DEFINED IN DOOMDEF.H:
 // gamespeed is cc (0 for easy, 1 for normal, 2 for hard)
 // franticitems is Frantic Mode items, bool
 // encoremode is Encore Mode (duh), bool
 // comeback is Battle Mode's karma comeback, also bool
 // mapreset is set when enough players fill an empty server
-
-// RadioRacers: Hacky ways of checking for events the exact FRAME that they happen
-boolean localPlayerJustBootyBounced = false; 	// The second you start a fastfall bounce
-boolean localPlayerJustWavedashed = false;		// The few seconds or so your wavedash starts
 
 boolean K_ThunderDome(void)
 {
@@ -11133,8 +11132,15 @@ static void K_KartDrift(player_t *player, boolean onground)
 
 			player->wavedash += addCharge;
 
-			if (player->wavedash >= MIN_WAVEDASH_CHARGE && (player->wavedash - addCharge) < MIN_WAVEDASH_CHARGE)
+			if (player->wavedash >= MIN_WAVEDASH_CHARGE && (player->wavedash - addCharge) < MIN_WAVEDASH_CHARGE) {
 				S_StartSound(player->mo, sfx_waved5);
+
+				// RadioRacers: Really gross.
+				if (cv_morerumbleevents.value && P_IsMachineLocalPlayer(player))
+				{
+					localPlayerWavedashClickTimer = 5;
+				}
+			}
 		}
 
 		if (abs(player->aizdrifttilt) < ANGLE_22h)
@@ -11205,12 +11211,6 @@ static void K_KartDrift(player_t *player, boolean onground)
 							255
 						)
 					);
-
-					// RadioRacers: .. right around here.
-					if (P_IsMachineLocalPlayer(player) && !localPlayerJustWavedashed)
-					{
-						localPlayerJustWavedashed = true;
-					}
 
 					K_SpawnDriftBoostExplosion(player, 0);
 				}
@@ -13952,12 +13952,6 @@ void K_MoveKartPlayer(player_t *player, boolean onground)
 			}
 		}
 
-	}
-
-	// RadioRacers: Really gross.
-	if (P_IsMachineLocalPlayer(player) && localPlayerJustWavedashed)
-	{
-		localPlayerJustWavedashed = false;
 	}
 
 	K_KartDrift(player, onground);

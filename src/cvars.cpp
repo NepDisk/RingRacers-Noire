@@ -514,24 +514,40 @@ consvar_t cv_rr_rumble_rings = Player("rr_rumble_rings", "On").on_off();
 consvar_t cv_rr_rumble_wavedash = Player("rr_rumble_wavedash", "On").on_off();
 
 // Rings drawn on player (akin to driftgauge)
-// Item/Ringbox Roulette drawn on player
-consvar_t cv_rouletteonplayer = Player("rouletteonplayer", "On").on_off();
-
-// Rumble Events
-consvar_t cv_morerumbleevents = Player("morerumbleevents", "On").on_off().onchange(RumbleEvents_OnChange);
-consvar_t cv_rr_rumble_wall_bump = Player("rr_rumble_wall_bump", "On").on_off();
-consvar_t cv_rr_rumble_fastfall_bounce = Player("rr_rumble_fastfall_bounce", "On").on_off();
-consvar_t cv_rr_rumble_drift = Player("rr_rumble_drift", "On").on_off();
-consvar_t cv_rr_rumble_spindash = Player("rr_rumble_spindash", "On").on_off();
-consvar_t cv_rr_rumble_tailwhip = Player("rr_rumble_tailwhip", "On").on_off();
-consvar_t cv_rr_rumble_rings = Player("rr_rumble_rings", "On").on_off();
-consvar_t cv_rr_rumble_wavedash = Player("rr_rumble_wavedash", "On").on_off();
-
-// Rings drawn on player (akin to driftgauge)
 consvar_t cv_ringsonplayer = Player("ringsonplayer", "Vanilla").values({
 	{0, "Vanilla"}, 
 	{1, "Custom"}
 });
+
+// Item/Ringbox Roulette drawn on player
+consvar_t cv_rouletteonplayer = Player("rouletteonplayer", "Vanilla").values({
+	{0, "Vanilla"}, 
+	{1, "Custom"}
+}).onchange(Roulette_OnChange);
+
+static CV_PossibleValue_t itemboxscale_cons_t[] = {
+	{FRACUNIT, "100%"},
+	{(9*FRACUNIT)/10, "90%"},
+	{(4*FRACUNIT)/5, "80%"},
+	{(14*FRACUNIT)/20, "70%"},
+	{(3*FRACUNIT)/5, "60%"},
+	{FRACUNIT/2, "50%"},
+	{(4*FRACUNIT)/10, "40%"}
+};
+
+static CV_PossibleValue_t itemboxposition_cons_t[] = {
+	{0, "Left"},
+	{1, "Above"},
+	{2, "Right"},
+};
+
+// How big should we draw the item roulette?
+// And where exactly should we draw it?
+consvar_t cv_ringbox_roulette_player_scale = Player("ringbox_roulette_player_scale", "60%").values(itemboxscale_cons_t);
+consvar_t cv_item_roulette_player_scale = Player("item_roulette_player_scale", "60%").values(itemboxscale_cons_t);
+
+consvar_t cv_ringbox_roulette_player_position = Player("ringbox_roulette_player_position", "Right").values(itemboxposition_cons_t);
+consvar_t cv_item_roulette_player_position = Player("item_roulette_player_position", "Left").values(itemboxposition_cons_t);
 
 // Hide the giant big ass letters at the start of the race
 consvar_t cv_hud_hidecountdown = Player("hidecountdown", "No").yes_no();
@@ -1020,7 +1036,7 @@ void Dummymenuplayer_OnChange(void);
 consvar_t cv_dummymenuplayer = MenuDummy("dummymenuplayer", "P1").onchange(Dummymenuplayer_OnChange).values({{0, "NOPE"}, {1, "P1"}, {2, "P2"}, {3, "P3"}, {4, "P4"}});
 
 consvar_t cv_dummyprofileautoroulette = MenuDummy("dummyprofileautoroulette", "Off").on_off();
-consvar_t cv_dummyprofilefov = MenuDummy("dummyprofilefov", "100").min_max(70, 110);
+consvar_t cv_dummyprofilefov = MenuDummy("dummyprofilefov", "100").min_max(70, 179); // Changed max to 179
 consvar_t cv_dummyprofilelitesteer = MenuDummy("dummyprofilelitesteer", "Off").on_off();
 consvar_t cv_dummyprofileautoring = MenuDummy("dummyprofileautoring", "Off").on_off();
 consvar_t cv_dummyprofilekickstart = MenuDummy("dummyprofilekickstart", "Off").on_off();
@@ -1228,26 +1244,9 @@ consvar_t cv_followercolor[MAXSPLITSCREENPLAYERS] = {
 	Player("followercolor4", "Match").values(Followercolor_cons_t).onchange_noinit(Followercolor4_OnChange),
 };
 
-/**
- * RadioRacers - FOV CVAR INFO
- * 
- * Leaivng this here for future work. What I changed here is remove
- * ".dont_save()" from the CVAR builder for the fov cvar.
- * 
- * The ideal change here is to remove the 110 MAX limit on the profile menu.
- * However, I'm worried about cross-compatability with the vanilla build ..
- * .. and if the game will say your profile is corrupt if you swap back to 
- * the vanilla build after using this one.
- * 
- * Check 
- * 	M_ProfileEditApply in options-profiles-edit-1.c 
- * 	PR_ApplyProfile_Settings in k_profiles.cpp
- * for more information
- * 
- */
 void Fov_OnChange(void);
 consvar_t cv_fov[MAXSPLITSCREENPLAYERS] = {
-	Player("fov", "100").floating_point().min_max(60*FRACUNIT, 179*FRACUNIT).onchange(Fov_OnChange),
+	Player("fov", "100").floating_point().min_max(60*FRACUNIT, 179*FRACUNIT).onchange(Fov_OnChange).dont_save(),
 	Player("fov2", "100").floating_point().min_max(60*FRACUNIT, 179*FRACUNIT).onchange(Fov_OnChange).dont_save(),
 	Player("fov3", "100").floating_point().min_max(60*FRACUNIT, 179*FRACUNIT).onchange(Fov_OnChange).dont_save(),
 	Player("fov4", "100").floating_point().min_max(60*FRACUNIT, 179*FRACUNIT).onchange(Fov_OnChange).dont_save(),

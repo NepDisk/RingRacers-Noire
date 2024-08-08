@@ -18,6 +18,7 @@
 #include "../console.h"
 
 #include "rr_cvar.h"
+#include "rr_controller.h"
 
 #ifdef __cplusplus
 extern "C" {

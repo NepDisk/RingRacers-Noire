@@ -48,6 +48,10 @@ boolean RR_RumbleJustWaveDashed(const player_t *player);                    // W
 boolean RR_RumbleChargingTailWhip(const player_t *player);                  // Charging Tailwhip
 boolean RR_RumbleOverchargingTailWhip(const player_t *player);              // Overcharging Tailwhip
 
+// Extra variables for checking events for rumble triggers
+extern boolean localPlayerJustBootyBounced;
+extern int16_t localPlayerWavedashClickTimer;
+
 #ifdef __cplusplus
 } // extern "C"
 #endif
