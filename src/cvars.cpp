@@ -526,19 +526,20 @@ consvar_t cv_rouletteonplayer = Player("rouletteonplayer", "Vanilla").values({
 }).onchange(Roulette_OnChange);
 
 static CV_PossibleValue_t itemboxscale_cons_t[] = {
-	{FRACUNIT, "100%"},
-	{(9*FRACUNIT)/10, "90%"},
-	{(4*FRACUNIT)/5, "80%"},
-	{(14*FRACUNIT)/20, "70%"},
-	{(3*FRACUNIT)/5, "60%"},
+	{(4*FRACUNIT)/10, "40%"},
 	{FRACUNIT/2, "50%"},
-	{(4*FRACUNIT)/10, "40%"}
+	{(3*FRACUNIT)/5, "60%"},
+	{(14*FRACUNIT)/20, "70%"},
+	{(4*FRACUNIT)/5, "80%"},
+	{(9*FRACUNIT)/10, "90%"},
+	{FRACUNIT, "100%"},
+	{0, NULL}
 };
 
 static CV_PossibleValue_t itemboxposition_cons_t[] = {
 	{0, "Left"},
 	{1, "Above"},
-	{2, "Right"},
+	{2, "Right"}
 };
 
 // How big should we draw the item roulette?
