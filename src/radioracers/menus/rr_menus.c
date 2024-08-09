@@ -56,13 +56,18 @@ menuitem_t OPTIONS_RadioRacersMenu[] =
 menuitem_t OPTIONS_RadioRacersHud[] =
 {	
 	{IT_HEADER, "Custom HUD Options", NULL,
-		NULL, {NULL}, 0, 0},
-	
+		NULL, {NULL}, 0, 0},	
 
 	{IT_STRING | IT_CVAR, "Ring Counter Position", "Toggle the RING COUNTER's HUD position.",
 		NULL, {.cvar = &cv_ringsonplayer}, 0, 0},
 
-	{IT_STRING | IT_CVAR, "Item/Ring Roulette Position", "Toggle the ITEM/RING ROULETTE HUD position.",
+	{IT_STRING | IT_CVAR, "Use Higher Resolution Portraits", "Draw higher resolution portraits in the minirankings.",
+		NULL, {.cvar = &cv_hud_usehighresportraits}, 0, 0},
+
+	{IT_HEADER, "Roulette Options", NULL,
+		NULL, {NULL}, 0, 0},	
+
+	{IT_STRING | IT_CVAR, "Roulette Layout", "Change the HUD layout for drawing the item/ring roluette.",
 		NULL, {.cvar = &cv_rouletteonplayer}, 0, 0},
 
 	{IT_STRING | IT_CVAR, "Ring Roulette Scale", "Choose a scale to draw the RING ROULETTE at.",
@@ -135,7 +140,7 @@ void Roulette_OnChange(void)
 
 	UINT16 newstatus = (cv_rouletteonplayer.value) ? IT_STRING | IT_CVAR : IT_GRAYEDOUT;
 
-	for (int i = 3; i < 7; i++) {
+	for (int i = 5; i < 9; i++) {
 		OPTIONS_RadioRacersHud[i].status = newstatus;
 	}
 }

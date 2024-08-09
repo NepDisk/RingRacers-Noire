@@ -556,6 +556,8 @@ consvar_t cv_hud_hidecountdown = Player("hidecountdown", "No").yes_no();
 consvar_t cv_hud_hideposition = Player("hideposition", "No").yes_no();
 // Hide the bigass lap emblem when you start a new lap
 consvar_t cv_hud_hidelapemblem = Player("hidelapemblem", "No").yes_no();
+// Draw high-res portraits in the minirankings
+consvar_t cv_hud_usehighresportraits = Player("usehighresportraits", "Yes").yes_no();
 //
 // Server local, also available on dedicated servers.
 // Usually saved, not sycned though...

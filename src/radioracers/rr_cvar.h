@@ -46,6 +46,7 @@ extern consvar_t cv_translucenthud;    // Self-explanatory; controls HUD translu
 extern consvar_t cv_hud_hidecountdown; // Hide the bigass letters at the start of the race
 extern consvar_t cv_hud_hideposition;  // Hide the bigass position bulbs at the start of the race
 extern consvar_t cv_hud_hidelapemblem; // Hide the bigass lap emblem when you start a new lap
+extern consvar_t cv_hud_usehighresportraits; // Draw higher-res portraits in the minirankings
 
 void RumbleEvents_OnChange(void);
 void Roulette_OnChange(void);
