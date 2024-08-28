@@ -25,6 +25,7 @@
 #include "r_data.h" // patchalphastyle_t
 #include "k_boss.h" // spottype_t (for lua)
 #include "k_follower.h" // followermode_t (for lua)
+#include "music.h" // tune flags (for lua)
 
 #include "deh_tables.h"
 
