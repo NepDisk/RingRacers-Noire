@@ -81,7 +81,7 @@ void KV1_UpdatePlayerAngle(player_t *player)
 	max_left_turn = player->lturn_max[(leveltime + MAXPREDICTTICS - cmd->latency) % MAXPREDICTTICS];
 	max_right_turn = player->rturn_max[(leveltime + MAXPREDICTTICS - cmd->latency) % MAXPREDICTTICS];
 
-	CONS_Printf("----------------\nangle diff: %d - turning options: %d to %d - ", angle_diff, max_left_turn, max_right_turn);
+	//CONS_Printf("----------------\nangle diff: %d - turning options: %d to %d - ", angle_diff, max_left_turn, max_right_turn);
 
 	if (angle_diff > max_left_turn)
 		angle_diff = max_left_turn;
@@ -93,15 +93,15 @@ void KV1_UpdatePlayerAngle(player_t *player)
 		anglechange = cmd->angle<<TICCMD_REDUCE;
 		add_delta = false;
 	}
-	CONS_Printf("applied turn: %d\n", angle_diff);
+	//CONS_Printf("applied turn: %d\n", angle_diff);
 
 	if (add_delta) {
 		anglechange += angle_diff<<TICCMD_REDUCE;
 		anglechange &= ~0xFFFF; // Try to keep the turning somewhat similar to how it was before?
-		CONS_Printf("leftover turn (%s): %5d or %4d%%\n",
+		/*CONS_Printf("leftover turn (%s): %5d or %4d%%\n",
 						player_names[player-players],
 						(INT16) (cmd->angle - (player->mo->angle>>TICCMD_REDUCE)),
-						(INT16) (cmd->angle - (player->mo->angle>>TICCMD_REDUCE)) * 100 / (angle_diff ? angle_diff : 1));
+						(INT16) (cmd->angle - (player->mo->angle>>TICCMD_REDUCE)) * 100 / (angle_diff ? angle_diff : 1));*/
 	}
 
 
