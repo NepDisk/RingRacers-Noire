@@ -115,6 +115,7 @@ static void M_ProfileEditApply(void)
 		CV_SetValue(&cv_autoring[belongsto], cv_dummyprofileautoring.value);
 		CV_SetValue(&cv_rumble[belongsto], cv_dummyprofilerumble.value);
 		CV_SetValue(&cv_fov[belongsto], cv_dummyprofilefov.value);
+		CV_SetValue(&cv_flipcam[belongsto], cv_dummyprofileflipcam.value);
 	}
 
 	// Reapply player 1's real profile.

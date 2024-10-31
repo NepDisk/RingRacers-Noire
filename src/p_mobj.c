@@ -63,6 +63,9 @@
 // HEP2
 #include "hep2/h_cvars.h"
 
+// HEP2
+#include "hep2/h_cvars.h"
+
 actioncache_t actioncachehead;
 
 static mobj_t *overlaycap = NULL;
@@ -3766,6 +3769,16 @@ void P_CalcChasePostImg(player_t *player, camera_t *thiscam)
 	// This can happen when joining
 	if (thiscam->subsector == NULL || thiscam->subsector->sector == NULL)
 		return;
+	
+	for (i = 0; i <= r_splitscreen; i++)
+	{
+		// Yeah
+		if (cv_flipcam[i].value && player->mo && !P_MobjWasRemoved(player->mo) && (player->mo->eflags & MFE_VERTICALFLIP) && player == &players[displayplayers[i]])
+		{
+			postimg = postimg_flip;
+			flipcam = true;
+		}
+	}
 
 	for (i = 0; i <= r_splitscreen; i++)
 	{
