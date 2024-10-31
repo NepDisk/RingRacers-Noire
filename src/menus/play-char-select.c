@@ -20,6 +20,7 @@
 #include "../m_cond.h" // Condition Sets
 #include "../k_color.h"
 #include "../z_zone.h"
+#include "../d_netcmd.h"
 
 //#define CHARSELECT_DEVICEDEBUG
 
@@ -46,7 +47,7 @@ menu_t PLAY_CharSelectDef = {
 	0,
 	PLAY_CharSelect,
 	0, 0,
-	SKINCOLOR_ULTRAMARINE, 0,
+	SKINCOLOR_ULTRAMARINE, 0, //This 0 determines if localskin or not
 	0,
 	NULL,
 	2, 5, // matches OPTIONS_EditProfileDef
@@ -358,9 +359,34 @@ void M_CharacterSelectInit(void)
 		else
 		{
 			setup_chargrid[x][y].skinlist[setup_chargrid[x][y].numskins] = i;
+			setup_chargrid[x][y].skinlocal[setup_chargrid[x][y].numskins] = false;
 			setup_chargrid[x][y].numskins++;
 
 			setup_maxpage = max(setup_maxpage, setup_chargrid[x][y].numskins-1);
+		}
+	}
+
+	{
+		for (i = 0; i < numlocalskins; i++)
+		{
+			UINT8 x = localskins[i].kartspeed-1;
+			UINT8 y = localskins[i].kartweight-1;
+
+			/*
+			if (!R_SkinUsable(g_localplayers[0], i, false))
+				continue;
+			*/
+
+			if (setup_chargrid[x][y].numskins >= MAXCLONES)
+				CONS_Alert(CONS_ERROR, "Max character alts reached for %d,%d\n", x+1, y+1);
+			else
+			{
+				setup_chargrid[x][y].skinlist[setup_chargrid[x][y].numskins] = i;
+				setup_chargrid[x][y].skinlocal[setup_chargrid[x][y].numskins] = true;
+				setup_chargrid[x][y].numskins++;
+
+				setup_maxpage = max(setup_maxpage, setup_chargrid[x][y].numskins-1);
+			}
 		}
 	}
 
@@ -399,9 +425,18 @@ void M_CharacterSelect(INT32 choice)
 	(void)choice;
 	PLAY_CharSelectDef.music = currentMenu->music;
 	PLAY_CharSelectDef.prevMenu = currentMenu;
+	PLAY_CharSelectDef.extra2 = 0;
 	M_SetupNextMenu(&PLAY_CharSelectDef, false);
 }
 
+void M_LocalCharacterSelect(INT32 choice)
+{
+	(void)choice;
+	PLAY_CharSelectDef.music = currentMenu->music;
+	PLAY_CharSelectDef.prevMenu = currentMenu;
+	PLAY_CharSelectDef.extra2 = 1;
+	M_SetupNextMenu(&PLAY_CharSelectDef, false);
+}
 
 // Gets the selected follower's state for a given setup player.
 static void M_GetFollowerState(setup_player_t *p)
@@ -763,7 +798,7 @@ static boolean M_HandleBeginningColors(setup_player_t *p)
 
 static void M_HandleBeginningFollowers(setup_player_t *p)
 {
-	if (setup_numfollowercategories == 0)
+	if (setup_numfollowercategories == 0 || PLAY_CharSelectDef.extra2 == 1)
 	{
 		p->followern = -1;
 		M_HandlePlayerFinalise(p);
@@ -778,8 +813,8 @@ static void M_HandleBeginningFollowers(setup_player_t *p)
 static void M_HandleBeginningColorsOrFollowers(setup_player_t *p)
 {
 	if (p->skin != -1)
-		S_StartSound(NULL, skins[p->skin].soundsid[S_sfx[sfx_kattk1].skinsound]);
-	if (M_HandleBeginningColors(p))
+		S_StartSound(NULL, (p->localskin ? localskins : skins)[p->skin].soundsid[S_sfx[sfx_kattk1].skinsound]);
+	if (M_HandleBeginningColors(p) && PLAY_CharSelectDef.extra2 == 0)
 		S_StartSound(NULL, sfx_s3k63);
 	else
 		M_HandleBeginningFollowers(p);
@@ -1341,6 +1376,7 @@ boolean M_CharacterSelectHandler(INT32 choice)
 		else
 		{
 			p->skin = setup_chargrid[p->gridx][p->gridy].skinlist[p->clonenum];
+			p->localskin = setup_chargrid[p->gridx][p->gridy].skinlocal[p->clonenum];
 		}
 
 		if (playersChanged == true)
@@ -1372,26 +1408,39 @@ static void M_MPConfirmCharacterSelection(void)
 
 	for (i = 0; i < splitscreen +1; i++)
 	{
-		// colour
-		// (convert the number that's saved to a string we can use)
-		col = setup_player[i].color;
-		CV_StealthSetValue(&cv_playercolor[i], col);
+		//Only set localskin while in localskin chooser
+		if (PLAY_CharSelectDef.extra2 == 0)
+		{
+			// colour
+			// (convert the number that's saved to a string we can use)
+			col = setup_player[i].color;
+			CV_StealthSetValue(&cv_playercolor[i], col);
 
-		// follower
-		if (setup_player[i].followern < 0)
-			CV_StealthSet(&cv_follower[i], "None");
-		else
-			CV_StealthSet(&cv_follower[i], followers[setup_player[i].followern].name);
+			// follower
+			if (setup_player[i].followern < 0)
+				CV_StealthSet(&cv_follower[i], "None");
+			else
+				CV_StealthSet(&cv_follower[i], followers[setup_player[i].followern].name);
+		}
 
 		// finally, call the skin[x] console command.
 		// This will call SendNameAndColor which will synch everything we sent here and apply the changes!
+		if (PLAY_CharSelectDef.extra2 == 0)
+			CV_StealthSet(&cv_skin[i], skins[setup_player[i].skin].name);
+		else
+		{
+			//TODO: splitscreen
+			CV_StealthSet(&cv_localskin, (setup_player[i].localskin ? localskins : skins)[setup_player[i].skin].name);
+			SetLocalPlayerSkin(consoleplayer, (setup_player[i].localskin ? localskins : skins)[setup_player[i].skin].name, &cv_localskin);
+		}
 
-		CV_StealthSet(&cv_skin[i], skins[setup_player[i].skin].name);
-
-		// ...actually, let's do this last - Skin_OnChange has some return-early occasions
-		// follower color
-		CV_SetValue(&cv_followercolor[i], setup_player[i].followercolor);
-
+		//Only set localskin while in localskin chooser
+		if (PLAY_CharSelectDef.extra2 == 0)
+		{
+			// ...actually, let's do this last - Skin_OnChange has some return-early occasions
+			// follower color
+			CV_SetValue(&cv_followercolor[i], setup_player[i].followercolor);
+		}
 	}
 	M_ClearMenus(true);
 }
@@ -1456,6 +1505,7 @@ void M_CharacterSelectTick(void)
 			}
 			else	// in a normal menu, stealthset the cvars and then go to the play menu.
 			{
+				//Dont check for localskin, since thats only availiable ingame
 				for (i = 0; i < setup_numplayers; i++)
 				{
 					CV_StealthSet(&cv_skin[i], skins[setup_player[i].skin].name);

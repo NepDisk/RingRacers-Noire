@@ -364,7 +364,7 @@ INT32 HW3S_I_StartSound(const void *origin_p, source3D_data_t *source_parm, chan
 	if (sfx->skinsound!=-1 && origin && origin->skin)
 	{
 		// it redirect player sound to the sound in the skin table
-		sfx_id = ((skin_t *)origin->skin)->soundsid[sfx->skinsound];
+		sfx_id = ((skin_t *)((origin->localskin) ? origin->localskin : origin->skin))->soundsid[sfx->skinsound];
 		sfx    = &S_sfx[sfx_id];
 	}
 

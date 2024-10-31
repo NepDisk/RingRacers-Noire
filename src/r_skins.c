@@ -42,7 +42,11 @@
 #endif
 
 INT32 numskins = 0;
+INT32 numallskins = 0;
+INT32 numlocalskins = 0;
 skin_t skins[MAXSKINS];
+skin_t localskins[MAXSKINS];
+skin_t allskins[MAXSKINS*2];
 
 unloaded_skin_t *unloadedskins = NULL;
 
@@ -50,6 +54,7 @@ unloaded_skin_t *unloadedskins = NULL;
 //#define SKINVALUES
 #ifdef SKINVALUES
 CV_PossibleValue_t skin_cons_t[MAXSKINS+1];
+CV_PossibleValue_t localskin_cons_t[MAXSKINS+1];
 #endif
 
 CV_PossibleValue_t Forceskin_cons_t[MAXSKINS+2];
@@ -103,7 +108,7 @@ UINT8 P_GetSkinSprite2(skin_t *skin, UINT8 spr2, player_t *player)
 	return spr2;
 }
 
-static void Sk_SetDefaultValue(skin_t *skin)
+static void Sk_SetDefaultValue(skin_t *skin, boolean local)
 {
 	INT32 i;
 	//
@@ -111,7 +116,7 @@ static void Sk_SetDefaultValue(skin_t *skin)
 	//
 	memset(skin, 0, sizeof (skin_t));
 	snprintf(skin->name,
-		sizeof skin->name, "skin %u", (UINT32)(skin-skins));
+		sizeof skin->name, "skin %u", (UINT32)(skin-( (local) ? localskins : skins )));
 	skin->name[sizeof skin->name - 1] = '\0';
 	skin->wadnum = INT16_MAX;
 
@@ -175,6 +180,8 @@ void R_InitSkins(void)
 	{
 		skin_cons_t[i].value = 0;
 		skin_cons_t[i].strvalue = NULL;
+		localskin_cons_t[i].value = 0;
+		localskin_cons_t[i].strvalue = NULL;
 	}
 #endif
 
@@ -183,7 +190,7 @@ void R_InitSkins(void)
 
 	for (i = 0; i < numwadfiles; i++)
 	{
-		R_AddSkins((UINT16)i, true);
+		R_AddSkins((UINT16)i, true, false);
 		R_PatchSkins((UINT16)i, true);
 		R_LoadSpriteInfoLumps(i, wadfiles[i]->numlumps);
 
@@ -341,6 +348,38 @@ INT32 R_SkinAvailable(const char *name)
 	return R_SkinAvailableEx(name, true);
 }
 
+// returns true if the skin name is found (loaded from pwad)
+// warning return -1 if not found
+INT32 R_AnySkinAvailable(const char *name)
+{
+	INT32 i;
+
+	for (i = 0; i < numallskins; i++)
+	{
+		if (stricmp(allskins[i].name,name)==0)
+			return i;
+	}
+	return -1;
+}
+
+INT32 R_LocalSkinAvailable(const char *name, boolean local)
+{
+	INT32 i;
+
+	if (local)
+	{
+		for (i = 0; i < numlocalskins; i++)
+		{
+			if (stricmp(localskins[i].name,name)==0)
+				return i;
+		}
+		return -1;
+	}
+	else
+		return R_SkinAvailable(name);
+}
+
+
 INT32 R_SkinAvailableEx(const char *name, boolean demoskins)
 {
 	INT32 i;
@@ -482,6 +521,69 @@ void SetPlayerSkin(INT32 playernum, const char *skinname)
 		CONS_Alert(CONS_WARNING, M_GetText("Player %d (%s) skin '%s' not found\n"), playernum, player_names[playernum], skinname);
 
 	SetSkin(player, GetPlayerDefaultSkin(playernum));
+}
+
+void SetLocalPlayerSkin(INT32 playernum, const char *skinname, consvar_t *cvar)
+{
+	player_t *player = &players[playernum];
+	INT32 i;
+
+	CONS_Printf("SetLocalPlayerSkin...\n");
+
+	if (strcasecmp(skinname, "none"))
+	{
+		for (i = 0; i < numlocalskins; i++)
+		{
+			// search in the skin list
+			if (stricmp(localskins[i].name, skinname) == 0)
+			{
+				player->localskin = 1 + i;
+				player->skinlocal = true;
+				if (player->mo)
+				{
+					player->mo->localskin = &localskins[i];
+					player->mo->skinlocal = true;
+				}
+				break;
+			}
+		}
+		for (i = 0; i < numskins; i++)
+		{
+			// search in the skin list
+			if (stricmp(skins[i].name, skinname) == 0)
+			{
+				player->localskin = 1 + i;
+				player->skinlocal = false;
+				if (player->mo)
+				{
+					player->mo->localskin = &skins[i];
+					player->mo->skinlocal = false;
+				}
+				break;
+			}
+		}
+	}
+	else
+	{
+		player->localskin = 0;
+		player->skinlocal = false;
+		if (player->mo)
+		{
+			player->mo->localskin = 0;
+			player->mo->skinlocal = false;
+		}
+	}
+
+	if (cvar != NULL) {
+		if (player->localskin > 0) {
+			CV_StealthSet(&cv_fakelocalskin, ( (player->skinlocal) ? localskins : skins )[player->localskin - 1].name);
+			CV_StealthSet(cvar, ( (player->skinlocal) ? localskins : skins )[player->localskin - 1].name);
+		}
+		else {
+			CV_StealthSet(&cv_fakelocalskin, "none");
+			CV_StealthSet(cvar, "none");
+		}
+	}
 }
 
 // Same as SetPlayerSkin, but uses the skin #.
@@ -933,7 +1035,7 @@ static boolean R_ProcessPatchableFields(skin_t *skin, char *stoken, char *value)
 //
 // Find skin sprites, sounds & optional status bar face, & add them
 //
-void R_AddSkins(UINT16 wadnum, boolean mainfile)
+void R_AddSkins(UINT16 wadnum, boolean mainfile, boolean local)
 {
 	UINT16 lump, lastlump = 0;
 	char *buf;
@@ -953,7 +1055,7 @@ void R_AddSkins(UINT16 wadnum, boolean mainfile)
 		// advance by default
 		lastlump = lump + 1;
 
-		if (numskins >= MAXSKINS)
+		if (( (local) ? numlocalskins : numskins ) >= MAXSKINS)
 		{
 			CONS_Debug(DBG_RENDER, "ignored skin (%d skins maximum)\n", MAXSKINS);
 			continue; // so we know how many skins couldn't be added
@@ -969,8 +1071,8 @@ void R_AddSkins(UINT16 wadnum, boolean mainfile)
 		buf2[size] = '\0';
 
 		// set defaults
-		skin = &skins[numskins];
-		Sk_SetDefaultValue(skin);
+		skin = &( (local) ? localskins : skins )[( (local) ? numlocalskins : numskins )];
+		Sk_SetDefaultValue(skin, local);
 		skin->wadnum = wadnum;
 		realname = false;
 		// parse
@@ -993,7 +1095,7 @@ void R_AddSkins(UINT16 wadnum, boolean mainfile)
 			// Others can't go in there because we don't want them to be patchable.
 			if (!stricmp(stoken, "name"))
 			{
-				INT32 skinnum = R_SkinAvailableEx(value, false);
+				INT32 skinnum = R_LocalSkinAvailable(value, local);
 				strlwr(value);
 				if (skinnum == -1)
 					STRBUFCPY(skin->name, value);
@@ -1003,12 +1105,12 @@ void R_AddSkins(UINT16 wadnum, boolean mainfile)
 				else
 				{
 					const size_t stringspace =
-						strlen(value) + sizeof (numskins) + 1;
+						strlen(value) + sizeof (( (local) ? numlocalskins : numskins )) + 1;
 					char *value2 = Z_Malloc(stringspace, PU_STATIC, NULL);
 					snprintf(value2, stringspace,
-						"%s%d", value, numskins);
+						"%s%d", value, ( (local) ? numlocalskins : numskins ));
 					value2[stringspace - 1] = '\0';
-					if (R_SkinAvailableEx(value2, false) == -1)
+					if (R_LocalSkinAvailable(value2, local) == -1)
 						// I'm lazy so if NEW name is already used I leave the 'skin x'
 						// default skin name set in Sk_SetDefaultValue
 						STRBUFCPY(skin->name, value2);
@@ -1038,7 +1140,7 @@ next_token:
 
 		// Add sprites
 		R_LoadSkinSprites(wadnum, &lump, &lastlump, skin);
-		//ST_LoadFaceGraphics(numskins); -- nah let's do this elsewhere
+		ST_ReloadSkinFaceGraphics();
 
 		R_FlushTranslationColormapCache();
 
@@ -1046,17 +1148,26 @@ next_token:
 			CONS_Printf(M_GetText("Added skin '%s'\n"), skin->name);
 
 #ifdef SKINVALUES
-		skin_cons_t[numskins].value = numskins;
-		skin_cons_t[numskins].strvalue = skin->name;
+		( (local) ? localskin_cons_t : skin_cons_t )[( (local) ? numlocalskins : numskins )].value = ( (local) ? numlocalskins : numskins );
+		( (local) ? localskin_cons_t : skin_cons_t )[( (local) ? numlocalskins : numskins )].strvalue = skin->name;
 #endif
+		if (!local)
+		{
+			// Update the forceskin possiblevalues
+			Forceskin_cons_t[numskins+1].value = numskins;
+			Forceskin_cons_t[numskins+1].strvalue = skins[numskins].name;
+		}
 
-		// Update the forceskin possiblevalues
-		Forceskin_cons_t[numskins+1].value = numskins;
-		Forceskin_cons_t[numskins+1].strvalue = skins[numskins].name;
+		skin->localskin = local;
+		// so we dont have to guess
+		if (local)
+			skin->localnum = numlocalskins;
+		else
+			skin->localnum = numskins;
 
 #ifdef HWRENDER
 		if (rendermode == render_opengl)
-			HWR_AddPlayerModel(numskins);
+			HWR_AddPlayerModel(( (local) ? numlocalskins : numskins ),local);
 #endif
 
 		// Finally, conclude by setting up final properties.
@@ -1121,7 +1232,10 @@ next_token:
 			}
 		}
 
-		numskins++;
+		allskins[numallskins] = ( (local) ? localskins : skins )[( (local) ? numlocalskins : numskins )];
+
+		( (local) ? numlocalskins++ : numskins++ );
+		numallskins++;
 	}
 	return;
 }
@@ -1228,7 +1342,7 @@ next_token:
 
 		// Patch sprites
 		R_LoadSkinSprites(wadnum, &lump, &lastlump, skin);
-		//ST_LoadFaceGraphics(skinnum); -- nah let's do this elsewhere
+		ST_ReloadSkinFaceGraphics();
 
 		R_FlushTranslationColormapCache();
 
@@ -1236,6 +1350,14 @@ next_token:
 			CONS_Printf(M_GetText("Patched skin '%s'\n"), skin->name);
 	}
 	return;
+}
+
+boolean R_MobjHasAnySkin(mobj_t *mo)
+{
+	if (mo->skin || mo->localskin)
+		return true;
+	else
+		return false;
 }
 
 #undef SYMBOLCONVERT

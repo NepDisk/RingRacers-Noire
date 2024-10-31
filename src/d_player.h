@@ -656,6 +656,8 @@ struct player_t
 	UINT16 skincolor;
 
 	INT32 skin;
+	INT32 localskin; // current localskin number
+	boolean skinlocal; // determines if localskin is a skin already loaded in the server
 	UINT8 availabilities[MAXAVAILABILITY];
 
 	UINT8 fakeskin; // ironman

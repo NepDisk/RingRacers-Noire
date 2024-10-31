@@ -31,6 +31,9 @@ extern consvar_t cv_follower[MAXSPLITSCREENPLAYERS];
 extern consvar_t cv_followercolor[MAXSPLITSCREENPLAYERS];
 extern consvar_t cv_lastprofile[MAXSPLITSCREENPLAYERS];
 
+extern consvar_t cv_localskin;
+extern consvar_t cv_fakelocalskin;
+
 // current profile loaded.
 // Used to know how to make the options menu behave among other things.
 extern consvar_t cv_currprofile;

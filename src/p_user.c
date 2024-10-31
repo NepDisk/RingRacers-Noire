@@ -1104,6 +1104,8 @@ mobj_t *P_SpawnGhostMobj(mobj_t *mobj)
 	ghost->renderflags = (mobj->renderflags & ~RF_TRANSMASK)|RF_TRANS50;
 	ghost->fuse = ghost->info->damage;
 	ghost->skin = mobj->skin;
+	ghost->localskin = mobj->localskin;
+	ghost->skinlocal = mobj->skinlocal;
 	ghost->standingslope = mobj->standingslope;
 
 	ghost->sprxoff = mobj->sprxoff;
@@ -3993,6 +3995,12 @@ boolean P_SpectatorJoinGame(player_t *player)
 	player->playerstate = PST_REBORN;
 	player->enteredGame = true;
 
+	//Remove spectator race music
+	if (player - players == consoleplayer)
+	{
+		S_AttemptToRestoreMusic();
+	}
+
 	// Reset away view (some code referenced from Got_Teamchange)
 	if (G_IsPartyLocal(player - players))
 	{
@@ -4009,6 +4017,7 @@ boolean P_SpectatorJoinGame(player_t *player)
 		text = va("\x82*%s entered the game.", player_names[player-players]);
 
 	HU_AddChatText(text, false);
+
 	return true; // no more player->mo, cannot continue.
 }
 

@@ -123,7 +123,7 @@ static inline INT32 randomframe (mobj_t *mobj, INT32 n)
 static void P_SetupStateAnimation(mobj_t *mobj, state_t *st)
 {
 	INT32 animlength = (mobj->sprite == SPR_PLAY && mobj->skin)
-		? (INT32)(((skin_t *)mobj->skin)->sprites[mobj->sprite2].numframes) - 1
+		? (INT32)(((mobj->localskin) ? ((skin_t *)mobj->localskin) : ((skin_t *)mobj->skin))->sprites[mobj->sprite2].numframes) - 1
 		: st->var1;
 
 	if (!(st->frame & FF_ANIMATE))
@@ -318,7 +318,7 @@ boolean P_SetPlayerMobjState(mobj_t *mobj, statenum_t state)
 		// Player animations
 		if (st->sprite == SPR_PLAY)
 		{
-			skin_t *skin = ((skin_t *)mobj->skin);
+			skin_t *skin = ((skin_t *)(mobj->localskin) ? mobj->localskin : mobj->skin);
 			UINT16 frame = (mobj->frame & FF_FRAMEMASK)+1;
 			UINT8 numframes, spr2;
 
@@ -444,7 +444,7 @@ boolean P_SetMobjState(mobj_t *mobj, statenum_t state)
 		// Player animations
 		if (st->sprite == SPR_PLAY)
 		{
-			skin_t *skin = ((skin_t *)mobj->skin);
+			skin_t *skin = ((skin_t *)(mobj->localskin) ? mobj->localskin : mobj->skin);
 			UINT16 frame = (mobj->frame & FF_FRAMEMASK)+1;
 			UINT8 numframes, spr2;
 
@@ -3777,7 +3777,11 @@ void P_CalcChasePostImg(player_t *player, camera_t *thiscam)
 		}
 	}
 
-	if (encoremode)
+	if (player->mo->eflags & MFE_VERTICALFLIP && cv_flipcam.value)
+	{
+		postimg = postimg_flip;
+	}	
+	else if (encoremode)
 	{
 		postimg = postimg_mirror;
 		if (flipcam) // We have flipcam so do that
@@ -11252,9 +11256,9 @@ mobj_t *P_SpawnMobj(fixed_t x, fixed_t y, fixed_t z, mobjtype_t type)
 		}
 	}
 
-	if (mobj->skin) // correct inadequecies above.
+	if (mobj->skin || mobj->localskin) // correct inadequecies above.
 	{
-		mobj->sprite2 = P_GetSkinSprite2(mobj->skin, (mobj->frame & FF_FRAMEMASK), NULL);
+		mobj->sprite2 = P_GetSkinSprite2((mobj->localskin) ? mobj->localskin : mobj->skin, (mobj->frame & FF_FRAMEMASK), NULL);
 		mobj->frame &= ~FF_FRAMEMASK;
 	}
 
@@ -12148,6 +12152,16 @@ void P_SpawnPlayer(INT32 playernum)
 	// (usefulness: when body mobj is detached from player (who respawns),
 	// the dead body mobj retains the skin through the 'spritedef' override).
 	mobj->skin = &skins[p->skin];
+	if (p->localskin > 0)
+	{
+		if (p->skinlocal)
+			mobj->localskin = &localskins[p->localskin - 1];
+		else
+			mobj->localskin = &     skins[p->localskin - 1];
+	}
+	else
+		mobj->localskin = 0;
+	mobj->skinlocal = p->skinlocal;
 	P_SetupStateAnimation(mobj, mobj->state);
 
 	mobj->health = 1;

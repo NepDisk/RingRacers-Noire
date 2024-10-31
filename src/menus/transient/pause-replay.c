@@ -38,7 +38,7 @@ menuitem_t PAUSE_PlaybackMenu[] =
 {
 	{IT_CALL   | IT_STRING, "Hide Menu",			NULL, "M_PHIDE",	{.routine = M_SelectableClearMenus},	  0, 0},
 
-	{IT_CALL   | IT_STRING, "Restart",				NULL, "M_PRSTRT",	{.routine = M_PlaybackRewind},			 20, 0},
+	{IT_CALL   | IT_STRING, "Rewind",				NULL, "M_PRSTRT",	{.routine = M_PlaybackRewind},			 20, 0},
 	{IT_CALL   | IT_STRING, "Pause",				NULL, "M_PPAUSE",	{.routine = M_PlaybackPause},			 36, 0},
 	{IT_CALL   | IT_STRING, "Fast-Forward",			NULL, "M_PFFWD",	{.routine = M_PlaybackFastForward},		 52, 0},
 	{IT_CALL   | IT_STRING, "Restart",				NULL, "M_PRSTRT",	{.routine = M_PlaybackRewind},			 20, 0},
@@ -204,7 +204,7 @@ void M_SetPlaybackMenuPointer(void)
 
 void M_PlaybackRewind(INT32 choice)
 {
-#if 0
+#if 1
 	static tic_t lastconfirmtime;
 
 	(void)choice;

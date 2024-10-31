@@ -55,6 +55,7 @@
 #include "k_dialogue.h"
 #include "f_finale.h"
 #include "m_easing.h"
+#include "r_main.h"	// cv_flipcam
 
 // Noire
 #include "noire/n_cvar.h"
@@ -218,6 +219,7 @@ static patch_t *kp_trickcool[2];
 
 patch_t *kp_autoroulette;
 patch_t *kp_autoring;
+patch_t *kp_flipcam;
 
 patch_t *kp_capsuletarget_arrow[2][2];
 patch_t *kp_capsuletarget_icon[2];
@@ -788,6 +790,7 @@ void K_LoadKartHUDGraphics(void)
 
 	HU_UpdatePatch(&kp_autoroulette, "A11YITEM");
 	HU_UpdatePatch(&kp_autoring, "A11YRING");
+	HU_UpdatePatch(&kp_flipcam, "A11YFLPC");
 
 	sprintf(buffer, "K_BOSB0x");
 	for (i = 0; i < 8; i++)
@@ -2557,7 +2560,15 @@ void PositionFacesInfo::draw_1p()
 			else
 				colormap = R_GetTranslationColormap(workingskin, static_cast<skincolornum_t>(players[rankplayer[i]].mo->color), GTC_CACHE);
 
-			V_DrawMappedPatch(FACE_X + xoff, Y + yoff, V_HUDTRANS|V_SLIDEIN|V_SNAPTOLEFT|flipflag, faceprefix[workingskin][FACE_RANK], colormap);
+			//hires ranking portraits
+			//V_DrawMappedPatch(FACE_X + xoff, Y + yoff, V_HUDTRANS|V_SLIDEIN|V_SNAPTOLEFT|flipflag, faceprefix[workingskin][FACE_RANK], colormap);
+			V_DrawFixedPatch((FACE_X + xoff)<<FRACBITS,
+				(Y + yoff)<<FRACBITS,
+				FRACUNIT >> 1,
+				V_HUDTRANS|V_SLIDEIN|V_SNAPTOLEFT|flipflag,
+				faceprefix[workingskin][FACE_WANTED], colormap
+			);
+			//(x)<<FRACBITS, (y)<<FRACBITS, FRACUNIT, s, p, c)
 
 			if (LUA_HudEnabled(hud_battlebumpers))
 			{
@@ -3330,6 +3341,22 @@ static void K_drawKartAccessibilityIcons(boolean gametypeinfoshown, INT32 fx)
         else
             fx += 14 + 1;
     }
+
+	if (stplyr->mo != NULL)
+	{
+		if (cv_flipcam.value && stplyr->mo->eflags & MFE_VERTICALFLIP)
+		{
+			if (mirror)
+				fx -= 14;
+
+			V_DrawScaledPatch(fx, fy-1, V_SLIDEIN|splitflags, kp_flipcam);
+
+			if (mirror)
+				fx--;
+			else
+				fx += 14 + 1;
+		}
+	}
 }
 
 static void K_drawKartSpeedometer(boolean gametypeinfoshown)
@@ -3339,6 +3366,12 @@ static void K_drawKartSpeedometer(boolean gametypeinfoshown)
 	UINT8 numbers[3];
 	INT32 splitflags = V_SNAPTOBOTTOM|V_SNAPTOLEFT|V_SPLITSCREEN;
 	INT32 fy = LAPS_Y-14;
+	INT32 stickerwidth = 42;
+	INT32 secondoff = 41;
+	UINT8 *colormap;
+
+	//Just set something here for now
+	colormap = R_GetTranslationColormap(TC_DEFAULT,SKINCOLOR_GREEN,GTC_CACHE);
 
 	if (battleprisons)
 	{
@@ -3362,15 +3395,24 @@ static void K_drawKartSpeedometer(boolean gametypeinfoshown)
 			case 2: // Kilometers
 				convSpeed = FixedDiv(FixedMul(stplyr->speed, 142371), mapobjectscale) / FRACUNIT; // 2.172409058
 				labeln = 1;
+				stickerwidth = 84;
+				secondoff = 43;
 				break;
 			case 3: // Miles
 				convSpeed = FixedDiv(FixedMul(stplyr->speed, 88465), mapobjectscale) / FRACUNIT; // 1.349868774
 				labeln = 2;
+				stickerwidth = 82;
 				break;
 			case 4: // Fracunits
 				convSpeed = FixedDiv(stplyr->speed, mapobjectscale) / FRACUNIT; // 1.0. duh.
 				labeln = 3;
+				stickerwidth = 82;
 				break;
+		}
+
+		if (K_TripwirePass(stplyr))
+		{
+			colormap = R_GetTranslationColormap(TC_RAINBOW, static_cast<skincolornum_t>(leveltime % FIRSTSUPERCOLOR), GTC_CACHE);
 		}
 	}
 
@@ -3396,13 +3438,34 @@ static void K_drawKartSpeedometer(boolean gametypeinfoshown)
 	}
 
 	using srb2::Draw;
-	Draw(LAPS_X+7, fy+1).flags(V_HUDTRANS|V_SLIDEIN|splitflags).align(Draw::Align::kCenter).width(42).small_sticker();
-	V_DrawScaledPatch(LAPS_X+7, fy, V_HUDTRANS|V_SLIDEIN|splitflags, kp_facenum[numbers[0]]);
-	V_DrawScaledPatch(LAPS_X+13, fy, V_HUDTRANS|V_SLIDEIN|splitflags, kp_facenum[numbers[1]]);
-	V_DrawScaledPatch(LAPS_X+19, fy, V_HUDTRANS|V_SLIDEIN|splitflags, kp_facenum[numbers[2]]);
-	V_DrawScaledPatch(LAPS_X+29, fy, V_HUDTRANS|V_SLIDEIN|splitflags, kp_speedometerlabel[labeln]);
 
-	K_drawKartAccessibilityIcons(gametypeinfoshown, 56);
+	Draw(LAPS_X+7, fy+1).flags(V_HUDTRANS|V_SLIDEIN|splitflags).align(Draw::Align::kCenter).width(stickerwidth).small_sticker();
+	//fuck you kkd
+	//V_DrawScaledPatch(LAPS_X+7, fy, V_HUDTRANS|V_SLIDEIN|splitflags, kp_facenum[numbers[0]],colormap);
+	V_DrawFixedPatch((LAPS_X+7)*FRACUNIT, (fy)<<FRACBITS, FRACUNIT, V_HUDTRANS|V_SLIDEIN|splitflags, kp_facenum[numbers[0]],colormap);
+	V_DrawFixedPatch((LAPS_X+13)*FRACUNIT, (fy)<<FRACBITS, FRACUNIT, V_HUDTRANS|V_SLIDEIN|splitflags, kp_facenum[numbers[1]],colormap);
+	V_DrawFixedPatch((LAPS_X+19)*FRACUNIT, (fy)<<FRACBITS, FRACUNIT, V_HUDTRANS|V_SLIDEIN|splitflags, kp_facenum[numbers[2]],colormap);
+	V_DrawFixedPatch((LAPS_X+29)*FRACUNIT, (fy)<<FRACBITS, FRACUNIT, V_HUDTRANS|V_SLIDEIN|splitflags, kp_speedometerlabel[labeln],colormap);
+
+	//still draw percentage if we're using something else
+	if (cv_kartspeedometer.value != 1)
+	{
+		//Copy shit lmao
+		convSpeed = (stplyr->speed * 100) / K_GetKartSpeed(stplyr, false, true); // Based on top speed!
+		labeln = 0;
+		if (convSpeed > 999 || convSpeed < 0)
+			convSpeed = 999;
+		numbers[0] = ((convSpeed / 100) % 10);
+		numbers[1] = ((convSpeed / 10) % 10);
+		numbers[2] = (convSpeed % 10);
+
+		V_DrawFixedPatch((LAPS_X+7+secondoff)*FRACUNIT, (fy)<<FRACBITS, FRACUNIT, V_HUDTRANS|V_SLIDEIN|splitflags, kp_facenum[numbers[0]],colormap);
+		V_DrawFixedPatch((LAPS_X+13+secondoff)*FRACUNIT, (fy)<<FRACBITS, FRACUNIT, V_HUDTRANS|V_SLIDEIN|splitflags, kp_facenum[numbers[1]],colormap);
+		V_DrawFixedPatch((LAPS_X+19+secondoff)*FRACUNIT, (fy)<<FRACBITS, FRACUNIT, V_HUDTRANS|V_SLIDEIN|splitflags, kp_facenum[numbers[2]],colormap);
+		V_DrawFixedPatch((LAPS_X+29+secondoff)*FRACUNIT, (fy)<<FRACBITS, FRACUNIT, V_HUDTRANS|V_SLIDEIN|splitflags, kp_speedometerlabel[labeln],colormap);
+	}
+
+	K_drawKartAccessibilityIcons(gametypeinfoshown, 56+secondoff);
 }
 
 static void K_drawBlueSphereMeter(boolean gametypeinfoshown)
@@ -4938,12 +5001,6 @@ static void K_drawKartMinimap(void)
 				if (encoremode)
 					ang = ANGLE_180 - ang;
 
-				if (skin && mobj->color && !mobj->colorized // relevant to redo
-				&& skins[skin].starttranscolor != skins[0].starttranscolor) // redoing would have an affect
-				{
-					colormap = R_GetTranslationColormap(TC_DEFAULT, static_cast<skincolornum_t>(mobj->color), GTC_CACHE);
-				}
-
 				K_drawKartMinimapIcon(
 						interpx,
 						interpy,
@@ -5160,7 +5217,7 @@ static void K_drawKartStartBulbs(void)
 				{
 					bulbtic -= length;
 
-					if (cv_reducevfx.value != 0)
+					if (cv_reducevfx.value != 0 || true)
 					{
 						patchnum = chillloop_animation[0];
 					}
@@ -5171,7 +5228,7 @@ static void K_drawKartStartBulbs(void)
 				}
 				else
 				{
-					if (cv_reducevfx.value != 0)
+					if (cv_reducevfx.value != 0 || true)
 					{
 						patchnum = loop_animation[0];
 					}
@@ -6629,7 +6686,6 @@ void K_DrawSticker(INT32 x, INT32 y, INT32 width, INT32 flags, boolean isSmall)
 		stickerEnd = static_cast<patch_t*>(W_CachePatchName((K_UseColorHud()) ? "K_SCIKEN" :"K_STIKEN", PU_CACHE));
 		height = 11;
 	}
-
 		UINT8 *colormap = R_GetTranslationColormap(TC_DEFAULT, static_cast<skincolornum_t>(K_GetHudColor()), GTC_CACHE);
 		V_DrawFixedPatch(x*FRACUNIT, y*FRACUNIT, FRACUNIT, flags, stickerEnd, (K_UseColorHud()) ? colormap : NULL);
 		V_DrawFill(x, y, width, height, (K_UseColorHud()) ? skincolors[K_GetHudColor()].ramp[7]|flags : 24|flags);

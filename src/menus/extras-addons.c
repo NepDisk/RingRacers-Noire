@@ -26,6 +26,15 @@ menuitem_t MISC_AddonsMenu[] =
 		NULL, {.routine = M_HandleAddons}, 0, 0},     // dummy menuitem for the control func
 };
 
+//This is really cool and good
+menuitem_t MISC_LocalAddonsMenu[] =
+{
+	{IT_STRING | IT_CVAR | IT_CV_STRING, "Search for add-ons", "Provide a full or partial name to filter available files by.",
+		NULL, {.cvar = &cv_dummyaddonsearch}, 0, 0},
+	{IT_KEYHANDLER | IT_NOTHING, NULL, NULL,
+		NULL, {.routine = M_HandleLocalAddons}, 0, 0},     // dummy menuitem for the control func
+};
+
 menu_t MISC_AddonsDef = {
 	sizeof (MISC_AddonsMenu)/sizeof (menuitem_t),
 	NULL,
@@ -35,6 +44,24 @@ menu_t MISC_AddonsDef = {
 	0, 0,
 	MBF_NOLOOPENTRIES,
 	"EXTRAS",
+	0, 0,
+	M_DrawAddons,
+	M_DrawExtrasBack,
+	M_AddonsRefresh,
+	NULL,
+	NULL,
+	NULL
+};
+
+menu_t MISC_LocalAddonsDef = {
+	sizeof (MISC_LocalAddonsMenu)/sizeof (menuitem_t),
+	NULL,
+	0,
+	MISC_LocalAddonsMenu,
+	50, 28,
+	0, 0,
+	MBF_NOLOOPENTRIES,
+	NULL,
 	0, 0,
 	M_DrawAddons,
 	M_DrawExtrasBack,
@@ -79,6 +106,38 @@ void M_Addons(INT32 choice)
 	M_SetupNextMenu(&MISC_AddonsDef, false);
 }
 
+void M_LocalAddons(INT32 choice)
+{
+	const char *pathname = ".";
+
+	(void)choice;
+
+	pathname = addonsdir;
+
+	strlcpy(menupath, pathname, 1024);
+	menupathindex[(menudepthleft = menudepth-1)] = strlen(menupath) + 1;
+
+	if (menupath[menupathindex[menudepthleft]-2] != PATHSEP[0])
+	{
+		menupath[menupathindex[menudepthleft]-1] = PATHSEP[0];
+		menupath[menupathindex[menudepthleft]] = 0;
+	}
+	else
+		--menupathindex[menudepthleft];
+
+	if (!preparefilemenu(false, false))
+	{
+		M_StartMessage("Add-ons Menu", va("No files/folders found.\n\n%s\n", LOCATIONSTRING1),NULL,MM_NOTHING, NULL, NULL);
+		return;
+	}
+	else
+		dir_on[menudepthleft] = 0;
+
+	MISC_LocalAddonsDef.lastOn = 0; // Always start on search
+
+	MISC_LocalAddonsDef.prevMenu = currentMenu;
+	M_SetupNextMenu(&MISC_LocalAddonsDef, false);
+}
 
 char *M_AddonsHeaderPath(void)
 {
@@ -327,6 +386,167 @@ void M_HandleAddons(INT32 choice)
 #endif
 				case EXT_PK3:
 					COM_BufAddText(va("addfile \"%s%s\"", menupath, dirmenu[dir_on[menudepthleft]]+DIR_STRING));
+					break;
+
+				default:
+					S_StartSound(NULL, sfx_s26d);
+			}
+
+			if (refresh)
+				refreshdirmenu |= REFRESHDIR_NORMAL;
+		}
+	}
+	else if (M_MenuBackPressed(pid))
+	{
+		exitmenu = true;
+		M_SetMenuDelay(pid);
+	}
+
+
+	if (exitmenu)
+	{
+		closefilemenu(true);
+
+		// Secret menu!
+		//MainMenu[secrets].status = (M_AnySecretUnlocked()) ? (IT_STRING | IT_CALL) : (IT_DISABLED);
+
+		// I could guard it, but let's just always do this.
+		M_InitExtras(-1);
+
+		if (currentMenu->prevMenu)
+			M_SetupNextMenu(M_InterruptMenuWithChallenges(currentMenu->prevMenu), false);
+		else
+			M_ClearMenus(true);
+
+		M_SetMenuDelay(pid);
+	}
+}
+
+void M_HandleLocalAddons(INT32 choice)
+{
+	const UINT8 pid = 0;
+	boolean exitmenu = false; // exit to previous menu
+
+	(void) choice;
+
+	if (menucmd[pid].dpad_ud > 0)
+	{
+		if (dir_on[menudepthleft] < sizedirmenu-1)
+		{
+			dir_on[menudepthleft]++;
+			S_StartSound(NULL, sfx_s3k5b);
+		}
+		else if (M_NextOpt())
+		{
+			S_StartSound(NULL, sfx_s3k5b);
+		}
+		M_SetMenuDelay(pid);
+	}
+	else if (menucmd[pid].dpad_ud < 0)
+	{
+		if (dir_on[menudepthleft])
+		{
+			dir_on[menudepthleft]--;
+			S_StartSound(NULL, sfx_s3k5b);
+		}
+		else if (M_PrevOpt())
+		{
+			S_StartSound(NULL, sfx_s3k5b);
+		}
+		M_SetMenuDelay(pid);
+	}
+
+	else if (M_MenuButtonPressed(pid, MBT_L))
+	{
+		UINT8 i;
+		for (i = numaddonsshown; i && (dir_on[menudepthleft] < sizedirmenu-1); i--)
+			dir_on[menudepthleft]++;
+
+		S_StartSound(NULL, sfx_s3k5b);
+		M_SetMenuDelay(pid);
+	}
+
+	else if (M_MenuButtonPressed(pid, MBT_R))
+	{
+		UINT8 i;
+		for (i = numaddonsshown; i && (dir_on[menudepthleft]); i--)
+			dir_on[menudepthleft]--;
+
+		S_StartSound(NULL, sfx_s3k5b);
+		M_SetMenuDelay(pid);
+	}
+
+	else if (M_MenuConfirmPressed(pid))
+	{
+		boolean refresh = true;
+		M_SetMenuDelay(pid);
+
+		if (!dirmenu[dir_on[menudepthleft]])
+			S_StartSound(NULL, sfx_s26d);
+		else
+		{
+			switch (dirmenu[dir_on[menudepthleft]][DIR_TYPE])
+			{
+				case EXT_FOLDER:
+					strcpy(&menupath[menupathindex[menudepthleft]],dirmenu[dir_on[menudepthleft]]+DIR_STRING);
+					if (menudepthleft)
+					{
+						menupathindex[--menudepthleft] = strlen(menupath);
+						menupath[menupathindex[menudepthleft]] = 0;
+
+						if (!preparefilemenu(false, false))
+						{
+							S_StartSound(NULL, sfx_s224);
+							M_StartMessage("Add-ons Menu", va("%c%s\x80\nThis folder is empty.\n", ('\x80' + (highlightflags>>V_CHARCOLORSHIFT)), M_AddonsHeaderPath()),NULL,MM_NOTHING, NULL, NULL);
+							menupath[menupathindex[++menudepthleft]] = 0;
+
+							if (!preparefilemenu(true, false))
+							{
+								UNEXIST;
+								return;
+							}
+						}
+						else
+						{
+							S_StartSound(NULL, sfx_s3k5b);
+							dir_on[menudepthleft] = 1;
+						}
+						refresh = false;
+					}
+					else
+					{
+						S_StartSound(NULL, sfx_s26d);
+						M_StartMessage("Add-ons Menu", va("%c%s\x80\nThis folder is too deep to navigate to!\n", ('\x80' + (highlightflags>>V_CHARCOLORSHIFT)), M_AddonsHeaderPath()),NULL,MM_NOTHING, NULL, NULL);
+						menupath[menupathindex[menudepthleft]] = 0;
+					}
+					break;
+
+				case EXT_UP:
+					S_StartSound(NULL, sfx_s3k5b);
+					menupath[menupathindex[++menudepthleft]] = 0;
+					if (!preparefilemenu(false, false))
+					{
+						UNEXIST;
+						return;
+					}
+					break;
+
+				case EXT_TXT:
+					M_StartMessage("Add-ons Menu", va("%c%s\x80\nThis file may not be a console script.\nAttempt to run anyways?\n", ('\x80' + (highlightflags>>V_CHARCOLORSHIFT)), dirmenu[dir_on[menudepthleft]]+DIR_STRING),&M_AddonExec,MM_YESNO, NULL, NULL);
+					break;
+
+				case EXT_CFG:
+					M_StartMessage("Add-ons Menu", va("%c%s\x80\nThis file may modify your settings.\nAttempt to run anyways?\n", ('\x80' + (highlightflags>>V_CHARCOLORSHIFT)), dirmenu[dir_on[menudepthleft]]+DIR_STRING),&M_AddonExec,MM_YESNO, NULL, NULL);
+					break;
+
+				case EXT_LUA:
+				case EXT_SOC:
+				case EXT_WAD:
+#ifdef USE_KART
+				case EXT_KART:
+#endif
+				case EXT_PK3:
+					COM_BufAddText(va("addfilelocal \"%s%s\"", menupath, dirmenu[dir_on[menudepthleft]]+DIR_STRING));
 					break;
 
 				default:

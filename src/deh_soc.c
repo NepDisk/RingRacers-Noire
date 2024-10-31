@@ -343,7 +343,7 @@ void readfreeslots(MYFILE *f)
 							CONS_Printf("Skincolor SKINCOLOR_%s allocated.\n",word);
 						FREE_SKINCOLORS[i] = Z_Malloc(strlen(word)+1, PU_STATIC, NULL);
 						strcpy(FREE_SKINCOLORS[i],word);
-						skincolors[SKINCOLOR_FIRSTFREESLOT+i].cache_spraycan = UINT16_MAX;
+						skincolors[i].cache_spraycan = UINT16_MAX;
 						numskincolors++;
 						N_ReloadHUDColorCvar();
 						break;

@@ -461,8 +461,6 @@ void EggTV::erase()
 		}
 	}
 
-	cache_ = cache_->folder().load();
-
 	if (cache_->folder().empty())
 	{
 		// Remove empty folder from list

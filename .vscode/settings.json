@@ -1,0 +1,7 @@
+{
+    "files.associations": {
+        "doomstat.h": "c",
+        "d_main.h": "c",
+        "p_setup.h": "c"
+    }
+}

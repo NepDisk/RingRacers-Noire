@@ -522,6 +522,12 @@ static void Y_DrawVoteThumbnail(fixed_t center_x, fixed_t center_y, fixed_t widt
 			UINT8 *playerMap = R_GetTranslationColormap(players[playerID].skin, players[playerID].skincolor, GTC_CACHE);
 			patch_t *playerPatch = faceprefix[players[playerID].skin][FACE_RANK];
 
+			if (players[playerID].localskin)
+			{
+				playerMap = R_GetTranslationColormap(players[playerID].localskin - 1, players[playerID].skincolor, GTC_CACHE);
+				playerPatch = ((players[playerID].skinlocal) ? localfaceprefix : faceprefix)[players[playerID].localskin - 1][FACE_RANK];
+			}
+
 			V_DrawFixedPatch(
 				(fx + fw - whiteSq + dupx) * FRACUNIT,
 				(fy + fh - whiteSq + dupy) * FRACUNIT,
@@ -688,17 +694,18 @@ static void Y_DrawVoteBackground(void)
 
 	V_DrawFixedPatch(
 		0, 0,
-		FRACUNIT, 0,
+		M_GetBGSize(),
+		V_SNAPTOLEFT|V_SNAPTOTOP,
 		vote_draw.bg_planet[planetFrame], NULL
 	);
 	V_DrawFixedPatch(
 		(BASEVIDWIDTH - vote_draw.bg_checker->width) * FRACUNIT, 0,
-		FRACUNIT, V_ADD|V_TRANSLUCENT,
+		FRACUNIT, V_ADD|V_TRANSLUCENT|V_SNAPTORIGHT|V_SNAPTOTOP,
 		vote_draw.bg_checker, NULL
 	);
 	V_DrawFixedPatch(
 		(BASEVIDWIDTH - vote_draw.bg_checker->width) * FRACUNIT, 0,
-		FRACUNIT, V_ADD|V_TRANSLUCENT,
+		FRACUNIT, V_ADD|V_TRANSLUCENT|V_SNAPTORIGHT|V_SNAPTOTOP,
 		vote_draw.bg_checker, NULL
 	);
 
@@ -709,15 +716,27 @@ static void Y_DrawVoteBackground(void)
 	}
 
 	V_DrawFixedPatch(
+		((BASEVIDWIDTH - vote_draw.bg_levelText->width) * FRACUNIT) - levelPos - levelLoop,
+		-levelPos - levelLoop,
+		FRACUNIT, V_ADD|V_SNAPTORIGHT,
+		vote_draw.bg_levelText, NULL
+	);
+	V_DrawFixedPatch(
 		((BASEVIDWIDTH - vote_draw.bg_levelText->width) * FRACUNIT) - levelPos,
 		-levelPos,
-		FRACUNIT, V_ADD,
+		FRACUNIT, V_ADD|V_SNAPTORIGHT,
 		vote_draw.bg_levelText, NULL
 	);
 	V_DrawFixedPatch(
 		((BASEVIDWIDTH - vote_draw.bg_levelText->width) * FRACUNIT) - levelPos + levelLoop,
 		-levelPos + levelLoop,
-		FRACUNIT, V_ADD,
+		FRACUNIT, V_ADD|V_SNAPTORIGHT,
+		vote_draw.bg_levelText, NULL
+	);
+	V_DrawFixedPatch(
+		((BASEVIDWIDTH - vote_draw.bg_levelText->width) * FRACUNIT) - levelPos + (levelLoop*2),
+		-levelPos + (levelLoop*2),
+		FRACUNIT, V_ADD|V_SNAPTORIGHT,
 		vote_draw.bg_levelText, NULL
 	);
 
@@ -727,16 +746,29 @@ static void Y_DrawVoteBackground(void)
 		derrPos -= derrLoop;
 	}
 
+	//we draw so much of these looping patches because of Widescreen!!!! Yay!!!
+	V_DrawFixedPatch(
+		-derrPos - derrLoop,
+		(BASEVIDHEIGHT - vote_draw.bg_derrText->height) * FRACUNIT,
+		FRACUNIT, V_SUBTRACT|V_SNAPTOBOTTOM,
+		vote_draw.bg_derrText, NULL
+	);
 	V_DrawFixedPatch(
 		-derrPos,
 		(BASEVIDHEIGHT - vote_draw.bg_derrText->height) * FRACUNIT,
-		FRACUNIT, V_SUBTRACT,
+		FRACUNIT, V_SUBTRACT|V_SNAPTOBOTTOM,
 		vote_draw.bg_derrText, NULL
 	);
 	V_DrawFixedPatch(
 		-derrPos + derrLoop,
 		(BASEVIDHEIGHT - vote_draw.bg_derrText->height) * FRACUNIT,
-		FRACUNIT, V_SUBTRACT,
+		FRACUNIT, V_SUBTRACT|V_SNAPTOBOTTOM,
+		vote_draw.bg_derrText, NULL
+	);
+	V_DrawFixedPatch(
+		-derrPos + (derrLoop*2),
+		(BASEVIDHEIGHT - vote_draw.bg_derrText->height) * FRACUNIT,
+		FRACUNIT, V_SUBTRACT|V_SNAPTOBOTTOM,
 		vote_draw.bg_derrText, NULL
 	);
 

@@ -81,7 +81,7 @@
 
 md2_t md2_models[NUMSPRITES];
 md2_t md2_playermodels[MAXSKINS];
-
+md2_t md2_localplayermodels[MAXSKINS];
 
 /*
  * free model
@@ -514,6 +514,15 @@ void HWR_InitModels(void)
 		md2_playermodels[s].skin = -1;
 		md2_playermodels[s].notfound = true;
 		md2_playermodels[s].error = false;
+
+		md2_localplayermodels[s].scale = -1.0f;
+		md2_localplayermodels[s].model = NULL;
+		md2_localplayermodels[s].grpatch = NULL;
+		md2_localplayermodels[s].notexturefile = false;
+		md2_localplayermodels[s].noblendfile = false;
+		md2_localplayermodels[s].skin = -1;
+		md2_localplayermodels[s].notfound = true;
+		md2_localplayermodels[s].error = false;
 	}
 	for (i = 0; i < NUMSPRITES; i++)
 	{
@@ -596,12 +605,13 @@ modelfound:
 	fclose(f);
 }
 
-void HWR_AddPlayerModel(INT32 skin) // For skins that were added after startup
+void HWR_AddPlayerModel(INT32 skin, boolean local) // For skins that were added after startup
 {
 	FILE *f;
 	char name[26], filename[32];
 	float scale, offset;
 	size_t prefixlen;
+	md2_t *md2s;
 
 	if (nomd2s)
 		return;
@@ -626,6 +636,7 @@ void HWR_AddPlayerModel(INT32 skin) // For skins that were added after startup
 	// length of the player model prefix
 	prefixlen = strlen(PLAYERMODELPREFIX);
 
+	md2s = ( (local) ? md2_localplayermodels : md2_playermodels );
 	// Check for any models that match the names of player skins!
 	while (fscanf(f, "%25s %31s %f %f", name, filename, &scale, &offset) == 4)
 	{
@@ -636,18 +647,18 @@ void HWR_AddPlayerModel(INT32 skin) // For skins that were added after startup
 		if (!strnicmp(name, PLAYERMODELPREFIX, prefixlen) && (len > prefixlen))
 			skinname += prefixlen;
 
-		if (stricmp(skinname, skins[skin].name) == 0)
+		if (stricmp(skinname, ( (local) ? localskins : skins )[skin].name) == 0)
 		{
-			md2_playermodels[skin].skin = skin;
-			md2_playermodels[skin].scale = scale;
-			md2_playermodels[skin].offset = offset;
-			md2_playermodels[skin].notfound = false;
-			strcpy(md2_playermodels[skin].filename, filename);
+			md2s[skin].skin = skin;
+			md2s[skin].scale = scale;
+			md2s[skin].offset = offset;
+			md2s[skin].notfound = false;
+			strcpy(md2s[skin].filename, filename);
 			goto playermodelfound;
 		}
 	}
 
-	md2_playermodels[skin].notfound = true;
+	md2s[skin].notfound = true;
 playermodelfound:
 	fclose(f);
 }
@@ -1461,12 +1472,36 @@ boolean HWR_DrawModel(gl_vissprite_t *spr)
 		// don't forget to enable the depth test because we can't do this
 		// like before: model polygons are not sorted
 
+		//just gonna assume thisll always be valid with players...
+		skin_t *myskin = (spr->mobj->localskin) ? (skin_t *)(spr->mobj->localskin) : (skin_t *)(spr->mobj->skin);
+		md2_t *md2s;
+		int workingskinnum;
+
+		if (spr->mobj->localskin)
+		{
+			if (spr->mobj->skinlocal)
+			{
+				md2s = md2_localplayermodels;
+				workingskinnum = (skin_t *)spr->mobj->localskin - localskins;
+			}
+			else
+			{
+				md2s = md2_playermodels;
+				workingskinnum = (skin_t *)spr->mobj->localskin -      skins;
+			}
+		}
+		else
+		{
+			md2s = md2_playermodels;
+			workingskinnum = (skin_t *)spr->mobj->skin - skins;
+		}
+
 		// 1. load model+texture if not already loaded
 		// 2. draw model with correct position, rotation,...
-		if (spr->mobj->skin && spr->mobj->sprite == SPR_PLAY && !md2_playermodels[(skin_t*)spr->mobj->skin-skins].notfound) // Use the player MD2 list if the mobj has a skin and is using the player sprites
+		if (R_MobjHasAnySkin(spr->mobj) && spr->mobj->sprite == SPR_PLAY && !md2s[workingskinnum].notfound) // Use the player MD2 list if the mobj has a skin and is using the player sprites
 		{
-			md2 = &md2_playermodels[(skin_t*)spr->mobj->skin-skins];
-			md2->skin = (skin_t*)spr->mobj->skin-skins;
+			md2 = &md2s[workingskinnum];
+			md2->skin = workingskinnum;
 		}
 		else
 		{
@@ -1540,7 +1575,7 @@ boolean HWR_DrawModel(gl_vissprite_t *spr)
 
 			if (spr->mobj->skin && spr->mobj->sprite == SPR_PLAY) // This thing is a player!
 			{
-				skinnum = (skin_t*)spr->mobj->skin-skins;
+				skinnum = myskin-skins;
 			}
 
 			// Hide not-yet-unlocked characters in replays from other people
@@ -1581,13 +1616,13 @@ boolean HWR_DrawModel(gl_vissprite_t *spr)
 		}
 
 		frame = (spr->mobj->frame & FF_FRAMEMASK);
-		if (spr->mobj->skin && spr->mobj->sprite == SPR_PLAY && md2->model->spr2frames)
+		if (R_MobjHasAnySkin(spr->mobj) && spr->mobj->sprite == SPR_PLAY && md2->model->spr2frames)
 		{
-			spr2 = HWR_GetModelSprite2(md2, spr->mobj->skin, spr->mobj->sprite2, spr->mobj->player);
+			spr2 = HWR_GetModelSprite2(md2, (spr->mobj->localskin) ? spr->mobj->localskin : spr->mobj->skin, spr->mobj->sprite2, spr->mobj->player);
 			mod = md2->model->spr2frames[spr2].numframes;
 #ifndef DONTHIDEDIFFANIMLENGTH // by default, different anim length is masked by the mod
-			if (mod > (INT32)((skin_t *)spr->mobj->skin)->sprites[spr2].numframes)
-				mod = ((skin_t *)spr->mobj->skin)->sprites[spr2].numframes;
+			if (mod > (INT32)myskin->sprites[spr2].numframes)
+				mod = myskin->sprites[spr2].numframes;
 #endif
 			if (!mod)
 				mod = 1;
@@ -1620,7 +1655,7 @@ boolean HWR_DrawModel(gl_vissprite_t *spr)
 					&& (spr->mobj->frame & FF_ANIMATE
 					|| (spr->mobj->state->nextstate != S_NULL
 					&& states[spr->mobj->state->nextstate].sprite == SPR_PLAY
-					&& ((P_GetSkinSprite2(spr->mobj->skin, (states[spr->mobj->state->nextstate].frame) & FF_FRAMEMASK, spr->mobj->player) == spr->mobj->sprite2)))))
+					&& ((P_GetSkinSprite2((spr->mobj->localskin) ? spr->mobj->localskin : spr->mobj->skin, (states[spr->mobj->state->nextstate].frame) & FF_FRAMEMASK, spr->mobj->player) == spr->mobj->sprite2)))))
 				{
 					nextFrame = (spr->mobj->frame & FF_FRAMEMASK) + 1;
 					if (nextFrame >= mod)
@@ -1665,7 +1700,7 @@ boolean HWR_DrawModel(gl_vissprite_t *spr)
 			p.z = FIXED_TO_FLOAT(interp.z);
 
 		if (spr->mobj->skin && spr->mobj->sprite == SPR_PLAY)
-			sprdef = &((skin_t *)spr->mobj->skin)->sprites[spr->mobj->sprite2];
+			sprdef = &((skin_t *)((spr->mobj->localskin) ? spr->mobj->localskin : spr->mobj->skin))->sprites[spr->mobj->sprite2];
 		else
 			sprdef = &sprites[spr->mobj->sprite];
 

@@ -43,9 +43,10 @@ typedef struct
 
 extern md2_t md2_models[NUMSPRITES];
 extern md2_t md2_playermodels[MAXSKINS];
+extern md2_t md2_localplayermodels[MAXSKINS];
 
 void HWR_InitModels(void);
-void HWR_AddPlayerModel(INT32 skin);
+void HWR_AddPlayerModel(INT32 skin,boolean local);
 void HWR_AddSpriteModel(size_t spritenum);
 boolean HWR_DrawModel(gl_vissprite_t *spr);
 

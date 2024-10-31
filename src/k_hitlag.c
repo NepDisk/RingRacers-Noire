@@ -42,8 +42,11 @@ void K_AddHitLag(mobj_t *mo, INT32 tics, boolean fromDamage)
 	}
 
 	mo->hitlag += tics;
-	mo->hitlag = min(mo->hitlag, MAXHITLAGTICS);
-
+	if (multiplayer)
+	{
+		mo->hitlag = min(mo->hitlag, MAXHITLAGTICS);
+	}
+	
 	if (mo->player != NULL)
 	{
 		// Reset each time. We want to explicitly set this for bananas afterwards,

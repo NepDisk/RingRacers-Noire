@@ -37,8 +37,6 @@ enum drawitem_e {
 	DI_FadeScreen,
 	DI_DrawTitleCardString,
 	DI_DrawKartString,
-	DI_SetClipRect,
-	DI_ClearClipRect,
 	DI_MAX,
 };
 

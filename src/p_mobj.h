@@ -346,6 +346,8 @@ struct mobj_t
 	mobj_t **tid_prev; // killough 8/11/98: change to ptr-to-ptr
 
 	void *skin; // overrides 'sprite' when non-NULL (for player bodies to 'remember' the skin)
+	void *localskin;
+	boolean skinlocal;
 	// Player and mobj sprites in multiplayer modes are modified
 	//  using an internal color lookup table for re-indexing.
 	UINT16 color; // This replaces MF_TRANSLATION. Use 0 for default (no translation).

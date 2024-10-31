@@ -15,6 +15,7 @@
 #include "doomdef.h"
 #include "byteptr.h"
 #include "d_main.h"
+#include "d_netcmd.h" //cv_localskin
 #include "doomstat.h"
 #include "g_game.h"
 #include "m_random.h"
@@ -913,7 +914,13 @@ static void P_NetUnArchivePlayers(savebuffer_t *save)
 
 		players[i].skincolor = READUINT8(save->p);
 		players[i].skin = READINT32(save->p);
-
+		/*
+		//actually, im not sure how i would add this without potentially causing any issues with vanilla builds
+		players[i].localskin = READINT32(save->p);
+		players[i].skinlocal = READINT32(save->p);
+		*/
+		SetLocalPlayerSkin(consoleplayer, cv_localskin.string, &cv_localskin);
+		
 		for (j = 0; j < MAXAVAILABILITY; j++)
 		{
 			players[i].availabilities[j] = READUINT8(save->p);

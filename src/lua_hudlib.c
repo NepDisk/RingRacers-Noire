@@ -379,6 +379,7 @@ static int libd_getSprite2Patch(lua_State *L)
 	spritedef_t *sprdef;
 	spriteframe_t *sprframe;
 	boolean super = false; // add FF_SPR2SUPER to sprite2 if true
+	boolean usinglocal = false;
 	HUDONLY
 
 	// get skin first!
@@ -395,7 +396,15 @@ static int libd_getSprite2Patch(lua_State *L)
 		const char *name = luaL_checkstring(L, 1);
 		i = R_SkinAvailable(name);
 		if (i == -1)
-			return 0;
+		{
+			if (R_LocalSkinAvailable(name,true))
+			{
+				i = R_LocalSkinAvailable(name,true);
+				usinglocal = true;
+			}
+			else
+				return 0;
+		}
 	}
 
 	if (demo.playback)
@@ -437,9 +446,9 @@ static int libd_getSprite2Patch(lua_State *L)
 	if (super)
 		j |= FF_SPR2SUPER;
 
-	j = P_GetSkinSprite2(&skins[i], j, NULL); // feed skin and current sprite2 through to change sprite2 used if necessary
+	j = P_GetSkinSprite2(&(usinglocal ? localskins : skins)[i], j, NULL); // feed skin and current sprite2 through to change sprite2 used if necessary
 
-	sprdef = &skins[i].sprites[j];
+	sprdef = &(usinglocal ? localskins : skins)[i].sprites[j];
 
 	// set frame number
 	frame = luaL_optinteger(L, 2, 0);
@@ -900,45 +909,6 @@ static int libd_drawKartString(lua_State *L)
 	return 0;
 }
 
-static int libd_setClipRect(lua_State *L)
-{
-	fixed_t x = luaL_checkinteger(L, 1);
-	fixed_t y = luaL_checkinteger(L, 2);
-	fixed_t w = luaL_checkinteger(L, 3);
-	fixed_t h = luaL_checkinteger(L, 4);
-	INT32 flags = luaL_optinteger(L, 5, 0);
-	huddrawlist_h list;
-
-	flags &= ~V_PARAMMASK; // Don't let crashes happen.
-
-	HUDONLY
-	lua_getfield(L, LUA_REGISTRYINDEX, "HUD_DRAW_LIST");
-	list = (huddrawlist_h) lua_touserdata(L, -1);
-	lua_pop(L, 1);
-
-	if (LUA_HUD_IsDrawListValid(list))
-		LUA_HUD_AddSetClipRect(list, x, y, w, h, flags);
-	else
-		V_SetClipRect(x, y, w, h, flags);
-	return 0;
-}
-
-static int libd_clearClipRect(lua_State *L)
-{
-	huddrawlist_h list;
-
-	HUDONLY
-	lua_getfield(L, LUA_REGISTRYINDEX, "HUD_DRAW_LIST");
-	list = (huddrawlist_h) lua_touserdata(L, -1);
-	lua_pop(L, 1);
-
-	if (LUA_HUD_IsDrawListValid(list))
-		LUA_HUD_AddClearClipRect(list);
-	else
-		V_ClearClipRect();
-	return 0;
-}
-
 static int libd_titleCardStringWidth(lua_State *L)
 {
 	const char *str = luaL_checkstring(L, 1);
@@ -1056,13 +1026,6 @@ static int libd_renderer(lua_State *L)
 		case render_soft:   lua_pushliteral(L, "software"); break; // Software renderer
 		default:            lua_pushliteral(L, "none");     break; // render_none (for dedicated), in case there's any reason this should be run
 	}
-	return 1;
-}
-
-static int libd_splitscreen(lua_State *L)
-{
-	HUDONLY
-	lua_pushinteger(L, r_splitscreen); // push splitscreen
 	return 1;
 }
 
@@ -1196,8 +1159,6 @@ static luaL_Reg lib_draw[] = {
 	{"drawString", libd_drawString},
 	{"drawTitleCardString", libd_drawTitleCardString},
 	{"drawKartString", libd_drawKartString},
-	{"setClipRect", libd_setClipRect},
-	{"clearClipRect", libd_clearClipRect},
 	// misc
 	{"stringWidth", libd_stringWidth},
 	{"titleCardStringWidth", libd_titleCardStringWidth},
@@ -1214,7 +1175,6 @@ static luaL_Reg lib_draw[] = {
 	{"dupx", libd_dupx},
 	{"dupy", libd_dupy},
 	{"renderer", libd_renderer},
-	{"splitscreen", libd_splitscreen},
 	{"localTransFlag", libd_getlocaltransflag},
 	{"drawOnMinimap", libd_drawOnMinimap},
 	{"getDeltaTime", libd_getDeltaTime},

@@ -58,7 +58,7 @@ void ST_UnloadGraphics(void);
 void ST_LoadGraphics(void);
 
 // face load graphics, called when skin changes
-void ST_LoadFaceGraphics(INT32 playernum);
+void ST_LoadFaceGraphics(INT32 playernum, boolean local);
 void ST_ReloadSkinFaceGraphics(void);
 
 void ST_doPaletteStuff(void);
@@ -94,6 +94,7 @@ extern fixed_t st_fadein; // transitioning value per player, FRACUNIT = fully in
 extern lumpnum_t st_borderpatchnum;
 // patches, also used in intermission
 extern patch_t *faceprefix[MAXSKINS][NUMFACES];
+extern patch_t *localfaceprefix[MAXSKINS][NUMFACES];
 
 extern UINT16 objectsdrawn;
 

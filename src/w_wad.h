@@ -131,6 +131,7 @@ struct wadfile_t
 	FILE *handle;
 	UINT32 filesize; // for network
 	UINT8 md5sum[16];
+	boolean localfile;
 
 	boolean important; // also network - !W_VerifyNMUSlumps
 };
@@ -154,6 +155,9 @@ UINT16 W_InitFile(const char *filename, boolean mainfile, boolean startup);
 // so that it stops with a message if a file was not found, but not if all is okay.
 // W_InitMultipleFiles exits if a file was not found, but not if all is okay.
 INT32 W_InitMultipleFiles(char **filenames, boolean addons);
+
+// Used for autoload. Uses P_AddWadFileLocal instead of W_InitFiles.
+INT32 W_AddAutoloadedLocalFiles(char **filenames);
 
 const char *W_CheckNameForNumPwad(UINT16 wad, UINT16 lump);
 const char *W_CheckNameForNum(lumpnum_t lumpnum);

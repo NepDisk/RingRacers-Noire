@@ -1949,7 +1949,7 @@ static void G_LoadDemoExtraFiles(UINT8 **pp)
 			}
 			else
 			{
-				P_PartialAddWadFile(filename);
+				P_PartialAddWadFile(filename, false);
 			}
 		}
 	}

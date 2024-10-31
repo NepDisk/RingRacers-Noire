@@ -125,6 +125,7 @@ void M_PrevMenuGametype(UINT32 forbidden);
 void M_HandleHostMenuGametype(INT32 choice);
 void M_HandlePauseMenuGametype(INT32 choice);
 void M_HandlePauseMenuAddons(INT32 choice);
+void M_HandlePauseMenuLocalAddons(INT32 choice);
 
 extern UINT32 menucallvote; // not midVoteType_e to prevent #include k_zvote
 extern UINT32 menuaddonoptions;
@@ -575,7 +576,9 @@ typedef enum
 
 	mpause_continue,
 	mpause_spectatetoggle,
+	mpause_localaddons,
 	mpause_psetup,
+	mpause_localskin,
 	mpause_cheats,
 	mpause_options,
 
@@ -785,6 +788,7 @@ UINT16 M_GetColorAfter(setup_player_colors_t *colors, UINT16 value, INT32 amount
 
 extern struct setup_chargrid_s {
 	INT16 skinlist[MAXCLONES];
+	boolean skinlocal[MAXCLONES];
 	UINT8 numskins;
 } setup_chargrid[9][9];
 
@@ -818,6 +822,7 @@ struct setup_player_t
 	UINT8 profilen;
 	menu_anim_t profilen_slide;
 	INT16 skin;
+	boolean localskin;
 	SINT8 clonenum;
 	SINT8 rotate;
 	UINT8 delay;
@@ -880,6 +885,9 @@ boolean M_CharacterSelectForceInAction(void);
 boolean M_CharacterSelectHandler(INT32 choice);
 void M_CharacterSelectTick(void);
 boolean M_CharacterSelectQuit(void);
+
+//Dupe
+void M_LocalCharacterSelect(INT32 choice);
 
 void M_SetupPlayMenu(INT32 choice);
 void M_SetupGametypeMenu(INT32 choice);
@@ -1294,8 +1302,11 @@ void M_PlaybackQuit(INT32 choice);
 // Misc menus:
 #define numaddonsshown 4
 void M_Addons(INT32 choice);
+void M_LocalAddons(INT32 choice);
 void M_AddonsRefresh(void);
 void M_HandleAddons(INT32 choice);
+//This sucks
+void M_HandleLocalAddons(INT32 choice);
 char *M_AddonsHeaderPath(void);
 extern consvar_t cv_dummyaddonsearch;
 extern consvar_t cv_dummyextraspassword;
@@ -1318,12 +1329,13 @@ extern INT32 warningflags;
 
 #define M_ALTCOLOR V_ORANGEMAP
 
-void M_DrawCursorHand(INT32 x, INT32 y);
-void M_DrawUnderline(INT32 left, INT32 right, INT32 y);
+void M_DrawCursorHand(INT32 x, INT32 y, INT32 flags);
+void M_DrawUnderline(INT32 left, INT32 right, INT32 y, INT32 flags);
 
 // For some menu highlights
 UINT16 M_GetCvPlayerColor(UINT8 pnum);
 
+fixed_t M_GetBGSize(void);
 void M_PickMenuBGMap(void);
 void M_UpdateMenuBGImage(boolean forceReset);
 void M_DrawMenuBackground(void);
@@ -1338,7 +1350,7 @@ void M_DrawMessageMenu(void);
 void M_DrawImageDef(void);
 
 void M_DrawCharacterSelect(void);
-boolean M_DrawCharacterSprite(INT16 x, INT16 y, INT16 skin, UINT8 spr2, UINT8 rotation, UINT32 frame, INT32 addflags, UINT8 *colormap);
+boolean M_DrawCharacterSprite(INT16 x, INT16 y, INT16 skin, UINT8 spr2, UINT8 rotation, UINT32 frame, INT32 addflags, UINT8 *colormap, boolean local);
 
 void M_DrawCup(cupheader_t *cup, fixed_t x, fixed_t y, INT32 lockedTic, boolean isTrophy, UINT8 placement);
 void M_DrawCupSelect(void);
@@ -1495,7 +1507,7 @@ void M_Statistics(INT32 choice);
 void M_DrawStatistics(void);
 boolean M_StatisticsInputs(INT32 ch);
 
-void M_DrawCharacterIconAndEngine(INT32 x, INT32 y, UINT8 skin, UINT8 *colormap, UINT8 baseskin);
+void M_DrawCharacterIconAndEngine(INT32 x, INT32 y, UINT8 skin, UINT8 *colormap, UINT8 baseskin, INT32 flags);
 fixed_t M_DrawCupWinData(INT32 rankx, INT32 ranky, cupheader_t *cup, UINT8 difficulty, boolean flash, boolean statsmode);
 
 #define MAXWRONGPLAYER MAXSPLITSCREENPLAYERS

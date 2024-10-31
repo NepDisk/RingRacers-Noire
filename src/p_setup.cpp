@@ -8329,15 +8329,18 @@ void P_LoadLevelMusic(void)
 			Music_BatchExempt("level_nosync");
 		}
 		Music_StopAll();
-		Music_Remap("level_nosync", music);
+		Music_Remap("level_nosync", players[consoleplayer].spectator ? "SPECTR" : music);
 	}
 	else
 	{
 		Music_StopAll();
-		Music_Remap("level", music);
+		Music_Remap("level", players[consoleplayer].spectator ? "SPECTR" : music);
 
-		tic_t level_music_start = starttime + (TICRATE/2);
-		Music_Seek("level", (std::max(leveltime, level_music_start) - level_music_start) * 1000UL / TICRATE);
+		if (!players[consoleplayer].spectator)
+		{
+			tic_t level_music_start = starttime + (TICRATE/2);
+			Music_Seek("level", (std::max(leveltime, level_music_start) - level_music_start) * 1000UL / TICRATE);
+		}
 	}
 
 	Music_ResetLevelVolume();
@@ -8965,7 +8968,7 @@ boolean P_RunSOC(const char *socfilename)
 	lumpnum_t lump;
 
 	if (strstr(socfilename, ".soc") != NULL)
-		return P_AddWadFile(socfilename);
+		return P_AddWadFile(socfilename,false);
 
 	lump = W_CheckNumForName(socfilename);
 	if (lump == LUMPERROR)
@@ -9308,11 +9311,11 @@ static UINT16 P_PartialAddWadFileEx(const char *wadfilename, boolean local);
 // Add a wadfile to the active wad files,
 // replace sounds, musics, patches, textures, sprites and maps
 //
-static boolean P_AddWadFileEx(const char *wadfilename, boolean local)
+boolean P_AddWadFile(const char *wadfilename, boolean local)
 {
 	UINT16 wadnum;
 
-	if ((wadnum = P_PartialAddWadFileEx(wadfilename, local)) == UINT16_MAX)
+	if ((wadnum = P_PartialAddWadFile(wadfilename, local)) == UINT16_MAX)
 		return false;
 
 	if (P_PartialAddGetStage() >= 0)
@@ -9321,33 +9324,33 @@ static boolean P_AddWadFileEx(const char *wadfilename, boolean local)
 	return true;
 }
 
-// I'm just too lazy and don't want to go through code and add extra argument everywhere
-boolean P_AddWadFile(const char *wadfilename)
-{
-	return P_AddWadFileEx(wadfilename, false);
-}
-
 boolean P_AddWadFileLocal(const char *wadfilename)
 {
-	boolean oldmodifiedgame = modifiedgame;
+	UINT16 wadnum;
 
-	boolean result = P_AddWadFileEx(wadfilename, true);
+	if ((wadnum = P_PartialAddWadFile(wadfilename, true)) == UINT16_MAX)
+		return false;
 
-	modifiedgame = oldmodifiedgame;
+	if (P_PartialAddGetStage() >= 0)
+		P_MultiSetupWadFiles(true);
 
-	return result;
+ 	return true;
 }
 
 //
 // Add a WAD file and do the per-WAD setup stages.
 // Call P_MultiSetupWadFiles as soon as possible after any number of these.
 //
-static UINT16 P_PartialAddWadFileEx(const char *wadfilename, boolean local)
+UINT16 P_PartialAddWadFile(const char *wadfilename, boolean local)
 {
 	size_t i, j, sreplaces = 0, mreplaces = 0, digmreplaces = 0;
 	UINT16 numlumps, wadnum;
 	char *name;
 	lumpinfo_t *lumpinfo;
+
+#ifdef PARANOIA
+	wadnum = 0;
+#endif
 
 	// Vars to help us with the position start and amount of each resource type.
 	// Useful for PK3s since they use folders.
@@ -9369,13 +9372,12 @@ static UINT16 P_PartialAddWadFileEx(const char *wadfilename, boolean local)
 		return false;
 	}
 
+	wadfiles[wadnum]->localfile = local;
 	wadnum = (UINT16)(numwadfiles-1);
 
-	// shhhhhhhh
+	// Local addons should never be marked important, as we dont want them in our demos
 	if (local)
-	{
 		wadfiles[wadnum]->important = false;
-	}
 
 	// Init partadd.
 	if (wadfiles[wadnum]->important)
@@ -9490,7 +9492,7 @@ static UINT16 P_PartialAddWadFileEx(const char *wadfilename, boolean local)
 	//
 	// look for skins
 	//
-	R_AddSkins(wadnum, false); // faB: wadfile index in wadfiles[]
+	R_AddSkins(wadnum, false, local); // faB: wadfile index in wadfiles[]
 	R_PatchSkins(wadnum, false); // toast: PATCH PATCH
 
 	//

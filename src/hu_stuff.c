@@ -1332,7 +1332,7 @@ static char *CHAT_WordWrap(INT32 w, fixed_t scale, INT32 option, const char *str
 
 // 30/7/18: chaty is now the distance at which the lowest point of the chat will be drawn if that makes any sense.
 
-INT16 chatx = 13, chaty = 169; // let's use this as our coordinates
+INT16 chatx = 13, chaty = 164; // let's use this as our coordinates
 
 // chat stuff by VincyTM LOL XD!
 

@@ -1435,7 +1435,7 @@ static void R_ParseSpriteInfoSkin(struct ParseSpriteInfoState *parser)
 		skinName[sprinfoTokenLength] = '\0';
 		strlwr(skinName);
 
-		skinnum = R_SkinAvailableEx(skinName, false);
+		skinnum = R_AnySkinAvailable(skinName);
 		if (skinnum == -1)
 			I_Error("Error parsing SPRTINFO lump: Unknown skin \"%s\"", skinName);
 

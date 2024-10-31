@@ -342,7 +342,11 @@ static int mobj_get(lua_State *L)
 	case mobj_skin: // skin name or nil, not struct
 		if (!mo->skin)
 			return 0;
-		lua_pushstring(L, ((skin_t *)mo->skin)->name);
+		if (mo->localskin)
+			lua_pushstring(L, ((skin_t *)mo->localskin)->name);
+		else
+			lua_pushstring(L, ((skin_t *)mo->skin)->name);
+		
 		break;
 	case mobj_color:
 		lua_pushinteger(L, mo->color);
@@ -726,6 +730,20 @@ static int mobj_set(lua_State *L)
 				if (demo.playback)
 					skin = demo.skinlist[skin].mapping;
 				mo->skin = &skins[skin];
+			}
+
+			return 0;
+		}
+		else {
+			skin = R_LocalSkinAvailable(name, true);
+			if (!mo->player || R_SkinUsable(mo->player-players, skin, false))
+			{
+				if (demo.playback)
+					skin = demo.skinlist[skin].mapping;
+				// set something here for localskin
+				mo->skin = &localskins[skin];
+				mo->localskin = &localskins[skin];
+				mo->skinlocal = (&localskins[skin])->localskin;
 			}
 
 			return 0;

@@ -63,6 +63,7 @@ UINT16 objectsdrawn = 0;
 //
 
 patch_t *faceprefix[MAXSKINS][NUMFACES];
+patch_t *localfaceprefix[MAXSKINS][NUMFACES];
 
 // ------------------------------------------
 //             status bar overlay
@@ -178,16 +179,16 @@ void ST_LoadGraphics(void)
 }
 
 // made separate so that skins code can reload custom face graphics
-void ST_LoadFaceGraphics(INT32 skinnum)
+void ST_LoadFaceGraphics(INT32 skinnum, boolean local)
 {
 #define FACE_MAX (FACE_MINIMAP+1)
-	spritedef_t *sprdef = &skins[skinnum].sprites[SPR2_XTRA];
+	spritedef_t *sprdef = &(local ? localskins : skins)[skinnum].sprites[SPR2_XTRA];
 	spriteframe_t *sprframe;
 	UINT8 i = 0, maxer = min(sprdef->numframes, FACE_MAX);
 	while (i < maxer)
 	{
 		sprframe = &sprdef->spriteframes[i];
-		faceprefix[skinnum][i] = W_CachePatchNum(sprframe->lumppat[0], PU_HUDGFX);
+		(local ? localfaceprefix : faceprefix)[skinnum][i] = W_CachePatchNum(sprframe->lumppat[0], PU_HUDGFX);
 		i++;
 	}
 	if (i < FACE_MAX)
@@ -195,7 +196,7 @@ void ST_LoadFaceGraphics(INT32 skinnum)
 		patch_t *missing = W_CachePatchName("MISSING", PU_HUDGFX);
 		while (i < FACE_MAX)
 		{
-			faceprefix[skinnum][i] = missing;
+			(local ? localfaceprefix : faceprefix)[skinnum][i] = missing;
 			i++;
 		}
 	}
@@ -207,7 +208,10 @@ void ST_ReloadSkinFaceGraphics(void)
 	INT32 i;
 
 	for (i = 0; i < numskins; i++)
-		ST_LoadFaceGraphics(i);
+		ST_LoadFaceGraphics(i,false);
+
+	for (i = 0; i < numlocalskins; i++)
+		ST_LoadFaceGraphics(i,true);
 }
 
 static inline void ST_InitData(void)

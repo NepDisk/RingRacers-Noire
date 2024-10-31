@@ -70,6 +70,9 @@ struct skin_t
 	// contains super versions too
 	spritedef_t sprites[NUMPLAYERSPRITES*2];
 	spriteinfo_t sprinfo[NUMPLAYERSPRITES*2];
+
+	boolean localskin;
+	INT32 localnum;
 };
 
 enum facepatches {
@@ -100,7 +103,11 @@ engineclass_t R_GetEngineClass(SINT8 speed, SINT8 weight, skinflags_t flags);
 
 /// Externs
 extern INT32 numskins;
+extern INT32 numlocalskins;
+extern INT32 numallskins;
 extern skin_t skins[MAXSKINS];
+extern skin_t localskins[MAXSKINS];
+extern skin_t allskins[MAXSKINS*2];
 
 extern CV_PossibleValue_t Forceskin_cons_t[];
 
@@ -108,11 +115,16 @@ extern CV_PossibleValue_t Forceskin_cons_t[];
 
 // Loading
 void R_InitSkins(void);
-void R_AddSkins(UINT16 wadnum, boolean mainfile);
+void R_AddSkins(UINT16 wadnum, boolean mainfile, boolean local);
 void R_PatchSkins(UINT16 wadnum, boolean mainfile);
+
+//Localskin
+boolean R_MobjHasAnySkin(mobj_t *mo);
 
 // Access
 INT32 R_SkinAvailable(const char *name);
+INT32 R_AnySkinAvailable(const char *name);
+INT32 R_LocalSkinAvailable(const char *name, boolean local);
 INT32 R_SkinAvailableEx(const char *name, boolean demoskins);
 boolean R_SkinUsable(INT32 playernum, INT32 skinnum, boolean demoskins);
 UINT8 *R_GetSkinAvailabilities(boolean demolock, INT32 botforcecharacter);
@@ -121,6 +133,7 @@ boolean R_CanShowSkinInDemo(INT32 skinnum);
 // Setting
 void SetPlayerSkin(INT32 playernum,const char *skinname);
 void SetPlayerSkinByNum(INT32 playernum,INT32 skinnum); // Tails 03-16-2002
+void SetLocalPlayerSkin(INT32 playernum,const char *skinname, consvar_t *cvar);
 
 // Set backup
 INT32 GetSkinNumClosestToStats(UINT8 kartspeed, UINT8 kartweight, UINT32 flags, boolean unlock);
