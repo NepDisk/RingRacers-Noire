@@ -106,6 +106,9 @@ menuitem_t OPTIONS_NoireGameplayItems[] =
 
 	{IT_STRING | IT_CVAR, "Flame Sheild Nerf", "Do diminishing returns on the Flame Shield and make the finishing thrust weaker.",
 		NULL, {.cvar = &cv_ng_nerfflameshield}, 0, 0},
+
+	{IT_STRING | IT_CVAR, "Air-time Timer Drain", "Drain timers for Grow and Invincibility regardless of being grounded.",
+		NULL, {.cvar = &cv_ng_airtimerdrain}, 0, 0},
 };
 
 ///////////

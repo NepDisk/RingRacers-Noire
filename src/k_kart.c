@@ -3755,7 +3755,7 @@ fixed_t K_GetKartSpeed(const player_t *player, boolean doboostpower, boolean dor
 	const fixed_t physicsScale = mobjValid ? K_GrowShrinkSpeedMul(player) : FRACUNIT;
 	fixed_t finalspeed = 0;
 
-	if (cv_ng_oldspeedcalc.value)
+	if (cv_ng_oldspeedcalc.value && !K_PlayerUsesBotMovement(player))
 		return N_GetKartSpeed(player, doboostpower, dorubberband);
 
 	if (K_PodiumSequence() == true)
@@ -3822,7 +3822,7 @@ fixed_t K_GetKartAccel(const player_t *player)
 	fixed_t k_accel = 121;
 	UINT8 stat = (9 - player->kartspeed);
 
-	if (cv_ng_oldspeedcalc.value)
+	if (cv_ng_oldspeedcalc.value && !K_PlayerUsesBotMovement(player))
 		return N_GetKartAccel(player);
 
 	if (K_PodiumSequence() == true)
@@ -3976,7 +3976,7 @@ fixed_t K_GetNewSpeed(const player_t *player)
 
 	fixed_t newspeed, oldspeed, finalspeed;
 
-	if (cv_ng_oldspeedcalc.value)
+	if (cv_ng_oldspeedcalc.value && !K_PlayerUsesBotMovement(player))
 		return N_GetNewSpeed(player);
 
 	if (player->curshield == KSHIELD_TOP)
@@ -4027,7 +4027,7 @@ fixed_t K_3dKartMovement(const player_t *player)
 	fixed_t movemul = FRACUNIT;
 	SINT8 forwardmove = K_GetForwardMove(player);
 
-	if (cv_ng_oldspeedcalc.value)
+	if (cv_ng_oldspeedcalc.value && !K_PlayerUsesBotMovement(player))
 		return N_3dKartMovement(player);
 
 	movemul = abs(forwardmove * FRACUNIT) / 50;
@@ -9283,6 +9283,10 @@ void K_KartPlayerThink(player_t *player, ticcmd_t *cmd)
 		}
 	}
 
+	if (cv_ng_airtimerdrain.value)
+		player->ignoreAirtimeLeniency = 5;
+
+
 	if (player->invincibilitytimer && (player->ignoreAirtimeLeniency > 0 || onground == true || K_PowerUpRemaining(player, POWERUP_SMONITOR)))
 		player->invincibilitytimer--;
 
@@ -9426,7 +9430,7 @@ void K_KartPlayerThink(player_t *player, ticcmd_t *cmd)
 	if (player->hyudorotimer)
 		player->hyudorotimer--;
 
-	if (cv_ng_oldspeedcalc.value)
+	if (cv_ng_oldspeedcalc.value && !K_PlayerUsesBotMovement(player))
 		N_AdjustPlayerFriction(player, onground);
 
 	if (player->bumpUnstuck > 30*5)

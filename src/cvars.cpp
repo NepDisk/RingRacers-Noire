@@ -862,7 +862,8 @@ consvar_t cv_ng_oldballhog = UnsavedNetVar("ng_oldballhog", "Ring Racers").value
 consvar_t cv_ng_oldspb = UnsavedNetVar("ng_oldspb", "Ring Racers").values(rrOrKart_cons_t).onchange_noinit(NG_Olditem_OnChange);
 consvar_t cv_ng_nerfdroptarget = UnsavedNetVar("ng_nerfdroptarget", "Off").on_off();
 consvar_t cv_ng_nerfflameshield = UnsavedNetVar("ng_nerfflameshield", "Off").on_off();
-consvar_t cv_ng_nerfflameshielddiminish = UnsavedNetVar("ng_flameshield_diminish", ".90").floating_point();
+consvar_t cv_ng_nerfflameshielddiminish = UnsavedNetVar("ng_flameshield_diminish", "1.2").floating_point();
+consvar_t cv_ng_airtimerdrain = UnsavedNetVar("ng_airtimerdrain", "Off").on_off();
 
 consvar_t cv_ng_noireodds = UnsavedNetVar("ng_itemodds", "Ring Racers").values({
 	{0, "Ring Racers"},

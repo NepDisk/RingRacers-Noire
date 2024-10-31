@@ -2086,13 +2086,13 @@ static void P_3dMovement(player_t *player)
 	// Do not let the player control movement if not onground.
 	onground = (P_IsObjectOnGround(player->mo) || player->pogospring); //NOIRE: Readd the extra condition that Kart had for springs
 
-	if (!cv_ng_oldspeedcalc.value)
+	if (!cv_ng_oldspeedcalc.value || K_PlayerUsesBotMovement(player))
 		K_AdjustPlayerFriction(player);
 
 	// Forward movement
 	// If the player isn't on the ground, there is no change in speed
 	// Smiley Face
-	if (cv_ng_oldspeedcalc.value)
+	if (cv_ng_oldspeedcalc.value && !K_PlayerUsesBotMovement(player))
 	{
 		// Forward movement
 		if (!((player->exiting || mapreset) || (P_PlayerInPain(player) && !onground)))
@@ -2244,7 +2244,7 @@ static void P_3dMovement(player_t *player)
 	// Sideways movement for pogo
 	if (player->pogosidemove != 0 && !((player->exiting || mapreset) || player->spinouttimer))
 	{
-		fixed_t kartspeed = cv_ng_oldspeedcalc.value ? N_GetKartSpeed(player, true, true) : K_GetKartSpeed(player, true, true);
+		fixed_t kartspeed = (cv_ng_oldspeedcalc.value && !K_PlayerUsesBotMovement(player)) ? N_GetKartSpeed(player, true, true) : K_GetKartSpeed(player, true, true);
 		if (player->pogosidemove > 0)
 			movepushside = (player->pogosidemove * FRACUNIT/128) + FixedDiv(player->speed, kartspeed);
 		else

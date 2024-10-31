@@ -49,6 +49,7 @@ extern consvar_t cv_ng_nerfflameshield;
 extern consvar_t cv_ng_nerfflameshielddiminish;
 extern consvar_t cv_ng_noireodds;
 extern consvar_t cv_ng_forceautoroulette;
+extern consvar_t cv_ng_airtimerdrain;
 
 extern consvar_t cv_distvar;
 // Itemtable hell
