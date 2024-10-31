@@ -443,6 +443,10 @@ consvar_t cv_bgaudio = Player("bgaudio", "Nothing").onchange_noinit(BGAudio_OnCh
 	{3, "Music&Sounds"},
 });
 
+consvar_t cv_localskin = Player("internal___localskin", "None").dont_save().flags(CV_HIDDEN);
+consvar_t cv_fakelocalskin = Player("localskin", "None").flags(CV_SAVE);
+//{"internal___localskin", "none", CV_HIDDEN, NULL, NULL, 0, NULL, NULL, 0, 0, NULL};
+
 // Pause game upon window losing focus
 consvar_t cv_pauseifunfocused = Player("pauseifunfocused", "Yes").yes_no();
 

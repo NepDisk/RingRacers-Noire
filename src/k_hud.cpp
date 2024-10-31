@@ -61,6 +61,9 @@
 #include "noire/n_cvar.h"
 #include "noire/n_hud.h"
 
+// HEP
+#include "hep2/h_cvars.h"
+
 //{ 	Patch Definitions
 static patch_t *kp_nodraw;
 
@@ -3344,17 +3347,23 @@ static void K_drawKartAccessibilityIcons(boolean gametypeinfoshown, INT32 fx)
 
 	if (stplyr->mo != NULL)
 	{
-		if (cv_flipcam.value && stplyr->mo->eflags & MFE_VERTICALFLIP)
+
+		int i;
+		for (i = 0; i <= r_splitscreen; i++)
 		{
-			if (mirror)
-				fx -= 14;
+			if (cv_flipcam[i].value && stplyr->mo->eflags & MFE_VERTICALFLIP)
+			{
+				if (mirror)
+					fx -= 14;
 
-			V_DrawScaledPatch(fx, fy-1, V_SLIDEIN|splitflags, kp_flipcam);
+				V_DrawScaledPatch(fx, fy-1, V_SLIDEIN|splitflags, kp_flipcam);
 
-			if (mirror)
-				fx--;
-			else
-				fx += 14 + 1;
+				if (mirror)
+					fx--;
+				else
+					fx += 14 + 1;
+			}
+
 		}
 	}
 }

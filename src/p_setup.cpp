@@ -9305,8 +9305,6 @@ UINT8 P_InitMapData(void)
 	return ret;
 }
 
-static UINT16 P_PartialAddWadFileEx(const char *wadfilename, boolean local);
-
 //
 // Add a wadfile to the active wad files,
 // replace sounds, musics, patches, textures, sprites and maps
@@ -9510,12 +9508,6 @@ UINT16 P_PartialAddWadFile(const char *wadfilename, boolean local)
 	refreshdirmenu &= ~REFRESHDIR_GAMEDATA; // Under usual circumstances we'd wait for REFRESHDIR_ flags to disappear the next frame, but this one's a bit too dangerous for that...
 
 	return true;
-}
-
-// Me being lazy again
-UINT16 P_PartialAddWadFile(const char *wadfilename)
-{
-	return P_PartialAddWadFileEx(wadfilename, false);
 }
 
 // Only exists to make sure there's no way to overwrite partadd_stage externally

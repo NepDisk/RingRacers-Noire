@@ -142,9 +142,6 @@ menuitem_t OPTIONS_ProfileAccessibility[] = {
 
 	{IT_STRING | IT_CVAR, "Input Display", "Show virtual controller on the HUD.",
 		NULL, {.cvar = &cv_drawinput}, 0, 0},
-
-	{IT_STRING | IT_CVAR, "Flipcam", "Flips your camera in reverse gravity.",
-		NULL, {.cvar = &cv_flipcam}, 0, 0},
 };
 
 menu_t OPTIONS_ProfileAccessibilityDef = {

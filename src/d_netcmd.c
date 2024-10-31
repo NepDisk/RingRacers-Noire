@@ -411,7 +411,6 @@ void D_RegisterServerCommands(void)
 	COM_AddDebugCommand("showmap", Command_Showmap_f);
 	COM_AddCommand("mapmd5", Command_Mapmd5_f);
 
-	COM_AddCommand("addfilelocal", Command_Addfilelocal);
 	COM_AddCommand("addskins", Command_Addskins);
 	COM_AddCommand("localskin", Command_GLocalSkin);
 
