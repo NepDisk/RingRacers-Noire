@@ -851,9 +851,7 @@ static void P_NetArchivePlayers(savebuffer_t *save)
 		WRITEUINT32(save->p, players[i].darkness_end);
 
 		//Pogo
-		WRITEUINT32(save->p, players[i].pogoSpringJumped);
-		WRITEFIXED(save->p, players[i].pogoMaxSpeed);
-		WRITEFIXED(save->p, players[i].pogoMinSpeed);
+		WRITEUINT8(save->p, players[i].pogospring);
 		WRITESINT8(save->p, players[i].pogosidemove);
 
 		WRITEUINT8(save->p, players[i].brakestop);
@@ -1488,9 +1486,7 @@ static void P_NetUnArchivePlayers(savebuffer_t *save)
 		players[i].darkness_start = READUINT32(save->p);
 		players[i].darkness_end = READUINT32(save->p);
 
-		players[i].pogoSpringJumped = READUINT32(save->p);
-		players[i].pogoMaxSpeed = READFIXED(save->p);
-		players[i].pogoMinSpeed = READFIXED(save->p);
+		players[i].pogospring = READUINT8(save->p);
 		players[i].pogosidemove = READSINT8(save->p);
 
 		players[i].brakestop = READUINT8(save->p);

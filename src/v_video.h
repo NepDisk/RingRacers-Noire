@@ -269,6 +269,8 @@ void V_EncoreInvertScreen(void);
 void V_DrawPromptBack(INT32 boxheight, INT32 color);
 
 /* Convenience macros for leagacy string function macros. */
+#define V_DrawStringScaled( x,y,scale,space_scale,linefeed_scale,option,cm,font,string ) \
+	V_DrawStringScaledEx(x,y,scale,scale,space_scale,linefeed_scale,option,cm,font,string)
 #define V__DrawOneScaleString( x,y,scale,option,cm,font,string ) \
 	V_DrawStringScaled(x,y,scale,FRACUNIT,FRACUNIT,option,cm,font,string)
 #define V__DrawDupxString( x,y,scale,option,cm,font,string )\
@@ -300,10 +302,11 @@ UINT8 *V_GetStringColormap(INT32 colorflags);
 INT32 V_LevelNameHeight(const char *string);
 
 // draw a string using a font
-void V_DrawStringScaled(
+void V_DrawStringScaledEx(
 		fixed_t     x,
 		fixed_t     y,
 		fixed_t           scale,
+		fixed_t          vscale,
 		fixed_t     space_scale,
 		fixed_t  linefeed_scale,
 		INT32       flags,

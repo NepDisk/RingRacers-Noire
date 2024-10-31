@@ -3975,25 +3975,22 @@ fixed_t K_GetNewSpeed(const player_t *player)
 		oldspeed = p_speed;
 	newspeed = FixedDiv(FixedDiv(FixedMul(oldspeed, accelmax - p_accel) + FixedMul(p_speed, p_accel), accelmax), K_PlayerBaseFriction(player, ORIG_FRICTION));
 
-	if (player->pogoSpringJumped) // NOIRE Pogo Spring minimum/maximum thrust. This goes here, before that finalSpeed line below, as it was in Kart code.
+	if (player->pogospring) // Pogo Spring minimum/maximum thrust
 	{
-		//CONS_Printf("K_GetNewSpeed: newSpeed: \x82%d\x80, pogoMaxSpeed: \x85%d\x80. pogoMinSpeed: \x88%d\x80 ",newspeed, player->pogoMaxSpeed,player->pogoMinSpeed);
-		if (player->pogoMinSpeed != 0) //First do the speedcap, AKA pogospring == 2
+		const fixed_t hscale = mapobjectscale;
+		fixed_t minspeed = 24*hscale;
+		fixed_t maxspeed = 28*hscale;
+
+		if (player->mo->terrain)
 		{
-			const fixed_t minSpeed = player->pogoMinSpeed * mapobjectscale;
-			//CONS_Printf(" minSpeed: \x84%d\x80 ", minSpeed);
-			if (newspeed < minSpeed)
-				newspeed = minSpeed;
-		}
-		if (player->pogoMaxSpeed != 0)
-		{
-			const fixed_t maxspeed = player->pogoMaxSpeed * mapobjectscale;
-			//CONS_Printf(" maxSpeed: \x87%d\x80 ", maxspeed);
-			if (newspeed > maxspeed)
-				newspeed = maxspeed;
+			minspeed = player->mo->terrain->pogoSpringMin*hscale;
+			maxspeed = player->mo->terrain->pogoSpringMax*hscale;
 		}
 
-		//CONS_Printf(" final newspeed: \x85%d\x80\n", newspeed);
+		if (newspeed > maxspeed && player->pogospring == 2)
+			newspeed = maxspeed;
+		if (newspeed < minspeed)
+			newspeed = minspeed;
 	}
 
 	finalspeed = newspeed - oldspeed;
@@ -9730,7 +9727,7 @@ void K_KartPlayerThink(player_t *player, ticcmd_t *cmd)
 	}
 
 	//NOIRE Springs: Pogo stuff put in the same place as in the original code (after eggman stuff)
-	if (P_IsObjectOnGround(player->mo) && player->pogoSpringJumped)
+	if (P_IsObjectOnGround(player->mo) && player->pogospring)
 	{
 		if (P_MobjFlip(player->mo) * player->mo->momz <= 0) {
 			K_PlayerResetPogo(player);
@@ -11100,7 +11097,7 @@ static void K_KartDrift(player_t *player, boolean onground)
 	// Grown players taking yellow spring panels will go below minspeed for one tic,
 	// and will then wrongdrift or have their sparks removed because of this.
 	// This fixes this problem.
-	if (player->pogoSpringJumped && player->pogoMaxSpeed != 0 && player->mo->scale > mapobjectscale)
+	if (player->pogospring && player->mo->scale > mapobjectscale)
 		minspeed = FixedMul(10 << FRACBITS, mapobjectscale);
 
 	// Drifting is actually straffing + automatic turning.
@@ -12586,7 +12583,7 @@ void K_AdjustPlayerFriction(player_t *player)
 	// NOIRE SPRINGS: Check for pogo status as well, originally this was in K_MoveKartPlayer...
 	// Original comment for checking pogoSpring: JugadorXEI: Do *not* calculate friction when a player is pogo'd
 	// because they'll be in the air and friction will not reset!
-	if (P_IsObjectOnGround(player->mo) == false || player->pogoSpringJumped) 
+	if (P_IsObjectOnGround(player->mo) == false || player->pogospring)
 	{
 		return;
 	}
@@ -14899,7 +14896,7 @@ boolean K_Cooperative(void)
 
 void K_SetTireGrease(player_t *player, tic_t tics)
 {
-	if (player->pogoSpringJumped)
+	if (player->pogospring)
 		return;
 	if (!player->tiregrease)
 	{
@@ -14968,7 +14965,5 @@ boolean K_PlayerCanUseItem(player_t *player)
 //}
 
 inline void K_PlayerResetPogo(player_t* player) {
-	player->pogoSpringJumped = false;
-	player->pogoMaxSpeed = 0;
-	player->pogoMinSpeed = 0;
+	player->pogospring = 0;
 }

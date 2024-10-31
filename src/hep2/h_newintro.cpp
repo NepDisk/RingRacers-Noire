@@ -198,12 +198,12 @@ std::string DevmodeSinescroll =
 	"DR ROBOTNIK'S RING RACERS FROM KART KREW.              "
 	"PATCHED BY KANYX AND ACHIIRO OF GG "
 	"AND DISTRIBUTED BY KART ROW. "
+	"MISC PATCHING WORK BY ALUFOLIE91, INDEV, GHG, AND NEPDISK    " // saturn devs
 	"INTRO GRACIOUSLY PROGRAMMED BY HAYASAKA "
 	"WITH AMAZING MUSIC BY RANDOM VOICE. "
-	"SPECIAL REGARDS TO KOMA AND CO FOR HELP "
 	"               REGARDS TO: "
 	"SUNFLOWER / COSMO / STAR / MAYO / AC / DIGGLE / "
-	"HYOGS / RHOPHASOFA (HAPPY BIRTHDAY!) / BLADE / "
+	"HYOGS / RHOPHASOFA (HAPPY BIRTHDAY!) / BLADE / KOMA / "
 	"MIKU FROM PT / DGPLEX / APOLLO / BEPIS / SALMON / "
 	"SATURN / SUPERSANIC / JOSEPH.... WE DIDN'T FORGET YOU THIS TIME "
 	"                      THAT'S IT BYE......           ";
@@ -249,16 +249,20 @@ static void M_DrawDevmode(void)
 	
 #define V_DrawBigAmigaString( x,y,option,string ) \
 	V__DrawOneScaleString (x,y,FRACUNIT,option,NULL,BIGAMIGA_FONT,string)
+#define V_DrawSquishedAmigaString( x,y,option,string ) \
+	V_DrawStringScaledEx(x,y,FRACUNIT,FRACUNIT/2,FRACUNIT,FRACUNIT,option,NULL,BIGAMIGA_FONT,string)
 	
 	V_SetAmigaEffect(ANG2, 4, -7);
-	V_DrawBigAmigaString(skidrow.bottomtext_line, ((BASEVIDHEIGHT-38)-7) << FRACBITS, V_TRANSLUCENT|V_GRAYMAP|V_MONOSPACE, DevmodeSinescroll.c_str());
+	V_DrawSquishedAmigaString(skidrow.bottomtext_line, (((BASEVIDHEIGHT-38)-7)+24) << FRACBITS, V_VFLIP|V_TRANSLUCENT|V_GRAYMAP|V_MONOSPACE, DevmodeSinescroll.c_str());
 	V_ClearAmigaEffect();
-	
+
+	// Im lazy
 	V_SetAmigaEffect(ANG2, 4, 28);
 	V_DrawBigAmigaString(skidrow.bottomtext_line, ((BASEVIDHEIGHT-70)-7) << FRACBITS, V_MONOSPACE, DevmodeSinescroll.c_str());
 	V_ClearAmigaEffect();
 	
 #undef V_DrawBigAmigaString
+#undef V_DrawSquishedAmigaString
 	
 	// draw all original text
 	for (i = 0; i < skidrow.curline; i++)
@@ -287,7 +291,9 @@ static void M_DrawDevmode(void)
 #define V_MediumStringWidth( string,option ) \
 	V__IntegerStringWidth ( FRACUNIT,option,MED_FONT,string )
 	
+	V_SetAmigaEffect(ANG10, 1, (DevmodeTopCredits[skidrow.curline].length()-skidrow.linetime)*2);
 	Draw(160-(V_MediumStringWidth(msg.c_str(), V_MONOSPACE)/2)-0.5, 10+yshift).flags(V_MONOSPACE|SkidrowTextColors[skidrow.curline]).text(text);
+	V_ClearAmigaEffect();
 	
 #undef V_MediumStringWidth
 }

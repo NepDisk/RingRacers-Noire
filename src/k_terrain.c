@@ -28,6 +28,7 @@
 #include "s_sound.h"
 #include "w_wad.h"
 #include "z_zone.h"
+#include "r_main.h"
 
 #include "k_kart.h" // on the chopping block...
 
@@ -636,7 +637,7 @@ void K_ProcessTerrainEffect(mobj_t *mo)
 			}
 		}
 
-		if (slope && !terrain->springDoKartPogo)
+		if (slope && (terrain->pogoSpring == 0))
 		{
 			const angle_t fa = (slope->zangle >> ANGLETOFINESHIFT);
 
@@ -653,13 +654,42 @@ void K_ProcessTerrainEffect(mobj_t *mo)
 			FixedMul(terrain->springStrength, si),
 			angle,
 			terrain->springStarColor,
-			terrain->springMaxSpeed,
-			terrain->springMinSpeed,
+			terrain->pogoSpringMax,
+			terrain->pogoSpringMin,
 			terrain->springDoKartPogo
 		);
-		
+
 		sector->soundorg.z = player->mo->z;
-		S_StartSound(&sector->soundorg, sfx_s3kb1);
+
+		if (terrain->pogoSpring == 0)
+			S_StartSound(&sector->soundorg, sfx_s3kb1); // Don't play two spring sounds at once thx!
+	}
+
+	if ((terrain->pogoSpring > 0) && terrain->springStrength) // Hack to allow spring strength to work with pogospring
+		mo->eflags &= ~MFE_SPRUNG;
+
+	// Pogospring panel
+	if (terrain->pogoSpring > 0 && !(mo->eflags & MFE_SPRUNG))
+	{
+		const fixed_t hscale = mapobjectscale + (mapobjectscale - player->mo->scale);
+		fixed_t minspeed = terrain->pogoSpringMin*hscale;
+		fixed_t maxspeed = terrain->pogoSpringMax*hscale;
+		angle_t pushangle = FixedHypot(player->mo->momx, player->mo->momy) ? R_PointToAngle2(0, 0, player->mo->momx, player->mo->momy) : player->mo->angle;
+
+		if (terrain->pogoSpring == 2)
+			player->pogospring = 2;
+		else
+			player->pogospring = 1;
+
+		if ((player->speed > maxspeed) && terrain->pogoSpring == 2) // Prevent overshooting jumps
+			P_InstaThrust(player->mo, pushangle, maxspeed);
+		else if (player->speed < minspeed) // Push forward to prevent getting stuck
+			P_InstaThrust(player->mo, pushangle, minspeed);
+
+		if (!terrain->springStrength)
+			K_DoPogoSpring(player->mo, 0, 1);
+		else
+			S_StartSound(player->mo, sfx_kc2f);
 	}
 
 	// Bumpy floor
@@ -1615,9 +1645,9 @@ static void K_TerrainDefaults(terrain_t *terrain)
 	terrain->speedPad = 0;
 	terrain->speedPadAngle = 0;
 	terrain->springStrength = 0;
-	terrain->springMinSpeed = 0;
-	terrain->springMaxSpeed = 0;
-	terrain->springDoKartPogo = 0;
+	terrain->pogoSpring = 0;
+	terrain->pogoSpringMin = 24;
+	terrain->pogoSpringMax = 28;
 	terrain->springStarColor = SKINCOLOR_NONE;
 	terrain->flags = TRF_REMAP;
 }
@@ -1738,17 +1768,17 @@ static void K_ParseTerrainParameter(size_t i, char *param, char *val)
 				FLOAT_TO_FIXED(15.625 * pow(1.6, fval));
 		}
 	}
-	else if (stricmp(param, "springDoKartPogo") == 0) //NOIRE: Add new terrain properties for springs...
+	else if (stricmp(param, "pogoSpring") == 0)
 	{
-		terrain->springDoKartPogo = (UINT8)get_number(val);
+		terrain->pogoSpring = (UINT8)get_number(val);
 	}
-	else if (stricmp(param, "springMinSpeed") == 0)
+	else if (stricmp(param, "pogoMinSpeed") == 0 || stricmp(param, "pogoSpringMinSpeed") == 0)
 	{
-		terrain->springMinSpeed = get_number(val);
+		terrain->pogoSpringMin = (UINT8)get_number(val);
 	}
-	else if (stricmp(param, "springMaxSpeed") == 0)
+	else if (stricmp(param, "pogoMaxSpeed") == 0 || stricmp(param, "pogoSpringMaxSpeed") == 0)
 	{
-		terrain->springMaxSpeed = get_number(val);
+		terrain->pogoSpringMax = (UINT8)get_number(val);
 	}
 	else if (stricmp(param, "springStarColor") == 0)
 	{

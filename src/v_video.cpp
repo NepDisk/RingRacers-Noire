@@ -1024,10 +1024,30 @@ void V_DrawStretchyFixedPatch(fixed_t x, fixed_t y, fixed_t pscale, fixed_t vsca
 		// the sine here
 		cy += FSIN((sine->angle >> FRACBITS)*(((I_GetTime() << FRACBITS) + g_time.timefrac)*sine->countermul + ((sine->counter << FRACBITS)+g_time.timefrac)/sine->countermul))*sine->mul;
 		
-		// set our clip rect to clip our patch
-		V_SetClipRect(cx + (FRACUNIT*i), cy, FRACUNIT, patch->height << FRACBITS, scrn);
-		// add the offset and start fucking moving
-		cx -= FRACUNIT;
+		fixed_t clx = cx, cly = cy;
+		
+		// offsets
+		{
+			fixed_t offsetx = 0, offsety = 0;
+
+			// left offset
+			if (scrn & V_FLIP)
+				offsetx = FixedMul((patch->width - patch->leftoffset)<<FRACBITS, pscale);
+			else
+				offsetx = FixedMul(patch->leftoffset<<FRACBITS, pscale);
+
+			// top offset
+			if (scrn & V_VFLIP)
+				offsety = FixedMul((patch->height - patch->topoffset)<<FRACBITS, vscale);
+			else
+				offsety = FixedMul(patch->topoffset<<FRACBITS, vscale);
+
+			// Subtract the offsets from x/y positions
+			clx -= offsetx;
+			cly -= offsety;
+		}
+		
+		V_SetClipRect(clx + (FRACUNIT*i), cly, FRACUNIT, patch->height << FRACBITS, scrn);
 		V_DrawStretchyFixedPatchEx(cx, cy, pscale, vscale, scrn, patch, colormap);
 	}
 	
@@ -2655,10 +2675,11 @@ static UINT8 V_GetButtonCodeWidth(UINT8 c)
 	return x;
 }
 
-void V_DrawStringScaled(
+void V_DrawStringScaledEx(
 		fixed_t    x,
 		fixed_t    y,
 		fixed_t      scale,
+		fixed_t     vscale,
 		fixed_t spacescale,
 		fixed_t    lfscale,
 		INT32      flags,
@@ -2893,7 +2914,7 @@ void V_DrawStringScaled(
 						fixed_t patchxofs = SHORT (font->font[c]->leftoffset) * dupx * scale;
 						cw = SHORT (font->font[c]->width) * dupx;
 						cxoff = (*fontspec.dim_fn)(scale, fontspec.chw, hchw, dupx, &cw);
-						V_DrawFixedPatch(cx + cxoff + patchxofs, cy + cyoff, scale,
+						V_DrawStretchyFixedPatch(cx + cxoff + patchxofs, cy + cyoff, scale, vscale,
 								flags, font->font[c], colormap);
 						cx += cw;
 					}

@@ -1068,13 +1068,10 @@ struct player_t
 	saltyhop_t salty;
 
 	//NOIRE: Re-declare pogoSpring stuff. If the game affords to declare one trillion variables for hardcoded lua, we can do this too.
-	// REVIEW: Should pogo shit be a player state, like Tricks?
-	boolean pogoSpringJumped; //Replication of Kart's pogoSpring, but just a boolean as most of the logic is now in k_terrain.c. Will be set to false in the same places as pogoSpring did, and when grounded.
-	fixed_t pogoMaxSpeed; // Maximum speed to use when pogoSpringJumped is true. ( Zero to not apply )
-	fixed_t pogoMinSpeed; // Minimum speed to use when pogoSpringJumped is true. ( Zero to not apply )
+	UINT8 pogospring;		// Pogo spring bounce effect
 	SINT8 pogosidemove;		// Used to store sidemove for pogo
 
-	UINT8 brakestop; // Brake stop
+	UINT8 brakestop; // Brake stop for V1 movement code option.
 };
 
 // WARNING FOR ANYONE ABOUT TO ADD SOMETHING TO THE PLAYER STRUCT, G_PlayerReborn WANTS YOU TO SUFFER

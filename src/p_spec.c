@@ -5431,12 +5431,10 @@ static void P_EvaluateOldSectorSpecial(player_t *player, sector_t *sector, secto
 				if (player->mo->eflags & MFE_SPRUNG)
 					break;
 
-				player->pogoMinSpeed = 24;
-
 				if (player->speed < minspeed) // Push forward to prevent getting stuck
 					P_InstaThrust(player->mo, pushangle, minspeed);
 
-				player->pogoSpringJumped = true;
+				player->pogospring = 1;
 				N_DoPogoSpring(player->mo, 0, 1);
 			}
 			break;
@@ -5453,15 +5451,12 @@ static void P_EvaluateOldSectorSpecial(player_t *player, sector_t *sector, secto
 				if (player->mo->eflags & MFE_SPRUNG)
 					break;
 
-				player->pogoMinSpeed = 24;
-				player->pogoMaxSpeed = 28;
-
 				if (player->speed > maxspeed) // Prevent overshooting jumps
 					P_InstaThrust(player->mo, pushangle, maxspeed);
 				else if (player->speed < minspeed) // Push forward to prevent getting stuck
 					P_InstaThrust(player->mo, pushangle, minspeed);
 
-				player->pogoSpringJumped = true;
+				player->pogospring = 2;
 				N_DoPogoSpring(player->mo, 0, 1);
 			}
 			break;
@@ -5524,7 +5519,7 @@ static void P_EvaluateOldSectorSpecial(player_t *player, sector_t *sector, secto
 				player->dashpadcooldown = TICRATE/3;
 				player->drift = 0;
 				player->driftcharge = 0;
-				player->pogoSpringJumped = 0;
+				player->pogospring = 0;
 				S_StartSound(player->mo, sfx_spdpad);
 				{
 					sfxenum_t pick = P_RandomKey(PR_VOICES,2); // Gotta roll the RNG every time this is called for sync reasons

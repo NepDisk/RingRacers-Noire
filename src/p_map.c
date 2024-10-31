@@ -369,22 +369,15 @@ P_DoSpringExMaxMin
 		P_ResetPlayer(object->player);
 
 		// NOIRE: Set pogoSpring stuff... We do this AFTER Interrupting tumble and RESETTING the player, which also resets POGO STATUS.
-		// CONS_Printf("\x88PLAYER\x80's pogoMaxSpeed and pogoMinSpeed: \x88%d\x80, \x88%d\x80, \x85SPRING\x80's
-		// maxSpeed and minSpeed: \x85%d\x80, \x85%d\x80\n", object->player->pogoMaxSpeed, object->player->pogoMinSpeed,
-		// maxSpeed, minSpeed);
 		if ((!horizspeed && cv_ng_oldpogooverride.value) || pogoOptions > 0)
 		{
-			object->player->pogoSpringJumped = true;
-			object->player->pogoMaxSpeed = maxSpeed;
-			object->player->pogoMinSpeed = minSpeed;
+			object->player->pogospring = 1;
 			// In Kart code, this is BEFORE the DoPogoSpring call, but this should be fine... Execute the speedcap!
 			if (minSpeed != 0 && object->player->speed < minSpeed)
 				P_InstaThrust(object, finalAngle, minSpeed);
 			if (maxSpeed != 0 && object->player->speed > maxSpeed)
 				P_InstaThrust(object, finalAngle, maxSpeed);
 		}
-		// CONS_Printf("Post Thrust: pogoMaxSpeed and pogoMinSpeed: %d, %d, maxSpeed and minSpeed: %d, %d\n\n",
-		// object->player->pogoMaxSpeed, object->player->pogoMinSpeed, maxSpeed, minSpeed);
 
 		object->player->springstars = max(abs(vertispeed), horizspeed) / FRACUNIT / 2;
 		object->player->springcolor = starcolor;
@@ -587,8 +580,7 @@ static void P_DoFanAndGasJet(mobj_t *spring, mobj_t *object)
 			{
 				if (object->player) //NOIRE: Replicate Red Kart Spring behavior that this object had in Kart
 				{
-					object->player->pogoSpringJumped = true;
-					object->player->pogoMinSpeed = 24 * FRACBITS;
+					object->player->pogospring = 1;
 				}
 				N_DoPogoSpring(object, 32<<FRACBITS, 0);
 			}

@@ -1155,6 +1155,13 @@ static int libd_renderer(lua_State *L)
 	return 1;
 }
 
+static int libd_splitscreen(lua_State *L)
+{
+	HUDONLY
+	lua_pushinteger(L, r_splitscreen); // push splitscreen
+	return 1;
+}
+
 // M_RANDOM
 //////////////
 
@@ -1303,6 +1310,7 @@ static luaL_Reg lib_draw[] = {
 	{"dupx", libd_dupx},
 	{"dupy", libd_dupy},
 	{"renderer", libd_renderer},
+	{"splitscreen", libd_splitscreen},
 	{"localTransFlag", libd_getlocaltransflag},
 	{"drawOnMinimap", libd_drawOnMinimap},
 	{"getDeltaTime", libd_getDeltaTime},

@@ -48,7 +48,7 @@ fixed_t N_GetKartSpeed(const player_t *player, boolean doboostpower, boolean dor
 
 	if (cv_ng_airspeedcap.value > 0)
 	{
-		if (doboostpower && !player->pogoSpringJumped && !P_IsObjectOnGround(player->mo))
+		if (doboostpower && !player->pogospring && !P_IsObjectOnGround(player->mo))
 			return (cv_ng_airspeedcap.value*mapobjectscale); // air speed cap
 	}
 
@@ -171,25 +171,22 @@ fixed_t N_GetNewSpeed(const player_t *player)
 	oldspeed = R_PointToDist2(0, 0, player->rmomx, player->rmomy); // FixedMul(P_AproxDistance(player->rmomx, player->rmomy), player->mo->scale);
 	newspeed = FixedDiv(FixedDiv(FixedMul(oldspeed, accelmax - p_accel) + FixedMul(p_speed, p_accel), accelmax), ORIG_FRICTION);
 
-	if (player->pogoSpringJumped) // NOIRE Pogo Spring minimum/maximum thrust. This goes here, before that finalSpeed line below, as it was in Kart code.
+	if (player->pogospring) // Pogo Spring minimum/maximum thrust
 	{
-		//CONS_Printf("K_GetNewSpeed: newSpeed: \x82%d\x80, pogoMaxSpeed: \x85%d\x80. pogoMinSpeed: \x88%d\x80 ",newspeed, player->pogoMaxSpeed,player->pogoMinSpeed);
-		if (player->pogoMinSpeed != 0) //First do the speedcap, AKA pogospring == 2
+		const fixed_t hscale = mapobjectscale;
+		fixed_t minspeed = 24*hscale;
+		fixed_t maxspeed = 28*hscale;
+
+		if (player->mo->terrain)
 		{
-			const fixed_t minSpeed = player->pogoMinSpeed * mapobjectscale;
-			//CONS_Printf(" minSpeed: \x84%d\x80 ", minSpeed);
-			if (newspeed < minSpeed)
-				newspeed = minSpeed;
-		}
-		if (player->pogoMaxSpeed != 0)
-		{
-			const fixed_t maxspeed = player->pogoMaxSpeed * mapobjectscale;
-			//CONS_Printf(" maxSpeed: \x87%d\x80 ", maxspeed);
-			if (newspeed > maxspeed)
-				newspeed = maxspeed;
+			minspeed = player->mo->terrain->pogoSpringMin*hscale;
+			maxspeed = player->mo->terrain->pogoSpringMax*hscale;
 		}
 
-		//CONS_Printf(" final newspeed: \x85%d\x80\n", newspeed);
+		if (newspeed > maxspeed && player->pogospring == 2)
+			newspeed = maxspeed;
+		if (newspeed < minspeed)
+			newspeed = minspeed;
 	}
 
 	finalspeed = newspeed - oldspeed;
@@ -523,7 +520,7 @@ void N_AdjustPlayerFriction(player_t *player, boolean onground)
 	const fixed_t prevfriction = K_PlayerBaseFriction(player, player->mo->friction);
 	// JugadorXEI: Do *not* calculate friction when a player is pogo'd
 	// because they'll be in the air and friction will not reset!
-	if (onground && !player->pogoSpringJumped)
+	if (onground && !player->pogospring)
 	{
 		player->mo->friction = prevfriction;
 

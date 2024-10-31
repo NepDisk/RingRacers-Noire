@@ -1996,7 +1996,7 @@ static void P_3dMovement(player_t *player)
 
 	}
 
-	if (player->pogoSpringJumped == false) // Pogosidemove
+	if (!player->pogospring) // Pogosidemove
 		player->pogosidemove = 0;
 
 	//CONS_Printf("pogosidemove: %d\n", player->pogosidemove);
@@ -2084,7 +2084,7 @@ static void P_3dMovement(player_t *player)
 	//}
 
 	// Do not let the player control movement if not onground.
-	onground = (P_IsObjectOnGround(player->mo) || player->pogoSpringJumped); //NOIRE: Readd the extra condition that Kart had for springs
+	onground = (P_IsObjectOnGround(player->mo) || player->pogospring); //NOIRE: Readd the extra condition that Kart had for springs
 
 	if (!cv_ng_oldspeedcalc.value)
 		K_AdjustPlayerFriction(player);
@@ -2252,10 +2252,10 @@ static void P_3dMovement(player_t *player)
 
 		totalthrust.x += P_ReturnThrustX(player->mo, movepushsideangle, movepushside);
 		totalthrust.y += P_ReturnThrustY(player->mo, movepushsideangle, movepushside);
-		CONS_Printf("totalthrust.x: %d\n", totalthrust.x);
+		/*CONS_Printf("totalthrust.x: %d\n", totalthrust.x);
 		CONS_Printf("totalthrust.y: %d\n", totalthrust.y);
 		CONS_Printf("P_ReturnThrustX: %d\n", P_ReturnThrustX(player->mo, movepushsideangle, movepushside));
-		CONS_Printf("P_ReturnThrustY: %d\n", P_ReturnThrustY(player->mo, movepushsideangle, movepushside));
+		CONS_Printf("P_ReturnThrustY: %d\n", P_ReturnThrustY(player->mo, movepushsideangle, movepushside));*/
 	}
 
 
@@ -2761,7 +2761,7 @@ void P_MovePlayer(player_t *player)
 		{
 			K_KartMoveAnimation(player);
 
-			if (player->pogoSpringJumped) // NOIRE Springs: Replicate pogo spring shit
+			if (player->pogospring) // NOIRE Springs: Replicate pogo spring shit
 				player->drawangle += ANGLE_22h;
 			else // Else vanilla behavior
 				player->drawangle = player->mo->angle;
