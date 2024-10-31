@@ -3766,7 +3766,7 @@ void P_CalcChasePostImg(player_t *player, camera_t *thiscam)
 	// This can happen when joining
 	if (thiscam->subsector == NULL || thiscam->subsector->sector == NULL)
 		return;
-	
+
 	for (i = 0; i <= r_splitscreen; i++)
 	{
 		// Yeah
@@ -3777,11 +3777,7 @@ void P_CalcChasePostImg(player_t *player, camera_t *thiscam)
 		}
 	}
 
-	if (player->mo->eflags & MFE_VERTICALFLIP && cv_flipcam.value)
-	{
-		postimg = postimg_flip;
-	}	
-	else if (encoremode)
+	if (encoremode)
 	{
 		postimg = postimg_mirror;
 		if (flipcam) // We have flipcam so do that
