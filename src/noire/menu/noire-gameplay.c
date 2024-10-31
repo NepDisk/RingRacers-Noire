@@ -100,6 +100,12 @@ menuitem_t OPTIONS_NoireGameplayItems[] =
 
 	{IT_STRING | IT_CVAR, "SPB Behavior", "Toggle between Ring Racers or Kart's SPB behavior.",
 		NULL, {.cvar = &cv_ng_oldspb}, 0, 0},
+
+	{IT_STRING | IT_CVAR, "Drop Target Nerf", "Make the Drop Target knockback less powerful.",
+		NULL, {.cvar = &cv_ng_nerfdroptarget}, 0, 0},
+
+	{IT_STRING | IT_CVAR, "Flame Sheild Nerf", "Do diminishing returns on the Flame Shield and make the finishing thrust weaker.",
+		NULL, {.cvar = &cv_ng_nerfflameshield}, 0, 0},
 };
 
 ///////////

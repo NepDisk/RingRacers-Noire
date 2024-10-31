@@ -44,6 +44,9 @@ extern consvar_t cv_ng_oldjawz;
 extern consvar_t cv_ng_oldhyudoro;
 extern consvar_t cv_ng_oldballhog;
 extern consvar_t cv_ng_oldspb;
+extern consvar_t cv_ng_nerfdroptarget;
+extern consvar_t cv_ng_nerfflameshield;
+extern consvar_t cv_ng_nerfflameshielddiminish;
 extern consvar_t cv_ng_noireodds;
 extern consvar_t cv_ng_forceautoroulette;
 

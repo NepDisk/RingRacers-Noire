@@ -553,8 +553,16 @@ boolean K_DropTargetCollide(mobj_t *t1, mobj_t *t2)
 		strength = 140;
 	}
 
-	// Intensify bumps if already spinning...
-	P_Thrust(t1, R_PointToAngle2(t1->x, t1->y, t2->x, t2->y), strength * t1->scale);
+	if (cv_ng_nerfdroptarget.value)
+	{
+		P_Thrust(t1, R_PointToAngle2(t1->x, t1->y, t2->x, t2->y),
+				 (t1->reactiontime && !draggeddroptarget) ? 35*mapobjectscale : 20*mapobjectscale);
+	}
+	else
+	{
+		// Intensify bumps if already spinning...
+		P_Thrust(t1, R_PointToAngle2(t1->x, t1->y, t2->x, t2->y), strength * t1->scale);
+	}
 
 	if (draggeddroptarget)
 	{
@@ -607,7 +615,14 @@ boolean K_DropTargetCollide(mobj_t *t1, mobj_t *t2)
 
 		t1->angle = t1->old_angle = R_PointToAngle2(0, 0, t1->momx, t1->momy);
 
-		t1->reactiontime = (7 * (t1speed + t2speed)) / (4 * t1->scale);
+		if (cv_ng_nerfdroptarget.value)
+		{
+			t1->reactiontime = 7*(t1speed+t2speed)/mapobjectscale;
+		}
+		else
+		{
+			t1->reactiontime = (7 * (t1speed + t2speed)) / (4 * t1->scale);
+		}
 		if (t1->reactiontime < 10)
 			t1->reactiontime = 10;
 		t1->threshold = 10;

@@ -3521,14 +3521,36 @@ static void K_GetKartBoostPower(player_t *player)
 		ADDBOOST(0, 0, SLIPTIDEHANDLING/2); // + 0% top speed, + 0% acceleration, +25% handling
 	}
 
-	if (player->flamedash) // Flame Shield dash
+	if (cv_ng_nerfflameshield.value)
 	{
-		fixed_t dash = K_FlameShieldDashVar(player->flamedash);
-		ADDBOOST(
-			dash, // + infinite top speed
-			3*FRACUNIT, // + 300% acceleration
-			FixedMul(FixedDiv(dash, FRACUNIT/2), SLIPTIDEHANDLING/2) // + infinite handling
-		);
+		if (player->flamedash) // Flame Shield dash
+		{
+			fixed_t dash = K_FlameShieldDashVar(player->flamedash);
+			fixed_t diminishvalue = cv_ng_nerfflameshielddiminish.value;
+			fixed_t intermediate = 0;
+			fixed_t boost = 0;
+
+			intermediate = FixedDiv(FixedMul(diminishvalue, FRACUNIT*-1/2) - FRACUNIT/4,-diminishvalue+FRACUNIT/2);
+			boost = FixedMul(diminishvalue,(FRACUNIT-FixedDiv(FRACUNIT,(dash+intermediate))));
+
+			ADDBOOST(
+				boost, // + diminished top speed
+				3*FRACUNIT, // + 300% acceleration
+				FixedMul(FixedDiv(boost, FRACUNIT/2), SLIPTIDEHANDLING/2) // + infinite handling
+			);
+		}
+	}
+	else
+	{
+		if (player->flamedash) // Flame Shield dash
+		{
+			fixed_t dash = K_FlameShieldDashVar(player->flamedash);
+			ADDBOOST(
+				dash, // + infinite top speed
+				3*FRACUNIT, // + 300% acceleration
+				FixedMul(FixedDiv(dash, FRACUNIT/2), SLIPTIDEHANDLING/2) // + infinite handling
+			);
+		}
 	}
 
 	if (player->counterdash) // "Fake Flame" (bubble, voltage)
@@ -13770,10 +13792,20 @@ void K_MoveKartPlayer(player_t *player, boolean onground)
 
 									if (player->flamemeter > flamemax)
 									{
-										P_Thrust(
-											player->mo, player->mo->angle,
-											FixedMul((50*player->mo->scale), K_GetKartGameSpeedScalar(gamespeed))
-										);
+										if (cv_ng_nerfflameshield.value)
+										{
+											P_Thrust(
+												player->mo, player->mo->angle,
+												FixedMul((25*player->mo->scale), K_GetKartGameSpeedScalar(gamespeed))
+											);
+										}
+										else
+										{
+											P_Thrust(
+												player->mo, player->mo->angle,
+												FixedMul((50*player->mo->scale), K_GetKartGameSpeedScalar(gamespeed))
+											);
+										}
 
 										player->wavedashboost += TICRATE;
 										player->wavedashpower = FRACUNIT;

@@ -338,16 +338,40 @@ void N_GetKartBoostPower(player_t *player)
 		ADDBOOST(0,FloatToFixed(0.4),2*SLIPTIDEHANDLING/5,FloatToFixed(-0.3),FloatToFixed(0.3));
 	}
 
-	if (player->flamedash) // Flame Shield dash
+	if (cv_ng_nerfflameshield.value)
 	{
-		fixed_t dash = K_FlameShieldDashVar(player->flamedash);
-		ADDBOOST(
-			dash, // + infinite top speed
-			3*FRACUNIT, // + 300% acceleration
-			FixedMul(FixedDiv(dash, FRACUNIT/2), SLIPTIDEHANDLING/2) // + infinite handling
-			,0  // No boostmult
-			,0
-		);
+		if (player->flamedash) // Flame Shield dash with diminish nerf
+		{
+			fixed_t dash = K_FlameShieldDashVar(player->flamedash);
+			fixed_t diminishvalue = cv_ng_nerfflameshielddiminish.value;
+			fixed_t intermediate = 0;
+			fixed_t boost = 0;
+
+			intermediate = FixedDiv(FixedMul(diminishvalue, FRACUNIT*-1/2) - FRACUNIT/4,-diminishvalue+FRACUNIT/2);
+			boost = FixedMul(diminishvalue,(FRACUNIT-FixedDiv(FRACUNIT,(dash+intermediate))));
+
+			ADDBOOST(
+				boost, // + diminished top speed
+				3*FRACUNIT, // + 300% acceleration
+				FixedMul(FixedDiv(boost, FRACUNIT/2), SLIPTIDEHANDLING/2) // + infinite handling
+				,0  // No boostmult
+				,0
+			);
+		}
+	}
+	else
+	{
+		if (player->flamedash) // Flame Shield dash
+		{
+			fixed_t dash = K_FlameShieldDashVar(player->flamedash);
+			ADDBOOST(
+				dash, // + infinite top speed
+				3*FRACUNIT, // + 300% acceleration
+				FixedMul(FixedDiv(dash, FRACUNIT/2), SLIPTIDEHANDLING/2) // + infinite handling
+				,0  // No boostmult
+				,0
+			);
+		}
 	}
 
 	if (player->counterdash) // "Fake Flame" (bubble, voltage)
