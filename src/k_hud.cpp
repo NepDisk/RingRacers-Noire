@@ -3867,24 +3867,24 @@ static boolean K_ShowPlayerNametag(player_t *p)
 	return true;
 }
 
-static void K_DrawLocalTagForPlayer(fixed_t x, fixed_t y, player_t *p, UINT8 id)
+static void K_DrawLocalTagForPlayer(fixed_t x, fixed_t y, player_t *p, UINT8 id, UINT32 flags)
 {
 	UINT8 blink = ((leveltime / 7) & 1);
 	UINT8 *colormap = R_GetTranslationColormap(TC_RAINBOW, static_cast<skincolornum_t>(p->skincolor), GTC_CACHE);
-	V_DrawFixedPatch(x, y, FRACUNIT, V_HUDTRANS|V_SPLITSCREEN, kp_localtag[id][blink], colormap);
+	V_DrawFixedPatch(x, y, FRACUNIT, flags, kp_localtag[id][blink], colormap);
 }
 
-static void K_DrawRivalTagForPlayer(fixed_t x, fixed_t y)
+static void K_DrawRivalTagForPlayer(fixed_t x, fixed_t y, UINT32 flags)
 {
 	UINT8 blink = ((leveltime / 7) & 1);
-	V_DrawFixedPatch(x, y, FRACUNIT, V_HUDTRANS|V_SPLITSCREEN, kp_rival[blink], NULL);
+	V_DrawFixedPatch(x, y, FRACUNIT, flags, kp_rival[blink], NULL);
 }
 
 static void K_DrawTypingDot(fixed_t x, fixed_t y, UINT8 duration, player_t *p, INT32 flags)
 {
 	if (p->typing_duration > duration)
 	{
-		V_DrawFixedPatch(x, y, FRACUNIT, V_HUDTRANS|V_SPLITSCREEN|flags, kp_typdot, NULL);
+		V_DrawFixedPatch(x, y, FRACUNIT, flags, kp_typdot, NULL);
 	}
 }
 
@@ -3892,7 +3892,7 @@ static void K_DrawTypingNotifier(fixed_t x, fixed_t y, player_t *p, INT32 flags)
 {
 	if (p->cmd.flags & TICCMD_TYPING)
 	{
-		V_DrawFixedPatch(x, y, FRACUNIT, V_HUDTRANS|V_SPLITSCREEN|flags, kp_talk, NULL);
+		V_DrawFixedPatch(x, y, FRACUNIT, V_SPLITSCREEN|flags, kp_talk, NULL);
 
 		/* spacing closer with the last two looks a better most of the time */
 		K_DrawTypingDot(x + 3*FRACUNIT,              y, 15, p, flags);
@@ -3906,8 +3906,19 @@ static void K_DrawNameTagItemSpy(INT32 x, INT32 y, player_t *p, INT32 flags)
 {
 	using srb2::Draw;
 	bool tiny = r_splitscreen > 1;
+	SINT8 flip = 1, flipboxoffset = 0;
+	if ((flags & V_VFLIP) == V_VFLIP)
+	{
+		// Remove the v_vflip flag - it makes things messy, but we also understand
+		// that we want to make this look okay for flipped players, so simply use this
+		// opportunity to flip vertical offsets accordingly instead.
+		flags &= ~V_VFLIP;
+		flip = P_MobjFlip(p->mo);
+		flipboxoffset = 8;
+	}
+	
 	Draw bar = Draw(x, y).flags(V_NOSCALESTART|flags);
-	Draw box = tiny ? bar.xy(-22 * vid.dupx, -17 * vid.dupy) : bar.xy(-40 * vid.dupx, -26 * vid.dupy);
+	Draw box = tiny ? bar.xy(-22 * vid.dupx, (-17+flipboxoffset) * vid.dupy) : bar.xy(-40 * vid.dupx, (-26+flipboxoffset) * vid.dupy);
 
 	box.colorize(p->skincolor).patch(kp_itembg[tiny ? 4 : 2]);
 
@@ -3934,8 +3945,8 @@ static void K_DrawNameTagItemSpy(INT32 x, INT32 y, player_t *p, INT32 flags)
 	if (p->itemamount > 1)
 	{
 		(tiny ?
-			bar.xy(-3 * vid.dupx, -4 * vid.dupy).font(Draw::Font::kPing) :
-			bar.xy(-4 * vid.dupx, -2 * vid.dupy).font(Draw::Font::kThinTimer)
+			bar.xy(-3 * vid.dupx, (-4*flip) * vid.dupy).font(Draw::Font::kPing) :
+			bar.xy(-4 * vid.dupx, (-2*flip) * vid.dupy).font(Draw::Font::kThinTimer)
 		)
 			.align(Draw::Align::kRight)
 			.text("{}", p->itemamount);
@@ -3981,6 +3992,13 @@ static void K_DrawNameTagForPlayer(fixed_t x, fixed_t y, player_t *p, INT32 flag
 
 	UINT8 *colormap = V_GetStringColormap(clr);
 	INT32 barx = 0, bary = 0, barw = 0;
+	INT32 flipped = P_MobjFlip(p->mo), flipfilloffset = 0, flipfontoffset = 0, flipspheresoffset = 0;
+	if (flipped == -1)
+	{
+		flipfilloffset = -3; // You cannot really flip drawfill.
+		flipfontoffset = -9; // Accounts for font height.
+		flipspheresoffset = 2;
+	}
 
 	UINT8 cnum = R_GetViewNumber();
 
@@ -4003,7 +4021,7 @@ static void K_DrawNameTagForPlayer(fixed_t x, fixed_t y, player_t *p, INT32 flag
 	bary = (y * vid.dupy) / FRACUNIT;
 
 	barx += (6 * vid.dupx);
-	bary -= (16 * vid.dupx);
+	bary -= ((16 + flipfilloffset) * vid.dupx) * flipped;
 
 	// Center it if necessary
 	if (vid.width != BASEVIDWIDTH * vid.dupx)
@@ -4024,7 +4042,7 @@ static void K_DrawNameTagForPlayer(fixed_t x, fixed_t y, player_t *p, INT32 flag
 
 	if (gametyperules & GTR_SPHERES)
 	{
-		K_DrawNameTagSphereMeter(barx, bary + (4 * vid.dupy), barw, p->spheres, flags);
+		K_DrawNameTagSphereMeter(barx, bary + (((4 + flipspheresoffset) * vid.dupy) * P_MobjFlip(p->mo)), barw, p->spheres, flags);
 	}
 
 	// Lat: 10/06/2020: colormap can be NULL on the frame you join a game, just arbitrarily use palette indexes 31 and 0 instead of whatever the colormap would give us instead to avoid crashes.
@@ -4036,7 +4054,7 @@ static void K_DrawNameTagForPlayer(fixed_t x, fixed_t y, player_t *p, INT32 flag
 	V_DrawFixedPatch(x, y, FRACUNIT, flags, kp_nametagstem, colormap);
 
 	// Draw the name itself
-	V_DrawThinStringAtFixed(x + (5*FRACUNIT), y - (26*FRACUNIT), clr|flags, player_names[p - players]);
+	V_DrawThinStringAtFixed(x + (5*FRACUNIT), y - (((26 + flipfontoffset) * FRACUNIT) * P_MobjFlip(p->mo)), clr|flags, player_names[p - players]);
 }
 
 playertagtype_t K_WhichPlayerTag(player_t *p)
@@ -4066,19 +4084,25 @@ playertagtype_t K_WhichPlayerTag(player_t *p)
 	return PLAYERTAG_NONE;
 }
 
-void K_DrawPlayerTag(fixed_t x, fixed_t y, player_t *p, playertagtype_t type, INT32 flags)
+void K_DrawPlayerTag(fixed_t x, fixed_t y, player_t *p, playertagtype_t type, boolean foreground)
 {
+	INT32 flags = P_IsObjectFlipped(p->mo) ? V_VFLIP : 0; 
+	
 	switch (type)
 	{
 	case PLAYERTAG_LOCAL:
-		K_DrawLocalTagForPlayer(x, y, p, G_PartyPosition(p - players));
+		flags |= V_HUDTRANS|V_SPLITSCREEN;
+		K_DrawLocalTagForPlayer(x, y, p, G_PartyPosition(p - players), flags);
 		break;
 
 	case PLAYERTAG_RIVAL:
-		K_DrawRivalTagForPlayer(x, y);
+		flags |= V_HUDTRANS|V_SPLITSCREEN;
+		K_DrawRivalTagForPlayer(x, y, flags);
 		break;
 
 	case PLAYERTAG_NAME:
+		// We only care about the trans flag here (based?) as well as V_VFLIP.
+		flags |= foreground ? 0 : V_60TRANS;
 		K_DrawNameTagForPlayer(x, y, p, flags);
 		K_DrawTypingNotifier(x, y, p, flags);
 		break;
@@ -4291,6 +4315,19 @@ static void K_drawKartProgressionMinimapIcon(UINT32 distancetofinish, INT32 hudx
 	V_DrawFixedPatch(hudx, hudy, FRACUNIT, flags, icon, colormap);
 }
 
+position_t K_GetKartObjectPosToMinimapPos(fixed_t objx, fixed_t objy)
+{
+	fixed_t amnumxpos, amnumypos;
+	
+	amnumxpos = (FixedMul(objx, minimapinfo.zoom) - minimapinfo.offs_x);
+	amnumypos = -(FixedMul(objy, minimapinfo.zoom) - minimapinfo.offs_y);
+
+	if (encoremode)
+		amnumxpos = -amnumxpos;
+	
+	return (position_t){amnumxpos, amnumypos};
+}
+
 static void K_drawKartMinimapIcon(fixed_t objx, fixed_t objy, INT32 hudx, INT32 hudy, INT32 flags, patch_t *icon, UINT8 *colormap)
 {
 	// amnum xpos & ypos are the icon's speed around the HUD.
@@ -4299,35 +4336,27 @@ static void K_drawKartMinimapIcon(fixed_t objx, fixed_t objy, INT32 hudx, INT32 
 
 	// am xpos & ypos are the icon's starting position. Withouht
 	// it, they wouldn't 'spawn' on the top-right side of the HUD.
-
-	fixed_t amnumxpos, amnumypos;
+	
+	position_t amnumpos;
 	INT32 amxpos, amypos;
+	
+	amnumpos = K_GetKartObjectPosToMinimapPos(objx, objy);
 
-	amnumxpos = (FixedMul(objx, minimapinfo.zoom) - minimapinfo.offs_x);
-	amnumypos = -(FixedMul(objy, minimapinfo.zoom) - minimapinfo.offs_y);
-
-	if (encoremode)
-		amnumxpos = -amnumxpos;
-
-	amxpos = amnumxpos + ((hudx - (SHORT(icon->width))/2)<<FRACBITS);
-	amypos = amnumypos + ((hudy - (SHORT(icon->height))/2)<<FRACBITS);
+	amxpos = amnumpos.x + ((hudx - (SHORT(icon->width))/2)<<FRACBITS);
+	amypos = amnumpos.y + ((hudy - (SHORT(icon->height))/2)<<FRACBITS);
 
 	V_DrawFixedPatch(amxpos, amypos, FRACUNIT, flags, icon, colormap);
 }
 
 static void K_drawKartMinimapDot(fixed_t objx, fixed_t objy, INT32 hudx, INT32 hudy, INT32 flags, UINT8 color, UINT8 size)
 {
-	fixed_t amnumxpos, amnumypos;
+	position_t amnumpos;
 	INT32 amxpos, amypos;
 
-	amnumxpos = (FixedMul(objx, minimapinfo.zoom) - minimapinfo.offs_x);
-	amnumypos = -(FixedMul(objy, minimapinfo.zoom) - minimapinfo.offs_y);
+	amnumpos = K_GetKartObjectPosToMinimapPos(objx, objy);
 
-	if (encoremode)
-		amnumxpos = -amnumxpos;
-
-	amxpos = (amnumxpos / FRACUNIT);
-	amypos = (amnumypos / FRACUNIT);
+	amxpos = (amnumpos.x / FRACUNIT);
+	amypos = (amnumpos.y / FRACUNIT);
 
 	if (flags & V_NOSCALESTART)
 	{
@@ -4390,6 +4419,50 @@ static void K_drawKartMinimapWaypoint(waypoint_t *wp, UINT8 rank, INT32 hudx, IN
 	K_drawKartMinimapDot(wp->mobj->x, wp->mobj->y, hudx, hudy, flags | V_NOSCALESTART, pal, size);
 }
 
+INT32 K_GetMinimapTransFlags(const boolean usingProgressBar)
+{
+	INT32 minimaptrans = 4;
+	boolean dofade = (usingProgressBar && r_splitscreen > 0) || (!usingProgressBar && r_splitscreen >= 1);
+
+	if (dofade)
+	{
+		minimaptrans = FixedMul(minimaptrans, (st_translucency * FRACUNIT) / 10);
+		
+		// If the minimap is fully transparent, just get your 0 back. Bail out with this.
+		if (!minimaptrans)
+			return minimaptrans;
+	}
+
+	minimaptrans = ((10-minimaptrans)<<V_ALPHASHIFT);
+	
+	return minimaptrans;
+}
+
+INT32 K_GetMinimapSplitFlags(const boolean usingProgressBar)
+{
+	INT32 splitflags = 0;
+	
+	if (usingProgressBar)
+		splitflags = (V_SLIDEIN|V_SNAPTOBOTTOM);
+	else
+	{
+		if (r_splitscreen < 1) // 1P right aligned
+		{
+			splitflags = (V_SLIDEIN|V_SNAPTORIGHT);
+		}
+		else // 2/4P splits
+		{
+			if (r_splitscreen == 1)
+				splitflags = V_SNAPTORIGHT; // 2P right aligned
+			
+			// 3P lives in the middle of the bottom right
+			// viewport and shouldn't fade in OR slide
+		}
+	}
+	
+	return splitflags;
+}
+
 #define ICON_DOT_RADIUS (10)
 
 static void K_drawKartMinimap(void)
@@ -4399,8 +4472,8 @@ static void K_drawKartMinimap(void)
 	INT32 i = 0;
 	INT32 x, y;
 
-	INT32 minimaptrans = 4;
-	INT32 splitflags = 0;
+	INT32 minimaptrans;
+	INT32 splitflags;
 
 	UINT8 skin = 0;
 	UINT8 *colormap = NULL;
@@ -4413,7 +4486,7 @@ static void K_drawKartMinimap(void)
 	fixed_t interpx, interpy;
 
 	boolean doprogressionbar = false;
-	boolean dofade = false, doencore = false;
+	boolean doencore = false;
 
 	UINT8 minipal;
 
@@ -4434,6 +4507,11 @@ static void K_drawKartMinimap(void)
 		// distancetofinish for an arbitrary object. ~toast 070423
 		doprogressionbar = true;
 	}
+	
+	minimaptrans = K_GetMinimapTransFlags(doprogressionbar);
+	if (!minimaptrans) return; // Exit early if it wouldn't draw anyway.
+	
+	splitflags = K_GetMinimapSplitFlags(doprogressionbar);
 
 	if (doprogressionbar == false)
 	{
@@ -4441,20 +4519,6 @@ static void K_drawKartMinimap(void)
 		{
 			return; // no pic, just get outta here
 		}
-
-		else if (r_splitscreen < 1) // 1P right aligned
-		{
-			splitflags = (V_SLIDEIN|V_SNAPTORIGHT);
-		}
-		else // 2/4P splits
-		{
-			if (r_splitscreen == 1)
-				splitflags = V_SNAPTORIGHT; // 2P right aligned
-
-			dofade = true;
-		}
-		// 3P lives in the middle of the bottom right
-		// viewport and shouldn't fade in OR slide
 
 		x = MINI_X;
 		y = MINI_Y;
@@ -4470,26 +4534,14 @@ static void K_drawKartMinimap(void)
 		if (r_splitscreen > 0)
 		{
 			y = BASEVIDHEIGHT/2;
-			dofade = true;
 		}
 		else
 		{
 			y = 180;
-			splitflags = (V_SLIDEIN|V_SNAPTOBOTTOM);
 		}
 
 		workingPic = kp_wouldyoustillcatchmeifiwereaworm;
 	}
-
-	if (dofade)
-	{
-		minimaptrans = FixedMul(minimaptrans, (st_translucency * FRACUNIT) / 10);
-
-		if (!minimaptrans)
-			return;
-	}
-
-	minimaptrans = ((10-minimaptrans)<<V_ALPHASHIFT);
 
 	// Really looking forward to never writing this loop again
 	UINT8 bestplayer = MAXPLAYERS;
@@ -4885,6 +4937,12 @@ static void K_drawKartMinimap(void)
 				angle_t ang = R_InterpolateAngle(mobj->old_angle, mobj->angle);
 				if (encoremode)
 					ang = ANGLE_180 - ang;
+
+				if (skin && mobj->color && !mobj->colorized // relevant to redo
+				&& skins[skin].starttranscolor != skins[0].starttranscolor) // redoing would have an affect
+				{
+					colormap = R_GetTranslationColormap(TC_DEFAULT, static_cast<skincolornum_t>(mobj->color), GTC_CACHE);
+				}
 
 				K_drawKartMinimapIcon(
 						interpx,

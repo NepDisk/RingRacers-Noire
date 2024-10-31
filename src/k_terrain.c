@@ -1917,7 +1917,7 @@ static boolean K_TERRAINLumpParser(char *data, size_t size)
 			tkn = M_GetToken(NULL);
 			pos = M_GetTokenPos();
 
-			if (tkn && pos < size)
+			if (tkn && pos <= size)
 			{
 				t_splash_t *s = NULL;
 
@@ -1959,7 +1959,7 @@ static boolean K_TERRAINLumpParser(char *data, size_t size)
 			tkn = M_GetToken(NULL);
 			pos = M_GetTokenPos();
 
-			if (tkn && pos < size)
+			if (tkn && pos <= size)
 			{
 				t_footstep_t *fs = NULL;
 
@@ -2001,7 +2001,7 @@ static boolean K_TERRAINLumpParser(char *data, size_t size)
 			tkn = M_GetToken(NULL);
 			pos = M_GetTokenPos();
 
-			if (tkn && pos < size)
+			if (tkn && pos <= size)
 			{
 				t_overlay_t *o = NULL;
 
@@ -2043,7 +2043,7 @@ static boolean K_TERRAINLumpParser(char *data, size_t size)
 			tkn = M_GetToken(NULL);
 			pos = M_GetTokenPos();
 
-			if (tkn && pos < size)
+			if (tkn && pos <= size)
 			{
 				terrain_t *t = NULL;
 
@@ -2084,8 +2084,8 @@ static boolean K_TERRAINLumpParser(char *data, size_t size)
 			Z_Free(tkn);
 			tkn = M_GetToken(NULL);
 			pos = M_GetTokenPos();
-
-			if (tkn && pos < size)
+			
+			if (tkn && pos <= size)
 			{
 				if (stricmp(tkn, "optional") == 0)
 				{
@@ -2096,7 +2096,7 @@ static boolean K_TERRAINLumpParser(char *data, size_t size)
 					pos = M_GetTokenPos();
 				}
 
-				if (tkn && pos < size)
+				if (tkn && pos <= size)
 				{
 					t_floor_t *f = NULL;
 
@@ -2125,7 +2125,7 @@ static boolean K_TERRAINLumpParser(char *data, size_t size)
 					tkn = M_GetToken(NULL);
 					pos = M_GetTokenPos();
 
-					if (tkn && pos < size)
+					if (tkn && pos <= size)
 					{
 						terrain_t *t = K_GetTerrainByName(tkn);
 
@@ -2173,7 +2173,7 @@ static boolean K_TERRAINLumpParser(char *data, size_t size)
 			tkn = M_GetToken(NULL);
 			pos = M_GetTokenPos();
 
-			if (tkn && pos < size)
+			if (tkn && pos <= size)
 			{
 				terrain_t *t = NULL;
 
@@ -2213,7 +2213,7 @@ static boolean K_TERRAINLumpParser(char *data, size_t size)
 			tkn = M_GetToken(NULL);
 			pos = M_GetTokenPos();
 
-			if (tkn && pos < size)
+			if (tkn && pos <= size)
 			{
 				t_footstep_t *fs = NULL;
 

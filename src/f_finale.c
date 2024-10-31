@@ -888,9 +888,10 @@ void F_IntroTicker(void)
 
 	if (doskip && disclaimerskippable)
 	{
-		if (dc_state == DISCLAIMER_FINAL)
+		if (dc_state == DISCLAIMER_FINAL) {
 			dc_state = DISCLAIMER_OUT;
-		else {
+			I_FadeOutStopSong(MUSICRATE*2/3);
+		} else {
 			if (dc_state <= DISCLAIMER_FADE)
 				Music_Play("lawyer");
 			dc_state = DISCLAIMER_SLIDE;

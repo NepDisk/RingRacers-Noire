@@ -6824,12 +6824,8 @@ static void P_TracerAngleThink(mobj_t *mobj)
 	if (!mobj->tracer)
 		return;
 
-	if (!mobj->extravalue2)
-		return;
-
 	// mobj->lastlook - Don't disable behavior after first failure
 	// mobj->extravalue1 - Angle tolerance
-	// mobj->extravalue2 - Exec tag upon failure
 	// mobj->cvval - Allowable failure delay
 	// mobj->cvmem - Failure timer
 
@@ -6852,8 +6848,6 @@ static void P_TracerAngleThink(mobj_t *mobj)
 			mobj->cvmem--;
 		else
 		{
-			INT32 exectag = mobj->extravalue2; // remember this before we erase the values
-
 			if (mobj->lastlook)
 				mobj->cvmem = mobj->cusval; // reset timer for next failure
 			else
@@ -6863,7 +6857,7 @@ static void P_TracerAngleThink(mobj_t *mobj)
 				mobj->lastlook = mobj->extravalue1 = mobj->extravalue2 = mobj->cvmem = mobj->cusval = 0;
 			}
 
-			P_LinedefExecute(exectag, mobj, NULL);
+			P_ActivateThingSpecial(mobj->tracer, mobj);
 		}
 	}
 	else
@@ -8398,6 +8392,9 @@ static boolean P_MobjRegularThink(mobj_t *mobj)
 		P_SetScale(mobj, (mobj->destscale = (5*mobj->target->scale)>>2));
 
 		P_MoveOrigin(mobj, mobj->target->x, mobj->target->y, mobj->target->z + mobj->target->height/2);
+		// Taken from K_FlipFromObject. We just want to flip the visual according to its target, but that's it.
+		mobj->eflags = (mobj->eflags & ~MFE_VERTICALFLIP)|(mobj->target->eflags & MFE_VERTICALFLIP);
+		
 		break;
 	}
 	case MT_BUBBLESHIELD:
@@ -8503,9 +8500,15 @@ static boolean P_MobjRegularThink(mobj_t *mobj)
 
 		mobj->extravalue2 = mobj->target->player->bubbleblowup;
 		P_SetScale(mobj, (mobj->destscale = scale));
+		
+		// For some weird reason, the Bubble Shield is the exception flip-wise, it has the offset baked into the sprite.
+		// So instead of simply flipping the object, we have to do a position offset.
+		fixed_t positionOffset = 0;
+		if (P_IsObjectFlipped(mobj->target))
+			positionOffset -= 8 * mobj->scale;
 
 		mobj->flags &= ~(MF_NOCLIPTHING);
-		P_MoveOrigin(mobj, mobj->target->x, mobj->target->y, mobj->target->z);
+		P_MoveOrigin(mobj, mobj->target->x, mobj->target->y, mobj->target->z + positionOffset);
 		mobj->flags |= MF_NOCLIPTHING;
 		break;
 	}
@@ -8593,6 +8596,8 @@ static boolean P_MobjRegularThink(mobj_t *mobj)
 			}
 		}
 
+		// Taken from K_FlipFromObject. We just want to flip the visual according to its target, but that's it.
+		mobj->eflags = (mobj->eflags & ~MFE_VERTICALFLIP)|(mobj->target->eflags & MFE_VERTICALFLIP);
 		P_MoveOrigin(mobj, mobj->target->x, mobj->target->y, mobj->target->z + mobj->target->height/2);
 		mobj->angle = K_MomentumAngle(mobj->target);
 
@@ -9918,10 +9923,12 @@ static boolean P_MobjRegularThink(mobj_t *mobj)
 	case MT_KART_LEFTOVER:
 	{
 		Obj_DestroyedKartThink(mobj);
+
 		if (P_MobjWasRemoved(mobj))
 		{
 			return false;
 		}
+		
 		break;
 	}
 
@@ -10598,8 +10605,8 @@ void P_SceneryThinker(mobj_t *mobj)
 		if (!P_MobjWasRemoved(mobj->target))
 		{
 			// Cast like a shadow on the ground
-			P_MoveOrigin(mobj, mobj->target->x, mobj->target->y, mobj->target->floorz);
-			mobj->standingslope = mobj->target->standingslope;
+			P_MoveOrigin(mobj, mobj->target->x, mobj->target->y, P_GetMobjGround(mobj->target));
+			mobj->standingslope = P_IsObjectOnGround(mobj->target) ? mobj->target->standingslope : NULL;
 
 			if (!P_IsObjectOnGround(mobj->target) && mobj->target->momz < -24 * mapobjectscale)
 			{

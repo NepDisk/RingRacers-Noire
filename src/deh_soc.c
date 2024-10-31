@@ -343,7 +343,7 @@ void readfreeslots(MYFILE *f)
 							CONS_Printf("Skincolor SKINCOLOR_%s allocated.\n",word);
 						FREE_SKINCOLORS[i] = Z_Malloc(strlen(word)+1, PU_STATIC, NULL);
 						strcpy(FREE_SKINCOLORS[i],word);
-						skincolors[i].cache_spraycan = UINT16_MAX;
+						skincolors[SKINCOLOR_FIRSTFREESLOT+i].cache_spraycan = UINT16_MAX;
 						numskincolors++;
 						N_ReloadHUDColorCvar();
 						break;
@@ -3567,7 +3567,7 @@ void readmaincfg(MYFILE *f, boolean mainfile)
 			else if (fastcmp(word, "EXECCFG"))
 			{
 				if (strchr(word2, '.'))
-					COM_BufAddText(va("exec %s\n", word2));
+					COM_BufAddText(va("exec \"%s\" -immediate\n", word2));
 				else
 				{
 					lumpnum_t lumpnum;
@@ -4733,7 +4733,7 @@ preciptype_t get_precip(const char *word)
 			return i;
 	}
 	deh_warning("Couldn't find weather type named 'PRECIP_%s'",word);
-	return PRECIP_RAIN;
+	return PRECIP_NONE;
 }
 
 /// \todo Make ANY of this completely over-the-top math craziness obey the order of operations.

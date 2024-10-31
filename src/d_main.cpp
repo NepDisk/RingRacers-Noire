@@ -1847,6 +1847,7 @@ void D_SRB2Main(void)
 	// HACK: Refer to https://git.do.srb2.org/KartKrew/RingRacers/-/merge_requests/29#note_61574
 	partadd_earliestfile = numwadfiles;
 	W_InitMultipleFiles(startuppwads, true);
+	
 	// Only search for pwad maps and reload graphics if we actually have a pwad added
 	if (startuppwads[0] != NULL)
 	{
