@@ -2568,18 +2568,14 @@ void PositionFacesInfo::draw_1p()
 			if (cv_highresportrait.value)
 			{
 				V_DrawFixedPatch((FACE_X + xoff)<<FRACBITS, (Y + yoff)<<FRACBITS, FRACUNIT >> 1,
-				V_HUDTRANS|V_SLIDEIN|V_SNAPTOLEFT|flipflag,
-				faceprefix[workingskin][FACE_WANTED], colormap
-			);
-
+					V_HUDTRANS|V_SLIDEIN|V_SNAPTOLEFT|flipflag,
+					faceprefix[workingskin][FACE_WANTED], colormap
+				);
 			}
 			else
 			{
 				V_DrawMappedPatch(FACE_X + xoff, Y + yoff, V_HUDTRANS|V_SLIDEIN|V_SNAPTOLEFT|flipflag, faceprefix[workingskin][FACE_RANK], colormap);
 			}
-
-			/**/
-			//(x)<<FRACBITS, (y)<<FRACBITS, FRACUNIT, s, p, c)
 
 			if (LUA_HudEnabled(hud_battlebumpers))
 			{
