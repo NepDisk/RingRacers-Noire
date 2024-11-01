@@ -1116,7 +1116,7 @@ boolean K_PvPTouchDamage(mobj_t *t1, mobj_t *t2)
 	if (P_MobjWasRemoved(t1) || P_MobjWasRemoved(t2) || !t1->player || !t2->player)
 		return false;
 
-	if ((t2->player->spinouttimer > 0) && !cv_ng_combo.value)
+	if (((t2->player->spinouttimer > 0) || (t1->player->spinouttimer > 0)) && !cv_ng_combo.value)
 		return false;
 
 	// Clash instead of damage if both parties have any of these conditions

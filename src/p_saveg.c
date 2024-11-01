@@ -856,6 +856,8 @@ static void P_NetArchivePlayers(savebuffer_t *save)
 		WRITESINT8(save->p, players[i].pogosidemove);
 
 		WRITEUINT8(save->p, players[i].brakestop);
+
+		WRITEINT16(save->p, players[i].growcancel);
 	}
 
 	TracyCZoneEnd(__zone);
@@ -1495,6 +1497,8 @@ static void P_NetUnArchivePlayers(savebuffer_t *save)
 
 		players[i].pogospring = READUINT8(save->p);
 		players[i].pogosidemove = READSINT8(save->p);
+
+		players[i].growcancel = READINT16(save->p);
 
 		players[i].brakestop = READUINT8(save->p);
 

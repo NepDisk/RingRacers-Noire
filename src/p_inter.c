@@ -157,7 +157,8 @@ boolean P_CanPickupItem(player_t *player, UINT8 weapon)
 			// Item-specific timer going off
 			if (player->stealingtimer
 				|| player->rocketsneakertimer
-				|| player->eggmanexplode)
+				|| player->eggmanexplode
+				|| (player->growshrinktimer > 0) && cv_ng_oldgrow.value)
 				return false;
 
 			// Item slot already taken up
@@ -3206,7 +3207,7 @@ boolean P_DamageMobj(mobj_t *target, mobj_t *inflictor, mobj_t *source, INT32 da
 				{
 					// Extend the invincibility if the hit was a direct hit.
 					if (inflictor == source && source->player->invincibilitytimer &&
-							!K_PowerUpRemaining(source->player, POWERUP_SMONITOR))
+							!K_PowerUpRemaining(source->player, POWERUP_SMONITOR) && !cv_ng_oldinvincibility.value)
 					{
 						tic_t kinvextend;
 

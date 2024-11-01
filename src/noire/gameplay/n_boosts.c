@@ -460,9 +460,12 @@ void N_GetKartBoostPower(player_t *player)
 		); // + 20% + ???% top speed, + 400% acceleration, +???% handling, No boostmult
 	}
 
-	if (player->eggmanexplode) // Ready-to-explode
+	if (!cv_ng_oldeggman.value)
 	{
-		ADDBOOST(6*FRACUNIT/20, FRACUNIT, 0, 0,0); // + 30% top speed, + 100% acceleration, +0% handling, No Boost Mult
+		if (player->eggmanexplode) // Ready-to-explode
+		{
+			ADDBOOST(6*FRACUNIT/20, FRACUNIT, 0, 0,0); // + 30% top speed, + 100% acceleration, +0% handling, No Boost Mult
+		}
 	}
 
 	if (player->trickcharge)

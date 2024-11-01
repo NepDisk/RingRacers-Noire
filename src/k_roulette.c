@@ -1765,7 +1765,10 @@ void K_KartItemRoulette(player_t *const player, ticcmd_t *const cmd)
 		if (roulette->eggman == true)
 		{
 			// FATASS JUMPSCARE instead of your actual item
-			player->eggmanexplode = 6*TICRATE;
+			if (cv_ng_oldeggman.value)
+				player->eggmanexplode = 4*TICRATE;
+			else
+				player->eggmanexplode = 6*TICRATE;
 
 			//player->karthud[khud_itemblink] = TICRATE;
 			//player->karthud[khud_itemblinkmode] = 1;

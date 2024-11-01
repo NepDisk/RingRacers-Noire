@@ -866,6 +866,10 @@ consvar_t cv_ng_oldjawz = UnsavedNetVar("ng_oldjawz", "Ring Racers").values(rrOr
 consvar_t cv_ng_oldhyudoro = UnsavedNetVar("ng_oldhyudoro", "Ring Racers").values(rrOrKart_cons_t).onchange_noinit(NG_Olditem_OnChange);
 consvar_t cv_ng_oldballhog = UnsavedNetVar("ng_oldballhog", "Ring Racers").values(rrOrKart_cons_t).onchange_noinit(NG_Olditem_OnChange);
 consvar_t cv_ng_oldspb = UnsavedNetVar("ng_oldspb", "Ring Racers").values(rrOrKart_cons_t).onchange_noinit(NG_Olditem_OnChange);
+consvar_t cv_ng_oldinvincibility = UnsavedNetVar("ng_oldinvincibility", "Ring Racers").values(rrOrKart_cons_t).onchange_noinit(NG_Olditem_OnChange);
+consvar_t cv_ng_oldgrow = UnsavedNetVar("ng_oldgrow", "Ring Racers").values(rrOrKart_cons_t).onchange_noinit(NG_Olditem_OnChange);
+consvar_t cv_ng_oldshrink = UnsavedNetVar("ng_oldshrink", "Ring Racers").values(rrOrKart_cons_t).onchange_noinit(NG_Olditem_OnChange);
+consvar_t cv_ng_oldeggman = UnsavedNetVar("ng_oldeggman", "Ring Racers").values(rrOrKart_cons_t).onchange_noinit(NG_Olditem_OnChange);
 consvar_t cv_ng_nerfdroptarget = UnsavedNetVar("ng_nerfdroptarget", "Off").on_off();
 consvar_t cv_ng_nerfflameshield = UnsavedNetVar("ng_nerfflameshield", "Off").on_off();
 consvar_t cv_ng_nerfflameshielddiminish = UnsavedNetVar("ng_flameshield_diminish", "1.2").floating_point();
@@ -1260,7 +1264,7 @@ consvar_t cv_ng_stairjank = UnsavedNetVar("ng_stairjank", "All").values({
 	{1, "Bumpy roads only"},
 	{2, "All"},
 });
-consvar_t cv_ng_turnstyle = UnsavedNetVar("ng_turnstyle", "V1").values({
+consvar_t cv_ng_turnstyle = UnsavedNetVar("ng_turnstyle", "Vanilla").values({
 	{0, "V1"},
 	{1, "V2 Indev"},
 	{2, "Tweaked"},

@@ -28,6 +28,7 @@ extern "C" {
 #endif
 
 void N_DoHyudoroSteal(player_t *player);
+void N_DoShrink(player_t *user);
 
 extern UINT8 N_NoireItemOddsRace[NUMKARTRESULTS-1][8];
 

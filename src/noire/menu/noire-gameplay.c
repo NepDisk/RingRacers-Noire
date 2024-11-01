@@ -8,12 +8,17 @@
 //-----------------------------------------------------------------------------
 
 #include "../n_menu.h"
+#include "presets.h"
 
 ///////////
 // MAIN MENU
 ///////////
 menuitem_t OPTIONS_NoireGameplay[] =
 {
+
+	{IT_STRING | IT_SUBMENU, "Presets...", "Custom Sets of these options for ease of use!",
+		NULL, {.submenu = &OPTIONS_NoireGameplayPresetsDef}, 0, 0},
+
 	{IT_STRING | IT_SUBMENU, "Ring Options...", "Adjust how rings work, or disable them entirely.",
 		NULL, {.submenu = &OPTIONS_NoireGameplayRingsDef}, 0, 0},
 
@@ -34,6 +39,19 @@ menuitem_t OPTIONS_NoireGameplay[] =
 
 	{IT_STRING | IT_SUBMENU, "Bot Options...", "Adjust the aggressiveness of CPUs.",
 		NULL, {.submenu = &OPTIONS_NoireGameplayBotsDef}, 0, 0},
+};
+
+menuitem_t OPTIONS_NoireGameplayPresets[] =
+{
+	{IT_STRING | IT_CALL, "\x85" "Ring Racers", "Ring Racers' vanilla gameplay.",
+		NULL, {.routine = N_RRVanillaPreset}, 0, 0},
+
+	{IT_STRING | IT_CALL, "\x85" "Noire+", "A mix of old and new. NepDisk's Personal setup.",
+		NULL, {.routine = N_NoirePreset}, 0, 0},
+
+	{IT_STRING | IT_CALL, "\x85" "SRB2Kart+", "Similar to modded SRB2kart.",
+		NULL, {.routine = N_SRB2KPreset}, 0, 0},
+
 };
 
 ///////////
@@ -74,6 +92,10 @@ menuitem_t OPTIONS_NoireGameplayRings[] =
 ///////////
 menuitem_t OPTIONS_NoireGameplayItems[] =
 {
+
+	{IT_STRING | IT_SUBMENU, "Item Functionality Options...", "Adjust the functionality of various items.",
+		NULL, {.submenu = &OPTIONS_NoireGameplayItemFunctionalityDef}, 0, 0},
+
 	{IT_STRING | IT_CVAR, "Force Small Itemboxes", "Force enable small Itemboxes on all maps regardless of mapheader.",
 		NULL, {.cvar = &cv_ng_forceoldboxscale}, 0, 0},
 
@@ -85,26 +107,46 @@ menuitem_t OPTIONS_NoireGameplayItems[] =
 
 	{IT_STRING | IT_CVAR, "Item Odds", "Odds to use for race mode. Noire or Custom recommended for revert toggles!",
 		NULL, {.cvar = &cv_ng_noireodds}, 0, 0},
+};
 
-	{IT_STRING | IT_CVAR, "Orbinaut Behavior", "Toggle between Ring Racers or Kart's Orbinaut behavior.",
+///////////
+// ITEM FUNCTIONALITY
+///////////
+
+menuitem_t OPTIONS_NoireGameplayItemFunctionality[] =
+{
+
+	{IT_STRING | IT_CVAR, "Orbinaut Behavior", "Toggle between Ring Racers or Kart Orbinaut behavior.",
 		NULL, {.cvar = &cv_ng_oldorbinaut}, 0, 0},
 
-	{IT_STRING | IT_CVAR, "Jawz Behavior", "Toggle between Ring Racers or Kart's Jawz behavior.",
+	{IT_STRING | IT_CVAR, "Jawz Behavior", "Toggle between Ring Racers or Kart Jawz behavior.",
 		NULL, {.cvar = &cv_ng_oldjawz}, 0, 0},
 
-	{IT_STRING | IT_CVAR, "Hyudoro Behavior", "Toggle between Ring Racers or Kart's Hyudoro behavior.",
+	{IT_STRING | IT_CVAR, "Hyudoro Behavior", "Toggle between Ring Racers or Kart Hyudoro behavior.",
 		NULL, {.cvar = &cv_ng_oldhyudoro}, 0, 0},
 
-	{IT_STRING | IT_CVAR, "Ballhog Behavior", "Toggle between Ring Racers or Kart's Ballhog behavior.",
+	{IT_STRING | IT_CVAR, "Ballhog Behavior", "Toggle between Ring Racers or Kart Ballhog behavior.",
 		NULL, {.cvar = &cv_ng_oldballhog}, 0, 0},
 
-	{IT_STRING | IT_CVAR, "SPB Behavior", "Toggle between Ring Racers or Kart's SPB behavior.",
+	{IT_STRING | IT_CVAR, "SPB Behavior", "Toggle between Ring Racers or Kart SPB behavior.",
 		NULL, {.cvar = &cv_ng_oldspb}, 0, 0},
+
+	{IT_STRING | IT_CVAR, "Invincibility Behaviour", "Toggle between Ring Racers or Kart Invincibility behavior.",
+		NULL, {.cvar = &cv_ng_oldinvincibility}, 0, 0},
+
+	{IT_STRING | IT_CVAR, "Grow Behaviour", "Toggle between Ring Racers or Kart Grow behavior.",
+		NULL, {.cvar = &cv_ng_oldgrow}, 0, 0},
+
+	{IT_STRING | IT_CVAR, "Shrink Behaviour", "Toggle between Ring Racers or Kart Shrink behavior.",
+		NULL, {.cvar = &cv_ng_oldshrink}, 0, 0},
+
+	{IT_STRING | IT_CVAR, "Eggmark Behaviour", "Toggle between Ring Racers or Kart Eggmark behavior.",
+		NULL, {.cvar = &cv_ng_oldeggman}, 0, 0},
 
 	{IT_STRING | IT_CVAR, "Drop Target Nerf", "Make the Drop Target knockback less powerful.",
 		NULL, {.cvar = &cv_ng_nerfdroptarget}, 0, 0},
 
-	{IT_STRING | IT_CVAR, "Flame Sheild Nerf", "Do diminishing returns on the Flame Shield and make the finishing thrust weaker.",
+	{IT_STRING | IT_CVAR, "Flame Shield Nerf", "Do diminishing returns on the Flame Shield and make the finishing thrust weaker.",
 		NULL, {.cvar = &cv_ng_nerfflameshield}, 0, 0},
 
 	{IT_STRING | IT_CVAR, "Air-time Timer Drain", "Drain timers for Grow and Invincibility regardless of being grounded.",
@@ -221,13 +263,13 @@ menuitem_t OPTIONS_NoireGameplayDriving[] =
 	{IT_STRING | IT_CVAR, "Slope Resistance", "Enable or disable harder slope climbing.",
 		NULL, {.cvar = &cv_ng_slopeclimb}, 0, 0},
 
-	{IT_STRING | IT_CVAR, "Stairjank", "Toggle 'steps & bumpy roads' or 'only roads' affecting karts' turning, or disable it.",
+	{IT_STRING | IT_CVAR, "Stairjank", "Toggle slipperyness given by stairs and certain terrain types.",
 		NULL, {.cvar = &cv_ng_stairjank}, 0, 0},
 
-	{IT_STRING | IT_CVAR, "Turn Control Style", "How kart's turning should behave.",
+	{IT_STRING | IT_CVAR, "Turn Control Style", "How kart turning should behave.",
 		NULL, {.cvar = &cv_ng_turnstyle}, 0, 0},
 
-	{IT_STRING | IT_CVAR, "Underwater Handling Adjust", "Toggle kart's different turning when underwater.",
+	{IT_STRING | IT_CVAR, "Underwater Handling Adjust", "Toggle kart turning differences when underwater.",
 		NULL, {.cvar = &cv_ng_underwaterhandling}, 0, 0},
 
 	{IT_STRING | IT_CVAR, "No Physics Flag SLope Launch", "Consider the 'No Physics' flag on slopes, launching racers or not.",
@@ -494,6 +536,24 @@ menu_t OPTIONS_NoireGameplayDef = {
 	NULL,
 };
 
+menu_t OPTIONS_NoireGameplayPresetsDef = {
+	sizeof (OPTIONS_NoireGameplayPresets) / sizeof (menuitem_t),
+	&OPTIONS_NoireGameplayDef,
+	0,
+	OPTIONS_NoireGameplayPresets,
+	48, 80,
+	SKINCOLOR_BLACK, 0,
+	MBF_DRAWBGWHILEPLAYING,
+	NULL,
+	2, 5,
+	M_DrawGenericOptions,
+	M_DrawOptionsCogs,
+	M_OptionsTick,
+	NULL,
+	NULL,
+	NULL,
+};
+
 menu_t OPTIONS_NoireGameplayRingsDef = {
 	sizeof (OPTIONS_NoireGameplayRings) / sizeof (menuitem_t),
 	&OPTIONS_NoireGameplayDef,
@@ -517,6 +577,24 @@ menu_t OPTIONS_NoireGameplayItemsDef = {
 	&OPTIONS_NoireGameplayDef,
 	0,
 	OPTIONS_NoireGameplayItems,
+	48, 80,
+	SKINCOLOR_BLACK, 0,
+	MBF_DRAWBGWHILEPLAYING,
+	NULL,
+	2, 5,
+	M_DrawGenericOptions,
+	M_DrawOptionsCogs,
+	M_OptionsTick,
+	NULL,
+	NULL,
+	NULL,
+};
+
+menu_t OPTIONS_NoireGameplayItemFunctionalityDef = {
+	sizeof (OPTIONS_NoireGameplayItemFunctionality) / sizeof (menuitem_t),
+	&OPTIONS_NoireGameplayItemsDef,
+	0,
+	OPTIONS_NoireGameplayItemFunctionality,
 	48, 80,
 	SKINCOLOR_BLACK, 0,
 	MBF_DRAWBGWHILEPLAYING,

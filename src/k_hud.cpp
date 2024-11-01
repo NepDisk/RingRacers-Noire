@@ -1497,6 +1497,19 @@ static void K_drawKartItem(void)
 			localpatch[1] = kp_rocketsneaker[offset];
 			flashOnOne = true;
 		}
+		else if ((stplyr->growshrinktimer > 0) && cv_ng_oldgrow.value)
+		{
+			if (stplyr->growcancel > 0)
+			{
+				itembar = stplyr->growcancel;
+				maxl = 26;
+			}
+
+			if (leveltime & 1)
+				localpatch[1] = kp_grow[offset];
+			else
+				localpatch[1] = kp_nodraw;
+		}
 		else if (stplyr->sadtimer > 0)
 		{
 			localpatch[1] = kp_sadface[offset];

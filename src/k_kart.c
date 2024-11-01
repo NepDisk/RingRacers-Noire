@@ -2002,7 +2002,7 @@ static void K_SpawnGenericSpeedLines(player_t *player, boolean top)
 		fast->colorized = true;
 		fast->renderflags |= RF_ADD;
 	}
-	else if (player->eggmanexplode)
+	else if (player->eggmanexplode && !cv_ng_oldeggman.value)
 	{
 		// Make it red when you have the eggman speed boost
 		fast->color = SKINCOLOR_RED;
@@ -3533,14 +3533,28 @@ static void K_GetKartBoostPower(player_t *player)
 	if (player->invincibilitytimer) // Invincibility
 	{
 		// S-Monitor: no extra %
-		fixed_t extra = FRACUNIT / 1400 * (player->invincibilitytimer - K_PowerUpRemaining(player, POWERUP_SMONITOR));
+		fixed_t extra = cv_ng_oldinvincibility.value ? 0 : FRACUNIT / 1400 * (player->invincibilitytimer - K_PowerUpRemaining(player, POWERUP_SMONITOR));
 		ADDBOOST(3*FRACUNIT/8 + extra, 3*FRACUNIT, SLIPTIDEHANDLING/2); // + 37.5 + ?% top speed, + 300% acceleration, +25% handling
 	}
 
-	if (player->growshrinktimer > 0) // Grow
+	if (cv_ng_oldgrow.value)
 	{
-		ADDBOOST(0, 0, SLIPTIDEHANDLING/2); // + 0% top speed, + 0% acceleration, +25% handling
+		if (player->growshrinktimer > 0) // Grow
+		{
+			// Done like this so grow speedboost doesn't stack
+			speedboost = max(speedboost,FRACUNIT/5); // + 20% nonstacking top speed
+			ADDBOOST(0, 0, 2*SLIPTIDEHANDLING/5); // + 0% acceleration, +20% handling
+		}
 	}
+	else
+	{
+		if (player->growshrinktimer > 0) // Grow
+		{
+			ADDBOOST(0, 0, SLIPTIDEHANDLING/2); // + 0% top speed, + 0% acceleration, +25% handling
+		}
+	}
+
+
 
 	if (cv_ng_nerfflameshield.value)
 	{
@@ -3675,9 +3689,13 @@ static void K_GetKartBoostPower(player_t *player)
 		); // + 20% + ???% top speed, + 400% acceleration, +???% handling
 	}
 
-	if (player->eggmanexplode) // Ready-to-explode
+
+	if (!cv_ng_oldeggman.value)
 	{
-		ADDBOOST(6*FRACUNIT/20, FRACUNIT, 0); // + 30% top speed, + 100% acceleration, +0% handling
+		if (player->eggmanexplode) // Ready-to-explode
+		{
+			ADDBOOST(6*FRACUNIT/20, FRACUNIT, 0); // + 30% top speed, + 100% acceleration, +0% handling
+		}
 	}
 
 	if (player->trickcharge)
@@ -4327,6 +4345,7 @@ void K_RemoveGrowShrink(player_t *player)
 	}
 
 	player->growshrinktimer = 0;
+	player->growcancel = -1;
 	player->roundconditions.consecutive_grow_lasers = 0;
 }
 
@@ -8865,7 +8884,7 @@ void K_KartPlayerThink(player_t *player, ticcmd_t *cmd)
 			// Speed lines
 			if (player->sneakertimer || player->ringboost
 				|| player->driftboost || player->startboost
-				|| player->eggmanexplode || player->trickboost
+				|| (player->eggmanexplode && !cv_ng_oldeggman.value) || player->trickboost
 				|| player->gateBoost || player->wavedashboost)
 			{
 #if 0
@@ -12874,7 +12893,8 @@ void K_MoveKartPlayer(player_t *player, boolean onground)
 			|| player->itemamount
 			|| player->itemRoulette.active == true
 			|| player->rocketsneakertimer
-			|| player->eggmanexplode))
+			|| player->eggmanexplode
+			|| ((player->growshrinktimer > 0) && cv_ng_oldgrow.value)))
 			player->itemflags |= IF_USERINGS;
 		else
 			player->itemflags &= ~IF_USERINGS;
@@ -12958,7 +12978,7 @@ void K_MoveKartPlayer(player_t *player, boolean onground)
 			chargingwhip = false;
 		}
 
-		if (leveltime < starttime || player->itemflags & (IF_ITEMOUT|IF_EGGMANOUT) || player->rocketsneakertimer || (player->defenseLockout && !K_PowerUpRemaining(player, POWERUP_BADGE)))
+		if (leveltime < starttime || player->itemflags & (IF_ITEMOUT|IF_EGGMANOUT) || player->rocketsneakertimer || ((player->growshrinktimer > 0) && cv_ng_oldgrow.value) || (player->defenseLockout && !K_PowerUpRemaining(player, POWERUP_BADGE)))
 		{
 			chargingwhip = false;
 			player->instaWhipCharge = 0;
@@ -13197,6 +13217,28 @@ void K_MoveKartPlayer(player_t *player, boolean onground)
 						player->botvars.itemconfirm = 2*TICRATE;
 					}
 				}
+				// Grow Canceling
+				else if ((player->growshrinktimer > 0) && cv_ng_oldgrow.value)
+				{
+					if (player->growcancel >= 0)
+					{
+						if (cmd->buttons & BT_ATTACK)
+						{
+							player->growcancel++;
+							if (player->growcancel > 26)
+								K_RemoveGrowShrink(player);
+						}
+						else
+							player->growcancel = 0;
+					}
+					else
+					{
+						if ((cmd->buttons & BT_ATTACK) || (player->oldcmd.buttons & BT_ATTACK))
+							player->growcancel = -1;
+						else
+							player->growcancel = 0;
+					}
+				}
 				else if (player->itemamount == 0)
 				{
 					K_UnsetItemOut(player);
@@ -13251,12 +13293,19 @@ void K_MoveKartPlayer(player_t *player, boolean onground)
 						case KITEM_INVINCIBILITY:
 							if (ATTACK_IS_DOWN && !HOLDING_ITEM && NO_HYUDORO) // Doesn't hold your item slot hostage normally, so you're free to waste it if you have multiple
 							{
-								UINT32 behind = K_GetItemRouletteDistance(player, player->itemRoulette.playing);
-								UINT32 behindScaled = behind * TICRATE / 4500;
-								behindScaled = min(behindScaled, 10*TICRATE);
+								if (cv_ng_oldinvincibility.value)
+								{
+									K_DoInvincibility(player, 10 * TICRATE);
+								}
+								else
+								{
+									UINT32 behind = K_GetItemRouletteDistance(player, player->itemRoulette.playing);
+									UINT32 behindScaled = behind * TICRATE / 4500;
+									behindScaled = min(behindScaled, 10*TICRATE);
+									K_DoInvincibility(player,
+										max(7u * TICRATE + behindScaled, player->invincibilitytimer + 5u*TICRATE));
+								}
 
-								K_DoInvincibility(player,
-									max(7u * TICRATE + behindScaled, player->invincibilitytimer + 5u*TICRATE));
 								K_PlayPowerGloatSound(player->mo);
 
 								player->itemamount--;
@@ -13639,8 +13688,17 @@ void K_MoveKartPlayer(player_t *player, boolean onground)
 									S_StartSound(player->mo, sfx_alarmg);
 								}
 
-								player->growshrinktimer = max(0, player->growshrinktimer);
-								player->growshrinktimer += ((gametyperules & GTR_CLOSERPLAYERS) ? 8 : 12) * TICRATE;
+								if (cv_ng_oldgrow.value)
+								{
+									player->growshrinktimer = ((gametyperules & GTR_CLOSERPLAYERS) ? 8 : 12) * TICRATE;
+								}
+								else
+								{
+									player->growshrinktimer = max(0, player->growshrinktimer);
+									player->growshrinktimer += ((gametyperules & GTR_CLOSERPLAYERS) ? 8 : 12) * TICRATE;
+								}
+
+
 
 								S_StartSound(player->mo, sfx_kc5a);
 
@@ -13651,7 +13709,10 @@ void K_MoveKartPlayer(player_t *player, boolean onground)
 						case KITEM_SHRINK:
 							if (ATTACK_IS_DOWN && !HOLDING_ITEM && NO_HYUDORO)
 							{
-								K_DoShrink(player);
+								if (cv_ng_oldshrink.value)
+									N_DoShrink(player);
+								else
+									K_DoShrink(player);
 								player->itemamount--;
 								K_PlayPowerGloatSound(player->mo);
 								player->botvars.itemconfirm = 0;
@@ -14829,6 +14890,8 @@ void K_EggmanTransfer(player_t *source, player_t *victim)
 	if (source->eggmanTransferDelay)
 		return;
 	if (victim->eggmanexplode)
+		return;
+	if (cv_ng_oldeggman.value)
 		return;
 
 	K_AddHitLag(victim->mo, 5, false);

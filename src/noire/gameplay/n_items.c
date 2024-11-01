@@ -88,6 +88,48 @@ void N_DoHyudoroSteal(player_t *player)
 	}
 }
 
+void N_DoShrink(player_t *user)
+{
+	INT32 i;
+
+	S_StartSound(user->mo, sfx_kc46); // Sound the BANG!
+
+	for (i = 0; i < MAXPLAYERS; i++)
+	{
+		if (!playeringame[i] || players[i].spectator || !players[i].mo)
+			continue;
+		if (&players[i] == user)
+			continue;
+		if (players[i].position < user->position)
+		{
+
+			// Grow should get taken away.
+			if (players[i].growshrinktimer > 0)
+				K_RemoveGrowShrink(&players[i]);
+			// Don't hit while invulnerable!
+			else if (!players[i].invincibilitytimer
+				&& players[i].growshrinktimer <= 0
+				&& !players[i].hyudorotimer)
+			{
+				// Start shrinking!
+				K_DropItems(&players[i]);
+				players[i].growshrinktimer = -(20*TICRATE);
+
+				if (players[i].mo && !P_MobjWasRemoved(players[i].mo))
+				{
+					players[i].mo->scalespeed = mapobjectscale/TICRATE;
+					players[i].mo->destscale = (6*mapobjectscale)/8;
+					if (K_PlayerShrinkCheat(&players[i]) == true)
+					{
+						players[i].mo->destscale = (6*players[i].mo->destscale)/8;
+					}
+					S_StartSound(players[i].mo, sfx_kc59);
+				}
+			}
+		}
+	}
+}
+
 
 UINT8 N_NoireItemOddsRace[NUMKARTRESULTS-1][8] =
 {

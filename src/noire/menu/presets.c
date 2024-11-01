@@ -1,0 +1,258 @@
+// RINGRACERS-NOIRE
+//-----------------------------------------------------------------------------
+// Copyright (C) 2024 by NepDisk
+//
+// This program is free software distributed under the
+// terms of the GNU General Public License, version 2.
+// See the 'LICENSE' file for more details.
+//-----------------------------------------------------------------------------
+
+#include "presets.h"
+#include "../n_menu.h"
+#include "../../s_sound.h"
+
+
+void N_RRVanillaPreset(INT32 choice)
+{
+	(void)choice;
+	S_StartSound(NULL, sfx_shield);
+
+	// Rings
+	CV_Set(&cv_ng_rings, "On");
+	CV_SetValue(&cv_ng_ringcap, 20);
+	CV_SetValue(&cv_ng_spillcap, 20);
+	CV_Set(&cv_ng_ringdebt, "On");
+	CV_Set(&cv_ng_ringsting, "On");
+	CV_SetValue(&cv_ng_ringdeathmark, -20);
+	CV_Set(&cv_ng_maprings, "On");
+	CV_Set(&cv_ng_mapringboxes, "On");
+	CV_Set(&cv_ng_ringboxtransform, "On");
+
+	// Items
+	CV_Set(&cv_ng_forceoldboxscale, "Off");
+	CV_Set(&cv_ng_capsules, "On");
+	CV_StealthSet(&cv_ng_oldorbinaut, "Ring Racers");
+	CV_StealthSet(&cv_ng_oldjawz, "Ring Racers");
+	CV_StealthSet(&cv_ng_oldhyudoro, "Ring Racers");
+	CV_StealthSet(&cv_ng_oldballhog, "Ring Racers");
+	CV_StealthSet(&cv_ng_oldspb, "Ring Racers");
+	CV_StealthSet(&cv_ng_oldinvincibility, "Ring Racers");
+	CV_StealthSet(&cv_ng_oldgrow, "Ring Racers");
+	CV_StealthSet(&cv_ng_oldshrink, "Ring Racers");
+	CV_StealthSet(&cv_ng_oldeggman, "Ring Racers");
+	CV_Set(&cv_ng_nerfdroptarget, "Off");
+	CV_Set(&cv_ng_nerfflameshield, "Off");
+	CV_Set(&cv_ng_nerfflameshielddiminish, "1.2");
+	CV_Set(&cv_ng_airtimerdrain, "Off");
+	CV_StealthSet(&cv_ng_noireodds, "Ring Racers");
+	CV_Set(&cv_ng_forceautoroulette, "Off");
+	CV_SetValue(&cv_distvar, 2048);
+
+	// Mechanics
+	CV_Set(&cv_ng_fastfall, "On");
+	CV_Set(&cv_ng_fastfallbounce, "On");
+	CV_Set(&cv_ng_draft, "On");
+	CV_Set(&cv_ng_wavedash, "On");
+	CV_Set(&cv_ng_tumble, "On");
+	CV_Set(&cv_ng_stumble, "On");
+	CV_Set(&cv_ng_hitlag, "On");
+	CV_Set(&cv_ng_combo, "On");
+	CV_SetValue(&cv_ng_mapanger, 2);
+	CV_Set(&cv_ng_tripwires, "On");
+	CV_Set(&cv_ng_forcenoposition, "Off");
+	CV_Set(&cv_ng_dospecialstage, "On");
+
+	CV_Set(&cv_ng_lives, "On");
+	CV_Set(&cv_ng_continuesrank, "On");
+
+	CV_Set(&cv_ng_instawhip, "On");
+	CV_SetValue(&cv_ng_instawhipcharge, 75);
+	CV_SetValue(&cv_ng_instawhiplockout, 70);
+	CV_Set(&cv_ng_instawhipdrain, "On");
+
+	CV_Set(&cv_ng_spindash, "On");
+	CV_SetValue(&cv_ng_spindashthreshold, 6);
+	CV_SetValue(&cv_ng_spindashcharge, 0);
+	CV_Set(&cv_ng_spindashoverheat, "On");
+
+	CV_Set(&cv_ng_butteredslopes, "On");
+	CV_Set(&cv_ng_slopeclimb, "On");
+	CV_Set(&cv_ng_stairjank, "All");
+	CV_Set(&cv_ng_turnstyle, "Vanilla");
+	CV_Set(&cv_ng_underwaterhandling, "On");
+	CV_Set(&cv_ng_oldpogooverride, "Off");
+	CV_Set(&cv_ng_nophysicsflag, "Off");
+	CV_Set(&cv_ng_oldboostpower, "Off");
+	CV_Set(&cv_ng_oldspeedcalc, "Off");
+	CV_SetValue(&cv_ng_airspeedcap, 50);
+	CV_Set(&cv_ng_botrubberbandboost, "On");
+	CV_Set(&cv_ng_charsetrivals, "On");
+	CV_Set(&cv_ng_rivals, "On");
+	CV_SetValue(&cv_ng_rivaltopspeed, 11);
+	CV_SetValue(&cv_ng_rivalringpower, 20);
+	CV_Set(&cv_ng_rivalfrantic, "On");
+	CV_Set(&cv_ng_rivaldraft, "On");
+}
+
+void N_NoirePreset(INT32 choice)
+{
+	(void)choice;
+	S_StartSound(NULL, sfx_wirlsg);
+
+	// Rings
+	CV_Set(&cv_ng_rings, "Off");
+	CV_SetValue(&cv_ng_ringcap, 0);
+	CV_SetValue(&cv_ng_spillcap, 0);
+	CV_Set(&cv_ng_ringdebt, "Off");
+	CV_Set(&cv_ng_ringsting, "Off");
+	CV_SetValue(&cv_ng_ringdeathmark, -20);
+	CV_Set(&cv_ng_maprings, "Off");
+	CV_Set(&cv_ng_mapringboxes, "Off");
+	CV_Set(&cv_ng_ringboxtransform, "Off");
+
+	// Items
+	CV_Set(&cv_ng_forceoldboxscale, "Off");
+	CV_Set(&cv_ng_capsules, "On");
+	CV_StealthSet(&cv_ng_oldorbinaut, "Kart");
+	CV_StealthSet(&cv_ng_oldjawz, "Kart");
+	CV_StealthSet(&cv_ng_oldhyudoro, "Kart");
+	CV_StealthSet(&cv_ng_oldballhog, "Kart");
+	CV_StealthSet(&cv_ng_oldspb, "Kart");
+	CV_StealthSet(&cv_ng_oldinvincibility, "Kart");
+	CV_StealthSet(&cv_ng_oldgrow, "Kart");
+	CV_StealthSet(&cv_ng_oldshrink, "Kart");
+	CV_StealthSet(&cv_ng_oldeggman, "Ring Racers");
+	CV_Set(&cv_ng_nerfdroptarget, "On");
+	CV_Set(&cv_ng_nerfflameshield, "On");
+	CV_Set(&cv_ng_nerfflameshielddiminish, "1.2");
+	CV_Set(&cv_ng_airtimerdrain, "On");
+	CV_StealthSet(&cv_ng_noireodds, "Noire");
+	CV_Set(&cv_ng_forceautoroulette, "On");
+	CV_SetValue(&cv_distvar, 2048);
+
+	// Mechanics
+	CV_Set(&cv_ng_fastfall, "On");
+	CV_Set(&cv_ng_fastfallbounce, "Bubble Shield");
+	CV_Set(&cv_ng_draft, "Off");
+	CV_Set(&cv_ng_wavedash, "Off");
+	CV_Set(&cv_ng_tumble, "Off");
+	CV_Set(&cv_ng_stumble, "Off");
+	CV_Set(&cv_ng_hitlag, "Off");
+	CV_Set(&cv_ng_combo, "Off");
+	CV_SetValue(&cv_ng_mapanger, 0);
+	CV_Set(&cv_ng_tripwires, "On");
+	CV_Set(&cv_ng_forcenoposition, "Off");
+	CV_Set(&cv_ng_dospecialstage, "On");
+
+	CV_Set(&cv_ng_lives, "On");
+	CV_Set(&cv_ng_continuesrank, "On");
+
+	CV_Set(&cv_ng_instawhip, "Off");
+	CV_SetValue(&cv_ng_instawhipcharge, 0);
+	CV_SetValue(&cv_ng_instawhiplockout, 0);
+	CV_Set(&cv_ng_instawhipdrain, "Off");
+
+	CV_Set(&cv_ng_spindash, "On");
+	CV_SetValue(&cv_ng_spindashthreshold, 6);
+	CV_SetValue(&cv_ng_spindashcharge, 0);
+	CV_Set(&cv_ng_spindashoverheat, "On");
+
+	CV_Set(&cv_ng_butteredslopes, "On");
+	CV_Set(&cv_ng_slopeclimb, "Off");
+	CV_Set(&cv_ng_stairjank, "None");
+	CV_Set(&cv_ng_turnstyle, "V1");
+	CV_Set(&cv_ng_underwaterhandling, "Off");
+	CV_Set(&cv_ng_oldpogooverride, "Off");
+	CV_Set(&cv_ng_nophysicsflag, "On");
+	CV_Set(&cv_ng_oldboostpower, "Off");
+	CV_Set(&cv_ng_oldspeedcalc, "Off");
+	CV_SetValue(&cv_ng_airspeedcap, 75);
+	CV_Set(&cv_ng_botrubberbandboost, "On");
+	CV_Set(&cv_ng_charsetrivals, "Off");
+	CV_Set(&cv_ng_rivals, "Off");
+	CV_SetValue(&cv_ng_rivaltopspeed, 8);
+	CV_SetValue(&cv_ng_rivalringpower, 0);
+	CV_Set(&cv_ng_rivalfrantic, "On");
+	CV_Set(&cv_ng_rivaldraft, "Off");
+}
+
+void N_SRB2KPreset(INT32 choice)
+{
+	(void)choice;
+	S_StartSound(NULL, sfx_forcsg);
+	// Rings
+	CV_Set(&cv_ng_rings, "Off");
+	CV_SetValue(&cv_ng_ringcap, 0);
+	CV_SetValue(&cv_ng_spillcap, 0);
+	CV_Set(&cv_ng_ringdebt, "Off");
+	CV_Set(&cv_ng_ringsting, "Off");
+	CV_SetValue(&cv_ng_ringdeathmark, -20);
+	CV_Set(&cv_ng_maprings, "Off");
+	CV_Set(&cv_ng_mapringboxes, "Off");
+	CV_Set(&cv_ng_ringboxtransform, "Off");
+
+	// Items
+	CV_Set(&cv_ng_forceoldboxscale, "Off");
+	CV_Set(&cv_ng_capsules, "Off");
+	CV_StealthSet(&cv_ng_oldorbinaut, "Kart");
+	CV_StealthSet(&cv_ng_oldjawz, "Kart");
+	CV_StealthSet(&cv_ng_oldhyudoro, "Kart");
+	CV_StealthSet(&cv_ng_oldballhog, "Kart");
+	CV_StealthSet(&cv_ng_oldspb, "Kart");
+	CV_StealthSet(&cv_ng_oldinvincibility, "Kart");
+	CV_StealthSet(&cv_ng_oldgrow, "Kart");
+	CV_StealthSet(&cv_ng_oldshrink, "Kart");
+	CV_StealthSet(&cv_ng_oldeggman, "Kart");
+	CV_Set(&cv_ng_nerfdroptarget, "On");
+	CV_Set(&cv_ng_nerfflameshield, "On");
+	CV_Set(&cv_ng_nerfflameshielddiminish, "1.2");
+	CV_Set(&cv_ng_airtimerdrain, "On");
+	CV_StealthSet(&cv_ng_noireodds, "Noire");
+	CV_Set(&cv_ng_forceautoroulette, "On");
+	CV_SetValue(&cv_distvar, 2048);
+
+	// Mechanics
+	CV_Set(&cv_ng_fastfall, "Off");
+	CV_Set(&cv_ng_fastfallbounce, "Off");
+	CV_Set(&cv_ng_draft, "Off");
+	CV_Set(&cv_ng_wavedash, "Off");
+	CV_Set(&cv_ng_tumble, "Off");
+	CV_Set(&cv_ng_stumble, "Off");
+	CV_Set(&cv_ng_hitlag, "Off");
+	CV_Set(&cv_ng_combo, "Off");
+	CV_SetValue(&cv_ng_mapanger, 0);
+	CV_Set(&cv_ng_tripwires, "On");
+	CV_Set(&cv_ng_forcenoposition, "Off");
+	CV_Set(&cv_ng_dospecialstage, "On");
+
+	CV_Set(&cv_ng_lives, "On");
+	CV_Set(&cv_ng_continuesrank, "On");
+
+	CV_Set(&cv_ng_instawhip, "Off");
+	CV_SetValue(&cv_ng_instawhipcharge, 0);
+	CV_SetValue(&cv_ng_instawhiplockout, 0);
+	CV_Set(&cv_ng_instawhipdrain, "Off");
+
+	CV_Set(&cv_ng_spindash, "Off");
+	CV_SetValue(&cv_ng_spindashthreshold, 6);
+	CV_SetValue(&cv_ng_spindashcharge, 0);
+	CV_Set(&cv_ng_spindashoverheat, "On");
+
+	CV_Set(&cv_ng_butteredslopes, "On");
+	CV_Set(&cv_ng_slopeclimb, "Off");
+	CV_Set(&cv_ng_stairjank, "None");
+	CV_Set(&cv_ng_turnstyle, "V1");
+	CV_Set(&cv_ng_underwaterhandling, "Off");
+	CV_Set(&cv_ng_oldpogooverride, "Off");
+	CV_Set(&cv_ng_nophysicsflag, "On");
+	CV_Set(&cv_ng_oldboostpower, "On");
+	CV_Set(&cv_ng_oldspeedcalc, "On");
+	CV_SetValue(&cv_ng_airspeedcap, 75);
+	CV_Set(&cv_ng_botrubberbandboost, "On");
+	CV_Set(&cv_ng_charsetrivals, "Off");
+	CV_Set(&cv_ng_rivals, "Off");
+	CV_SetValue(&cv_ng_rivaltopspeed, 8);
+	CV_SetValue(&cv_ng_rivalringpower, 0);
+	CV_Set(&cv_ng_rivalfrantic, "On");
+	CV_Set(&cv_ng_rivaldraft, "Off");
+}

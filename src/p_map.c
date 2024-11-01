@@ -1550,11 +1550,8 @@ static BlockItReturn_t PIT_CheckThing(mobj_t *thing)
 			{
 				if (g_tm.thing->hitlag == 0)
 				{
-
-					if (K_PvPTouchDamage(g_tm.thing, thing) == true)
-						K_KartBouncing(g_tm.thing, thing);
-					else
-						K_KartBouncing(g_tm.thing, thing);
+					K_PvPTouchDamage(g_tm.thing, thing);
+					K_KartBouncing(g_tm.thing, thing);
 				}
 			}
 			else

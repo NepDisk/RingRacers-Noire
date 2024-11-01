@@ -622,6 +622,8 @@ static int player_get(lua_State *L)
 		lua_pushinteger(L, plr->pogosidemove);
 	else if (fastcmp(field,"brakestop"))
 		lua_pushinteger(L, plr->brakestop);
+	else if (fastcmp(field,"growcancel"))
+		lua_pushinteger(L, plr->growcancel);
 
 	else if (fastcmp(field,"charflags"))
 		lua_pushinteger(L, plr->charflags);
@@ -1181,6 +1183,8 @@ static int player_set(lua_State *L)
 		plr->pogosidemove = luaL_checkinteger(L, 3);
 	else if (fastcmp(field,"brakestop"))
 		plr->brakestop = luaL_checkinteger(L, 3);
+	else if (fastcmp(field,"growcancel"))
+		plr->growcancel = luaL_checkinteger(L, 3);
 
 	//
 	else if (fastcmp(field,"charflags"))

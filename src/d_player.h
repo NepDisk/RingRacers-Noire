@@ -1074,6 +1074,8 @@ struct player_t
 	SINT8 pogosidemove;		// Used to store sidemove for pogo
 
 	UINT8 brakestop; // Brake stop for V1 movement code option.
+
+	INT16 growcancel; // Duration of grow canceling.
 };
 
 // WARNING FOR ANYONE ABOUT TO ADD SOMETHING TO THE PLAYER STRUCT, G_PlayerReborn WANTS YOU TO SUFFER
