@@ -5525,6 +5525,11 @@ static mobj_t *K_SpawnKartMissile(mobj_t *source, mobjtype_t type, angle_t an, I
 				nerf = FRACUNIT/4;
 				break;
 
+			case MT_JAWZ:
+				if (cv_ng_oldjawz.value)
+					nerf = FRACUNIT/4;
+				break;
+
 			case MT_BALLHOG:
 				nerf = FRACUNIT/8;
 				break;

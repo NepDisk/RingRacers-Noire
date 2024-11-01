@@ -47,10 +47,6 @@ void Obj_OrbinautOldThrown(mobj_t *th, fixed_t finalSpeed, SINT8 dir)
 		th->color = SKINCOLOR_GREY;
 	}
 
-
-	if (dir == -1)
-		finalSpeed = finalSpeed/8;
-
 	orbinaut_speed(th) = finalSpeed;
 
 	orbinaut_flags(th) |= ORBI_TRAIL;

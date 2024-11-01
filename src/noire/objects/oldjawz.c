@@ -252,8 +252,7 @@ void Obj_JawzOldThrown(mobj_t *th, fixed_t finalSpeed, SINT8 dir)
 
 	if (dir == -1)
 	{
-		// Slow down the top speed.
-		finalSpeed = finalSpeed / 8;
+		;
 	}
 	else
 	{
