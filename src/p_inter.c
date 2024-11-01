@@ -3231,6 +3231,9 @@ boolean P_DamageMobj(mobj_t *target, mobj_t *inflictor, mobj_t *source, INT32 da
 
 					K_TryHurtSoundExchange(target, source);
 
+					if (!cv_ng_hitlag.value)
+						K_PlayHitLagSFX(target, 5);
+
 					if (K_Cooperative() == false)
 					{
 						K_BattleAwardHit(source->player, player, inflictor, damage);

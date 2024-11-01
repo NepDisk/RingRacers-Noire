@@ -154,7 +154,7 @@ void K_SpawnSingleHitLagSpark(
 	Return:-
 		N/A
 --------------------------------------------------*/
-static void K_PlayHitLagSFX(mobj_t *victim, UINT8 tics)
+void K_PlayHitLagSFX(mobj_t *victim, UINT8 tics)
 {
 	sfxenum_t soundID = sfx_dmga1;
 
