@@ -54,6 +54,9 @@ void N_drawOldInput()
 	ticcmd_t *cmd = &stplyr->cmd;
 	fixed_t slide = K_GetDialogueSlide(FRACUNIT);
 
+	if (r_splitscreen)
+		return;
+
 	// Don't draw under dialouge boxes pls
 	if (slide)
 	{

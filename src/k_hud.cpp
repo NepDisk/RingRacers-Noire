@@ -3237,7 +3237,12 @@ static void K_drawRingCounter(boolean gametypeinfoshown)
 		// Lives
 		if (uselives)
 		{
+			boolean ringson = (cv_ng_ringcap.value > 0);
 			UINT8 *colormap = R_GetTranslationColormap(TC_DEFAULT, static_cast<skincolornum_t>(K_GetHudColor()), GTC_CACHE);
+
+			if (!ringson && cv_extendedspeedometer.value)
+				fy -= 12;
+
 			if (cv_highresportrait.value)
 				V_DrawFixedPatch((LAPS_X+rco+46)<<FRACBITS, (fy-5)<<FRACBITS, FRACUNIT >> 1, V_HUDTRANS|V_SLIDEIN|splitflags, faceprefix[stplyr->skin][FACE_WANTED], colormap);
 			else
@@ -3249,6 +3254,7 @@ static void K_drawRingCounter(boolean gametypeinfoshown)
 				if (livescount > 10)
 					livescount = 10;
 			}
+
 			using srb2::Draw;
 			Draw row = Draw(LAPS_X+rco+65, fy-4).flags(V_HUDTRANS|V_SLIDEIN|splitflags).font(Draw::Font::kThinTimer);
 			row.text("{}", livescount);
@@ -3398,6 +3404,7 @@ static void K_drawKartSpeedometer(boolean gametypeinfoshown)
 	INT32 stickerwidth = 42;
 	INT32 secondoff = 41;
 	UINT8 *colormap;
+	boolean ringson = (cv_ng_ringcap.value > 0);
 
 	//Just set something here for now
 	colormap = R_GetTranslationColormap(TC_DEFAULT,SKINCOLOR_GREEN,GTC_CACHE);
@@ -3407,7 +3414,7 @@ static void K_drawKartSpeedometer(boolean gametypeinfoshown)
 		fy -= 2;
 	}
 
-	if (cv_ng_ringcap.value == 0)
+	if (!ringson && !battleprisons)
 	{
 		fy += 15;
 	}
@@ -3498,7 +3505,10 @@ static void K_drawKartSpeedometer(boolean gametypeinfoshown)
 		V_DrawFixedPatch((LAPS_X+29+secondoff)*FRACUNIT, (fy)<<FRACBITS, FRACUNIT, V_HUDTRANS|V_SLIDEIN|splitflags, kp_speedometerlabel[labeln],colormap);
 	}
 
-	K_drawKartAccessibilityIcons(gametypeinfoshown, 56+secondoff);
+	if (cv_extendedspeedometer.value && (cv_kartspeedometer.value != 1))
+		K_drawKartAccessibilityIcons(gametypeinfoshown, 56+secondoff);
+	else
+		K_drawKartAccessibilityIcons(gametypeinfoshown, 56);
 }
 
 static void K_drawBlueSphereMeter(boolean gametypeinfoshown)
@@ -6527,7 +6537,7 @@ void K_drawKartHUD(void)
 				}
 				else if (!islonesome && !K_Cooperative())
 				{
-					if (cv_oldpositiondisplay.value)
+					if (cv_oldpositiondisplay.value && !r_splitscreen)
 						N_DrawKartOldPositionNum(stplyr->position);
 					else
 						K_DrawKartPositionNum(stplyr->position);
