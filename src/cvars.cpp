@@ -1260,7 +1260,7 @@ consvar_t cv_ng_stairjank = UnsavedNetVar("ng_stairjank", "All").values({
 	{1, "Bumpy roads only"},
 	{2, "All"},
 });
-consvar_t cv_ng_turnstyle = UnsavedNetVar("ng_turnstyle", "Vanilla").values({
+consvar_t cv_ng_turnstyle = UnsavedNetVar("ng_turnstyle", "V1").values({
 	{0, "V1"},
 	{1, "V2 Indev"},
 	{2, "Tweaked"},
