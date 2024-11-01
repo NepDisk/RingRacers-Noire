@@ -2564,13 +2564,21 @@ void PositionFacesInfo::draw_1p()
 				colormap = R_GetTranslationColormap(workingskin, static_cast<skincolornum_t>(players[rankplayer[i]].mo->color), GTC_CACHE);
 
 			//hires ranking portraits
-			//V_DrawMappedPatch(FACE_X + xoff, Y + yoff, V_HUDTRANS|V_SLIDEIN|V_SNAPTOLEFT|flipflag, faceprefix[workingskin][FACE_RANK], colormap);
-			V_DrawFixedPatch((FACE_X + xoff)<<FRACBITS,
-				(Y + yoff)<<FRACBITS,
-				FRACUNIT >> 1,
+
+			if (cv_highresportrait.value)
+			{
+				V_DrawFixedPatch((FACE_X + xoff)<<FRACBITS, (Y + yoff)<<FRACBITS, FRACUNIT >> 1,
 				V_HUDTRANS|V_SLIDEIN|V_SNAPTOLEFT|flipflag,
 				faceprefix[workingskin][FACE_WANTED], colormap
 			);
+
+			}
+			else
+			{
+				V_DrawMappedPatch(FACE_X + xoff, Y + yoff, V_HUDTRANS|V_SLIDEIN|V_SNAPTOLEFT|flipflag, faceprefix[workingskin][FACE_RANK], colormap);
+			}
+
+			/**/
 			//(x)<<FRACBITS, (y)<<FRACBITS, FRACUNIT, s, p, c)
 
 			if (LUA_HudEnabled(hud_battlebumpers))
@@ -3404,18 +3412,22 @@ static void K_drawKartSpeedometer(boolean gametypeinfoshown)
 			case 2: // Kilometers
 				convSpeed = FixedDiv(FixedMul(stplyr->speed, 142371), mapobjectscale) / FRACUNIT; // 2.172409058
 				labeln = 1;
-				stickerwidth = 84;
+				if (cv_extendedspeedometer.value)
+					stickerwidth = 84;
+
 				secondoff = 43;
 				break;
 			case 3: // Miles
 				convSpeed = FixedDiv(FixedMul(stplyr->speed, 88465), mapobjectscale) / FRACUNIT; // 1.349868774
 				labeln = 2;
-				stickerwidth = 82;
+				if (cv_extendedspeedometer.value)
+					stickerwidth = 82;
 				break;
 			case 4: // Fracunits
 				convSpeed = FixedDiv(stplyr->speed, mapobjectscale) / FRACUNIT; // 1.0. duh.
 				labeln = 3;
-				stickerwidth = 82;
+				if (cv_extendedspeedometer.value)
+					stickerwidth = 82;
 				break;
 		}
 
@@ -3457,7 +3469,7 @@ static void K_drawKartSpeedometer(boolean gametypeinfoshown)
 	V_DrawFixedPatch((LAPS_X+29)*FRACUNIT, (fy)<<FRACBITS, FRACUNIT, V_HUDTRANS|V_SLIDEIN|splitflags, kp_speedometerlabel[labeln],colormap);
 
 	//still draw percentage if we're using something else
-	if (cv_kartspeedometer.value != 1)
+	if (cv_kartspeedometer.value != 1 && cv_extendedspeedometer.value)
 	{
 		//Copy shit lmao
 		convSpeed = (stplyr->speed * 100) / K_GetKartSpeed(stplyr, false, true); // Based on top speed!

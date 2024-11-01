@@ -528,6 +528,8 @@ consvar_t cv_colorizedhudcolor = Player("colorizedhudcolor", "Skin Color").value
 
 consvar_t cv_oldinputdisplay = Player("oldinputdisplay", "On").on_off();
 consvar_t cv_oldpositiondisplay = Player("oldpositiondisplay", "On").on_off();
+consvar_t cv_extendedspeedometer = Player("extendedspeedometer", "Off").on_off();
+consvar_t cv_highresportrait = Player("highresportrait", "Off").on_off();
 
 // HEP2 cvars....
 // Should probably make this profile specific...

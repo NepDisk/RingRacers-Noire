@@ -66,6 +66,12 @@ menuitem_t OPTIONS_Noire[] =
 
 	{IT_STRING | IT_CVAR, "Kart Position Display", "Use the position display from SRB2Kart.",
 		NULL, {.cvar = &cv_oldpositiondisplay}, 0, 0},
+
+	{IT_STRING | IT_CVAR, "Extended Speedometer", "When not using percentage, show it alongside your current.",
+		NULL, {.cvar = &cv_extendedspeedometer}, 0, 0},
+
+	{IT_STRING | IT_CVAR, "Hires Portrait", "Enable the use of the higher resolution character icons in some places",
+		NULL, {.cvar = &cv_highresportrait}, 0, 0},
 		
 	{IT_HEADER, "Sound/Music...", NULL,
 		NULL, {NULL}, 0, 0},
