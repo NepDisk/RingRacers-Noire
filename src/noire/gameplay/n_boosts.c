@@ -151,7 +151,7 @@ fixed_t N_GetNewSpeed(const player_t *player)
 	fixed_t newspeed, oldspeed, finalspeed;
 	fixed_t p_speed = N_GetKartSpeed(player, true, true);
 	fixed_t p_accel = N_GetKartAccel(player);
-	boolean onground = P_IsObjectOnGround(player->mo);
+	boolean onground = (P_IsObjectOnGround(player->mo) || player->pogospring);
 
 	if (!onground) return 0; // If the player isn't on the ground, there is no change in speed
 
