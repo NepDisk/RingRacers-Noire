@@ -495,6 +495,8 @@ static void P_ClearSingleMapHeaderInfo(INT16 num)
 	P_ClearMapHeaderLighting(&mapheaderinfo[num]->lighting);
 	P_ClearMapHeaderLighting(&mapheaderinfo[num]->lighting_encore);
 	mapheaderinfo[num]->use_encore_lighting = false;
+	mapheaderinfo[num]->legacyboxscale = false;
+	mapheaderinfo[num]->legacystart = false;
 #if 1 // equivalent to "Followers = DEFAULT"
 	P_SetDefaultHeaderFollowers(num);
 #else
