@@ -3225,7 +3225,10 @@ static void K_drawRingCounter(boolean gametypeinfoshown)
 		if (uselives)
 		{
 			UINT8 *colormap = R_GetTranslationColormap(TC_DEFAULT, static_cast<skincolornum_t>(K_GetHudColor()), GTC_CACHE);
-			V_DrawMappedPatch(LAPS_X+rco+46, fy-5, V_HUDTRANS|V_SLIDEIN|splitflags, faceprefix[stplyr->skin][FACE_RANK], colormap);
+			if (cv_highresportrait.value)
+				V_DrawFixedPatch((LAPS_X+rco+46)<<FRACBITS, (fy-5)<<FRACBITS, FRACUNIT >> 1, V_HUDTRANS|V_SLIDEIN|splitflags, faceprefix[stplyr->skin][FACE_WANTED], colormap);
+			else
+				V_DrawMappedPatch(LAPS_X+rco+46, fy-5, V_HUDTRANS|V_SLIDEIN|splitflags, faceprefix[stplyr->skin][FACE_RANK], colormap);
 			SINT8 livescount = 0;
 			if (stplyr->lives > 0)
 			{
