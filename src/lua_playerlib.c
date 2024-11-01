@@ -615,6 +615,14 @@ static int player_get(lua_State *L)
 	else if (fastcmp(field,"tulipbuf"))
 		lua_pushinteger(L, plr->tulipbuf);
 
+	// Noire stuff
+	else if (fastcmp(field,"pogospring"))
+		lua_pushinteger(L, plr->pogospring);
+	else if (fastcmp(field,"pogosidemove"))
+		lua_pushinteger(L, plr->pogosidemove);
+	else if (fastcmp(field,"brakestop"))
+		lua_pushinteger(L, plr->brakestop);
+
 	else if (fastcmp(field,"charflags"))
 		lua_pushinteger(L, plr->charflags);
 	else if (fastcmp(field,"followitem"))
@@ -868,7 +876,7 @@ static int player_set(lua_State *L)
 		plr->gateSound = luaL_checkinteger(L, 3);
 	else if (fastcmp(field,"startboost"))
 		plr->startboost = luaL_checkinteger(L, 3);
-	else if (fastcmp(field,"aizdriftstraft"))
+	else if (fastcmp(field,"aizdriftstrat"))
 		plr->aizdriftstrat = luaL_checkinteger(L, 3);
 	else if (fastcmp(field,"aizdrifttilt"))
 		plr->aizdrifttilt = luaL_checkinteger(L, 3);
@@ -1165,6 +1173,14 @@ static int player_set(lua_State *L)
 		plr->tuliplaunch = luaL_checkinteger(L, 3);
 	else if (fastcmp(field,"tulipbuf"))
 		plr->tulipbuf = luaL_checkinteger(L, 3);
+
+	// Noire Stuff
+	else if (fastcmp(field,"pogospring"))
+		plr->pogospring = luaL_checkinteger(L, 3);
+	else if (fastcmp(field,"pogospringsidemove"))
+		plr->pogosidemove = luaL_checkinteger(L, 3);
+	else if (fastcmp(field,"brakestop"))
+		plr->brakestop = luaL_checkinteger(L, 3);
 
 	//
 	else if (fastcmp(field,"charflags"))

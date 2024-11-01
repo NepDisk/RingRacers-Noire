@@ -168,6 +168,8 @@ void P_ParseAnimationDefintion(void);
   * \author Steven McGranahan (original), Shadow Hog (had to rewrite it to handle multiple WADs), JTE (had to rewrite it to handle multiple WADs _correctly_)
   */
 
+static boolean animdeftempflats = false;
+
 void P_InitPicAnims(void)
 {
 	// Init animation
@@ -187,6 +189,7 @@ void P_InitPicAnims(void)
 
 		while (animdefsLumpNum != INT16_MAX)
 		{
+			animdeftempflats = ((partadd_earliestfile == UINT16_MAX) || partadd_earliestfile == w);
 			P_ParseANIMDEFSLump(w, animdefsLumpNum);
 			animdefsLumpNum = W_CheckNumForNamePwad("ANIMDEFS", (UINT16)w, animdefsLumpNum + 1);
 		}
@@ -208,14 +211,22 @@ void P_InitPicAnims(void)
 	lastanim = anims;
 	for (i = 0; animdefs[i].istexture != -1; i++)
 	{
-		if (animdefs[i].istexture != 1)
-			continue;
+		if (animdefs[i].istexture == 1)
+		{
+			if (R_CheckTextureNumForName(animdefs[i].startname) == -1)
+				continue;
 
-		if (R_CheckTextureNumForName(animdefs[i].startname) == -1)
-			continue;
+			lastanim->picnum = R_TextureNumForName(animdefs[i].endname);
+			lastanim->basepic = R_TextureNumForName(animdefs[i].startname);
+		}
+		else
+		{
+			if ((W_CheckNumForName(animdefs[i].startname)) == LUMPERROR)
+				continue;
 
-		lastanim->picnum = R_TextureNumForName(animdefs[i].endname);
-		lastanim->basepic = R_TextureNumForName(animdefs[i].startname);
+			lastanim->picnum = R_GetFlatNumForName(animdefs[i].endname);
+			lastanim->basepic = R_GetFlatNumForName(animdefs[i].startname);
+		}
 
 		lastanim->istexture = animdefs[i].istexture;
 		lastanim->numpics = lastanim->picnum - lastanim->basepic + 1;
