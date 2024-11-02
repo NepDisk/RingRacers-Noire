@@ -137,21 +137,14 @@ Default Value: "Off"
 
 Choices: "Off", "On"
 
-sets if flipcam is enabled, this is profile tied so its probably better to set there
-
-#### flipcam - flipcam4
-Default Value: "Off"
-
-Choices: "Off", "On"
-
-sets if flipcam is enabled, this is profile tied so its probably better to set there
+Sets if flipcam is enabled, this is profile tied so its probably better to set there.
 
 #### oldtricks - oldtricks4
 Default Value: "Off"
 
 Choices: "Off", "On"
 
-sets if oldtricks is enabled, this is profile tied so its probably better to set there
+Sets if oldtricks is enabled, this is profile tied so its probably better to set there.
 
 ## Gameplay Cvars
 These are Cvars the affect the actual gameplay. These values are netsynched but not saved.
