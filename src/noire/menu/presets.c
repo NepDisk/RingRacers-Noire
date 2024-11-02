@@ -81,6 +81,7 @@ void N_RRVanillaPreset(INT32 choice)
 	CV_Set(&cv_ng_slopehelper, "Off");
 	CV_Set(&cv_ng_slopehelperspeedboost, "1.2");
 	CV_Set(&cv_ng_slopehelperaccelboost, "1.25");
+	CV_Set(&cv_ng_stairjank, "All");
 	CV_Set(&cv_ng_turnstyle, "Vanilla");
 	CV_Set(&cv_ng_underwaterhandling, "On");
 	CV_Set(&cv_ng_oldpogooverride, "Off");

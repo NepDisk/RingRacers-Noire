@@ -83,10 +83,10 @@ menuitem_t OPTIONS_Noire[] =
 		NULL, {.cvar = &cv_menumusic}, 0, 0},
 
 	{IT_STRING | IT_CVAR, "Spectator Music", "Toggles the ability to use separate music while spectating.",
-		NULL, {.cvar = &cv_postracemusic}, 0, 0},
+		NULL, {.cvar = &cv_spectatormusic}, 0, 0},
 
 	{IT_STRING | IT_CVAR | IT_CV_STRING, "Spectator Music", "Music lump to use in spectator. Nothing or invalid lump means no music",
-		NULL, {.cvar = &cv_menumusic}, 0, 0},
+		NULL, {.cvar = &cv_spectatormusiclump}, 0, 0},
 		
 	{IT_STRING | IT_CVAR, "Final Rank Intermissions", "Toggles the ability to use separate intermission music lumps based on your final rank.",
 		NULL, {.cvar = &cv_postracemusic}, 0, 0},

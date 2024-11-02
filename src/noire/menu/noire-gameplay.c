@@ -81,7 +81,7 @@ menuitem_t OPTIONS_NoireGameplayRings[] =
 		NULL, {.cvar = &cv_ng_maprings}, 0, 0},
 
 	{IT_STRING | IT_CVAR, "Spawn Ring Capsules", "Will ring capsules appear on tracks.",
-		NULL, {.cvar = &cv_ng_maprings}, 0, 0},
+		NULL, {.cvar = &cv_ng_mapringcapsules}, 0, 0},
 
 	{IT_STRING | IT_CVAR, "Spawn Ring Boxes", "Enable or disable Ring Boxes appearance in tracks.",
 		NULL, {.cvar = &cv_ng_mapringboxes}, 0, 0},
