@@ -1086,7 +1086,12 @@ offroadhandle:
 
 	// - Being affected by offroad
 	// Using acutal offroad check here to prevent lua boostpower modifications from spawning the offroad particles - Nep
-	if (!(K_ApplyOffroad(mo->player) && mo->player->offroad > 0))
+	if (!(K_ApplyOffroad(mo->player) && mo->player->offroad > 0) && !(mo->player->bananadrag > TICRATE))
+	{
+		return;
+	}
+
+	if  (!P_IsObjectOnGround(mo))
 	{
 		return;
 	}
