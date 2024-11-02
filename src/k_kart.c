@@ -178,7 +178,7 @@ static void K_SpawnItemCapsules(void)
 		}
 
 		isRingCapsule = (mt->thing_args[0] < 1 || mt->thing_args[0] == KITEM_SUPERRING || mt->thing_args[0] >= NUMKARTITEMS);
-		if (isRingCapsule == true && ((gametyperules & GTR_SPHERES) || (modeattacking & ATTACKING_SPB)))
+		if (isRingCapsule == true && ((gametyperules & GTR_SPHERES) || (modeattacking & ATTACKING_SPB) || !cv_ng_mapringcapsules.value))
 		{
 			// don't spawn ring capsules in ringless gametypes
 			continue;
@@ -8864,6 +8864,9 @@ void K_KartPlayerThink(player_t *player, ticcmd_t *cmd)
 		N_GetKartBoostPower(player);
 	else
 		K_GetKartBoostPower(player);
+
+	if (cv_ng_slopehelper.value)
+		N_SlopeHelper(player);
 
 	// Special effect objects!
 	if (player->mo && !player->spectator)

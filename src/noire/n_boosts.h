@@ -34,6 +34,7 @@ void N_GetKartBoostPower(player_t *player);
 fixed_t N_GetNewSpeed(const player_t *player);
 fixed_t N_3dKartMovement(const player_t *player);
 void N_AdjustPlayerFriction(player_t *player, boolean onground);
+void N_SlopeHelper(player_t *player);
 
 #ifdef __cplusplus
 } // extern "C"

@@ -25,6 +25,7 @@ void N_RRVanillaPreset(INT32 choice)
 	CV_Set(&cv_ng_ringsting, "On");
 	CV_SetValue(&cv_ng_ringdeathmark, -20);
 	CV_Set(&cv_ng_maprings, "On");
+	CV_Set(&cv_ng_mapringcapsules, "On");
 	CV_Set(&cv_ng_mapringboxes, "On");
 	CV_Set(&cv_ng_ringboxtransform, "On");
 
@@ -77,7 +78,9 @@ void N_RRVanillaPreset(INT32 choice)
 
 	CV_Set(&cv_ng_butteredslopes, "On");
 	CV_Set(&cv_ng_slopeclimb, "On");
-	CV_Set(&cv_ng_stairjank, "All");
+	CV_Set(&cv_ng_slopehelper, "Off");
+	CV_Set(&cv_ng_slopehelperspeedboost, "1.2");
+	CV_Set(&cv_ng_slopehelperaccelboost, "1.25");
 	CV_Set(&cv_ng_turnstyle, "Vanilla");
 	CV_Set(&cv_ng_underwaterhandling, "On");
 	CV_Set(&cv_ng_oldpogooverride, "Off");
@@ -107,6 +110,7 @@ void N_NoirePreset(INT32 choice)
 	CV_Set(&cv_ng_ringsting, "Off");
 	CV_SetValue(&cv_ng_ringdeathmark, -20);
 	CV_Set(&cv_ng_maprings, "Off");
+	CV_Set(&cv_ng_mapringcapsules, "Off");
 	CV_Set(&cv_ng_mapringboxes, "Off");
 	CV_Set(&cv_ng_ringboxtransform, "Off");
 
@@ -159,6 +163,9 @@ void N_NoirePreset(INT32 choice)
 
 	CV_Set(&cv_ng_butteredslopes, "On");
 	CV_Set(&cv_ng_slopeclimb, "Off");
+	CV_Set(&cv_ng_slopehelper, "On");
+	CV_Set(&cv_ng_slopehelperspeedboost, "1.2");
+	CV_Set(&cv_ng_slopehelperaccelboost, "1.25");
 	CV_Set(&cv_ng_stairjank, "None");
 	CV_Set(&cv_ng_turnstyle, "V1");
 	CV_Set(&cv_ng_underwaterhandling, "Off");
@@ -188,6 +195,7 @@ void N_SRB2KPreset(INT32 choice)
 	CV_Set(&cv_ng_ringsting, "Off");
 	CV_SetValue(&cv_ng_ringdeathmark, -20);
 	CV_Set(&cv_ng_maprings, "Off");
+	CV_Set(&cv_ng_mapringcapsules, "Off");
 	CV_Set(&cv_ng_mapringboxes, "Off");
 	CV_Set(&cv_ng_ringboxtransform, "Off");
 
@@ -240,6 +248,9 @@ void N_SRB2KPreset(INT32 choice)
 
 	CV_Set(&cv_ng_butteredslopes, "On");
 	CV_Set(&cv_ng_slopeclimb, "Off");
+	CV_Set(&cv_ng_slopehelper, "On");
+	CV_Set(&cv_ng_slopehelperspeedboost, "1.2");
+	CV_Set(&cv_ng_slopehelperaccelboost, "1.25");
 	CV_Set(&cv_ng_stairjank, "None");
 	CV_Set(&cv_ng_turnstyle, "V1");
 	CV_Set(&cv_ng_underwaterhandling, "Off");

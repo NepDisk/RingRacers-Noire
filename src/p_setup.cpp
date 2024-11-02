@@ -8331,12 +8331,12 @@ void P_LoadLevelMusic(void)
 			Music_BatchExempt("level_nosync");
 		}
 		Music_StopAll();
-		Music_Remap("level_nosync", players[consoleplayer].spectator ? "SPECTR" : music);
+		Music_Remap("level_nosync", (players[consoleplayer].spectator && cv_spectatormusic.value) ? cv_spectatormusiclump.string : music);
 	}
 	else
 	{
 		Music_StopAll();
-		Music_Remap("level", players[consoleplayer].spectator ? "SPECTR" : music);
+		Music_Remap("level", (players[consoleplayer].spectator && cv_spectatormusic.value) ? cv_spectatormusiclump.string : music);
 
 		if (!players[consoleplayer].spectator)
 		{

@@ -77,7 +77,10 @@ menuitem_t OPTIONS_NoireGameplayRings[] =
 	{IT_STRING | IT_CVAR, "Ring Deathmark", "Racer dies upon taking damage if ring count is equal to or below this value.",
 		NULL, {.cvar = &cv_ng_ringdeathmark}, 0, 0},
 
-	{IT_STRING | IT_CVAR, "Spawn Rings", "Will rings appear in tracks.",
+	{IT_STRING | IT_CVAR, "Spawn Rings", "Will rings appear on tracks.",
+		NULL, {.cvar = &cv_ng_maprings}, 0, 0},
+
+	{IT_STRING | IT_CVAR, "Spawn Ring Capsules", "Will ring capsules appear on tracks.",
 		NULL, {.cvar = &cv_ng_maprings}, 0, 0},
 
 	{IT_STRING | IT_CVAR, "Spawn Ring Boxes", "Enable or disable Ring Boxes appearance in tracks.",
@@ -257,11 +260,14 @@ menuitem_t OPTIONS_NoireGameplayAttack[] =
 ///////////
 menuitem_t OPTIONS_NoireGameplayDriving[] =
 {
-	{IT_STRING | IT_CVAR, "Slope Physics", "Enable or disable slope physics.",
+	{IT_STRING | IT_CVAR, "Slope Physics", "Enable or disable slope physics entirely for both up and down.",
 		NULL, {.cvar = &cv_ng_butteredslopes}, 0, 0},
 
 	{IT_STRING | IT_CVAR, "Slope Resistance", "Enable or disable harder slope climbing.",
 		NULL, {.cvar = &cv_ng_slopeclimb}, 0, 0},
+
+	{IT_STRING | IT_CVAR, "Slope Helper", "A helper boost for climbing slopes. Good for no ring setups.",
+		NULL, {.cvar = &cv_ng_slopehelper}, 0, 0},
 
 	{IT_STRING | IT_CVAR, "Stairjank", "Toggle slipperyness given by stairs and certain terrain types.",
 		NULL, {.cvar = &cv_ng_stairjank}, 0, 0},
@@ -383,6 +389,7 @@ void NG_Rings_OnChange(void)
 		CV_Set(&cv_ng_ringsting, "On");
 		CV_Set(&cv_ng_ringdeathmark, "-20");
 		CV_Set(&cv_ng_maprings, "On");
+		CV_Set(&cv_ng_mapringcapsules, "On");
 		CV_Set(&cv_ng_mapringboxes, "On");
 		CV_Set(&cv_ng_ringboxtransform, "On");
 
@@ -399,6 +406,7 @@ void NG_Rings_OnChange(void)
 		CV_Set(&cv_ng_ringsting, "Off");
 		CV_Set(&cv_ng_ringdeathmark, "-20");
 		CV_Set(&cv_ng_maprings, "Off");
+		CV_Set(&cv_ng_mapringcapsules, "Off");
 		CV_Set(&cv_ng_mapringboxes, "Off");
 		CV_Set(&cv_ng_ringboxtransform, "Off");
 

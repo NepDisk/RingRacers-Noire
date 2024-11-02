@@ -623,3 +623,45 @@ void N_AdjustPlayerFriction(player_t *player, boolean onground)
 
 	}
 }
+
+// Based on indevs slopehelper script, Thanks!
+void N_SlopeHelper(player_t *player)
+{
+	fixed_t speedval = cv_ng_slopehelperspeedboost.value;
+	fixed_t accelval = cv_ng_slopehelperaccelboost.value;
+	pslope_t *slope = player->mo->standingslope;
+	boolean flip = !(player->mo->eflags & MFE_VERTICALFLIP);
+	angle_t momangle = player->mo->angle;
+	angle_t hillangle = 0;
+	fixed_t anglemult;
+	fixed_t slopemult;
+	fixed_t mult;
+	fixed_t addedboost;
+	fixed_t addedaccel;
+
+	if (!slope || (player->offroad && K_ApplyOffroad(player)))
+		return;
+
+	if ((((int)slope->zangle > 0) && flip) || (((int)slope->zangle < 0) && (!flip)))
+		hillangle = momangle - slope->xydirection;
+	else
+		hillangle = momangle - (slope->xydirection + ANGLE_180);
+
+	hillangle = max(abs((int)hillangle) - ANG1*3, 0); // ANG1*3 somehow fixes some slopes???
+
+	if (hillangle >= ANGLE_90)
+		return;
+
+	anglemult = FixedDiv(AngleFixed(ANGLE_90-hillangle), 90*FRACUNIT);
+	slopemult = FixedDiv(AngleFixed(min(abs((int)slope->zangle)+ANG1*3, ANGLE_90)), 90*FRACUNIT);
+
+	mult = FixedMul(anglemult, slopemult);
+
+	addedboost = min(FixedMul(mult, speedval), FRACUNIT);
+	addedaccel = FixedMul(mult, accelval);
+
+	//CONS_Printf("addedboost: %d\naddedaccel: %d\n",addedboost,addedaccel);
+
+	player->speedboost = max(player->speedboost, addedboost);
+	player->accelboost = max(player->accelboost, addedaccel);
+}

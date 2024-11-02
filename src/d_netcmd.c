@@ -73,6 +73,9 @@
 #include "k_bans.h"
 #include "k_director.h"
 #include "k_credits.h"
+#include "music.h"
+
+#include "noire/n_cvar.h"
 
 #include "fastcmp.h"
 
@@ -3717,6 +3720,24 @@ void P_SetPlayerSpectator(INT32 playernum)
 	players[playernum].pflags &= ~PF_WANTSTOJOIN;
 
 	players[playernum].playerstate = PST_REBORN;
+
+	if (cv_spectatormusic.value)
+	{
+		if (P_UseContinuousLevelMusic())
+		{
+			if (!stricmp(Music_Song("level_nosync"), cv_spectatormusiclump.string))
+			{
+				//  Do not reset music if it is the same
+				Music_BatchExempt("level_nosync");
+			}
+			Music_Remap("level_nosync", cv_spectatormusiclump.string);
+		}
+		else
+		{
+			Music_Remap("level", cv_spectatormusiclump.string);
+		}
+	}
+
 }
 
 //todo: This and the other teamchange functions are getting too long and messy. Needs cleaning.

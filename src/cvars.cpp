@@ -531,6 +531,9 @@ consvar_t cv_oldpositiondisplay = Player("oldpositiondisplay", "On").on_off();
 consvar_t cv_extendedspeedometer = Player("extendedspeedometer", "Off").on_off();
 consvar_t cv_highresportrait = Player("highresportrait", "Off").on_off();
 
+consvar_t cv_spectatormusic = Player("spectatormusic", "Off").on_off(); // Special spectator Music while watching a race
+consvar_t cv_spectatormusiclump = Player("spectatormusiclump", ""); // none means no music.
+
 // HEP2 cvars....
 // Should probably make this profile specific...
 consvar_t cv_saltyhop = Player("saltyhop", "Off").on_off();
@@ -855,6 +858,7 @@ consvar_t cv_ng_ringdebt = UnsavedNetVar("ng_ringdebt", "On").on_off();
 consvar_t cv_ng_ringsting = UnsavedNetVar("ng_ringsting", "On").on_off();
 consvar_t cv_ng_ringdeathmark = UnsavedNetVar("ng_ringdeathmark", "Default (-20)").min_max(INT8_MIN, INT8_MAX, {{-20, "Default (-20)"}});
 consvar_t cv_ng_maprings = UnsavedNetVar("ng_maprings", "On").on_off().onchange_noinit(NG_Generic_OnChange);
+consvar_t cv_ng_mapringcapsules = UnsavedNetVar("ng_mapringcapsules", "On").on_off().onchange_noinit(NG_Generic_OnChange);
 consvar_t cv_ng_mapringboxes = UnsavedNetVar("ng_mapringboxes", "On").on_off();
 consvar_t cv_ng_ringboxtransform = UnsavedNetVar("ng_ringboxtransform", "On").on_off();
 
@@ -1259,6 +1263,9 @@ consvar_t cv_ng_spindashoverheat = UnsavedNetVar("ng_spindashoverheat", "On").on
 void NG_OldPogoOverride_OnChange(void);
 consvar_t cv_ng_butteredslopes = UnsavedNetVar("ng_slopephysics", "On").on_off();
 consvar_t cv_ng_slopeclimb = UnsavedNetVar("ng_sloperesistance", "On").on_off();
+consvar_t cv_ng_slopehelper = UnsavedNetVar("ng_slopehelper", "Off").on_off();
+consvar_t cv_ng_slopehelperspeedboost = UnsavedNetVar("ng_slopehelper_speedboost", "1.2").floating_point();
+consvar_t cv_ng_slopehelperaccelboost = UnsavedNetVar("ng_slopehelper_accelboost", "1.25").floating_point();
 consvar_t cv_ng_stairjank = UnsavedNetVar("ng_stairjank", "All").values({
 	{0, "None"},
 	{1, "Bumpy roads only"},
@@ -1342,7 +1349,7 @@ extern CV_PossibleValue_t numlaps_cons_t[];
 void NumLaps_OnChange(void);
 consvar_t cv_numlaps = OnlineCheat("numlaps", "Map default").values(numlaps_cons_t).onchange(NumLaps_OnChange).description("Race maps always have the same number of laps");
 
-consvar_t cv_restrictskinchange = OnlineCheat("restrictskinchange", "Yes").yes_no().description("Don't let players change their skin in the middle of gameplay");
+consvar_t cv_restrictskinchange = OnlineCheat("restrictskinchange", "No").yes_no().description("Don't let players change their skin in the middle of gameplay");
 consvar_t cv_spbtest = OnlineCheat("spbtest", "Off").on_off().description("SPB can never target a player");
 consvar_t cv_showgremlins = OnlineCheat("showgremlins", "No").yes_no().description("Show line collision errors");
 consvar_t cv_timescale = OnlineCheat(cvlist_timer)("timescale", "1.0").floating_point().min_max(FRACUNIT/20, 20*FRACUNIT).description("Overclock or slow down the game");

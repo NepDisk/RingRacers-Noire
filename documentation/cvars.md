@@ -94,6 +94,16 @@ Default Value: ""
 
 Set this value to the lump name of an audio track to use that for the title screen music.
 
+#### spectatormusic
+Default Value: "Off"
+
+Choices: "Off", "On"
+
+#### spectatormusiclump
+Default Value: ""
+
+Set this value to the lump name of an audio track to use that for the spectator music.
+
 #### postracemusic
 Default Value: "Off"
 
@@ -172,6 +182,13 @@ Default Value: "On"
 Choices: "Off", "On"
 
 Sets if rings can spawn on map start.
+
+#### ng_mapringcapsules
+Default Value: "On"
+
+Choices: "Off", "On"
+
+Sets if ring capsules can spawn on map start.
 
 #### ng_mapringboxes
 Default Value: "On"
@@ -500,7 +517,27 @@ Default Value: "On"
 
 Choices: "Off", "On"
 
-When disabled the player will be slope climbing assistance.
+When disabled this makes it slighty easier to climb slopes.
+
+#### ng_slopehelper
+Default Value: "Off"
+
+Choices: "Off", "On"
+
+This is a hardcoded version of Indev's SlopeHelper script.
+When enabled this give the player a boost when going up slopes to make them less harsh.
+Good for when you want the downward slopeboost but not the slowdown from going up.
+Also good for ringless setups as it makes it possible to climb steep slopes without boosts.
+
+#### ng_slopehelper_speedboost
+Default Value: "1.2"
+
+Speed value used for sloehelper speedboost calculation.
+
+#### ng_slopehelper_accelboost
+Default Value: "1.25"
+
+Accel value used for sloehelper speedboost calculation.
 
 #### ng_stairjank
 Default Value: "All"

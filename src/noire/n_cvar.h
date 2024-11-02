@@ -26,6 +26,8 @@ extern consvar_t cv_oldinputdisplay;
 extern consvar_t cv_oldpositiondisplay;
 extern consvar_t cv_extendedspeedometer;
 extern consvar_t cv_highresportrait;
+extern consvar_t cv_spectatormusic;
+extern consvar_t cv_spectatormusiclump;
 
 //Rings
 extern consvar_t cv_ng_rings;
@@ -35,6 +37,7 @@ extern consvar_t cv_ng_ringdebt;
 extern consvar_t cv_ng_ringsting;
 extern consvar_t cv_ng_ringdeathmark;
 extern consvar_t cv_ng_maprings;
+extern consvar_t cv_ng_mapringcapsules;
 extern consvar_t cv_ng_mapringboxes;
 extern consvar_t cv_ng_ringboxtransform;
 
@@ -107,6 +110,9 @@ extern consvar_t cv_ng_spindashoverheat;
 //Driving
 extern consvar_t cv_ng_butteredslopes;
 extern consvar_t cv_ng_slopeclimb;
+extern consvar_t cv_ng_slopehelper;
+extern consvar_t cv_ng_slopehelperspeedboost;
+extern consvar_t cv_ng_slopehelperaccelboost;
 extern consvar_t cv_ng_stairjank;
 extern consvar_t cv_ng_turnstyle;
 extern consvar_t cv_ng_oldpogooverride;
