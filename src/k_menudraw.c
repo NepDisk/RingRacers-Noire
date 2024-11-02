@@ -309,6 +309,7 @@ void M_DrawMenuBackground(void)
 
 	fixed_t bgMapImageScale = M_GetBGSize();
 
+	V_DrawFill(0, 0,vid.width ,vid.height , 31); // HOM prevention
 	V_DrawFixedPatch(0, 0, 
 		bgMapImageScale, 
 		V_SNAPTOLEFT|V_SNAPTOTOP,
@@ -360,6 +361,7 @@ void M_DrawMenuBackground(void)
 void M_DrawExtrasBack(void)
 {
 	patch_t *bg = W_CachePatchName("M_XTRABG", PU_CACHE);
+	V_DrawFill(0, 0,vid.width ,vid.height , 164|V_SNAPTOLEFT|V_SNAPTOTOP); // HOM prevention
 	V_DrawFixedPatch(0, 0, M_GetBGSize(), V_SNAPTOLEFT|V_SNAPTOTOP, bg, NULL);
 }
 
@@ -500,10 +502,10 @@ void M_DrawMenuForeground(void)
 		M_DrawMenuParty();
 	}
 
-#if 0
+#if 1
 		// draw non-green resolution border
 		if ((!menuactive || currentMenu != &PAUSE_PlaybackMenuDef) && // this obscures replay menu and I want to put in minimal effort to fix that
-			((vid.width % BASEVIDWIDTH != 0) || (vid.height % BASEVIDHEIGHT != 0)))
+			((vid.width % BASEVIDWIDTH != 0) || (vid.height % BASEVIDHEIGHT != 0)) && currentMenu == &EXTRAS_EggTVDef)
 		{
 			V_DrawFixedPatch(0, 0, FRACUNIT, 0, W_CachePatchName("WEIRDRES", PU_CACHE), NULL);
 		}
@@ -3594,7 +3596,7 @@ static boolean M_LevelSelectToTimeAttackTransitionHelper(void)
 
 void M_DrawSealedBack(void)
 {
-	V_DrawFill(0, 0, BASEVIDWIDTH, BASEVIDHEIGHT, 31);
+	V_DrawFill(0, 0, vid.width, vid.height, 31);
 
 	if (M_LevelSelectHasBG(currentMenu) == false)
 		return;
@@ -3610,7 +3612,7 @@ void M_DrawSealedBack(void)
 
 	V_DrawFixedPatch(
 		0, 0,
-		FRACUNIT,
+		M_GetBGSize(),
 		translucencylevel << V_ALPHASHIFT,
 		W_CachePatchName("MENUI008", PU_CACHE),
 		R_GetTranslationColormap(TC_RAINBOW, SKINCOLOR_BLACK, GTC_CACHE)
@@ -4427,6 +4429,7 @@ void M_DrawOptionsCogs(void)
 		if (optionsmenu.fade)
 		{
 			c2 = R_GetTranslationColormap(TC_DEFAULT, optionsmenu.lastcolour, GTC_CACHE);
+			V_DrawFill(0, 0,vid.width ,vid.height , skincolors[optionsmenu.lastcolour].ramp[8]); // HOM prevention
 			V_DrawFixedPatch(0, 0, M_GetBGSize(), V_SNAPTOLEFT|V_SNAPTOTOP, back, c2);
 
 			// prepare fade flag:
@@ -4434,6 +4437,7 @@ void M_DrawOptionsCogs(void)
 
 		}
 		c = R_GetTranslationColormap(TC_DEFAULT, optionsmenu.currcolour, GTC_CACHE);
+		V_DrawFill(0, 0,vid.width ,vid.height , skincolors[optionsmenu.currcolour].ramp[8]|tflag|V_SNAPTOLEFT|V_SNAPTOTOP); // HOM prevention
 		V_DrawFixedPatch(0, 0, M_GetBGSize(), tflag|V_SNAPTOLEFT|V_SNAPTOTOP, back, c);
 	}
 	else

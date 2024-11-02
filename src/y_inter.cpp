@@ -1641,6 +1641,7 @@ void Y_IntermissionDrawer(void)
 	UINT8 *bgcolor = R_GetTranslationColormap(TC_INTERMISSION, static_cast<skincolornum_t>(0), GTC_CACHE);
 
 	// Draw the background
+	V_DrawFill(0, 0,vid.width ,vid.height , 31|V_SNAPTOLEFT|V_SNAPTOTOP); // HOM prevention
 	K_DrawMapThumbnail(0, 0, FixedMul(640*FRACUNIT,FixedDiv((vid.width/vid.dupx)*FRACUNIT,640*FRACUNIT)), (data.encore ? V_FLIP : 0)|V_SNAPTOLEFT|V_SNAPTOTOP, prevmap, bgcolor);
 
 	for (x = -mqscroll; x < (vid.width * FRACUNIT); x += mqloop)
