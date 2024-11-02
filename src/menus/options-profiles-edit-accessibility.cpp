@@ -18,6 +18,7 @@
 #include "../p_local.h" // cv_tilting
 #include "../hep2/h_cvars.h"
 #include "../r_main.h"	// cv_flipcam
+#include "../noire/n_menu.h"
 
 extern "C" consvar_t cv_mindelay, cv_drawinput;
 
@@ -118,9 +119,9 @@ menuitem_t OPTIONS_ProfileAccessibility[] = {
 
 	{IT_STRING | IT_CVAR, "Field of View", "Higher FOV lets you see more.",
 		NULL, {.cvar = &cv_dummyprofilefov}, 0, 0},
-		
-	{IT_STRING | IT_CVAR, "Flipcam", "Flip the camera when upside down. Kinda sucks.",
-		NULL, {.cvar = &cv_dummyprofileflipcam}, 0, 0},
+
+	{IT_STRING | IT_SUBMENU, "Noire Options...", "Adjust Noire profile options..",
+		NULL, {.submenu = &OPTIONS_NoireProfileAccessibilityDef}, 0, 0},
 
 	{IT_SPACE | IT_NOTHING, NULL,  NULL,
 		NULL, {NULL}, 0, 0},

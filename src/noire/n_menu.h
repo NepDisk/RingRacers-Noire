@@ -52,6 +52,9 @@ extern menu_t OPTIONS_NoireGameplayAttackDef;
 extern menuitem_t OPTIONS_Noire[];
 extern menu_t OPTIONS_NoireDef;
 
+extern menuitem_t OPTIONS_NoireProfileAccessibility[];
+extern menu_t OPTIONS_NoireProfileAccessibilityDef;
+
 #ifdef __cplusplus
 } // extern "C"
 #endif

@@ -132,6 +132,14 @@ typedef enum
 	PF_NOFASTFALL		= (INT32)(1U<<31), // Has already done ebrake/fastfall behavior for this input. Fastfalling needs a new input to prevent unwanted bounces on unexpected airtime.
 } pflags_t;
 
+//
+// Noire player Flags
+//
+typedef enum
+{
+	NF_OLDTRICKS			= 1<<0, // Pre 2.2 tricks.
+} nflags_t;
+
 typedef enum
 {
 	// Are animation frames playing?
@@ -644,6 +652,9 @@ struct player_t
 	// Bit flags.
 	// See pflags_t, above.
 	UINT32 pflags;
+
+	// See nflags_t, above.
+	UINT32 nflags;
 
 	// playing animation.
 	panim_t panim;

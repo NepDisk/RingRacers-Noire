@@ -614,7 +614,6 @@ consvar_t cv_recordmultiplayerdemos = Server("netdemo_record", kNetDemoRecordDef
 
 consvar_t cv_reducevfx = Server("reducevfx", "No").yes_no();
 consvar_t cv_screenshake = Server("screenshake", "Full").values({{0, "Off"}, {1, "Half"}, {2, "Full"}});
-// consvar_t cv_flipcam = Server("flipcam", "No").yes_no();
 
 consvar_t cv_rendezvousserver = Server("holepunchserver", "relay.kartkrew.org");
 
@@ -1492,6 +1491,9 @@ consvar_t cv_dummyprofileplayername = MenuDummy("dummyprofileplayername", "");
 consvar_t cv_dummyprofilerumble = MenuDummy("dummyprofilerumble", "On").on_off();
 consvar_t cv_dummyprofileflipcam = MenuDummy("dummyprofileflipcam", "Off").on_off();
 
+// Noire
+consvar_t cv_ng_dummyprofileoldtricks = MenuDummy("dummyprofileoldtricks", "Off").on_off();
+
 consvar_t cv_dummyscramble = MenuDummy("dummyscramble", "Random").values({{0, "Random"}, {1, "Points"}});
 
 void CV_SPBAttackChanged(void);
@@ -1597,6 +1599,15 @@ consvar_t cv_litesteer[MAXSPLITSCREENPLAYERS] = {
 	Player("litesteer2", "Off").on_off().onchange(weaponPrefChange2),
 	Player("litesteer3", "Off").on_off().onchange(weaponPrefChange3),
 	Player("litesteer4", "Off").on_off().onchange(weaponPrefChange4),
+};
+
+// Noire
+
+consvar_t cv_ng_trick_reversion[MAXSPLITSCREENPLAYERS] = {
+	Player("oldtricks", "Off").on_off().onchange(weaponPrefChange),
+	Player("oldtricks2", "Off").on_off().onchange(weaponPrefChange2),
+	Player("oldtricks3", "Off").on_off().onchange(weaponPrefChange3),
+	Player("oldtricks4", "Off").on_off().onchange(weaponPrefChange4),
 };
 
 consvar_t cv_autoring[MAXSPLITSCREENPLAYERS] = {

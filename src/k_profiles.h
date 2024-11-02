@@ -168,6 +168,7 @@ struct profile_t
 	boolean rumble;						// cv_rumble
 	UINT8 fov;							// cv_fov
 	boolean flipcam;					// cv_flipcam
+	boolean oldtricks;						// cv_ng_oldtricks
 
 	// Finally, control data itself
 	INT32 controls[num_gamecontrols][MAXINPUTMAPPING];	// Lists of all the controls, defined the same way as default inputs in g_input.c

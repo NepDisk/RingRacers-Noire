@@ -10872,7 +10872,7 @@ INT16 K_GetKartTurnValue(const player_t *player, INT16 turnvalue)
 	}
 
 	// Staff ghosts - direction-only trickpanel behavior
-	if (G_CompatLevel(0x000A) || K_PlayerUsesBotMovement(player))
+	if (G_CompatLevel(0x000A) || K_PlayerUsesBotMovement(player) || (player->nflags & NF_OLDTRICKS))
 	{
 		if (player->trickpanel == TRICKSTATE_READY || player->trickpanel == TRICKSTATE_FORWARD)
 		{
@@ -11058,7 +11058,7 @@ INT16 K_GetKartTurnValue(const player_t *player, INT16 turnvalue)
 	}
 
 	// 2.2 - Presteering allowed in trickpanels
-	if (!G_CompatLevel(0x000A) && !K_PlayerUsesBotMovement(player))
+	if (!G_CompatLevel(0x000A) && !K_PlayerUsesBotMovement(player) && !(player->nflags & NF_OLDTRICKS))
 	{
 		if (player->trickpanel == TRICKSTATE_READY || player->trickpanel == TRICKSTATE_FORWARD)
 		{
@@ -14167,7 +14167,13 @@ void K_MoveKartPlayer(player_t *player, boolean onground)
 				player->trickpanel = TRICKSTATE_NONE;
 				P_SetPlayerMobjState(player->mo, S_KART_SPINOUT);
 				if (gametype != GT_TUTORIAL)
-					K_AddMessageForPlayer(player, "Press <dpad> + <a> to trick!", true, false);
+				{
+
+					if (player->nflags & NF_OLDTRICKS)
+						K_AddMessageForPlayer(player, "Press <dpad> to trick!", true, false);
+					else
+						K_AddMessageForPlayer(player, "Press <dpad> + <a> to trick!", true, false);
+				}
 				if (player->itemflags & (IF_ITEMOUT|IF_EGGMANOUT))
 				{
 					//K_PopPlayerShield(player); // shield is just being yeeted, don't pop
@@ -14199,7 +14205,7 @@ void K_MoveKartPlayer(player_t *player, boolean onground)
 				}
 
 				// 2.2 - Pre-steering trickpanels
-				if (!G_CompatLevel(0x000A) && !K_PlayerUsesBotMovement(player))
+				if (!G_CompatLevel(0x000A) && !K_PlayerUsesBotMovement(player) && !(player->nflags & NF_OLDTRICKS))
 				{
 					if (!(buttons & BT_ACCELERATE))
 					{
@@ -14442,7 +14448,7 @@ void K_MoveKartPlayer(player_t *player, boolean onground)
 		}
 
 		// 2.2 - Lenient trickpanels
-		if (G_CompatLevel(0x000A) || K_PlayerUsesBotMovement(player))
+		if (G_CompatLevel(0x000A) || K_PlayerUsesBotMovement(player) || (player->nflags & NF_OLDTRICKS))
 		{
 			// Wait until we let go off the control stick to remove the delay
 			// buttons must be neutral after the initial trick delay. This prevents weirdness where slight nudges after blast off would send you flying.

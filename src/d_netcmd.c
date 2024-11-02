@@ -13,6 +13,7 @@
 ///        commands are executed through the command buffer
 ///	       like console commands, other miscellaneous commands (at the end)
 
+#include "d_player.h"
 #include "doomdef.h"
 
 #include "console.h"
@@ -1276,6 +1277,7 @@ enum {
 	WP_AUTOROULETTE = 1<<2,
 	WP_ANALOGSTICK = 1<<3,
 	WP_AUTORING = 1<<4,
+	WP_OLDTRICKS = 1<<5,
 };
 
 void WeaponPref_Send(UINT8 ssplayer)
@@ -1296,6 +1298,9 @@ void WeaponPref_Send(UINT8 ssplayer)
 
 	if (cv_autoring[ssplayer].value)
 		prefs |= WP_AUTORING;
+
+	if (cv_ng_trick_reversion[ssplayer].value)
+		prefs |= WP_OLDTRICKS;
 
 	UINT8 buf[2];
 	buf[0] = prefs;
@@ -1325,6 +1330,9 @@ void WeaponPref_Save(UINT8 **cp, INT32 playernum)
 	if (player->pflags & PF_AUTORING)
 		prefs |= WP_AUTORING;
 
+	if (player->nflags & NF_OLDTRICKS)
+		prefs |= WP_OLDTRICKS;
+
 	WRITEUINT8(*cp, prefs);
 }
 
@@ -1336,6 +1344,7 @@ size_t WeaponPref_Parse(const UINT8 *bufstart, INT32 playernum)
 	UINT8 prefs = READUINT8(p);
 
 	player->pflags &= ~(PF_KICKSTARTACCEL|PF_SHRINKME|PF_AUTOROULETTE|PF_AUTORING);
+	player->nflags &= ~(NF_OLDTRICKS);
 
 	if (prefs & WP_KICKSTARTACCEL)
 		player->pflags |= PF_KICKSTARTACCEL;
@@ -1353,6 +1362,9 @@ size_t WeaponPref_Parse(const UINT8 *bufstart, INT32 playernum)
 
 	if (prefs & WP_AUTORING)
 		player->pflags |= PF_AUTORING;
+
+	if (prefs & WP_OLDTRICKS)
+		player->nflags |= NF_OLDTRICKS;
 
 	if (leveltime < 2)
 	{

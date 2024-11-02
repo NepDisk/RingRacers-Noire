@@ -29,6 +29,9 @@ extern consvar_t cv_highresportrait;
 extern consvar_t cv_spectatormusic;
 extern consvar_t cv_spectatormusiclump;
 
+extern consvar_t cv_ng_trick_reversion[MAXSPLITSCREENPLAYERS];
+extern consvar_t cv_ng_dummyprofileoldtricks;
+
 //Rings
 extern consvar_t cv_ng_rings;
 extern consvar_t cv_ng_ringcap;

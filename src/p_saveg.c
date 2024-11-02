@@ -240,6 +240,7 @@ static void P_NetArchivePlayers(savebuffer_t *save)
 
 		WRITEUINT8(save->p, players[i].playerstate);
 		WRITEUINT32(save->p, players[i].pflags);
+		WRITEUINT32(save->p, players[i].nflags);
 		WRITEUINT8(save->p, players[i].panim);
 		WRITEUINT8(save->p, players[i].spectator);
 		WRITEUINT32(save->p, players[i].spectatewait);
@@ -907,6 +908,7 @@ static void P_NetUnArchivePlayers(savebuffer_t *save)
 
 		players[i].playerstate = READUINT8(save->p);
 		players[i].pflags = READUINT32(save->p);
+		players[i].nflags = READUINT32(save->p);
 		players[i].panim = READUINT8(save->p);
 		players[i].spectator = READUINT8(save->p);
 		players[i].spectatewait = READUINT32(save->p);
