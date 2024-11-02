@@ -414,6 +414,13 @@ Sets if the player should be affected by stumble.
 
 If stumble is disabled, Grow will spinout instead.
 
+#### ng_safelanding
+Default Value: "On"
+
+Choices: "Off", "On"
+
+Sets if the player should be hurt by improper landings.
+
 #### ng_hitlag
 Default Value: "On"
 

@@ -170,7 +170,7 @@ menuitem_t OPTIONS_NoireGameplayMechanics[] =
 	{IT_STRING | IT_SUBMENU, "Life Options...", "Adjust the behavior of the lives system.",
 		NULL, {.submenu = &OPTIONS_NoireGameplayLivesDef}, 0, 0},
 
-	{IT_STRING | IT_SUBMENU, "Attack Options...", "Adjust the behavior of sending and reciving damage.",
+	{IT_STRING | IT_SUBMENU, "Damage Options...", "Adjust the behavior of sending and reciving damage.",
 		NULL, {.submenu = &OPTIONS_NoireGameplayAttackDef}, 0, 0},
 
 	{IT_NOTHING|IT_SPACE, NULL, NULL,
@@ -247,6 +247,9 @@ menuitem_t OPTIONS_NoireGameplayAttack[] =
 
 	{IT_STRING | IT_CVAR, "Stumble", "Enable or disable stumble, a weaker form of tumble where racers just get pushed away.",
 		NULL, {.cvar = &cv_ng_stumble}, 0, 0},
+
+	{IT_STRING | IT_CVAR, "Safe Landing", "Enable or disable safe landing, a source of damage when you land improperly.",
+		NULL, {.cvar = &cv_ng_safelanding}, 0, 0},
 
 	{IT_STRING | IT_CVAR, "Hitlag", "Enable or disable hitlag.",
 		NULL, {.cvar = &cv_ng_hitlag}, 0, 0},
@@ -383,15 +386,18 @@ void NG_Rings_OnChange(void)
 {
 	if(cv_ng_rings.value)
 	{
-		CV_SetValue(&cv_ng_ringcap, 20);
-		CV_SetValue(&cv_ng_spillcap, 20);
-		CV_Set(&cv_ng_ringdebt, "On");
-		CV_Set(&cv_ng_ringsting, "On");
-		CV_Set(&cv_ng_ringdeathmark, "-20");
-		CV_Set(&cv_ng_maprings, "On");
-		CV_Set(&cv_ng_mapringcapsules, "On");
-		CV_Set(&cv_ng_mapringboxes, "On");
-		CV_Set(&cv_ng_ringboxtransform, "On");
+		if ((server || (addedtogame && IsPlayerAdmin(consoleplayer))))
+		{
+			CV_SetValue(&cv_ng_ringcap, 20);
+			CV_SetValue(&cv_ng_spillcap, 20);
+			CV_Set(&cv_ng_ringdebt, "On");
+			CV_Set(&cv_ng_ringsting, "On");
+			CV_Set(&cv_ng_ringdeathmark, "-20");
+			CV_Set(&cv_ng_maprings, "On");
+			CV_Set(&cv_ng_mapringcapsules, "On");
+			CV_Set(&cv_ng_mapringboxes, "On");
+			CV_Set(&cv_ng_ringboxtransform, "On");
+		}
 
 		for (int i = 1; i < OPTIONS_NoireGameplayRingsDef.numitems; i++)
 		{
@@ -400,15 +406,18 @@ void NG_Rings_OnChange(void)
 	}
 	else
 	{
-		CV_SetValue(&cv_ng_ringcap, 0);
-		CV_SetValue(&cv_ng_spillcap, 0);
-		CV_Set(&cv_ng_ringdebt, "Off");
-		CV_Set(&cv_ng_ringsting, "Off");
-		CV_Set(&cv_ng_ringdeathmark, "-20");
-		CV_Set(&cv_ng_maprings, "Off");
-		CV_Set(&cv_ng_mapringcapsules, "Off");
-		CV_Set(&cv_ng_mapringboxes, "Off");
-		CV_Set(&cv_ng_ringboxtransform, "Off");
+		if ((server || (addedtogame && IsPlayerAdmin(consoleplayer))))
+		{
+			CV_SetValue(&cv_ng_ringcap, 0);
+			CV_SetValue(&cv_ng_spillcap, 0);
+			CV_Set(&cv_ng_ringdebt, "Off");
+			CV_Set(&cv_ng_ringsting, "Off");
+			CV_Set(&cv_ng_ringdeathmark, "-20");
+			CV_Set(&cv_ng_maprings, "Off");
+			CV_Set(&cv_ng_mapringcapsules, "Off");
+			CV_Set(&cv_ng_mapringboxes, "Off");
+			CV_Set(&cv_ng_ringboxtransform, "Off");
+		}
 
 		for (int i = 1; i < OPTIONS_NoireGameplayRingsDef.numitems; i++)
 		{

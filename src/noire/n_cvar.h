@@ -88,6 +88,7 @@ extern consvar_t cv_ng_draft;
 extern consvar_t cv_ng_wavedash;
 extern consvar_t cv_ng_tumble;
 extern consvar_t cv_ng_stumble;
+extern consvar_t cv_ng_safelanding;
 extern consvar_t cv_ng_hitlag;
 extern consvar_t cv_ng_combo;
 extern consvar_t cv_ng_mapanger;

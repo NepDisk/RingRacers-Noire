@@ -4535,6 +4535,12 @@ boolean K_CheckStumble(player_t *player, angle_t oldPitch, angle_t oldRoll, bool
 		return false;
 	}
 
+	if (!cv_ng_safelanding.value)
+	{
+		// Toggled off.
+		return false;
+	}
+
 	if (fromAir && player->airtime < STUMBLE_AIRTIME
 		&& player->airtime > 1) // ACHTUNG HACK, sorry. Ground-to-ground transitions sometimes have 1-tic airtime because collision blows
 	{
@@ -4708,6 +4714,13 @@ void K_UpdateStumbleIndicator(player_t *player)
 		K_InitStumbleIndicator(player);
 		return;
 	}
+
+	if (!cv_ng_safelanding.value)
+	{
+		// Toggled off.
+		return;
+	}
+
 
 	mobj = player->stumbleIndicator;
 
