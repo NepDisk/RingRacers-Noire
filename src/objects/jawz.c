@@ -236,7 +236,7 @@ void Obj_JawzThink(mobj_t *th)
 
 	if (grounded) // Handle pogosprings.
 	{
-		if (P_MobjTouchingSectorSpecial(th, 3, 1) || P_MobjTouchingSectorSpecial(th, 3, 3) || (th->terrain && (th->terrain->springDoKartPogo > 0)))
+		if (P_MobjTouchingSectorSpecial(th, 3, 1) || P_MobjTouchingSectorSpecial(th, 3, 3) || (th->terrain && (th->terrain->pogoSpring > 0)))
 			N_DoPogoSpring(th, 0, 1);
 	}
 

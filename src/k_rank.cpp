@@ -142,7 +142,7 @@ static void RankCapsules_LoadTextmap(void)
 	}
 }
 
-#if 0
+#if 1
 /*--------------------------------------------------
 	static void RankCapsules_LoadThingsLump(UINT8 *data)
 
@@ -230,7 +230,7 @@ static boolean RankCapsules_LoadMapData(const virtres_t *virt)
 	}
 	else
 	{
-#if 0
+#if 1
 		RankCapsules_LoadThingsLump(virtthings->data);
 #else
 		CONS_Printf("binary maps SMELL!!!!!\n");

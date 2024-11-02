@@ -1258,7 +1258,7 @@ consvar_t cv_ng_spindashoverheat = UnsavedNetVar("ng_spindashoverheat", "On").on
 //Driving
 void NG_OldPogoOverride_OnChange(void);
 consvar_t cv_ng_butteredslopes = UnsavedNetVar("ng_slopephysics", "On").on_off();
-consvar_t cv_ng_slopeclimb = UnsavedNetVar("ng_slopeclimb", "On").on_off();
+consvar_t cv_ng_slopeclimb = UnsavedNetVar("ng_sloperesistance", "On").on_off();
 consvar_t cv_ng_stairjank = UnsavedNetVar("ng_stairjank", "All").values({
 	{0, "None"},
 	{1, "Bumpy roads only"},

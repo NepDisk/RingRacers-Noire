@@ -125,7 +125,6 @@ struct terrain_t
 	UINT8 pogoSpring;		// Is this panel a pogo spring?
 	UINT8 pogoSpringMin;	// Minimum Speed of a pogo spring
 	UINT8 pogoSpringMax;	// Maximum Speed of a pogo spring value of 2
-	UINT8 springDoKartPogo; // NOIRE Spring: Whenever it should do Kart pogo jumps. 0 -> Default. 1 -> Does a pogo jump, but with no diagonal projection in the case it'd do one. 2 -> Pogo jump AND diagonal projection.
 	UINT16 springStarColor; // Spring star color
 	fixed_t outrun;			// Raise top speed by this amount, for super fast road.
 	fixed_t floorClip;		// Offset for sprites on this ground

@@ -656,7 +656,7 @@ void K_ProcessTerrainEffect(mobj_t *mo)
 			terrain->springStarColor,
 			terrain->pogoSpringMax,
 			terrain->pogoSpringMin,
-			terrain->springDoKartPogo
+			terrain->pogoSpring
 		);
 
 		sector->soundorg.z = player->mo->z;
