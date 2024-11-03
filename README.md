@@ -1,34 +1,33 @@
-# RingRacers Noire
+# Ring Racers Noire
 
-Noire is a modification of Dr. Robotnik's Ring Racers which adds new features and adds toggles to existing ones with more to come!
+Noire is a modification of Dr. Robotnik's Ring Racers which adds new features and adds toggles to existing ones!
 
-Documentation for new stuff added is located within the documentation folder.
+Some Features include:
+- Rings toggle
+- Combo toggle
+- Hitlag toggle
+- Tumble/Stumble toggles
+- Item revert toggles
+- Custom itemodds
+- Slope Helper toggle
+- Local Skins
+- Flipcam and old trick input profile options
+- New Pogo Spring Terrain type
+and many more!
 
-Thanks to Alug, Haya, LuigiBudd, Freaky Mutant Man and Wumbo for their forks of ring racers! They have helped to add useful or neat features!
+Documentation for new stuff added is located within the [documentation](https://github.com/NepDisk/RingRacers-Noire/tree/Noire/documentation) folder.
 
-Original Readme below
+This contain information about all the new thing added by Noire.
 
-# Dr. Robotnik's Ring Racers
+# Credits
 
-<p align="center">
-  <a href="https://www.kartkrew.org">
-    <img src="docs/logo.png" width="404" style="image-rendering:pixelated" alt="Dr. Robotnik's Ring Racers logo">
-  </a>
-</p>
+Thanks to Alug, Haya, LuigiBudd, Freaky Mutant Man, WumboSpasm, mncho and Anreol for their forks and Pull Requests!
 
-Dr. Robotnik's Ring Racers is a kart racing video game originally based on the 3D Sonic the Hedgehog fangame [Sonic Robo Blast 2](https://srb2.org/), itself based on a modified version of [Doom Legacy](http://doomlegacy.sourceforge.net/).
+Also thanks to Indev for creating the original Slope Helper script!
 
-Ring Racers' source code is available to users under the GNU General Public License version 2.0 or higher.
+## Contributing
 
-## Links
-
-- [Kart Krew Dev Website](https://www.kartkrew.org/)
-- [Kart Krew Dev Discord](https://www.kartkrew.org/discord)
-- [SRB2 Forums](https://mb.srb2.org/)
-
-## Disclaimer
-
-Dr. Robotnik's Ring Racers is a work of fan art made available for free without intent to profit or harm the intellectual property rights of the original works it is based on. Kart Krew Dev is in no way affiliated with SEGA Corporation. We do not claim ownership of any of SEGA's intellectual property used in Dr. Robotnik's Ring Racers.
+Have a feature or toggle idea? Want a new gameplay style preset added to the menu? Feel free to make PRs to this branch!
 
 # Development
 
@@ -66,6 +65,11 @@ To configure and build the game, there are [CMake presets] (declared in `CMakePr
 - ninja-arm64_osx_vcpkg-develop
 - ninja-arm64_osx_vcpkg-release
 
+These were added and not originally included. Presets by Alug
+- ninja-x86_64_mingw_static_vcpkg-debug
+- ninja-x86_64_mingw_static_vcpkg-develop
+- ninja-x86_64_mingw_static_vcpkg-release
+
 [CMake presets]: https://cmake.org/cmake/help/latest/manual/cmake-presets.7.html
 
 These presets depend on the `VCPKG_ROOT` environment variable being specified before the first run of the `cmake` command. Their build directories are pre-configured as subdirectories of `build/`.
@@ -75,11 +79,6 @@ After all prerequisites are set-up, configure and build using the following comm
     cmake --preset ninja-x86_mingw_static_vcpkg-develop
     cmake --build --preset ninja-x86_mingw_static_vcpkg-develop
 
-## Contributing
+## Disclaimer
 
-We welcome external contributions from the community. If you are planning on making a large feature you intend to contribute to the project, please consider reaching out to us in the Kart Krew Dev public Discord server so we can coordinate with you.
-
-Our primary source repository is [hosted on the SRB2 Gitlab](https://git.do.srb2.org/KartKrew/RingRacers). The Github repository is a mirror of this. If you submit a Pull Request to the Github repository, please keep in mind that we do not consistently monitor that mirror and may not see your request.
-
-All contributions must be made available under the GPL General Public License version 2.0, or public domain. Integrations for third party code must be made to code which is compatibly licensed.
-
+Dr. Robotnik's Ring Racers is a work of fan art made available for free without intent to profit or harm the intellectual property rights of the original works it is based on. Kart Krew Dev is in no way affiliated with SEGA Corporation. We do not claim ownership of any of SEGA's intellectual property used in Dr. Robotnik's Ring Racers.
