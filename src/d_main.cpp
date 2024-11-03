@@ -1405,7 +1405,6 @@ static void IdentifyVersion(void)
 #ifdef USE_PATCH_FILE
 	D_AddFile(startupiwads, va(pandf,srb2waddir,"patch.pk3"));
 #endif
-	D_AddFile(startupiwads, va(pandf,srb2waddir,"luigibudd.pk3"));
 
 	// completely optional
 	if (FIL_ReadFileOK(va(pandf,srb2waddir,"noire.pk3"))) {
