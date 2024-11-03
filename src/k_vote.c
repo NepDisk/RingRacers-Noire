@@ -53,6 +53,8 @@
 #include "k_color.h"
 #include "music.h"
 
+#include "noire/n_cvar.h"
+
 #ifdef HWRENDER
 #include "hardware/hw_main.h"
 #endif
@@ -525,13 +527,13 @@ static void Y_DrawVoteThumbnail(fixed_t center_x, fixed_t center_y, fixed_t widt
 			if (players[playerID].localskin)
 			{
 				playerMap = R_GetTranslationColormap(players[playerID].localskin - 1, players[playerID].skincolor, GTC_CACHE);
-				playerPatch = ((players[playerID].skinlocal) ? localfaceprefix : faceprefix)[players[playerID].localskin - 1][FACE_RANK];
+				playerPatch = ((players[playerID].skinlocal) ? localfaceprefix : faceprefix)[players[playerID].localskin - 1][cv_highresportrait.value ? FACE_WANTED : FACE_RANK];
 			}
 
 			V_DrawFixedPatch(
 				(fx + fw - whiteSq + dupx) * FRACUNIT,
 				(fy + fh - whiteSq + dupy) * FRACUNIT,
-				FRACUNIT, flags|V_NOSCALESTART,
+				cv_highresportrait.value ? FRACUNIT >> 1: FRACUNIT, flags|V_NOSCALESTART,
 				playerPatch, playerMap
 			);
 		}

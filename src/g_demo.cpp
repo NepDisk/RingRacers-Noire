@@ -207,6 +207,7 @@ boolean G_CompatLevel(UINT16 level)
 #define DEMO_BOT			0x08
 #define DEMO_AUTOROULETTE	0x10
 #define DEMO_AUTORING		0x20
+#define DEMO_OLDTRICKS		0x80
 
 // For demos
 #define ZT_FWD		0x0001
@@ -2317,6 +2318,8 @@ void G_BeginRecording(void)
 				i |= DEMO_AUTORING;
 			if (player->pflags & PF_SHRINKME)
 				i |= DEMO_SHRINKME;
+			if (player->nflags & NF_OLDTRICKS)
+				i |= DEMO_OLDTRICKS;
 			if (player->bot == true)
 				i |= DEMO_BOT;
 			WRITEUINT8(demobuf.p, i);
@@ -3410,6 +3413,11 @@ void G_DoPlayDemoEx(const char *defdemoname, lumpnum_t deflumpnum)
 			players[p].pflags |= PF_SHRINKME;
 		else
 			players[p].pflags &= ~PF_SHRINKME;
+
+		if (flags & DEMO_OLDTRICKS)
+			players[p].nflags |= NF_OLDTRICKS;
+		else
+			players[p].nflags &= ~NF_OLDTRICKS;
 
 		if ((players[p].bot = bot) == true)
 		{

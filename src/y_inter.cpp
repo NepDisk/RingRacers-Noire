@@ -58,6 +58,8 @@
 #include "m_easing.h"
 #include "music.h"
 
+#include "noire/n_cvar.h"
+
 #ifdef HWRENDER
 #include "hardware/hw_main.h"
 #endif
@@ -221,6 +223,8 @@ static void Y_CalculateMatchData(UINT8 rankingsmode, void (*comparison)(INT32))
 
 		data.color[data.numplayers] = players[i].skincolor;
 		data.character[data.numplayers] = players[i].skin;
+		data.localcharacter[data.numplayers] = players[i].localskin;
+		data.characterlocal[data.numplayers] = players[i].skinlocal;
 
 		if (data.numplayers && (data.val[data.numplayers] == data.val[data.numplayers-1]))
 		{
@@ -392,13 +396,26 @@ static void Y_CalculateMatchData(UINT8 rankingsmode, void (*comparison)(INT32))
 			{
 				data.gotthrough = true;
 
-				if (players[i].skin < numskins)
+			if (players[i].skinlocal)
+			{
+				if (players[i].localskin-1 < numlocalskins)
 				{
-					snprintf(data.headerstring,
-						sizeof data.headerstring,
-						"%s",
-						R_CanShowSkinInDemo(players[i].skin) ? skins[players[i].skin].realname : "???");
+					snprintf(
+						data.headerstring, sizeof data.headerstring,
+						"%s", R_CanShowSkinInDemo(players[i].skin) ? localskins[players[i].localskin-1].realname : "???"
+					);
 				}
+			}
+			else
+			{
+				if (players[i].localskin ? players[i].localskin-1 : players[i].skin < numlocalskins)
+				{
+					snprintf(
+						data.headerstring, sizeof data.headerstring,
+						"%s", R_CanShowSkinInDemo(players[i].skin) ? skins[players[i].localskin ? players[i].localskin-1 : players[i].skin].realname : "???"
+					);
+				}
+			}
 
 				data.showroundnum = true;
 			}
@@ -570,7 +587,7 @@ void Y_PlayerStandingsDrawer(y_data_t *standings, INT32 xoffset)
 			}
 			else if (standings->color[i] != SKINCOLOR_NONE)
 			{
-				charcolormap = R_GetTranslationColormap(standings->character[i], static_cast<skincolornum_t>(standings->color[i]), GTC_CACHE);
+				charcolormap = R_GetTranslationColormap(standings->localcharacter[i] ? standings->localcharacter[i] : standings->character[i], static_cast<skincolornum_t>(standings->color[i]), GTC_CACHE);
 			}
 
 			if (standings->isduel)
@@ -656,10 +673,10 @@ void Y_PlayerStandingsDrawer(y_data_t *standings, INT32 xoffset)
 				}
 				else
 				{
-					charcolormap = R_GetTranslationColormap(standings->character[i], static_cast<skincolornum_t>(standings->color[i]), GTC_CACHE);
+					charcolormap = R_GetTranslationColormap(standings->localcharacter[i] ? standings->localcharacter[i] : standings->character[i], static_cast<skincolornum_t>(standings->color[i]), GTC_CACHE);
 					V_DrawMappedPatch(x+14, y-5, 0,
-						R_CanShowSkinInDemo(standings->character[i]) ?
-						faceprefix[standings->character[i]][FACE_MINIMAP] : kp_unknownminimap,
+						R_CanShowSkinInDemo(standings->character[i]) ? ((standings->characterlocal[i] == true) ?
+						localfaceprefix[standings->localcharacter[i]-1] : faceprefix[standings->localcharacter[i] ? standings->localcharacter[i]-1 : standings->character[i]])[FACE_MINIMAP] : kp_unknownminimap,
 						charcolormap);
 				}
 			}
@@ -904,6 +921,7 @@ void Y_RoundQueueDrawer(y_data_t *standings, INT32 offset, boolean doanimations,
 	UINT8 *colormap = NULL, *oppositemap = NULL;
 	fixed_t playerx = 0, playery = 0;
 	UINT8 pskin = MAXSKINS;
+	boolean pskinlocal = false;
 	UINT16 pcolor = SKINCOLOR_WHITE;
 
 	if (standings->mainplayer == MAXPLAYERS)
@@ -920,7 +938,8 @@ void Y_RoundQueueDrawer(y_data_t *standings, INT32 offset, boolean doanimations,
 		&& players[standings->mainplayer].skincolor < numskincolors
 	)
 	{
-		pskin = players[standings->mainplayer].skin;
+		pskin = players[standings->mainplayer].localskin ? players[standings->mainplayer].localskin-1 : players[standings->mainplayer].skin;
+		pskinlocal = players[standings->mainplayer].skinlocal;
 		pcolor = players[standings->mainplayer].skincolor;
 	}
 
@@ -1393,7 +1412,7 @@ void Y_RoundQueueDrawer(y_data_t *standings, INT32 offset, boolean doanimations,
 		playerx -= (10 * FRACUNIT);
 		playery -= (14 * FRACUNIT);
 
-		if (pskin < numskins)
+		if (pskin < pskinlocal ? numlocalskins : numskins)
 		{
 			// Draw outline for rank icon
 			V_DrawFixedPatch(
@@ -1407,9 +1426,9 @@ void Y_RoundQueueDrawer(y_data_t *standings, INT32 offset, boolean doanimations,
 			// Draw the player's rank icon
 			V_DrawFixedPatch(
 				playerx + FRACUNIT, playery + FRACUNIT,
-				FRACUNIT,
+				cv_highresportrait.value ? FRACUNIT >> 1 : FRACUNIT,
 				baseflags,
-				faceprefix[pskin][FACE_RANK],
+				((pskinlocal == true) ? localfaceprefix : faceprefix)[pskin][cv_highresportrait.value ? FACE_WANTED : FACE_RANK],
 				R_GetTranslationColormap(pskin, static_cast<skincolornum_t>(pcolor), GTC_CACHE)
 			);
 		}

@@ -1269,8 +1269,10 @@ void P_DoPlayerExit(player_t *player, pflags_t flags)
 	if (cv_postracevoices.value && !(flags & PF_NOCONTEST))
 	{
 		const INT32 sfx_id = (losing ? sfx_klose : sfx_kwin);
-		skin_t *playerskin = &skins[player->skin];
-		S_StartSound(player->mo, playerskin->soundsid[S_sfx[sfx_id].skinsound]);
+		skin_t *playerskin = &skins[player->localskin ? player->localskin-1 : player->skin];
+		skin_t *localplayerskin = &localskins[player->localskin-1];
+		boolean skinlocal = player->skinlocal;
+		S_StartSound(player->mo, player->skinlocal ? localplayerskin->soundsid[S_sfx[sfx_id].skinsound] : playerskin->soundsid[S_sfx[sfx_id].skinsound]);
 	}
 
 	if (!player->spectator)

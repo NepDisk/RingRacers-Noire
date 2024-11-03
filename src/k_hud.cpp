@@ -14,6 +14,7 @@
 #include <vector>
 #include <deque>
 
+#include "d_player.h"
 #include "p_mobj.h"
 #include "v_draw.hpp"
 
@@ -223,6 +224,7 @@ static patch_t *kp_trickcool[2];
 patch_t *kp_autoroulette;
 patch_t *kp_autoring;
 patch_t *kp_flipcam;
+patch_t *kp_oldtricks;
 
 patch_t *kp_capsuletarget_arrow[2][2];
 patch_t *kp_capsuletarget_icon[2];
@@ -794,6 +796,7 @@ void K_LoadKartHUDGraphics(void)
 	HU_UpdatePatch(&kp_autoroulette, "A11YITEM");
 	HU_UpdatePatch(&kp_autoring, "A11YRING");
 	HU_UpdatePatch(&kp_flipcam, "A11YFLPC");
+	HU_UpdatePatch(&kp_oldtricks, "A11YOLDT");
 
 	sprintf(buffer, "K_BOSB0x");
 	for (i = 0; i < 8; i++)
@@ -2121,7 +2124,7 @@ void K_drawKartTimestamp(tic_t drawtime, INT32 TX, INT32 TY, INT32 splitflags, U
 
 		V_DrawScaledPatch(xbar, ybar - 2, barflags|transflags, kp_wouldyoustillcatchmeifiwereaworm);
 
-		V_DrawMappedPatch(160 + widthbar/2 - 7, ybar - 7, barflags, faceprefix[stplyr->skin][FACE_MINIMAP], colormap);
+		V_DrawMappedPatch(160 + widthbar/2 - 7, ybar - 7, barflags, (stplyr->skinlocal ? localfaceprefix[stplyr->localskin-1] : faceprefix[stplyr->localskin ? stplyr->localskin-1 : stplyr->skin])[FACE_MINIMAP], colormap);
 
 		// vibes-based math
 		currentx = (stplyr->SPBdistance/mapobjectscale - mobjinfo[MT_SPB].radius/FRACUNIT - mobjinfo[MT_PLAYER].radius/FRACUNIT) * 6;
@@ -2566,9 +2569,14 @@ void PositionFacesInfo::draw_1p()
 		if (players[rankplayer[i]].mo->color)
 		{
 			if ((skin_t*)players[rankplayer[i]].mo->skin)
-				workingskin = (skin_t*)players[rankplayer[i]].mo->skin - skins;
+			{
+				boolean skinlocal = players[rankplayer[i]].mo->skinlocal;
+				workingskin = ((skin_t*)(players[rankplayer[i]].mo->localskin ? players[rankplayer[i]].mo->localskin : players[rankplayer[i]].mo->skin))-(skinlocal ? localskins : skins);
+			}
 			else
-				workingskin = players[rankplayer[i]].skin;
+			{
+				workingskin = players[rankplayer[i]].localskin ? players[rankplayer[i]].localskin : players[rankplayer[i]].skin;
+			}
 
 			colormap = R_GetTranslationColormap(workingskin, static_cast<skincolornum_t>(players[rankplayer[i]].mo->color), GTC_CACHE);
 			if (players[rankplayer[i]].mo->colorized)
@@ -2582,12 +2590,12 @@ void PositionFacesInfo::draw_1p()
 			{
 				V_DrawFixedPatch((FACE_X + xoff)<<FRACBITS, (Y + yoff)<<FRACBITS, FRACUNIT >> 1,
 					V_HUDTRANS|V_SLIDEIN|V_SNAPTOLEFT|flipflag,
-					faceprefix[workingskin][FACE_WANTED], colormap
+					(players[rankplayer[i]].skinlocal ? localfaceprefix[workingskin] : faceprefix[workingskin])[FACE_WANTED], colormap
 				);
 			}
 			else
 			{
-				V_DrawMappedPatch(FACE_X + xoff, Y + yoff, V_HUDTRANS|V_SLIDEIN|V_SNAPTOLEFT|flipflag, faceprefix[workingskin][FACE_RANK], colormap);
+				V_DrawMappedPatch(FACE_X + xoff, Y + yoff, V_HUDTRANS|V_SLIDEIN|V_SNAPTOLEFT|flipflag, (players[rankplayer[i]].skinlocal ? localfaceprefix[workingskin] : faceprefix[workingskin])[FACE_RANK], colormap);
 			}
 
 			if (LUA_HudEnabled(hud_battlebumpers))
@@ -2702,7 +2710,7 @@ void PositionFacesInfo::draw_4p_battle(int x, int y, INT32 flags)
 	auto head = [&](Draw col, int i)
 	{
 		const player_t& p = players[rankplayer[i]];
-		col.colormap(p.skin, static_cast<skincolornum_t>(p.skincolor)).patch(faceprefix[p.skin][FACE_MINIMAP]);
+		col.colormap(p.localskin ? p.localskin-1 : p.skin, static_cast<skincolornum_t>(p.skincolor)).patch((p.skinlocal ? localfaceprefix[p.localskin-1]: faceprefix[p.localskin ? p.localskin-1 : p.skin])[FACE_MINIMAP]);
 
 		bool dance = g_pointlimit && (g_pointlimit <= p.roundscore);
 		bool flash = dance && leveltime % 8 < 4;
@@ -3166,7 +3174,7 @@ static void K_drawRingCounter(boolean gametypeinfoshown)
 		if (uselives)
 		{
 			UINT8 *colormap = R_GetTranslationColormap(TC_DEFAULT, static_cast<skincolornum_t>(K_GetHudColor()), GTC_CACHE);
-			V_DrawMappedPatch(fr+21, fy-3, V_HUDTRANS|V_SLIDEIN|splitflags, faceprefix[stplyr->skin][FACE_MINIMAP], colormap);
+			V_DrawMappedPatch(fr+21, fy-3, V_HUDTRANS|V_SLIDEIN|splitflags, (stplyr->skinlocal ? localfaceprefix[stplyr->localskin-1] : faceprefix[stplyr->localskin ? stplyr->localskin-1 : stplyr->skin])[FACE_MINIMAP], colormap);
 			if (stplyr->lives >= 0)
 				K_DrawLivesDigits(fr+34, fy, 4, V_HUDTRANS|V_SLIDEIN|splitflags, fontv[PINGNUM_FONT].font);
 		}
@@ -3244,9 +3252,13 @@ static void K_drawRingCounter(boolean gametypeinfoshown)
 				fy -= 12;
 
 			if (cv_highresportrait.value)
-				V_DrawFixedPatch((LAPS_X+rco+46)<<FRACBITS, (fy-5)<<FRACBITS, FRACUNIT >> 1, V_HUDTRANS|V_SLIDEIN|splitflags, faceprefix[stplyr->skin][FACE_WANTED], colormap);
+			{
+				V_DrawFixedPatch((LAPS_X+rco+46)<<FRACBITS, (fy-5)<<FRACBITS, FRACUNIT >> 1, V_HUDTRANS|V_SLIDEIN|splitflags, (stplyr->skinlocal ? localfaceprefix[stplyr->localskin-1] : faceprefix[stplyr->localskin ? stplyr->localskin-1 : stplyr->skin])[FACE_WANTED], colormap);
+			}
 			else
-				V_DrawMappedPatch(LAPS_X+rco+46, fy-5, V_HUDTRANS|V_SLIDEIN|splitflags, faceprefix[stplyr->skin][FACE_RANK], colormap);
+			{
+				V_DrawMappedPatch(LAPS_X+rco+46, fy-5, V_HUDTRANS|V_SLIDEIN|splitflags, (stplyr->skinlocal ? localfaceprefix[stplyr->localskin-1] : faceprefix[stplyr->localskin ? stplyr->localskin-1 : stplyr->skin])[FACE_RANK], colormap);
+			}
 			SINT8 livescount = 0;
 			if (stplyr->lives > 0)
 			{
@@ -3371,25 +3383,41 @@ static void K_drawKartAccessibilityIcons(boolean gametypeinfoshown, INT32 fx)
             fx += 14 + 1;
     }
 
-	if (stplyr->mo != NULL)
+    if (noire_ascicons)
 	{
-
-		int i;
-		for (i = 0; i <= r_splitscreen; i++)
+		if (stplyr->nflags & NF_OLDTRICKS)
 		{
-			if (cv_flipcam[i].value && stplyr->mo->eflags & MFE_VERTICALFLIP)
+			if (mirror)
+				fx -= 16;
+
+			V_DrawScaledPatch(fx, fy-1, V_SLIDEIN|splitflags, kp_oldtricks);
+
+			if (mirror)
+				fx--;
+			else
+				fx += 16 + 1;
+		}
+
+		if (stplyr->mo != NULL)
+		{
+
+			int i;
+			for (i = 0; i <= r_splitscreen; i++)
 			{
-				if (mirror)
-					fx -= 14;
+				if (cv_flipcam[i].value && stplyr->mo->eflags & MFE_VERTICALFLIP)
+				{
+					if (mirror)
+						fx -= 18;
 
-				V_DrawScaledPatch(fx, fy-1, V_SLIDEIN|splitflags, kp_flipcam);
+					V_DrawScaledPatch(fx, fy-1, V_SLIDEIN|splitflags, kp_flipcam);
 
-				if (mirror)
-					fx--;
-				else
-					fx += 14 + 1;
+					if (mirror)
+						fx--;
+					else
+						fx += 18 + 1;
+				}
+
 			}
-
 		}
 	}
 }
@@ -4809,9 +4837,10 @@ static void K_drawKartMinimap(void)
 			}
 			else
 			{
-				skin = ((skin_t*)mobj->skin)-skins;
+				skin = ((skin_t*)(mobj->localskin ? mobj->localskin : mobj->skin))-(mobj->skinlocal ? localskins : skins);
 
-				workingPic = R_CanShowSkinInDemo(skin) ? faceprefix[skin][FACE_MINIMAP] : kp_unknownminimap;
+
+				workingPic = R_CanShowSkinInDemo(skin) ? (mobj->skinlocal ? localfaceprefix[skin] : faceprefix[skin])[FACE_MINIMAP] : kp_unknownminimap;
 
 				if (mobj->color)
 				{
@@ -5009,9 +5038,9 @@ static void K_drawKartMinimap(void)
 		}
 		else
 		{
-			skin = ((skin_t*)mobj->skin)-skins;
+			skin = ((skin_t*)(mobj->localskin ? mobj->localskin : mobj->skin))-(mobj->skinlocal ? localskins : skins);
 
-			workingPic = R_CanShowSkinInDemo(skin) ? faceprefix[skin][FACE_MINIMAP] : kp_unknownminimap;
+			workingPic = R_CanShowSkinInDemo(skin) ? (mobj->skinlocal ? localfaceprefix[skin] : faceprefix[skin])[FACE_MINIMAP] : kp_unknownminimap;
 
 			if (mobj->color)
 			{

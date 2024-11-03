@@ -35,6 +35,8 @@ typedef struct
 	UINT8 pos[MAXPLAYERS]; // player positions. used for ties
 
 	UINT8 character[MAXPLAYERS]; // Character #
+	UINT8 localcharacter[MAXPLAYERS]; // Character #
+	boolean characterlocal[MAXPLAYERS]; // Character #
 	UINT16 color[MAXPLAYERS]; // Color #
 
 	UINT32 val[MAXPLAYERS]; // Gametype-specific value

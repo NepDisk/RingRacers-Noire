@@ -2592,6 +2592,8 @@ static void HU_DrawRankings(void)
 		completed[i] = true;
 
 		standings.character[standings.numplayers] = players[i].skin;
+		standings.localcharacter[standings.numplayers] = players[i].localskin;
+		standings.characterlocal[standings.numplayers] = players[i].skinlocal;
 		standings.color[standings.numplayers] = players[i].skincolor;
 		standings.pos[standings.numplayers] = players[i].position;
 

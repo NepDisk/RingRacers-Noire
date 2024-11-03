@@ -4629,6 +4629,19 @@ static void P_SetupSignObject(mobj_t *sign, mobj_t *pmo, boolean error)
 	cur->hnext = P_SpawnMobjFromMobj(sign, 0, 0, 0, MT_SIGN_PIECE);
 	P_SetTarget(&cur->hnext->target, sign);
 	cur->hnext->skin = pmo->skin;
+
+	if (pmo->localskin) {
+		// needs - 1 or else it pukes an error out
+		// same thing happens on p_mobj.c
+		cur->hnext->localskin = &localskins[pmo->player->localskin - 1];
+		cur->hnext->skinlocal = pmo->skinlocal;
+	} else {
+		// needs - 1 or else it pukes an error out
+		// same thing happens on p_mobj.c
+		cur->hnext->localskin = &skins[pmo->player->localskin - 1];
+		cur->hnext->skinlocal = pmo->skinlocal;
+	}
+
 	P_SetMobjState(cur->hnext, (error == true) ? S_SIGN_ERROR : S_KART_SIGN);
 	cur->hnext->extravalue1 = 7;
 	cur->hnext->extravalue2 = 0;

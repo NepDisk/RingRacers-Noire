@@ -37,6 +37,8 @@
 #include "g_party.h"
 #include "g_input.h"
 
+#include "noire/n_cvar.h"
+
 boolean level_tally_t::UseBonuses(void)
 {
 	if ((gametyperules & GTR_SPECIALSTART) || (grandprixinfo.gp == true && grandprixinfo.eventmode == GPEVENT_SPECIAL))
@@ -422,12 +424,25 @@ void level_tally_t::Init(player_t *player)
 		{
 			gotThru = true;
 
-			if (player->skin < numskins)
+			if (player->skinlocal)
 			{
-				snprintf(
-					header, sizeof header,
-					"%s", R_CanShowSkinInDemo(player->skin) ? skins[player->skin].realname : "???"
-				);
+				if (player->localskin-1 < numlocalskins)
+				{
+					snprintf(
+						header, sizeof header,
+						"%s", R_CanShowSkinInDemo(player->skin) ? localskins[player->localskin-1].realname : "???"
+					);
+				}
+			}
+			else
+			{
+				if (player->localskin ? player->localskin-1 : player->skin < numlocalskins)
+				{
+					snprintf(
+						header, sizeof header,
+						"%s", R_CanShowSkinInDemo(player->skin) ? skins[player->localskin ? player->localskin-1 : player->skin].realname : "???"
+					);
+				}
 			}
 
 			showRoundNum = true;
@@ -1045,8 +1060,9 @@ void level_tally_t::Draw(void)
 
 			const skincolornum_t color = static_cast<skincolornum_t>(owner->skincolor);
 			lives_drawer
-				.colormap(owner->skin, color)
-				.patch(faceprefix[owner->skin][FACE_RANK]);
+				.colormap(owner->localskin ? owner->localskin-1 : owner->skin, color)
+				.scale((cv_highresportrait.value) ? 0.5 : 1)
+				.patch((owner->skinlocal ? localfaceprefix[owner->localskin] : faceprefix[owner->localskin ? owner->localskin-1 : owner->skin])[cv_highresportrait.value ? FACE_WANTED : FACE_RANK]);
 
 			UINT8 lives_num = owner->lives;
 			if (state == TALLY_ST_GAMEOVER_SLIDEIN)
@@ -1273,8 +1289,9 @@ void level_tally_t::Draw(void)
 							const skincolornum_t color = static_cast<skincolornum_t>(owner->skincolor);
 							lives_drawer
 								.x(r_splitscreen ? -7.0 : -2.0)
-								.colormap(owner->skin, color)
-								.patch(faceprefix[owner->skin][r_splitscreen ? FACE_MINIMAP : FACE_RANK]);
+								.scale((!r_splitscreen &&cv_highresportrait.value) ? 0.5 : 1)
+								.colormap(owner->localskin ? owner->localskin-1 : owner->skin, color)
+								.patch((owner->skinlocal ? localfaceprefix[owner->localskin-1] : faceprefix[owner->localskin ? owner->localskin-1 : owner->skin])[r_splitscreen ? FACE_MINIMAP : cv_highresportrait.value ? FACE_WANTED : FACE_RANK]);
 
 							UINT8 lives_num = std::min(owner->lives + livesAdded, 10);
 							if (xtraBlink > 0 && (xtraBlink & 1) == 0 && livesAdded > 0)

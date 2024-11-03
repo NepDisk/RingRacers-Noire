@@ -1354,6 +1354,7 @@ boolean found_noire_pk3;
 
 boolean clr_hud = false;
 boolean noire_smfont = false;
+boolean noire_ascicons = false;
 
 static void IdentifyVersion(void)
 {
@@ -1787,6 +1788,9 @@ void D_SRB2Main(void)
 	// TODO possibly check if font is completely valid
 	if (W_CheckMultipleLumps("SKRFU033", NULL))
 		noire_smfont = true;
+
+	if (W_CheckMultipleLumps("A11YFLPC", "A11YOLDT", NULL))
+		noire_ascicons = true;
 
 	// Load credits_def lump
 	F_LoadCreditsDefinitions();
