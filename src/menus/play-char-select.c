@@ -366,6 +366,7 @@ void M_CharacterSelectInit(void)
 		}
 	}
 
+	if (PLAY_CharSelectDef.extra2 == 1)
 	{
 		for (i = 0; i < numlocalskins; i++)
 		{

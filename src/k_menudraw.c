@@ -2587,10 +2587,11 @@ void M_DrawCharacterSelect(void)
 				if (sp->clonenum < setup_chargrid[sp->gridx][sp->gridy].numskins
 					&& setup_chargrid[sp->gridx][sp->gridy].skinlist[sp->clonenum] < numskins)
 				{
-					const char* skname = skins[setup_chargrid[sp->gridx][sp->gridy].skinlist[sp->clonenum]].realname;
+
+					char* skname = (setup_chargrid[sp->gridx][sp->gridy].skinlocal[sp->clonenum] ? localskins : skins)[setup_chargrid[sp->gridx][sp->gridy].skinlist[sp->clonenum]].realname;
 					// display amount of alts
 					if (setup_chargrid[sp->gridx][sp->gridy].numskins > 1 && sp->mdepth != CSSTEP_ALTS)
-						skname = va("%s (+%d)", skins[setup_chargrid[sp->gridx][sp->gridy].skinlist[0]].realname, setup_chargrid[sp->gridx][sp->gridy].numskins-1);
+						skname = va("%s (+%d)", (setup_chargrid[sp->gridx][sp->gridy].skinlocal[0] ? localskins : skins)[setup_chargrid[sp->gridx][sp->gridy].skinlist[0]].realname, setup_chargrid[sp->gridx][sp->gridy].numskins-1);
 					V_DrawCenteredMenuString(oinfox, oinfoy, 0, skname);
 				}
 				break;
