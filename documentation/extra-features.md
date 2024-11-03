@@ -1,5 +1,9 @@
 # Noire Extra Features
 
+
+## F12 Spymode
+This bind removed in Ring Racers has been brought back.
+
 ## addfilelocal
 Allows players to run local addons such as player skins with local skin, graphic replacements, or simple lua scripts for things such as custom HUDs.
 
