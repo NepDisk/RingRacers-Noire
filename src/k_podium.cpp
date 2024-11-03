@@ -125,6 +125,8 @@ void podiumData_s::Init(void)
 
 		memset(&rank, 0, sizeof(gpRank_t));
 		rank.skin = players[consoleplayer].skin;
+		rank.localskin = players[consoleplayer].localskin;
+		rank.skinlocal = players[consoleplayer].skinlocal;
 
 		rank.numPlayers = std::clamp<UINT8>(M_RandomRange(0, MAXSPLITSCREENPLAYERS + 1), 1, MAXSPLITSCREENPLAYERS);
 		rank.totalPlayers = K_GetGPPlayerCount(rank.numPlayers);
@@ -265,15 +267,21 @@ void podiumData_s::Init(void)
 
 	gradeVoice = sfx_None;
 
-	// It'd be neat to add all of the grade sounds,
-	// but not this close to release
-	if (rank.position > RANK_NEUTRAL_POSITION || grade < GRADE_C)
 	{
-		gradeVoice = skins[rank.skin].soundsid[S_sfx[sfx_klose].skinsound];
-	}
-	else
-	{
-		gradeVoice = skins[rank.skin].soundsid[S_sfx[sfx_kwin].skinsound];
+		UINT8 skinid = rank.skin;
+		if (rank.localskin)
+			skinid = rank.localskin - 1;
+
+		// It'd be neat to add all of the grade sounds,
+		// but not this close to release
+		if (rank.position > RANK_NEUTRAL_POSITION || grade < GRADE_C)
+		{
+			gradeVoice = ((rank.skinlocal == true) ? localskins : skins)[skinid].soundsid[S_sfx[sfx_klose].skinsound];
+		}
+		else
+		{
+			gradeVoice = ((rank.skinlocal == true) ? localskins : skins)[skinid].soundsid[S_sfx[sfx_kwin].skinsound];
+		}
 	}
 }
 
@@ -502,8 +510,8 @@ void podiumData_s::Draw(void)
 		}
 
 		drawer_winner
-			.colormap(bestHuman->skin, static_cast<skincolornum_t>(bestHuman->skincolor))
-			.patch(faceprefix[bestHuman->skin][FACE_WANTED]);
+			.colormap(bestHuman->localskin ? bestHuman->localskin : bestHuman->skin, static_cast<skincolornum_t>(bestHuman->skincolor))
+			.patch((bestHuman->skinlocal ? localfaceprefix[bestHuman->localskin-1] : faceprefix[bestHuman->localskin ? bestHuman->localskin-1 : bestHuman->skin])[FACE_WANTED]);
 
 		drawer_winner
 			.xy(44, 31)
@@ -591,7 +599,7 @@ void podiumData_s::Draw(void)
 						drawer_perplayer
 							.xy(12, -2)
 							.colormap(player->skin, static_cast<skincolornum_t>(player->skincolor))
-							.patch(faceprefix[player->skin][FACE_MINIMAP]);
+							.patch((player->skinlocal ? localfaceprefix[player->localskin-1] : faceprefix[player->localskin ? player->localskin-1 : player->skin])[FACE_MINIMAP]);
 
 						drawer_perplayer
 							.xy(26, 0)

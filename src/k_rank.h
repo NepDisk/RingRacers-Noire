@@ -45,6 +45,8 @@ struct gpRank_t
 
 	UINT8 position;
 	UINT8 skin;
+	UINT8 localskin;
+	boolean skinlocal;
 
 	UINT32 winPoints;
 	UINT32 totalPoints;

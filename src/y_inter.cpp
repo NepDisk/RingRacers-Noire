@@ -408,7 +408,7 @@ static void Y_CalculateMatchData(UINT8 rankingsmode, void (*comparison)(INT32))
 			}
 			else
 			{
-				if (players[i].localskin ? players[i].localskin-1 : players[i].skin < numlocalskins)
+				if (players[i].localskin ? players[i].localskin-1 : players[i].skin < numskins)
 				{
 					snprintf(
 						data.headerstring, sizeof data.headerstring,

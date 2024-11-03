@@ -4632,13 +4632,7 @@ static void P_SetupSignObject(mobj_t *sign, mobj_t *pmo, boolean error)
 
 	if (pmo->localskin) {
 		// needs - 1 or else it pukes an error out
-		// same thing happens on p_mobj.c
-		cur->hnext->localskin = &localskins[pmo->player->localskin - 1];
-		cur->hnext->skinlocal = pmo->skinlocal;
-	} else {
-		// needs - 1 or else it pukes an error out
-		// same thing happens on p_mobj.c
-		cur->hnext->localskin = &skins[pmo->player->localskin - 1];
+		cur->hnext->localskin = pmo->skinlocal ? &localskins[pmo->player->localskin - 1] : &skins[pmo->player->localskin - 1];
 		cur->hnext->skinlocal = pmo->skinlocal;
 	}
 

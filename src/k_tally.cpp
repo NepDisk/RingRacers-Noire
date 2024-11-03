@@ -436,7 +436,7 @@ void level_tally_t::Init(player_t *player)
 			}
 			else
 			{
-				if (player->localskin ? player->localskin-1 : player->skin < numlocalskins)
+				if (player->localskin ? player->localskin-1 : player->skin < numskins)
 				{
 					snprintf(
 						header, sizeof header,
@@ -1062,7 +1062,7 @@ void level_tally_t::Draw(void)
 			lives_drawer
 				.colormap(owner->localskin ? owner->localskin-1 : owner->skin, color)
 				.scale((cv_highresportrait.value) ? 0.5 : 1)
-				.patch((owner->skinlocal ? localfaceprefix[owner->localskin] : faceprefix[owner->localskin ? owner->localskin-1 : owner->skin])[cv_highresportrait.value ? FACE_WANTED : FACE_RANK]);
+				.patch((owner->skinlocal ? localfaceprefix[owner->localskin-1] : faceprefix[owner->localskin ? owner->localskin-1 : owner->skin])[cv_highresportrait.value ? FACE_WANTED : FACE_RANK]);
 
 			UINT8 lives_num = owner->lives;
 			if (state == TALLY_ST_GAMEOVER_SLIDEIN)
