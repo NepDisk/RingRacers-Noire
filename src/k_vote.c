@@ -522,7 +522,7 @@ static void Y_DrawVoteThumbnail(fixed_t center_x, fixed_t center_y, fixed_t widt
 		if (playerID < MAXPLAYERS)
 		{
 			UINT8 *playerMap = R_GetTranslationColormap(players[playerID].skin, players[playerID].skincolor, GTC_CACHE);
-			patch_t *playerPatch = faceprefix[players[playerID].skin][FACE_RANK];
+			patch_t *playerPatch = faceprefix[players[playerID].skin][cv_highresportrait.value ? FACE_WANTED : FACE_RANK];
 
 			if (players[playerID].localskin)
 			{

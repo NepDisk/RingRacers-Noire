@@ -606,13 +606,13 @@ void Y_PlayerStandingsDrawer(y_data_t *standings, INT32 xoffset)
 
 				M_DrawCharacterSprite(
 					duelx + 40, duely + 78,
-					standings->character[i],
+					standings->localcharacter[i] ? standings->localcharacter[i]-1 : standings->character[i],
 					spr2,
 					(datarightofcolumn ? 1 : 7),
 					0,
 					0,
 					charcolormap,
-					false
+					standings->characterlocal[i]
 				);
 
 				duelx += 8;
