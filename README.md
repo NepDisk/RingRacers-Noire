@@ -13,6 +13,7 @@ Some Features include:
 - Slope Helper toggle
 - Local Skins
 - F12 bind to switch perspectives
+- Eight maps in vote
 - Flipcam and old trick input profile options
 - New Pogo Spring Terrain type
 and many more!
