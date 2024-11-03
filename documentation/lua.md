@@ -1,5 +1,8 @@
 # Noire Lua Additions
 
+## Bugfixes
+The huddisable drawlist has been fixed so now disabling hud elements should properly work.
+
 ## Player Userdata
 These are values that were added to the player userdata.
 
