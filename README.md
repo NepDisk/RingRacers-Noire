@@ -4,7 +4,7 @@ Noire is a modification of Dr. Robotnik's Ring Racers which adds new features an
 
 Documentation for new stuff added is located within the documentation folder.
 
-Thanks to Alug, Haya, LuigiBudd and Wumbo for their forks of ring racers! They have helped to add useful or neat features!
+Thanks to Alug, Haya, LuigiBudd, Freaky Mutant Man and Wumbo for their forks of ring racers! They have helped to add useful or neat features!
 
 Original Readme below
 
