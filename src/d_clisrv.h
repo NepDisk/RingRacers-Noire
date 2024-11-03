@@ -34,7 +34,7 @@ The 'packet version' is used to distinguish packet formats.
 This version is independent of VERSION and SUBVERSION. Different
 applications may follow different packet versions.
 */
-#define PACKETVERSION 0
+#define PACKETVERSION 1
 
 // Network play related stuff.
 // There is a data struct that stores network
