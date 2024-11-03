@@ -3,6 +3,7 @@
 Noire is a modification of Dr. Robotnik's Ring Racers which adds new features and adds toggles to existing ones!
 
 Some Features include:
+- All of HEP2's features
 - Rings toggle
 - Combo toggle
 - Hitlag toggle
@@ -14,6 +15,10 @@ Some Features include:
 - Flipcam and old trick input profile options
 - New Pogo Spring Terrain type
 and many more!
+
+All gameplay tweaks are located in the Noire Gameplay menu inside Options > Gameplay.
+
+These all work in GrandPrix as well but have to be activated before hand.
 
 Documentation for new stuff added is located within the [documentation](https://github.com/NepDisk/RingRacers-Noire/tree/Noire/documentation) folder.
 
@@ -28,6 +33,10 @@ Also thanks to Indev for creating the original Slope Helper script!
 ## Contributing
 
 Have a feature or toggle idea? Want a new gameplay style preset added to the menu? Feel free to make PRs to this branch!
+
+## Note
+
+This is not net compatible with vanilla Ring Racers.
 
 # Development
 
