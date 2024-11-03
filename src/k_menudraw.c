@@ -2149,13 +2149,16 @@ static void M_DrawCharSelectPreview(UINT8 num)
 				}
 				/* FALLTHRU */
 			case CSSTEP_CHARS: // Character Select grid
-				V_DrawThinString(x-3, y+2, 0, va("Class %c (s %c - w %c)",
-					('A' + R_GetEngineClass(p->gridx+1, p->gridy+1, randomskin)),
-					(randomskin
-						? '?' : ('1'+p->gridx)),
-					(randomskin
-						? '?' : ('1'+p->gridy))
-					));
+				if (PLAY_CharSelectDef.extra2 == 0)
+				{
+					V_DrawThinString(x-3, y+2, 0, va("Class %c (s %c - w %c)",
+						('A' + R_GetEngineClass(p->gridx+1, p->gridy+1, randomskin)),
+						(randomskin
+							? '?' : ('1'+p->gridx)),
+						(randomskin
+							? '?' : ('1'+p->gridy))
+						));
+				}
 				break;
 			case CSSTEP_COLORS: // Select color
 				if (p->color < numskincolors)
