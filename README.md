@@ -12,6 +12,7 @@ Some Features include:
 - Custom itemodds
 - Slope Helper toggle
 - Local Skins
+- F12 bind to switch perspectives
 - Flipcam and old trick input profile options
 - New Pogo Spring Terrain type
 and many more!
