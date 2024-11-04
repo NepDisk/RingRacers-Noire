@@ -440,7 +440,7 @@ Default Value: 2
 
 Value used to determine how many times a map needs to get ignored before it votes for itself.
 
-Setting this value to 0 disables this.
+Setting this value to -1 disables this.
 
 #### ng_tripwires
 Default Value: "On"
