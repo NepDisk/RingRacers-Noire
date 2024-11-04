@@ -78,16 +78,8 @@ void KV1_UpdatePlayerAngle(player_t *player)
 	// Instead, turn the player only up to the amount they're supposed to turn.
 	angle_diff = cmd->angle - (player->mo->angle>>16);
 
-	if (!G_CompatLevel(0x1000))
-	{
-		max_left_turn = player->lturn_max[(leveltime + MAXPREDICTTICS) % MAXPREDICTTICS];
-		max_right_turn = player->rturn_max[(leveltime + MAXPREDICTTICS) % MAXPREDICTTICS];
-	}
-	else
-	{
-		max_left_turn = player->lturn_max[(leveltime + MAXPREDICTTICS - cmd->latency) % MAXPREDICTTICS];
-		max_right_turn = player->rturn_max[(leveltime + MAXPREDICTTICS - cmd->latency) % MAXPREDICTTICS];
-	}
+	max_left_turn = player->lturn_max[(leveltime + MAXPREDICTTICS - cmd->latency) % MAXPREDICTTICS];
+	max_right_turn = player->rturn_max[(leveltime + MAXPREDICTTICS - cmd->latency) % MAXPREDICTTICS];
 
 	//CONS_Printf("----------------\nangle diff: %d - turning options: %d to %d - ", angle_diff, max_left_turn, max_right_turn);
 
