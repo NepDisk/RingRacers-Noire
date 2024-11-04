@@ -238,7 +238,7 @@ Sets if capsules should spawn on race start.
 #### ng_oldorbinaut
 Default Value: "Ring Racers"
 
-Choices: "Ring Racers", "SRB2Kart"
+Choices: "Ring Racers", "Kart"
 
 Decides behaviour of Orbinauts.
 
@@ -247,7 +247,7 @@ SRB2Kart Orbinauts go backwards slowly and do not orbit in a circle.
 #### ng_oldjawz
 Default Value: "Ring Racers"
 
-Choices: "Ring Racers", "SRB2Kart"
+Choices: "Ring Racers", "Kart"
 
 Decides behaviour of Jawz.
 
@@ -256,7 +256,7 @@ SRB2Kart Jawz go backwards slowly and don't home-in on the person who threw it.
 #### ng_oldhyudoro
 Default Value: "Ring Racers"
 
-Choices: "Ring Racers", "SRB2Kart"
+Choices: "Ring Racers", "Kart"
 
 Decides behaviour of Hyudoro.
 
@@ -265,7 +265,7 @@ SRB2Kart Hyudoro instantly steal player items and makes the stealer a ghost.
 #### ng_oldballhog
 Default Value: "Ring Racers"
 
-Choices: "Ring Racers", "SRB2Kart"
+Choices: "Ring Racers", "Kart"
 
 Decides behaviour of the Ballhog.
 
@@ -274,7 +274,7 @@ SRB2Kart Ballhog throws all ammo at once and bounces off walls.
 #### ng_oldspb
 Default Value: "Ring Racers"
 
-Choices: "Ring Racers", "SRB2Kart"
+Choices: "Ring Racers", "Kart"
 
 Decides behaviour of the SPB.
 
@@ -283,7 +283,7 @@ SRB2Kart SPB instantly targets first place and flies to them rather then driving
 #### ng_oldinvincibility
 Default Value: "Ring Racers"
 
-Choices: "Ring Racers", "SRB2Kart"
+Choices: "Ring Racers", "Kart"
 
 Decides behaviour of Invincibility.
 
@@ -292,7 +292,7 @@ SRB2Kart Invincibility does not stack the duration when used multiple times and 
 #### ng_oldgrow
 Default Value: "Ring Racers"
 
-Choices: "Ring Racers", "SRB2Kart"
+Choices: "Ring Racers", "Kart"
 
 Decides behaviour of Grow.
 
@@ -301,7 +301,7 @@ SRB2Kart Grow makes its user's itembox held hostage and prevents item pickups an
 #### ng_oldshrink
 Default Value: "Ring Racers"
 
-Choices: "Ring Racers", "SRB2Kart"
+Choices: "Ring Racers", "Kart"
 
 Decides behaviour of Shrink.
 
@@ -310,7 +310,7 @@ SRB2Kart Shrink causes players ahead of the user to shrink down in size instantl
 #### ng_oldeggman
 Default Value: "Ring Racers"
 
-Choices: "Ring Racers", "SRB2Kart"
+Choices: "Ring Racers", "Kart"
 
 Decides behaviour of Shrink.
 
