@@ -168,7 +168,15 @@ INT16 N_GetKartDriftValue(const player_t* player, fixed_t countersteer)
 		basedrift += (basedrift / greasetics) * player->tiregrease;
 	}
 
-	return basedrift + (FixedMul(driftadjust * FRACUNIT, countersteer) / FRACUNIT);
+	// Compat level for Noire 1.0 Replays
+	if (G_CompatLevel(0x1000))
+	{
+		return basedrift + (FixedMul(driftadjust * FRACUNIT, countersteer) / FRACUNIT);
+	}
+	else
+	{
+		return basedrift + FixedMul(driftadjust, countersteer);
+	}
 }
 
 INT16 N_GetKartTurnValue(player_t* player, INT16 turnvalue)
