@@ -75,7 +75,7 @@ void KV1_UpdatePlayerAngle(player_t *player)
 	}
 
 	// KART: Don't directly apply angleturn! It may have been either A) forged by a malicious client, or B) not be a smooth turn due to a player dropping frames.
-	// Instead, turn the player only up to the amount they're supposed to turn accounting for latency. Allow exactly 1 extra turn unit to try to keep old replays synced.
+	// Instead, turn the player only up to the amount they're supposed to turn.
 	angle_diff = cmd->angle - (player->mo->angle>>16);
 
 	if (!G_CompatLevel(0x1000))
@@ -106,10 +106,10 @@ void KV1_UpdatePlayerAngle(player_t *player)
 	if (add_delta) {
 		anglechange += angle_diff<<TICCMD_REDUCE;
 		anglechange &= ~0xFFFF; // Try to keep the turning somewhat similar to how it was before?
-		/*CONS_Printf("leftover turn (%s): %5d or %4d%%\n",
-						player_names[player-players],
-						(INT16) (cmd->angle - (player->mo->angle>>TICCMD_REDUCE)),
-						(INT16) (cmd->angle - (player->mo->angle>>TICCMD_REDUCE)) * 100 / (angle_diff ? angle_diff : 1));*/
+		//CONS_Printf("leftover turn (%s): %5d or %4d%%\n",
+						//player_names[player-players],
+						//(INT16) (cmd->angle - (player->mo->angle>>TICCMD_REDUCE)),
+						//(INT16) (cmd->angle - (player->mo->angle>>TICCMD_REDUCE)) * 100 / (angle_diff ? angle_diff : 1));
 	}
 
 
