@@ -158,7 +158,7 @@ boolean P_CanPickupItem(player_t *player, UINT8 weapon)
 			if (player->stealingtimer
 				|| player->rocketsneakertimer
 				|| player->eggmanexplode
-				|| (player->growshrinktimer > 0) && cv_ng_oldgrow.value)
+				|| ((player->growshrinktimer > 0) && cv_ng_oldgrow.value))
 				return false;
 
 			// Item slot already taken up

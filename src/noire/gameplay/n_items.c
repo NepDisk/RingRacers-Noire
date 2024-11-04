@@ -118,12 +118,12 @@ void N_DoShrink(player_t *user)
 				if (players[i].mo && !P_MobjWasRemoved(players[i].mo))
 				{
 					players[i].mo->scalespeed = mapobjectscale/TICRATE;
-					players[i].mo->destscale = (6*mapobjectscale)/8;
-					if (K_PlayerShrinkCheat(&players[i]) == true)
+					players[i].mo->destscale = FixedMul(mapobjectscale, SHRINK_SCALE);
+
+					if (K_PlayerShrinkCheat(players[i].mo->player) == true)
 					{
-						players[i].mo->destscale = (6*players[i].mo->destscale)/8;
+						players[i].mo->destscale = FixedMul(players[i].mo->destscale, SHRINK_SCALE);
 					}
-					S_StartSound(players[i].mo, sfx_kc59);
 				}
 			}
 		}
