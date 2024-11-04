@@ -564,12 +564,15 @@ boolean K_DropTargetCollide(mobj_t *t1, mobj_t *t2)
 		P_Thrust(t1, R_PointToAngle2(t1->x, t1->y, t2->x, t2->y), strength * t1->scale);
 	}
 
-	if (draggeddroptarget)
+	if (!G_CompatLevel(0x1000) && cv_ng_nerfdroptarget.value)
 	{
-		// "Pass through" the shock of the impact, part 1.
-		t1->momx = t1->target->momx;
-		t1->momy = t1->target->momy;
-		t1->momz = t1->target->momz;
+		if (draggeddroptarget)
+		{
+			// "Pass through" the shock of the impact, part 1.
+			t1->momx = t1->target->momx;
+			t1->momy = t1->target->momy;
+			t1->momz = t1->target->momz;
+		}
 	}
 
 	fixed_t bumppower = FRACUNIT;
@@ -630,19 +633,23 @@ boolean K_DropTargetCollide(mobj_t *t1, mobj_t *t2)
 
 	t1->renderflags &= ~RF_FULLDARK; // brightest on the bump
 
-	if (draggeddroptarget)
+	if (!G_CompatLevel(0x1000) && cv_ng_nerfdroptarget.value)
 	{
-		// "Pass through" the shock of the impact, part 2.
-		draggeddroptarget->momx = t1->momx;
-		draggeddroptarget->momy = t1->momy;
-		draggeddroptarget->momz = t1->momz;
 
-		// Have the drop target travel between them.
-		t1->momx = (t1->momx + t2->momx)/2;
-		t1->momy = (t1->momy + t2->momy)/2;
-		t1->momz = (t1->momz + t2->momz)/2;
+		if (draggeddroptarget)
+		{
+			// "Pass through" the shock of the impact, part 2.
+			draggeddroptarget->momx = t1->momx;
+			draggeddroptarget->momy = t1->momy;
+			draggeddroptarget->momz = t1->momz;
 
-		K_AddHitLag(t1->target, 6, false);
+			// Have the drop target travel between them.
+			t1->momx = (t1->momx + t2->momx)/2;
+			t1->momy = (t1->momy + t2->momy)/2;
+			t1->momz = (t1->momz + t2->momz)/2;
+
+			K_AddHitLag(t1->target, 6, false);
+		}
 	}
 
 	K_AddHitLag(t1, 6, true);

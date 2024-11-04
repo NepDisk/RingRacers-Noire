@@ -3207,27 +3207,30 @@ boolean P_DamageMobj(mobj_t *target, mobj_t *inflictor, mobj_t *source, INT32 da
 				{
 					// Extend the invincibility if the hit was a direct hit.
 					if (inflictor == source && source->player->invincibilitytimer &&
-							!K_PowerUpRemaining(source->player, POWERUP_SMONITOR) && !cv_ng_oldinvincibility.value)
+							!K_PowerUpRemaining(source->player, POWERUP_SMONITOR) && !(G_CompatLevel(0x1000) && !cv_ng_oldinvincibility.value))
 					{
 						tic_t kinvextend;
 
 						hitFromInvinc = true;
 
-						if (gametyperules & GTR_CLOSERPLAYERS)
-							kinvextend = 2*TICRATE;
-						else
-							kinvextend = 3*TICRATE;
+						if (!cv_ng_oldinvincibility.value)
+						{
+							if (gametyperules & GTR_CLOSERPLAYERS)
+								kinvextend = 2*TICRATE;
+							else
+								kinvextend = 3*TICRATE;
 
-						// Reduce the value of subsequent invinc extensions
-						kinvextend = kinvextend / (1 + source->player->invincibilityextensions); // 50%, 33%, 25%[...]
-						kinvextend = max(kinvextend, TICRATE);
+							// Reduce the value of subsequent invinc extensions
+							kinvextend = kinvextend / (1 + source->player->invincibilityextensions); // 50%, 33%, 25%[...]
+							kinvextend = max(kinvextend, TICRATE);
 
-						source->player->invincibilityextensions++;
+							source->player->invincibilityextensions++;
 
-						source->player->invincibilitytimer += kinvextend;
+							source->player->invincibilitytimer += kinvextend;
 
-						if (P_IsDisplayPlayer(source->player))
-							S_StartSound(NULL, sfx_gsha7);
+							if (P_IsDisplayPlayer(source->player))
+								S_StartSound(NULL, sfx_gsha7);
+						}
 					}
 
 					K_TryHurtSoundExchange(target, source);
