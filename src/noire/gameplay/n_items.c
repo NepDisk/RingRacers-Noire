@@ -12,6 +12,7 @@
 #include "../n_items.h"
 #include "../../m_random.h"
 #include "../n_cvar.h"
+#include "../../g_demo.h"
 
 void N_DoHyudoroSteal(player_t *player)
 {
@@ -117,12 +118,25 @@ void N_DoShrink(player_t *user)
 
 				if (players[i].mo && !P_MobjWasRemoved(players[i].mo))
 				{
-					players[i].mo->scalespeed = mapobjectscale/TICRATE;
-					players[i].mo->destscale = FixedMul(mapobjectscale, SHRINK_SCALE);
-
-					if (K_PlayerShrinkCheat(players[i].mo->player) == true)
+					if (!G_CompatLevel(0x1000))
 					{
-						players[i].mo->destscale = FixedMul(players[i].mo->destscale, SHRINK_SCALE);
+						players[i].mo->scalespeed = mapobjectscale/TICRATE;
+						players[i].mo->destscale = FixedMul(mapobjectscale, SHRINK_SCALE);
+
+						if (K_PlayerShrinkCheat(players[i].mo->player) == true)
+						{
+							players[i].mo->destscale = FixedMul(players[i].mo->destscale, SHRINK_SCALE);
+						}
+					}
+					else
+					{
+						players[i].mo->scalespeed = mapobjectscale/TICRATE;
+						players[i].mo->destscale = (6*mapobjectscale)/8;
+						if (K_PlayerShrinkCheat(&players[i]) == true)
+						{
+							players[i].mo->destscale = (6*players[i].mo->destscale)/8;
+						}
+
 					}
 				}
 			}

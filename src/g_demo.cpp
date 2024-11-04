@@ -172,8 +172,9 @@ demoghost *ghosts = NULL;
 // - 0x000C (Ring Racers v2.2)
 // - 0x000D (Ring Racers v2.3)
 // - 0x1000 (Ring Racers Noire v1.0)
+// - 0x1001 (Ring Racers Noire v1.0)
 
-#define DEMOVERSION 0x1000
+#define DEMOVERSION 0x1001
 
 boolean G_CompatLevel(UINT16 level)
 {
@@ -2535,6 +2536,7 @@ UINT8 G_CmpDemoTime(char *oldname, char *newname)
 	case 0x000B: // 2.2 indev (staff ghosts)
 	case 0x000C: // 2.2
 	case 0x000D: // 2.3
+	case 0x1000; // Noire 1.0
 		break;
 	// too old, cannot support.
 	default:
@@ -2688,6 +2690,7 @@ void G_LoadDemoInfo(menudemo_t *pdemo, boolean allownonmultiplayer)
 	case 0x000B: // 2.2 indev (staff ghosts)
 	case 0x000C: // 2.2
 	case 0x000D: // 2.3
+	case 0x1000; // Noire 1.0
 		if (P_SaveBufferRemaining(&info) < 64)
 		{
 			goto corrupt;
@@ -3119,6 +3122,7 @@ void G_DoPlayDemoEx(const char *defdemoname, lumpnum_t deflumpnum)
 	case 0x000B: // 2.2 indev (staff ghosts)
 	case 0x000C: // 2.2
 	case 0x000D: // 2.3
+	case 0x1000; // Noire 1.0
 		break;
 	// too old, cannot support.
 	default:
@@ -3590,6 +3594,7 @@ void G_AddGhost(savebuffer_t *buffer, const char *defdemoname)
 	case 0x000B: // 2.2 indev (staff ghosts)
 	case 0x000C: // 2.2
 	case 0x000D: // 2.3
+	case 0x1000; // Noire 1.0
 		break;
 	// too old, cannot support.
 	default:
@@ -3854,6 +3859,7 @@ staffbrief_t *G_GetStaffGhostBrief(UINT8 *buffer)
 		case 0x000B: // 2.2 indev (staff ghosts)
 		case 0x000C: // 2.2
 		case 0x000D: // 2.3
+		case 0x1000; // Noire 1.0
 			break;
 
 		// too old, cannot support.

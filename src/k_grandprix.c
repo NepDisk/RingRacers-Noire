@@ -111,11 +111,7 @@ UINT8 K_GetGPPlayerCount(UINT8 humans)
 	// 2P -> 8 total
 	// 3P -> 12 total
 	// 4P -> 16 total
-	
-	(void)humans;
-	//TEST: always return 16 for maximum "fun"
-	return 16; //max(min(humans * 4, MAXPLAYERS), 8);
-	//return max(min(humans * 4, MAXPLAYERS), 8);
+	return max(min(humans * 4, MAXPLAYERS), 8);
 }
 
 /*--------------------------------------------------
