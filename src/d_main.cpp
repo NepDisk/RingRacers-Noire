@@ -1847,8 +1847,6 @@ void D_SRB2Main(void)
 
 	I_RegisterSysCommands();
 
-	CON_SetLoadingProgress(LOADED_HUINIT);
-
 	CONS_Printf("W_InitMultipleFiles(): Adding external PWADs.\n");
 
 	// HACK: Refer to https://git.do.srb2.org/KartKrew/RingRacers/-/merge_requests/29#note_61574
@@ -1867,8 +1865,6 @@ void D_SRB2Main(void)
 
 	D_CleanFile(startuppwads);
 	partadd_earliestfile = UINT16_MAX;
-
-	CON_SetLoadingProgress(LOADED_PWAD);
 
 	CON_SetLoadingProgress(LOADED_HUINIT);
 
