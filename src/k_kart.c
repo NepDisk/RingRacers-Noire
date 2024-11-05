@@ -8856,7 +8856,7 @@ void K_KartPlayerThink(player_t *player, ticcmd_t *cmd)
 
 	Obj_DashRingPlayerThink(player);
 
-	if (!cv_ng_tumble.value)
+	if (!cv_ng_tumble.value && !cv_ng_stumble.value)
 	{
 		player->tumbleBounces = 0;
 		player->tumbleHeight = 0;
