@@ -48,7 +48,6 @@ void KV1_UpdatePlayerAngle(player_t *player)
 {
 	INT16 angle_diff, max_left_turn, max_right_turn;
 	boolean add_delta = true;
-	fixed_t currentSpeed = 0;
 	ticcmd_t *cmd = &player->cmd;
 	angle_t anglechange = player->angleturn;
 	int i;
@@ -76,8 +75,9 @@ void KV1_UpdatePlayerAngle(player_t *player)
 	}
 
 	// KART: Don't directly apply angleturn! It may have been either A) forged by a malicious client, or B) not be a smooth turn due to a player dropping frames.
-	// Instead, turn the player only up to the amount they're supposed to turn accounting for latency. Allow exactly 1 extra turn unit to try to keep old replays synced.
+	// Instead, turn the player only up to the amount they're supposed to turn.
 	angle_diff = cmd->angle - (player->mo->angle>>16);
+
 	max_left_turn = player->lturn_max[(leveltime + MAXPREDICTTICS - cmd->latency) % MAXPREDICTTICS];
 	max_right_turn = player->rturn_max[(leveltime + MAXPREDICTTICS - cmd->latency) % MAXPREDICTTICS];
 
@@ -98,10 +98,10 @@ void KV1_UpdatePlayerAngle(player_t *player)
 	if (add_delta) {
 		anglechange += angle_diff<<TICCMD_REDUCE;
 		anglechange &= ~0xFFFF; // Try to keep the turning somewhat similar to how it was before?
-		/*CONS_Printf("leftover turn (%s): %5d or %4d%%\n",
-						player_names[player-players],
-						(INT16) (cmd->angle - (player->mo->angle>>TICCMD_REDUCE)),
-						(INT16) (cmd->angle - (player->mo->angle>>TICCMD_REDUCE)) * 100 / (angle_diff ? angle_diff : 1));*/
+		//CONS_Printf("leftover turn (%s): %5d or %4d%%\n",
+						//player_names[player-players],
+						//(INT16) (cmd->angle - (player->mo->angle>>TICCMD_REDUCE)),
+						//(INT16) (cmd->angle - (player->mo->angle>>TICCMD_REDUCE)) * 100 / (angle_diff ? angle_diff : 1));
 	}
 
 
@@ -168,7 +168,15 @@ INT16 N_GetKartDriftValue(const player_t* player, fixed_t countersteer)
 		basedrift += (basedrift / greasetics) * player->tiregrease;
 	}
 
-	return basedrift + (FixedMul(driftadjust * FRACUNIT, countersteer) / FRACUNIT);
+	// Compat level for Noire 1.0 Replays
+	if (G_CompatLevel(0x1000))
+	{
+		return basedrift + (FixedMul(driftadjust * FRACUNIT, countersteer) / FRACUNIT);
+	}
+	else
+	{
+		return basedrift + FixedMul(driftadjust, countersteer);
+	}
 }
 
 INT16 N_GetKartTurnValue(player_t* player, INT16 turnvalue)

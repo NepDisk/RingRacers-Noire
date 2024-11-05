@@ -248,14 +248,16 @@ class TiccmdBuilder
 			return;
 		}
 
-		if (player()->mo)
-			cmd->angle = N_GetKartTurnValue(player(), cmd->turning);
+		angle_t angleChange = 0;
 
-		cmd->angle *= realtics;
+		{
+			angleChange = N_GetKartTurnValue(player(), cmd->turning) << TICCMD_REDUCE;
 
-		localangle[ssplayer-1] += (cmd->angle<<TICCMD_REDUCE);
+			angleChange *= realtics;
 
-		cmd->angle = (INT16)(localangle[ssplayer-1] >> TICCMD_REDUCE);
+			localangle[ssplayer-1] += angleChange;
+			cmd->angle = localangle[viewnum] >> TICCMD_REDUCE;
+		}
 	}
 
 	bool typing_input()
