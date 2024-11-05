@@ -3735,7 +3735,7 @@ void P_SetPlayerSpectator(INT32 playernum)
 
 	players[playernum].playerstate = PST_REBORN;
 
-	if (cv_spectatormusic.value)
+	if (cv_spectatormusic.value && (players[displayplayers[0]].spectator == true) && !r_splitscreen)
 	{
 		if (P_UseContinuousLevelMusic())
 		{
