@@ -21,7 +21,7 @@ extern "C" {
 #include "../r_main.h"
 
 // :)
-#define HEPVSTRING "v2.3333"
+#define HEPVSTRING "v2.5"
 
 extern patch_t* checkerpatches[4];
 

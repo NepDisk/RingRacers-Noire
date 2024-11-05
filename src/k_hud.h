@@ -130,6 +130,10 @@ INT32 K_GetMinimapTransFlags(const boolean usingProgressBar);
 INT32 K_GetMinimapSplitFlags(const boolean usingProgressBar);
 position_t K_GetKartObjectPosToMinimapPos(fixed_t objx, fixed_t objy);
 
+INT32 K_GetMinimapTransFlags(const boolean usingProgressBar);
+INT32 K_GetMinimapSplitFlags(const boolean usingProgressBar);
+position_t K_GetKartObjectPosToMinimapPos(fixed_t objx, fixed_t objy);
+
 #ifdef __cplusplus
 } // extern "C"
 #endif

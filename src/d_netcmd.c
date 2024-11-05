@@ -80,6 +80,8 @@
 
 #include "fastcmp.h"
 
+#include "fastcmp.h"
+
 #ifdef SRB2_CONFIG_ENABLE_WEBM_MOVIES
 #include "m_avrecorder.h"
 #endif
