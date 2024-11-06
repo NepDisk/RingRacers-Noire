@@ -35,6 +35,8 @@ extern menuitem_t OPTIONS_NoireGameplayLives[];
 extern menuitem_t OPTIONS_NoireGameplayDriving[];
 extern menuitem_t OPTIONS_NoireGameplayBots[];
 extern menuitem_t OPTIONS_NoireGameplayRivals[];
+extern menuitem_t OPTIONS_NoireGameplayAttacks[];
+extern menuitem_t OPTIONS_NoireGameplayMaps[];
 extern menu_t OPTIONS_NoireGameplayDef;
 extern menu_t OPTIONS_NoireGameplayPresetsDef;
 extern menu_t OPTIONS_NoireGameplayRingsDef;
@@ -48,6 +50,7 @@ extern menu_t OPTIONS_NoireGameplayDrivingDef;
 extern menu_t OPTIONS_NoireGameplayBotsDef;
 extern menu_t OPTIONS_NoireGameplayRivalsDef;
 extern menu_t OPTIONS_NoireGameplayAttackDef;
+extern menu_t OPTIONS_NoireGameplayMapsDef;
 
 extern menuitem_t OPTIONS_Noire[];
 extern menu_t OPTIONS_NoireDef;

@@ -68,6 +68,9 @@ menuitem_t OPTIONS_NoireGameplayRings[] =
 	{IT_STRING | IT_CVAR, "Spill Cap", "Maximum amount of rings that can be lost upon taking damage.",
 		NULL, {.cvar = &cv_ng_spillcap}, 0, 0},
 
+	{IT_STRING | IT_CVAR, "Duration Cap", "Maximum amount of ringboost allowed in tics",
+		NULL, {.cvar = &cv_ng_durationcap}, 0, 0},
+
 	{IT_STRING | IT_CVAR, "Ring Debt", "Let ring count go into negatives.",
 		NULL, {.cvar = &cv_ng_ringdebt}, 0, 0},
 
@@ -173,6 +176,9 @@ menuitem_t OPTIONS_NoireGameplayMechanics[] =
 	{IT_STRING | IT_SUBMENU, "Damage Options...", "Adjust the behavior of sending and reciving damage.",
 		NULL, {.submenu = &OPTIONS_NoireGameplayAttackDef}, 0, 0},
 
+	{IT_STRING | IT_SUBMENU, "Map Options...", "Adjust the behavior of map mechanics.",
+		NULL, {.submenu = &OPTIONS_NoireGameplayMapsDef}, 0, 0},
+
 	{IT_NOTHING|IT_SPACE, NULL, NULL,
 		NULL, {NULL}, 0, 0},
 
@@ -190,18 +196,6 @@ menuitem_t OPTIONS_NoireGameplayMechanics[] =
 
 	{IT_STRING | IT_CVAR, "Triangle Dash", "Enable or disable the thrusts done by miniturbos in the air.",
 		NULL, {.cvar = &cv_ng_triangledash}, 0, 0},
-
-	{IT_STRING | IT_CVAR, "Map Anger", "Amount of times a map has to be ignored by everyone to vote itself.",
-		NULL, {.cvar = &cv_ng_mapanger}, 0, 0},
-
-	{IT_STRING | IT_CVAR, "Tripwires", "Enable or disable terrain recognized as tripwire.",
-		NULL, {.cvar = &cv_ng_tripwires}, 0, 0},
-
-	{IT_STRING | IT_CVAR, "Force Disable Position", "Force disable Position on all maps regardless of mapheader.",
-		NULL, {.cvar = &cv_ng_forcenoposition}, 0, 0},
-
-	{IT_STRING | IT_CVAR, "Special Stages", "Enable or disable special stages in Intense or higher GPs.",
-		NULL, {.cvar = &cv_ng_dospecialstage}, 0, 0},
 };
 
 ///////////
@@ -263,6 +257,25 @@ menuitem_t OPTIONS_NoireGameplayAttack[] =
 
 	{IT_STRING | IT_CVAR, "Combos", "Enable or disable hit combos.",
 		NULL, {.cvar = &cv_ng_combo}, 0, 0},
+};
+
+///////////
+// MAPS
+///////////
+
+menuitem_t OPTIONS_NoireGameplayMaps[] =
+{
+	{IT_STRING | IT_CVAR, "Map Anger", "Amount of times a map has to be ignored by everyone to vote itself.",
+		NULL, {.cvar = &cv_ng_mapanger}, 0, 0},
+
+	{IT_STRING | IT_CVAR, "Tripwires", "Enable or disable terrain recognized as tripwire.",
+		NULL, {.cvar = &cv_ng_tripwires}, 0, 0},
+
+	{IT_STRING | IT_CVAR, "Force Disable Position", "Force disable Position on all maps regardless of mapheader.",
+		NULL, {.cvar = &cv_ng_forcenoposition}, 0, 0},
+
+	{IT_STRING | IT_CVAR, "Special Stages", "Enable or disable special stages in Intense or higher GPs.",
+		NULL, {.cvar = &cv_ng_dospecialstage}, 0, 0},
 };
 
 ///////////
@@ -763,6 +776,24 @@ menu_t OPTIONS_NoireGameplayAttackDef = {
 	&OPTIONS_NoireGameplayMechanicsDef,
 	0,
 	OPTIONS_NoireGameplayAttack,
+	48, 80,
+	SKINCOLOR_BLACK, 0,
+	MBF_DRAWBGWHILEPLAYING,
+	NULL,
+	2, 5,
+	M_DrawGenericOptions,
+	M_DrawOptionsCogs,
+	M_OptionsTick,
+	NULL,
+	NULL,
+	NULL,
+};
+
+menu_t OPTIONS_NoireGameplayMapsDef = {
+	sizeof (OPTIONS_NoireGameplayMaps) / sizeof (menuitem_t),
+	&OPTIONS_NoireGameplayMechanicsDef,
+	0,
+	OPTIONS_NoireGameplayMaps,
 	48, 80,
 	SKINCOLOR_BLACK, 0,
 	MBF_DRAWBGWHILEPLAYING,

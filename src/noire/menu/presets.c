@@ -21,6 +21,7 @@ void N_RRVanillaPreset(INT32 choice)
 	CV_Set(&cv_ng_rings, "On");
 	CV_SetValue(&cv_ng_ringcap, 20);
 	CV_SetValue(&cv_ng_spillcap, 20);
+	CV_Set(&cv_ng_durationcap, "Off");
 	CV_Set(&cv_ng_ringdebt, "On");
 	CV_Set(&cv_ng_ringsting, "On");
 	CV_SetValue(&cv_ng_ringdeathmark, -20);
@@ -59,6 +60,7 @@ void N_RRVanillaPreset(INT32 choice)
 	CV_Set(&cv_ng_safelanding, "On");
 	CV_Set(&cv_ng_hitlag, "On");
 	CV_Set(&cv_ng_combo, "On");
+	CV_Set(&cv_ng_triangledash, "On");
 	CV_SetValue(&cv_ng_mapanger, 2);
 	CV_Set(&cv_ng_tripwires, "On");
 	CV_Set(&cv_ng_forcenoposition, "Off");
@@ -76,6 +78,7 @@ void N_RRVanillaPreset(INT32 choice)
 	CV_SetValue(&cv_ng_spindashthreshold, 6);
 	CV_SetValue(&cv_ng_spindashcharge, 0);
 	CV_Set(&cv_ng_spindashoverheat, "On");
+	CV_Set(&cv_ng_desperationforce, "Off");
 
 	CV_Set(&cv_ng_butteredslopes, "On");
 	CV_Set(&cv_ng_slopeclimb, "On");
@@ -108,6 +111,7 @@ void N_NoirePreset(INT32 choice)
 	CV_Set(&cv_ng_rings, "Off");
 	CV_SetValue(&cv_ng_ringcap, 0);
 	CV_SetValue(&cv_ng_spillcap, 0);
+	CV_Set(&cv_ng_durationcap, "Off");
 	CV_Set(&cv_ng_ringdebt, "Off");
 	CV_Set(&cv_ng_ringsting, "Off");
 	CV_SetValue(&cv_ng_ringdeathmark, -20);
@@ -127,7 +131,7 @@ void N_NoirePreset(INT32 choice)
 	CV_StealthSet(&cv_ng_oldinvincibility, "Kart");
 	CV_StealthSet(&cv_ng_oldgrow, "Kart");
 	CV_StealthSet(&cv_ng_oldshrink, "Kart");
-	CV_StealthSet(&cv_ng_oldeggman, "Ring Racers");
+	CV_StealthSet(&cv_ng_oldeggman, "Kart");
 	CV_Set(&cv_ng_nerfdroptarget, "On");
 	CV_Set(&cv_ng_nerfflameshield, "On");
 	CV_Set(&cv_ng_nerfflameshielddiminish, "1.2");
@@ -146,7 +150,8 @@ void N_NoirePreset(INT32 choice)
 	CV_Set(&cv_ng_safelanding, "Off");
 	CV_Set(&cv_ng_hitlag, "Off");
 	CV_Set(&cv_ng_combo, "Off");
-	CV_SetValue(&cv_ng_mapanger, 0);
+	CV_Set(&cv_ng_triangledash, "Forward Thrust Only");
+	CV_SetValue(&cv_ng_mapanger, -1);
 	CV_Set(&cv_ng_tripwires, "On");
 	CV_Set(&cv_ng_forcenoposition, "Off");
 	CV_Set(&cv_ng_dospecialstage, "On");
@@ -163,6 +168,7 @@ void N_NoirePreset(INT32 choice)
 	CV_SetValue(&cv_ng_spindashthreshold, 6);
 	CV_SetValue(&cv_ng_spindashcharge, 0);
 	CV_Set(&cv_ng_spindashoverheat, "On");
+	CV_Set(&cv_ng_desperationforce, "On");
 
 	CV_Set(&cv_ng_butteredslopes, "On");
 	CV_Set(&cv_ng_slopeclimb, "Off");
@@ -194,6 +200,7 @@ void N_SRB2KPreset(INT32 choice)
 	CV_Set(&cv_ng_rings, "Off");
 	CV_SetValue(&cv_ng_ringcap, 0);
 	CV_SetValue(&cv_ng_spillcap, 0);
+	CV_Set(&cv_ng_durationcap, "Off");
 	CV_Set(&cv_ng_ringdebt, "Off");
 	CV_Set(&cv_ng_ringsting, "Off");
 	CV_SetValue(&cv_ng_ringdeathmark, -20);
@@ -232,7 +239,8 @@ void N_SRB2KPreset(INT32 choice)
 	CV_Set(&cv_ng_safelanding, "Off");
 	CV_Set(&cv_ng_hitlag, "Off");
 	CV_Set(&cv_ng_combo, "Off");
-	CV_SetValue(&cv_ng_mapanger, 0);
+	CV_Set(&cv_ng_triangledash, "Off");
+	CV_SetValue(&cv_ng_mapanger, -1);
 	CV_Set(&cv_ng_tripwires, "On");
 	CV_Set(&cv_ng_forcenoposition, "Off");
 	CV_Set(&cv_ng_dospecialstage, "On");
@@ -249,6 +257,7 @@ void N_SRB2KPreset(INT32 choice)
 	CV_SetValue(&cv_ng_spindashthreshold, 6);
 	CV_SetValue(&cv_ng_spindashcharge, 0);
 	CV_Set(&cv_ng_spindashoverheat, "On");
+	CV_Set(&cv_ng_desperationforce, "On");
 
 	CV_Set(&cv_ng_butteredslopes, "On");
 	CV_Set(&cv_ng_slopeclimb, "Off");

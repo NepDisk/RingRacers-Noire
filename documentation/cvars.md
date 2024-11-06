@@ -167,9 +167,13 @@ The total amount of rings a player is allowed to have at one time.
 #### ng_spillcap
 Default Value: 20
 
-Choices: "Off", "On"
-
 The maximum amount of rings to be dropped at once.
+
+#### ng_durationcap
+Default Value: 0
+
+The maximum amount of ringboost a player can have at once in tics. Can be used to nerf jackpot and ring stacking.
+Zero means disabled.
 
 #### ng_ringdebt
 Default Value: "On"

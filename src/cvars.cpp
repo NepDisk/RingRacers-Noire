@@ -853,6 +853,7 @@ void NG_Rings_OnChange(void);
 consvar_t cv_ng_rings = UnsavedNetVar("ng_rings", "On").on_off().onchange_noinit(NG_Rings_OnChange);
 consvar_t cv_ng_ringcap = UnsavedNetVar("ng_ringcap", "Default (20)").min_max(INT8_MIN, INT8_MAX, {{20, "Default (20)"}}); //Rings in player are a Signed int, so we'll put the limits to the technical limits
 consvar_t cv_ng_spillcap = UnsavedNetVar("ng_spillcap", "Default (20)").min_max(INT8_MIN, INT8_MAX, {{20, "Default (20)"}});
+consvar_t cv_ng_durationcap = UnsavedNetVar("ng_durationcap", "Off").min_max(0, INT32_MAX, {{0, "Off"}});
 consvar_t cv_ng_ringdebt = UnsavedNetVar("ng_ringdebt", "On").on_off();
 consvar_t cv_ng_ringsting = UnsavedNetVar("ng_ringsting", "On").on_off();
 consvar_t cv_ng_ringdeathmark = UnsavedNetVar("ng_ringdeathmark", "Default (-20)").min_max(INT8_MIN, INT8_MAX, {{-20, "Default (-20)"}});

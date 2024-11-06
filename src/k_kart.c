@@ -8872,6 +8872,11 @@ void K_KartPlayerThink(player_t *player, ticcmd_t *cmd)
 				player->rings = 0;
 	}
 
+	if (cv_ng_durationcap.value > 0)
+	{
+		player->ringboost = min(player->ringboost, cv_ng_durationcap.value);
+	}
+
 	// update boost angle if not spun out
 	if (!player->spinouttimer && !player->wipeoutslow)
 		player->boostangle = player->mo->angle;
