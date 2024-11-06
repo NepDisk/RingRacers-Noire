@@ -19,6 +19,7 @@
 
 #include "k_kart.h"
 #include "d_player.h"
+#include "g_demo.h"
 #include "k_battle.h"
 #include "k_pwrlv.h"
 #include "k_color.h"
@@ -8856,10 +8857,13 @@ void K_KartPlayerThink(player_t *player, ticcmd_t *cmd)
 
 	Obj_DashRingPlayerThink(player);
 
-	if (!cv_ng_tumble.value && !cv_ng_stumble.value)
+	if (G_CompatLevel(0x1001) || G_CompatLevel(0x1000))
 	{
-		player->tumbleBounces = 0;
-		player->tumbleHeight = 0;
+		if (!cv_ng_tumble.value)
+		{
+			player->tumbleBounces = 0;
+			player->tumbleHeight = 0;
+		}
 	}
 
 	if (!cv_ng_ringdebt.value)
@@ -14182,9 +14186,12 @@ void K_MoveKartPlayer(player_t *player, boolean onground)
 			if (momz * P_MobjFlip(player->mo) < -10*FRACUNIT)	// :youfuckedup:
 			{
 				// tumble if you let your chance pass!!
-				player->tumbleBounces = 1;
-				player->pflags &= ~PF_TUMBLESOUND;
-				player->tumbleHeight = 30;	// Base tumble bounce height
+				if (cv_ng_tumble.value || G_CompatLevel(0x1001) || G_CompatLevel(0x1000))
+				{
+					player->tumbleBounces = 1;
+					player->pflags &= ~PF_TUMBLESOUND;
+					player->tumbleHeight = 30;	// Base tumble bounce height
+				}
 				player->trickpanel = TRICKSTATE_NONE;
 				P_SetPlayerMobjState(player->mo, S_KART_SPINOUT);
 				if (gametype != GT_TUTORIAL)
