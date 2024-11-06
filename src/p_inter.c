@@ -3034,7 +3034,7 @@ boolean P_DamageMobj(mobj_t *target, mobj_t *inflictor, mobj_t *source, INT32 da
 				}
 				else if (K_IsBigger(target, inflictor) == true &&
 					// SPB bypasses grow (K_IsBigger handles NULL check)
-					(type != DMG_EXPLODE || inflictor->type != MT_SPBEXPLOSION || !inflictor->movefactor))
+					((cv_ng_oldgrow.value && !( G_CompatLevel(0x1001) || G_CompatLevel(0x1000))) || (type != DMG_EXPLODE || inflictor->type != MT_SPBEXPLOSION || !inflictor->movefactor)))
 				{
 					sfx = sfx_grownd;
 				}
