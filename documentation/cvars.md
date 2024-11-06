@@ -435,6 +435,13 @@ Choices: "Off", "On"
 
 Sets if the player should be allowed to be combo'd by damage sources.
 
+#### ng_triangledash
+Default Value: "On"
+
+Choices: "Off", "Downward Thrust Only", "Forward Thrust Only", "On"
+
+Determines how Triangle dashing will work.
+
 #### ng_mapanger
 Default Value: 2
 
@@ -525,6 +532,13 @@ Default Value: "On"
 Choices: "Off", "On"
 
 Sets if overcharging the spindash hurts the player.
+
+#### ng_spindashforcedesperation
+Default Value: "Off"
+
+Choices: "Off", "On"
+
+Sets if player should always have the fast spindash.
 
 #### ng_slopephysics
 Default Value: "On"
