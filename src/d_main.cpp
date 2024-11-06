@@ -1758,7 +1758,7 @@ void D_SRB2Main(void)
 
 #endif //ifndef DEVELOP
 
-	if (found_noire_pk3)
+	if (found_noire_pk3 == true)
 		mainwads++;
 
 	/* This is an example of how you would to check if needed lumps from an optional pk3 exists before using it
