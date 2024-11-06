@@ -1260,6 +1260,7 @@ consvar_t cv_ng_spindash = UnsavedNetVar("ng_spindash", "On").on_off().onchange_
 consvar_t cv_ng_spindashthreshold = UnsavedNetVar("ng_spindashthreshold", "Default (6)").min_max(0, 100, {{6, "Default (6)"}});
 consvar_t cv_ng_spindashcharge = UnsavedNetVar("ng_spindashcharge", "Default (0)").min_max(0, 100, {{0, "Default (0)"}});
 consvar_t cv_ng_spindashoverheat = UnsavedNetVar("ng_spindashoverheat", "On").on_off();
+consvar_t cv_ng_desperationforce = UnsavedNetVar("ng_spindashforcedesperation", "Off").on_off();
 
 //Driving
 void NG_OldPogoOverride_OnChange(void);

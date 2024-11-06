@@ -112,6 +112,7 @@ extern consvar_t cv_ng_spindash;
 extern consvar_t cv_ng_spindashthreshold;
 extern consvar_t cv_ng_spindashcharge;
 extern consvar_t cv_ng_spindashoverheat;
+extern consvar_t cv_ng_desperationforce;
 
 //Driving
 extern consvar_t cv_ng_butteredslopes;
