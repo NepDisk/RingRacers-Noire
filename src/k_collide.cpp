@@ -159,11 +159,15 @@ boolean K_BananaBallhogCollide(mobj_t *t1, mobj_t *t2)
 
 boolean K_EggItemCollide(mobj_t *t1, mobj_t *t2)
 {
-	// Push fakes out of other item boxes
-	if (t2->type == MT_RANDOMITEM || t2->type == MT_EGGMANITEM)
+
+	if (!cv_ng_oldeggman.value && !( G_CompatLevel(0x1001) || G_CompatLevel(0x1000)))
 	{
-		P_InstaThrust(t1, R_PointToAngle2(t2->x, t2->y, t1->x, t1->y), t2->radius/4);
-		return true;
+		// Push fakes out of other item boxes
+		if (t2->type == MT_RANDOMITEM || t2->type == MT_EGGMANITEM)
+		{
+			P_InstaThrust(t1, R_PointToAngle2(t2->x, t2->y, t1->x, t1->y), t2->radius/4);
+			return true;
+		}
 	}
 
 	if (t2->player)
@@ -175,6 +179,9 @@ boolean K_EggItemCollide(mobj_t *t1, mobj_t *t2)
 			return true;
 
 		if (!P_CanPickupItem(t2->player, 2))
+			return true;
+
+		if (!(G_CompatLevel(0x1001) || G_CompatLevel(0x1000)) && ((cv_ng_oldinvincibility.value && t2->player->invincibilitytimer) || (cv_ng_oldgrow.value && (t2->player->growshrinktimer > 0))))
 			return true;
 
 		K_DropItems(t2->player);
