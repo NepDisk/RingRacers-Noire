@@ -188,6 +188,9 @@ menuitem_t OPTIONS_NoireGameplayMechanics[] =
 	{IT_STRING | IT_CVAR, "Wavedash", "Enable or disable the boost charged by sliptiding.",
 		NULL, {.cvar = &cv_ng_wavedash}, 0, 0},
 
+	{IT_STRING | IT_CVAR, "Triangle Dash", "Enable or disable the thrusts done by miniturbos in the air.",
+		NULL, {.cvar = &cv_ng_triangledash}, 0, 0},
+
 	{IT_STRING | IT_CVAR, "Map Anger", "Amount of times a map has to be ignored by everyone to vote itself.",
 		NULL, {.cvar = &cv_ng_mapanger}, 0, 0},
 
@@ -235,6 +238,10 @@ menuitem_t OPTIONS_NoireGameplaySpindash[] =
 
 	{IT_STRING | IT_CVAR, "Overheat", "Enable or disable overcharging spindash hurting racers.",
 		NULL, {.cvar = &cv_ng_spindashoverheat}, 0, 0},
+
+	{IT_STRING | IT_CVAR, "Force Desperation", "Force enable desperation spindash regardless of ring count",
+		NULL, {.cvar = &cv_ng_desperationforce}, 0, 0},
+
 };
 
 ///////////
