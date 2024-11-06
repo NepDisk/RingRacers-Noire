@@ -14439,7 +14439,8 @@ void K_MoveKartPlayer(player_t *player, boolean onground)
 				if (player->curshield != KSHIELD_BUBBLE) // Allow bubblebounce (it's cute) but don't give standard trick rewards
 				{
 					P_InstaThrust(player->mo, player->mo->angle, 2*abs(player->fastfall)/3 + 15*FRACUNIT);
-					player->mo->hitlag = 3;
+					if (cv_ng_hitlag.value || G_CompatLevel(0x1001) || G_CompatLevel(0x1000))
+						player->mo->hitlag = 3;
 					S_StartSound(player->mo, sfx_gshba);
 					player->fastfall = 0; // intentionally skip bounce
 					player->trickcharge = 0;
