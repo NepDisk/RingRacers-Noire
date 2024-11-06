@@ -862,7 +862,7 @@ static void SetPlayerName(INT32 playernum, char *newname)
 
 boolean CanChangeSkin(INT32 playernum)
 {
-	(void)playernum;
+	//(void)playernum;
 
 	// Of course we can change if we're not playing
 	if (!Playing() || !addedtogame)
@@ -870,6 +870,12 @@ boolean CanChangeSkin(INT32 playernum)
 
 	// Force skin in effect.
 	if (cv_forceskin.value != -1 && K_CanChangeRules(true))
+		return false;
+
+	if (players[playernum].spectator || players[playernum].playerstate == PST_DEAD || players[playernum].playerstate == PST_REBORN)
+		return true;
+
+	if (players[playernum].speed > 0 || (players[playernum].mo && !P_IsObjectOnGround(players[playernum].mo)))
 		return false;
 
 	// ... there used to be a lot more here, but it's now handled in Got_NameAndColor.
