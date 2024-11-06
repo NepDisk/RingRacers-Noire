@@ -24,6 +24,7 @@
 #include "hu_stuff.h"
 #include "g_input.h"
 #include "k_menu.h"
+#include "p_mobj.h"
 #include "r_local.h"
 #include "r_skins.h"
 #include "p_local.h"
@@ -875,7 +876,7 @@ boolean CanChangeSkin(INT32 playernum)
 	if (players[playernum].spectator || players[playernum].playerstate == PST_DEAD || players[playernum].playerstate == PST_REBORN)
 		return true;
 
-	if (players[playernum].speed > 0 || (players[playernum].mo && !P_IsObjectOnGround(players[playernum].mo)))
+	if (players[playernum].speed > 0 || (players[playernum].mo &&! !P_MobjWasRemoved(players[playernum].mo) && !P_IsObjectOnGround(players[playernum].mo)))
 		return false;
 
 	// ... there used to be a lot more here, but it's now handled in Got_NameAndColor.
