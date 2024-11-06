@@ -11214,13 +11214,13 @@ static void K_KartDrift(player_t *player, boolean onground)
 			UINT8 oldDriftBoost = player->driftboost;
 
 			// Airtime means we're not gaining speed. Get grounded!
-			if (!onground)
+			if (!onground && cv_ng_triangledashdownthrust.value)
 				player->mo->momz -= player->speed/2;
 
 			if (player->driftcharge < 0)
 			{
 				// Stage 0: Grey sparks
-				if (!onground)
+				if (!onground && cv_ng_triangledash.value)
 					P_Thrust(player->mo, pushdir, player->speed / 8);
 
 				if (player->driftboost < 15)
@@ -11229,7 +11229,7 @@ static void K_KartDrift(player_t *player, boolean onground)
 			else if (player->driftcharge >= dsone && player->driftcharge < dstwo)
 			{
 				// Stage 1: Yellow sparks
-				if (!onground)
+				if (!onground && cv_ng_triangledash.value)
 					P_Thrust(player->mo, pushdir, player->speed / 3);
 
 				if (player->driftboost < 20)
@@ -11240,7 +11240,7 @@ static void K_KartDrift(player_t *player, boolean onground)
 			else if (player->driftcharge < dsthree)
 			{
 				// Stage 2: Red sparks
-				if (!onground)
+				if (!onground && cv_ng_triangledash.value)
 					P_Thrust(player->mo, pushdir, player->speed / 2);
 
 				if (player->driftboost < 50)
@@ -11251,7 +11251,7 @@ static void K_KartDrift(player_t *player, boolean onground)
 			else if (player->driftcharge < dsfour)
 			{
 				// Stage 3: Blue sparks
-				if (!onground)
+				if (!onground && cv_ng_triangledash.value)
 					P_Thrust(player->mo, pushdir, player->speed);
 
 				if (player->driftboost < 85)
@@ -11266,7 +11266,7 @@ static void K_KartDrift(player_t *player, boolean onground)
 			else if (player->driftcharge >= dsfour)
 			{
 				// Stage 4: Rainbow sparks
-				if (!onground)
+				if (!onground && cv_ng_triangledash.value)
 					P_Thrust(player->mo, pushdir, (5 * player->speed / 4));
 
 				if (player->driftboost < 125)

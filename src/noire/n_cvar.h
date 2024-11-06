@@ -91,6 +91,8 @@ extern consvar_t cv_ng_stumble;
 extern consvar_t cv_ng_safelanding;
 extern consvar_t cv_ng_hitlag;
 extern consvar_t cv_ng_combo;
+extern consvar_t cv_ng_triangledash;
+extern consvar_t cv_ng_triangledashdownthrust;
 extern consvar_t cv_ng_mapanger;
 extern consvar_t cv_ng_tripwires;
 extern consvar_t cv_ng_lives;
