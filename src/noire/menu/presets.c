@@ -29,6 +29,7 @@ void N_RRVanillaPreset(INT32 choice)
 	CV_Set(&cv_ng_mapringcapsules, "On");
 	CV_Set(&cv_ng_mapringboxes, "On");
 	CV_Set(&cv_ng_ringboxtransform, "On");
+	CV_Set(&cv_ng_trickrings, "On");
 
 	// Items
 	CV_Set(&cv_ng_forceoldboxscale, "Off");
@@ -122,6 +123,7 @@ void N_NoirePreset(INT32 choice)
 	CV_Set(&cv_ng_mapringcapsules, "Off");
 	CV_Set(&cv_ng_mapringboxes, "Off");
 	CV_Set(&cv_ng_ringboxtransform, "Off");
+	CV_Set(&cv_ng_trickrings, "Off");
 
 	// Items
 	CV_Set(&cv_ng_forceoldboxscale, "Off");
@@ -214,6 +216,7 @@ void N_SRB2KPreset(INT32 choice)
 	CV_Set(&cv_ng_mapringcapsules, "Off");
 	CV_Set(&cv_ng_mapringboxes, "Off");
 	CV_Set(&cv_ng_ringboxtransform, "Off");
+	CV_Set(&cv_ng_trickrings, "Off");
 
 	// Items
 	CV_Set(&cv_ng_forceoldboxscale, "Off");
