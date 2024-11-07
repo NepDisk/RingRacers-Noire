@@ -3428,6 +3428,7 @@ static void K_drawRingCounter(boolean gametypeinfoshown)
 		if (DRAW_RINGS_ON_PLAYER) {
 			vector3_t v;
 			trackingResult_t result;
+			INT32 yoffset = cv_ringsonplayeryoffset.value;
 
 			ringcounterflags &= ~V_SLIDEIN;
 			ringcounterflags &= ~splitflags;
@@ -3450,6 +3451,8 @@ static void K_drawRingCounter(boolean gametypeinfoshown)
 				// Add some offset so it's directly below the player (in Software)
 				fy = (result.y / FRACUNIT); 
 				RINGC_X = (result.x / FRACUNIT) - 20;
+
+				fy += yoffset;
 			} 
 		}
 

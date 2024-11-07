@@ -28,6 +28,12 @@ Choices: :"Vanilla", "Custom"
 
 When set to "Custom" the ring counter will be drawn under the player.
 
+#### ringsonplayeryoffset
+Default Value: "None"
+
+Value used for y offset of ring counter when its near the player.
+Useful to move it out of the way of Lua hud elements such as driftgauge.
+
 #### rouletteonplayer
 Default Value: "Vanilla"
 

@@ -63,6 +63,9 @@ menuitem_t OPTIONS_RadioRacersHud[] =
 	{IT_STRING | IT_CVAR, "Ring Counter Position", "Toggle the RING COUNTER's HUD position.",
 		NULL, {.cvar = &cv_ringsonplayer}, 0, 0},
 
+	{IT_STRING | IT_CVAR, "Ring Counter Custom Offset", "The RING COUNTER's HUD yoffset when in custom mode.",
+		NULL, {.cvar = &cv_ringsonplayer}, 0, 0},
+
 	{IT_STRING | IT_CVAR, "Use Higher Resolution Portraits", "Draw higher resolution portraits in the minirankings.",
 		NULL, {.cvar = &cv_highresportrait}, 0, 0},
 

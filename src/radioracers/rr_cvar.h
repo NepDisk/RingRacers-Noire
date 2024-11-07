@@ -24,6 +24,7 @@ extern "C" {
 // Player (Clientside)
 extern consvar_t cv_votesnitch;         // Vote Snitch
 extern consvar_t cv_ringsonplayer;      // Rings drawn on player
+extern consvar_t cv_ringsonplayeryoffset; // Y offset for rings drawn on player
 extern consvar_t cv_rouletteonplayer;   // Item/Ring Roulette drawn on player
 
 // Extra customization

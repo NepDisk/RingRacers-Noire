@@ -539,6 +539,8 @@ consvar_t cv_ringsonplayer = Player("ringsonplayer", "Vanilla").values({
 	{1, "Custom"}
 });
 
+consvar_t cv_ringsonplayeryoffset = Player("ringsonplayeryoffset", "None").min_max(INT32_MIN, INT32_MAX, {{0,"None"}});
+
 // Item/Ringbox Roulette drawn on player
 consvar_t cv_rouletteonplayer = Player("rouletteonplayer", "Vanilla").values({
 	{0, "Vanilla"},
