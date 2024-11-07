@@ -12151,7 +12151,7 @@ void K_KartEbrakeVisuals(player_t *p)
 			if (p->mo->hprev && !P_MobjWasRemoved(p->mo->hprev))
 			{
 				const INT16 overcharge = (p->spindash - MAXCHARGETIME);
-				const boolean desperation = (p->rings <= 0 && (cv_ng_desperationforce.value || cv_ng_ringcap.value > 0)); // desperation spindash
+				const boolean desperation = (cv_ng_desperationforce.value || ((p->rings <= 0) && (cv_ng_ringcap.value > 0))); // desperation spindash
 
 				UINT8 frame = min(1 + ((p->spindash*3) / MAXCHARGETIME), 4);
 
@@ -12426,7 +12426,7 @@ static void K_KartSpindash(player_t *player)
 
 			INT16 chargetime = MAXCHARGETIME - ++player->spindash;
 
-			if (player->rings <= 0 && chargetime >= 0 && (cv_ng_ringcap.value > 0)) // Desperation spindash
+			if ((cv_ng_desperationforce.value && chargetime >= 0)|| (player->rings <= 0 && chargetime >= 0 && (cv_ng_ringcap.value > 0))) // Desperation spindash
 			{
 				player->spindash++;
 				if (!S_SoundPlaying(player->mo, sfx_kc38))
