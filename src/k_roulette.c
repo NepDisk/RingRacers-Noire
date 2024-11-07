@@ -1645,7 +1645,7 @@ fixed_t K_GetRouletteOffset(itemroulette_t *const roulette, fixed_t renderDelta,
 	const fixed_t curTic = (roulette->tics << FRACBITS) - renderDelta;
 	const fixed_t midTic = roulette->speed * (FRACUNIT >> 1);
 
-	fixed_t result = FixedMul(FixedDiv(midTic - curTic, ((roulette->speed + 1) << FRACBITS)), ROULETTE_SPACING);
+	fixed_t result = FixedMul(FixedDiv(midTic - curTic, ((roulette->speed + 1) << FRACBITS)), (ROULETTE_SPACING));
 
 	if (fudge > 0)
 	{

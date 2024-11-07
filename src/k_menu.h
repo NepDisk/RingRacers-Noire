@@ -571,6 +571,7 @@ typedef enum
 	mpause_discordrequests,
 #endif
 	mpause_admin,
+	mpause_muteplayers, // RadioRacers: Yeah.
 	mpause_callvote,
 
 	mpause_giveup,
@@ -1268,14 +1269,30 @@ void M_QuitPauseMenu(INT32 choice);
 boolean M_PauseInputs(INT32 ch);
 void M_PauseTick(void);
 
+
+/**
+ * RadioRacers: Extending this struct by adding another struct which controls the purpose of the kick menu.
+ * Can't think of a solution of reusing the code M_DrawKickHandler without it being needlessly complex or
+ * disgustingly ugly.
+ * 
+ * Better to add edge-cases as and when.
+ * */ 
+typedef enum
+{
+	PKM_KICK = 0,	// Kick another player in the server
+	PKM_MUTE		// (Locally) mute another player in the server
+} playerkickmenu_purpose;
+
 extern struct playerkickmenu_s {
 	tic_t ticker;
 	UINT8 player;
 	UINT8 poke;
 	boolean adminpowered;
+	playerkickmenu_purpose purpose; // RadioRacers: By default, the purpose is to kick someone.
 } playerkickmenu;
 
 void M_KickHandler(INT32 choice);
+void M_MuteHandler(INT32 choice); // RadioRacers: Handler for muting players
 
 extern consvar_t cv_dummymenuplayer;
 extern consvar_t cv_dummyspectator;

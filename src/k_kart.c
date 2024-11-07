@@ -78,6 +78,8 @@
 #include "noire/n_boosts.h"
 #include "noire/n_soc.h"
 #include "noire/n_items.h"
+#include "radioracers/rr_cvar.h"
+#include "radioracers/rr_controller.h"
 
 // SOME IMPORTANT VARIABLES DEFINED IN DOOMDEF.H:
 // gamespeed is cc (0 for easy, 1 for normal, 2 for hard)
@@ -11518,7 +11520,6 @@ static void K_KartDrift(player_t *player, boolean onground)
 		if (cv_ng_wavedash.value)
 		{
 
-
 			if (!extendedSliptide)
 			{
 				// Give charge proportional to your angle. Sharp turns are rewarding, slow analog slides are not—remember, this is giving back the speed you gave up.
@@ -11535,8 +11536,13 @@ static void K_KartDrift(player_t *player, boolean onground)
 
 				if (player->wavedash >= MIN_WAVEDASH_CHARGE && (player->wavedash - addCharge) < MIN_WAVEDASH_CHARGE)
 					S_StartSound(player->mo, sfx_waved5);
-			}
 
+				// RadioRacers: Really gross.
+				if (cv_morerumbleevents.value && P_IsMachineLocalPlayer(player))
+				{
+					localPlayerWavedashClickTimer = 5;
+				}
+			}
 		}
 
 			if (abs(player->aizdrifttilt) < ANGLE_22h)
@@ -12561,6 +12567,11 @@ boolean K_FastFallBounce(player_t *player)
 		else
 		{
 			S_StartSound(player->mo, sfx_ffbonc);
+			// RadioRacers: .. right around here.
+			if (P_IsMachineLocalPlayer(player) && !localPlayerJustBootyBounced)
+			{
+				localPlayerJustBootyBounced = true;
+			}
 		}
 
 		if (player->mo->eflags & MFE_UNDERWATER)

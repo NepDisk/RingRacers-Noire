@@ -26,6 +26,9 @@
 #include "byteptr.h"
 #include "s_sound.h"
 
+// RadioRacers
+#include "radioracers/rr_votesnitch.h"
+
 extern consvar_t cv_zvote_quorum;
 extern consvar_t cv_zvote_spectators;
 extern consvar_t cv_zvote_length;
@@ -313,6 +316,10 @@ static void Got_SetZVote(const UINT8 **cp, INT32 playernum)
 	S_StartSound(NULL, sfx_gshad);
 
 	g_midVote.votes[playernum] = true;
+
+	if (RR_UseVoteSnitch()){
+		RR_VoteSnitchYesVotes(playernum);
+	}
 }
 
 /*--------------------------------------------------
@@ -708,6 +715,11 @@ void K_InitNewMidVote(player_t *caller, midVoteType_e type, INT32 variable, play
 	g_midVote.victim = victim;
 
 	S_StartSound(NULL, sfx_cdfm67);
+
+	// RadioRacers: Finally...
+	if (RR_UseVoteSnitch()){
+		RR_VoteSnitchNewVote(type, victim, caller);
+	}
 
 	g_midVote.votes[caller - players] = true;
 

@@ -41,6 +41,8 @@
 #include "noire/n_hud.h"
 // HEP2
 #include "hep2/h_cvars.h"
+// RadioRacers
+#include "radioracers/rr_cvar.h"
 
 // There is a memset in one of consvar_t's constructors. It
 // SHOULD be safe if there is no polymorphism, but just
@@ -467,7 +469,7 @@ consvar_t cv_scr_scale = Player("scr_scale", "1.0").floating_point();
 consvar_t cv_scr_x = Player("scr_x", "0.0").floating_point();
 consvar_t cv_scr_y = Player("scr_y", "0.0").floating_point();
 
-consvar_t cv_translucenthud = Player("translucenthud", "10").values({{0, "MIN"}, {10, "MAX"}});
+consvar_t cv_translucenthud = Player("translucenthud", "10").min_max(0, 10);
 
 consvar_t cv_seenames = Player("seenames", "On").on_off();
 consvar_t cv_shadow = Player("shadow", "On").on_off();
@@ -515,6 +517,66 @@ consvar_t precachesound = Player("precachesound", "Off").on_off();
 // stereo reverse
 consvar_t stereoreverse = Player("stereoreverse", "Off").on_off();
 
+/**
+ * RadioRacers: cvars for custom miscellanous functionalities
+ */
+// Vote Snitch
+consvar_t cv_votesnitch = Player("votesnitch", "On").on_off();
+
+// Rumble Events
+consvar_t cv_morerumbleevents = Player("morerumbleevents", "On").on_off().onchange(RumbleEvents_OnChange);
+consvar_t cv_rr_rumble_wall_bump = Player("rr_rumble_wall_bump", "On").on_off();
+consvar_t cv_rr_rumble_fastfall_bounce = Player("rr_rumble_fastfall_bounce", "On").on_off();
+consvar_t cv_rr_rumble_drift = Player("rr_rumble_drift", "On").on_off();
+consvar_t cv_rr_rumble_spindash = Player("rr_rumble_spindash", "On").on_off();
+consvar_t cv_rr_rumble_tailwhip = Player("rr_rumble_tailwhip", "On").on_off();
+consvar_t cv_rr_rumble_rings = Player("rr_rumble_rings", "On").on_off();
+consvar_t cv_rr_rumble_wavedash = Player("rr_rumble_wavedash", "On").on_off();
+
+// Rings drawn on player (akin to driftgauge)
+consvar_t cv_ringsonplayer = Player("ringsonplayer", "Vanilla").values({
+	{0, "Vanilla"},
+	{1, "Custom"}
+});
+
+// Item/Ringbox Roulette drawn on player
+consvar_t cv_rouletteonplayer = Player("rouletteonplayer", "Vanilla").values({
+	{0, "Vanilla"},
+	{1, "Custom"}
+}).onchange_noinit(Roulette_OnChange);
+
+static CV_PossibleValue_t itemboxscale_cons_t[] = {
+	{(4*FRACUNIT)/10, "40%"},
+	{FRACUNIT/2, "50%"},
+	{(3*FRACUNIT)/5, "60%"},
+	{(14*FRACUNIT)/20, "70%"},
+	{(4*FRACUNIT)/5, "80%"},
+	{(9*FRACUNIT)/10, "90%"},
+	{FRACUNIT, "100%"},
+	{0, NULL}
+};
+
+static CV_PossibleValue_t itemboxposition_cons_t[] = {
+	{0, "Left"},
+	{1, "Above"},
+	{2, "Right"},
+	{0, NULL}
+};
+
+// How big should we draw the item roulette?
+// And where exactly should we draw it?
+consvar_t cv_ringbox_roulette_player_scale = Player("ringbox_roulette_player_scale", "60%").values(itemboxscale_cons_t);
+consvar_t cv_item_roulette_player_scale = Player("item_roulette_player_scale", "60%").values(itemboxscale_cons_t);
+
+consvar_t cv_ringbox_roulette_player_position = Player("ringbox_roulette_player_position", "Right").values(itemboxposition_cons_t);
+consvar_t cv_item_roulette_player_position = Player("item_roulette_player_position", "Left").values(itemboxposition_cons_t);
+
+// Hide the giant big ass letters at the start of the race
+consvar_t cv_hud_hidecountdown = Player("hidecountdown", "No").yes_no();
+// Hide the bigass position bulbs at the start of the race
+consvar_t cv_hud_hideposition = Player("hideposition", "No").yes_no();
+// Hide the bigass lap emblem when you start a new lap
+consvar_t cv_hud_hidelapemblem = Player("hidelapemblem", "No").yes_no();
 
 //
 // Noire client related cvars for customization

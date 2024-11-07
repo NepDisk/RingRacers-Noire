@@ -19,6 +19,71 @@ Choices: "16 bits", "24 bits"
 
 Decides what how many bits should be used in palette rendering. "16 bits" is what software looks like in game and "24 bits" is what software looks like in screenshots.
 
+### Radio Racers Hud Menu
+
+#### ringsonplayer
+Default Value: "Vanilla"
+
+Choices: :"Vanilla", "Custom"
+
+When set to "Custom" the ring counter will be drawn under the player.
+
+#### rouletteonplayer
+Default Value: "Vanilla"
+
+Choices: "Vanilla", "Custom"
+
+When set to "Custom" the roulette will be drawn near the player.
+
+#### ringbox_roulette_player_scale
+Default Value: "60%"
+
+Choices: "40%", "50%", "60%", "70%", "80%", "90%", "100%"
+
+Sets the scale of the ring roulette when its drawn near the player.
+
+#### item_roulette_player_scale
+Default Value: "60%"
+
+Choices: "40%", "50%", "60%", "70%", "80%", "90%", "100%"
+
+Sets the scale of the item roulette when its drawn near the player.
+
+#### ringbox_roulette_player_position
+Default Value: "Right"
+
+Choices: "Left", "Right", "Above"
+
+Sets the position of the ring roulette when its near the player
+
+#### item_roulette_player_position
+Default Value: "Right"
+
+Choices: "Left", "Right", "Above"
+
+Sets the position of the item roulette when its near the player
+
+#### hidecountdown
+Default Value: "Off"
+
+Choices: "Off", "On"
+
+When enabled it hides the letters at the start of the race
+
+#### hideposition
+Default Value: "Off"
+
+Choices: "Off", "On"
+
+When enabled it hides the position bulbs at the start of the race
+
+#### hidelapemblem
+Default Value: "Off"
+
+Choices: "Off", "On"
+
+When enabled it hides the lap emblem when you start a new lap
+
 ### Noire Menu
 
 #### holdscoreboardbutton
@@ -145,6 +210,78 @@ Default Value: "Off"
 Choices: "Off", "On"
 
 Sets if oldtricks is enabled, this is profile tied so its probably better to set there.
+
+### RadioRacers Menu
+
+#### votesnitch
+Default Value: "On"
+
+Choices: "Off", "On"
+
+Shows what players voted during a Z-Vote.
+
+#### morerumbleevents
+Default Value: "On"
+
+Choices: "Off", "On"
+
+Enables / disables RadioRacers' extra rumble feedback.
+
+#### rr_rumble_wall_bump
+Default Value: "On"
+
+Choices: "Off", "On"
+
+Enables / disables rumble on wall hit.
+
+#### rr_rumble_fastfall_bounce
+Default Value: "On"
+
+Choices: "Off", "On"
+
+Enables / disables rumble on fast fall bounce.
+
+#### rr_rumble_drift
+Default Value: "On"
+
+Choices: "Off", "On"
+
+Enables / disables rumble on drifting.
+
+#### cv_rr_rumble_spindash
+Default Value: "On"
+
+Choices: "Off", "On"
+
+Enables / disables rumble on spindashing.
+
+#### rr_rumble_tailwhip
+Default Value: "On"
+
+Choices: "Off", "On"
+
+Enables / disables rumble on instawhip.
+
+#### rr_rumble_tailwhip
+Default Value: "On"
+
+Choices: "Off", "On"
+
+Enables / disables rumble on instawhip.
+
+#### rr_rumble_rings
+Default Value: "On"
+
+Choices: "Off", "On"
+
+Enables / disables rumble on ring usage.
+
+#### cv_rr_rumble_wavedash
+Default Value: "On"
+
+Choices: "Off", "On"
+
+Enables / disables rumble on wavedashing.
 
 ## Gameplay Cvars
 These are Cvars the affect the actual gameplay. These values are netsynched but not saved.

@@ -4,6 +4,7 @@ Noire is a modification of Dr. Robotnik's Ring Racers which adds new features an
 
 Some Features include:
 - All of HEP2's features
+- All of RadioRacers' features
 - Rings toggle
 - Combo toggle
 - Hitlag toggle

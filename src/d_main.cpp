@@ -1356,10 +1356,15 @@ boolean clr_hud = false;
 boolean noire_smfont = false;
 boolean noire_ascicons = false;
 
+// RadioRacers: Custom optional addons for miscelleanous additions
+boolean found_radioracers;
+boolean radioracers_usemuteicons = false;
+
 static void IdentifyVersion(void)
 {
 	const char *srb2waddir = NULL;
 	found_noire_pk3 = false;
+	found_radioracers = false;
 
 #if (defined (__unix__) && !defined (MSDOS)) || defined (UNIXCOMMON) || defined (HAVE_SDL)
 	// change to the directory where 'bios.pk3' is found
@@ -1411,6 +1416,12 @@ static void IdentifyVersion(void)
 	if (FIL_ReadFileOK(va(pandf,srb2waddir,"noire.pk3"))) {
 		D_AddFile(startupiwads, va(pandf,srb2waddir,"noire.pk3"));
 		found_noire_pk3 = true;
+	}
+
+	// RadioRacers: Test
+	if (FIL_ReadFileOK(va(pandf,srb2waddir,"radioracers.wad"))) {
+		D_AddFile(startupiwads, va(pandf,srb2waddir,"radioracers.wad"));
+		found_radioracers = true;
 	}
 
 #define MUSICTEST(str) \
@@ -1758,7 +1769,7 @@ void D_SRB2Main(void)
 
 #endif //ifndef DEVELOP
 
-	if (found_noire_pk3 == true)
+	if (found_noire_pk3)
 		mainwads++;
 
 	/* This is an example of how you would to check if needed lumps from an optional pk3 exists before using it
@@ -1791,6 +1802,14 @@ void D_SRB2Main(void)
 
 	if (W_CheckMultipleLumps("A11YFLPC", "A11YOLDT", NULL))
 		noire_ascicons = true;
+
+	if(found_radioracers)
+		mainwads++;
+
+	//RadioRacers: Mute icon for Pause Menu
+	if (W_CheckMultipleLumps("M_ICOMUT", "M_ICOMU2", NULL)) {
+		radioracers_usemuteicons = true;
+	}
 
 	// Load credits_def lump
 	F_LoadCreditsDefinitions();

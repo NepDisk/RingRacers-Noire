@@ -20,6 +20,7 @@
 
 // Noire
 #include "../noire/n_menu.h"
+#include "../radioracers/rr_menu.h"
 
 // options menu --  see mopt_e
 menuitem_t OPTIONS_Main[] =
@@ -53,6 +54,9 @@ menuitem_t OPTIONS_Main[] =
 
 	{IT_STRING | IT_SUBMENU, "Noire Options", "Toggle options related to Noire and HEP2. No gameplay toggles here!",
 		NULL, {.submenu = &OPTIONS_NoireDef}, 0, 0},
+
+	// RadioRacers is too long :rolling_eyes:
+	{IT_STRING | IT_SUBMENU, "RADIO! Options", "Options controlling any RadioRacers changes.", NULL, {.submenu = &OPTIONS_RadioRacersMenuDef}, 0, 0},
 };
 
 // For options menu, the 'extra1' field will determine the background colour to use for... the background! (What a concept!)

@@ -264,6 +264,13 @@ void RemoveAdminPlayer(INT32 playernum);
 void ItemFinder_OnChange(void);
 void D_SetPassword(const char *pw);
 
+// RadioRacers
+void ClearMutedPlayers(void); // Clear the muted players array at the end of a netgame.
+void MutePlayerFromChat(INT32 playernum); // Mute a player from chat.
+void UnmutePlayerFromChat(INT32 playernum); // Unmute a player from chat.
+boolean IsPlayerMuted(INT32 playernum); // Check if a player node is in the 'muted players' array
+
+
 struct scheduleTask_t
 {
 	UINT16 basetime;

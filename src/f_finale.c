@@ -1761,6 +1761,7 @@ void F_VersionDrawer(void)
 		// Shill :)
 		addtext(trans, va("%s", VERSIONSTRING));
 		addtext(trans, va("HEP2 %s", HEPVSTRING));
+		addtext(trans, "RadioRacers");
 #endif
 
 		if (compuncommitted)

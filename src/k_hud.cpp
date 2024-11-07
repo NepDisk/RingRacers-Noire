@@ -65,6 +65,9 @@
 // HEP
 #include "hep2/h_cvars.h"
 
+#include "radioracers/rr_cvar.h"
+#include "radioracers/rr_hud.h"
+
 //{ 	Patch Definitions
 static patch_t *kp_nodraw;
 
@@ -1418,6 +1421,13 @@ static void K_drawKartItem(void)
 	boolean flashOnOne = false;
 	boolean flashOnTwo = false;
 
+	// RadioRacers
+	const boolean isHudTranslucencyAlreadyLow = (cv_translucenthud.value << V_ALPHASHIFT) <= V_TRANSLUCENT;
+	boolean shouldDrawOnPlayer = false;
+	INT32 baseVideoFlags = V_HUDTRANS|V_SLIDEIN;
+	fixed_t baseHudScale = FRACUNIT;
+	float baseHudScaleFloat = (float)((float)(baseHudScale) / (FRACUNIT));
+
 	if (stplyr->itemRoulette.itemListLen > 0)
 	{
 		// Init with item roulette stuff.
@@ -1617,7 +1627,44 @@ static void K_drawKartItem(void)
 	{
 		fx = ITEM_X;
 		fy = ITEM_Y;
-		fflags = V_SNAPTOTOP|V_SNAPTOLEFT|V_SPLITSCREEN;
+
+		// We are NOT supporting this for splitscreen, the vanilla layout is easier to read.
+		if (cv_rouletteonplayer.value == 1 && r_splitscreen == 0)
+		{
+			itembox_tracking_coordinates_t coords = RR_getRouletteCoordinatesForKartItem();
+
+			// if(result.x != 0 && result.y != 0)
+			if(coords.valid_coords)
+			{
+				shouldDrawOnPlayer = true;
+				const boolean rouletteIsActive = (stplyr->itemRoulette.active == true);
+				/**
+				 * This solution WILL obscure the player's view.
+				 * The item roulette background is transparent .. but some items are pretty loud visually (e.g. flame shield)
+				 * Making it scale any smaller than 75% is unreasonable (it spins pretty fast towards the end of a race)..
+				 * so we'll just make it a bit translucent.
+				 */
+				baseVideoFlags = rouletteIsActive ? V_HUDTRANS : V_TRANSLUCENT; 
+
+				baseHudScale = RR_getItemBoxHudScale();
+				baseHudScaleFloat = RR_getItemBoxHudScaleFloat();
+				rouletteCrop = RR_getRouletteCroppingForKartItem(rouletteCrop);
+
+				fx = coords.x;
+				fy = coords.y;
+
+				roulette_offset_spacing_t roulette_offset_spacing = RR_getRouletteSpacingOffsetForKartItem(
+					rouletteOffset
+				);
+				rouletteSpace = roulette_offset_spacing.space;
+				rouletteOffset = roulette_offset_spacing.offset;
+
+				if (isHudTranslucencyAlreadyLow || stplyr->exiting)
+					baseVideoFlags = V_HUDTRANS;
+			}
+		} else {	
+			fflags = V_SNAPTOTOP|V_SNAPTOLEFT|V_SPLITSCREEN;
+		}
 	}
 
 	if (r_splitscreen == 1)
@@ -1625,14 +1672,32 @@ static void K_drawKartItem(void)
 		fy -= 5;
 	}
 
+	// V_DrawScaledPatch(fx, fy, V_TRANSLUCENT|V_SLIDEIN|fflags, localbg);
+
+	/**
+	 * Normally, this would just follow the V_HUDTRANS flag from the get-go.
+	 * But if you're playing with the HUD 100% opaque, it's gonna block vision easily. 
+	 * At the very least, I'll enforce a slightly lower translucency.. until their hud transluency is low enough.
+	 */
 	UINT8 *colormap = R_GetTranslationColormap(TC_DEFAULT, static_cast<skincolornum_t>(K_GetHudColor()), GTC_CACHE);
-	V_DrawMappedPatch(fx, fy, V_HUDTRANS|V_SLIDEIN|fflags, localbg, (K_UseColorHud()) ? colormap : NULL);
+	INT32 itemBackgroundFlags = baseVideoFlags|fflags;
+	if (shouldDrawOnPlayer) 
+	{
+		itemBackgroundFlags = V_70TRANS|fflags;
+		if (isHudTranslucencyAlreadyLow || stplyr->exiting)
+			itemBackgroundFlags = V_HUDTRANS;
+	}
+	V_DrawFixedPatch(
+		(fx<<FRACBITS), (fy<<FRACBITS), 
+		baseHudScale, itemBackgroundFlags,
+		localbg, (K_UseColorHud()) ? colormap : NULL
+	);
 
 	// Need to draw these in a particular order, for sorting.
 	V_SetClipRect(
 		(fx + rouletteCrop.x) << FRACBITS, (fy + rouletteCrop.y) << FRACBITS,
 		rouletteSpace, rouletteSpace,
-		V_SLIDEIN|fflags
+		(shouldDrawOnPlayer) ? fflags : V_SLIDEIN|fflags
 	);
 
 	auto draw_item = [&](fixed_t y, int i)
@@ -1640,18 +1705,26 @@ static void K_drawKartItem(void)
 		const UINT8 *colormap = (localcolor[i] ? R_GetTranslationColormap(colormode[i], localcolor[i], GTC_CACHE) : NULL);
 		V_DrawFixedPatch(
 			fx<<FRACBITS, (fy<<FRACBITS) + rouletteOffset + y,
-			FRACUNIT, V_HUDTRANS|V_SLIDEIN|fflags,
+			baseHudScale, baseVideoFlags|fflags,
 			localpatch[i], colormap
 		);
 		if (localamt[i] > 1)
 		{
+			INT32 splitScreenOffset = (r_splitscreen > 1 ? 15 : 33);
+			// If this boolean is true, there should be no splitscreen
+			if (shouldDrawOnPlayer)
+			{
+				splitScreenOffset = (int)(33 * baseHudScaleFloat);
+			}
+				
 			using srb2::Draw;
 			Draw(
 				fx + rouletteCrop.x + FixedToFloat(rouletteSpace/2),
-				fy + rouletteCrop.y + FixedToFloat(rouletteOffset + y + rouletteSpace) - (r_splitscreen > 1 ? 15 : 33))
+				fy + rouletteCrop.y + FixedToFloat(rouletteOffset + y + rouletteSpace) - (splitScreenOffset))
 				.font(r_splitscreen > 1 ? Draw::Font::kRollingNum4P : Draw::Font::kRollingNum)
 				.align(Draw::Align::kCenter)
-				.flags(V_HUDTRANS|V_SLIDEIN|fflags)
+				.flags(baseVideoFlags|fflags)
+				.scale(baseHudScaleFloat)
 				.colormap(colormap)
 				.text("{}", localamt[i]);
 		}
@@ -1676,43 +1749,113 @@ static void K_drawKartItem(void)
 
 		boolean transflag = V_HUDTRANS;
 
+		// RadioRacers
+		if (shouldDrawOnPlayer)
+		{
+			transflag = V_40TRANS;
+			/**
+			 * RadioRacers
+			 * 
+			 * Flame Shield and Eggman Fakes get unique exceptions. 
+			 * This is because there are other visual elements that are more important than just the item icon.
+			 * 
+			 * For Eggman Fakes, it's the impending timer.
+			 * For Flame shields, it's the flame meter (more on that below).
+			 * For rocket sneakers, it's the duration bar.
+			 * For the garden top, it's the green arrow.
+			 */
+			if (stplyr->itemtype == KITEM_FLAMESHIELD || stplyr->itemtype == KITEM_GARDENTOP || stplyr->eggmanexplode > 1 || stplyr->rocketsneakertimer > 1) {
+				transflag = V_60TRANS;
+			} 
+
+			if (isHudTranslucencyAlreadyLow || stplyr->exiting)
+				transflag = V_HUDTRANS;
+		}
+
 		if (cv_reducevfx.value && (flashOnOne || flashOnTwo))
 		{
 			transflag = V_HUDTRANSHALF;
 		}
 
+		INT32 localpatchflags = (shouldDrawOnPlayer) ? (transflag|fflags) : (transflag|V_SLIDEIN|fflags);
 		if (fakeitemamount >= numberdisplaymin && stplyr->itemRoulette.active == false)
 		{
+			// Then, the numbers:
+			// V_DrawScaledPatch(
+			// 	fx + (flipamount ? 48 : 0), fy,
+			// 	V_HUDTRANS|V_SLIDEIN|fflags|(flipamount ? V_FLIP : 0),
+			// 	kp_itemmulsticker[offset]
+			// ); // flip this graphic for p2 and p4 in split and shift it.
+
 			UINT8 *colormap = R_GetTranslationColormap(TC_DEFAULT, static_cast<skincolornum_t>(K_GetHudColor()), GTC_CACHE);
-			V_DrawMappedPatch(
-				fx + (flipamount ? 48 : 0), fy,
-				V_HUDTRANS|V_SLIDEIN|fflags|(flipamount ? V_FLIP : 0),
-				K_getItemMulPatch(offset),  (K_UseColorHud()) ? colormap : NULL); // flip this graphic for p2 and p4 in split and shift it.
+			V_DrawFixedPatch(
+				((fx + (flipamount ? 48 : 0))<<FRACBITS), (fy<<FRACBITS), 
+				baseHudScale, baseVideoFlags|fflags|(flipamount ? V_FLIP : 0),
+				K_getItemMulPatch(offset), (K_UseColorHud()) ? colormap : NULL
+			);
 
 			V_DrawFixedPatch(
 				fx<<FRACBITS, (fy<<FRACBITS) + rouletteOffset,
-				FRACUNIT, transflag|V_SLIDEIN|fflags,
+				baseHudScale, localpatchflags,
 				localpatch[1], (localcolor[1] ? R_GetTranslationColormap(colormode[1], localcolor[1], GTC_CACHE) : NULL)
 			);
+
+			/**
+			 * RadioRacers
+			 * 
+			 * Similar philosophy with the flame shield/eggman fake.
+			 * In this case, the player needs to know the quantity of an item. That's a given.
+			 * That information doesn't need to be at FULL opacity though.
+			 */
+			INT32 itemAmountFlags = V_HUDTRANS|V_SLIDEIN;
+			
+			if (shouldDrawOnPlayer)
+				itemAmountFlags = (stplyr->exiting || isHudTranslucencyAlreadyLow) ? V_HUDTRANS : V_40TRANS;
 
 			if (offset)
 			{
 				if (flipamount) // reminder that this is for 3/4p's right end of the screen.
-					V_DrawString(fx+2, fy+31, V_HUDTRANS|V_SLIDEIN|fflags, va("x%d", fakeitemamount));
+					// V_DrawString(fx+2, fy+31, V_HUDTRANS|V_SLIDEIN|fflags, va("x%d", fakeitemamount));
+					V_DrawStringScaled(
+						((fx+2)<<FRACBITS),
+						((fy+31)<<FRACBITS),
+						baseHudScale, baseHudScale, baseHudScale,
+						itemAmountFlags|fflags, NULL, HU_FONT, va("x%d", fakeitemamount)
+					);
 				else
-					V_DrawString(fx+24, fy+31, V_HUDTRANS|V_SLIDEIN|fflags, va("x%d", fakeitemamount));
+					// V_DrawString(fx+24, fy+31, V_HUDTRANS|V_SLIDEIN|fflags, va("x%d", fakeitemamount));
+					V_DrawStringScaled(
+						((fx+24)<<FRACBITS),
+						((fy+31)<<FRACBITS),
+						baseHudScale, baseHudScale, baseHudScale,
+						itemAmountFlags|fflags, NULL, HU_FONT, va("x%d", fakeitemamount)
+					);
 			}
 			else
 			{
-				V_DrawScaledPatch(fy+28, fy+41, V_HUDTRANS|V_SLIDEIN|fflags, kp_itemx);
-				V_DrawTimerString(fx+38, fy+36, V_HUDTRANS|V_SLIDEIN|fflags, va("%d", fakeitemamount));
+				// V_DrawScaledPatch(fx+28, fy+41, V_HUDTRANS|V_SLIDEIN|fflags, kp_itemx);
+				// 22, 30
+				V_DrawFixedPatch(
+					((fx + (int)(28 * baseHudScaleFloat) + 1)<<FRACBITS), 
+					((fy + (int)(41 * baseHudScaleFloat))<<FRACBITS), 
+					baseHudScale, itemAmountFlags|fflags,
+					kp_itemx, 0
+				);
+				// V_DrawTimerString(fx+38, fy+36, V_HUDTRANS|V_SLIDEIN|fflags, va("%d", fakeitemamount));
+				// 28, 27
+				V_DrawStringScaled(
+					((fx + (int)(38 * baseHudScaleFloat))<<FRACBITS),
+					((fy + (int)(36 * baseHudScaleFloat))<<FRACBITS),
+					baseHudScale, baseHudScale, baseHudScale,
+					itemAmountFlags|fflags, NULL, TIMER_FONT, va("x%d", fakeitemamount)
+				);
 			}
 		}
 		else
 		{
 			V_DrawFixedPatch(
 				fx<<FRACBITS, (fy<<FRACBITS) + rouletteOffset,
-				FRACUNIT, transflag|V_SLIDEIN|fflags,
+				baseHudScale, localpatchflags,
 				localpatch[1], (localcolor[1] ? R_GetTranslationColormap(colormode[1], localcolor[1], GTC_CACHE) : NULL)
 			);
 		}
@@ -1724,9 +1867,17 @@ static void K_drawKartItem(void)
 		const INT32 fill = ((itembar*barlength)/maxl);
 		const INT32 length = std::min(barlength, fill);
 		const INT32 height = (offset ? 1 : 2);
-		const INT32 x = (offset ? 17 : 11), y = (offset ? 27 : 35);
+		INT32 x = (offset ? 17 : 11), y = (offset ? 27 : 35);
 
-		V_DrawScaledPatch(fx+x, fy+y, V_HUDTRANS|V_SLIDEIN|fflags, kp_itemtimer[offset]);
+		INT32 itemTimerFlags = V_HUDTRANS|V_SLIDEIN|fflags;
+		if (shouldDrawOnPlayer) {
+			x = (int) (11 * baseHudScaleFloat) - 5;
+			y = (int) (35 * baseHudScaleFloat) + 5;
+
+			itemTimerFlags = V_HUDTRANS|fflags;
+		}
+
+		V_DrawScaledPatch(fx+x, fy+y, itemTimerFlags, kp_itemtimer[offset]);
 		// The left dark "AA" edge
 		V_DrawFill(fx+x+1, fy+y+1, (length == 2 ? 2 : 1), height, 12|fflags);
 		// The bar itself
@@ -1741,7 +1892,17 @@ static void K_drawKartItem(void)
 
 	// Quick Eggman numbers
 	if (stplyr->eggmanexplode > 1)
-		V_DrawScaledPatch(fx+17, fy+13-offset, V_HUDTRANS|V_SLIDEIN|fflags, kp_eggnum[std::min<INT32>(5, G_TicsToSeconds(stplyr->eggmanexplode))]);
+	{
+		// V_DrawScaledPatch(fx+17, fy+13-offset, V_HUDTRANS|V_SLIDEIN|fflags, kp_eggnum[std::min<INT32>(5, G_TicsToSeconds(stplyr->eggmanexplode))]);
+		// 13, 9
+		INT32 eggmanNumbersFlags = (shouldDrawOnPlayer) ? V_HUDTRANS|fflags : V_HUDTRANS|V_SLIDEIN|fflags;
+		V_DrawFixedPatch(
+			((fx + (int)(17 * baseHudScaleFloat)) << FRACBITS), 
+			((fy + (int)(13 * baseHudScaleFloat) - offset) << FRACBITS), 
+			baseHudScale, eggmanNumbersFlags|fflags,
+			kp_eggnum[std::min<INT32>(5, G_TicsToSeconds(stplyr->eggmanexplode))], 0
+		);
+	}
 
 	if (stplyr->itemtype == KITEM_FLAMESHIELD && stplyr->flamelength > 0)
 	{
@@ -1755,6 +1916,25 @@ static void K_drawKartItem(void)
 
 		INT32 xo = 6, yo = 4;
 		INT32 flip = 0;
+		
+		/**
+		 * RadioRacers
+		 * 
+		 * Flame Shield gets a unique exception. 
+		 * We wouldn't want to focus on the item icon, you'd want to focus on the flame meter.
+		 */
+		INT32 flameMeterFlags = fflags|flip;
+		if (shouldDrawOnPlayer)
+		{
+			xo = (int) (xo * baseHudScaleFloat);
+			yo = (int) (yo * baseHudScaleFloat);
+			if(stplyr->exiting || isHudTranslucencyAlreadyLow)
+			{
+				flameMeterFlags |= V_HUDTRANS;
+			} else {
+				flameMeterFlags |= V_30TRANS;
+			}
+		}
 
 		if (offset)
 		{
@@ -1774,18 +1954,36 @@ static void K_drawKartItem(void)
 		*/
 
 		if (bf >= 0 && bf < numframes)
-			V_DrawScaledPatch(fx-xo, fy-yo, V_HUDTRANS|V_SLIDEIN|fflags|flip, kp_flameshieldmeter_bg[bf][offset]);
+			// V_DrawScaledPatch(fx-xo, fy-yo, V_HUDTRANS|V_SLIDEIN|fflags|flip, kp_flameshieldmeter_bg[bf][offset]);
+
+			V_DrawFixedPatch(
+				((fx-xo)<<FRACBITS), 
+				((fy-yo)<<FRACBITS), 
+				baseHudScale, flameMeterFlags,
+				kp_flameshieldmeter_bg[bf][offset], 0
+			);
 
 		if (ff >= 0 && ff < numframes && stplyr->flamemeter > 0)
 		{
 			if ((stplyr->flamemeter > flamemax) && (leveltime & 1))
 			{
 				UINT8 *fsflash = R_GetTranslationColormap(TC_BLINK, SKINCOLOR_WHITE, GTC_CACHE);
-				V_DrawMappedPatch(fx-xo, fy-yo, V_HUDTRANS|V_SLIDEIN|fflags|flip, kp_flameshieldmeter[ff][offset], fsflash);
+				// V_DrawMappedPatch(fx-xo, fy-yo, V_HUDTRANS|V_SLIDEIN|fflags|flip, kp_flameshieldmeter[ff][offset], fsflash);
+
+				V_DrawFixedPatch(
+					((fx-xo)<<FRACBITS), ((fy-yo)<<FRACBITS), 
+					baseHudScale, flameMeterFlags,
+					kp_flameshieldmeter[ff][offset], fsflash
+				);
 			}
 			else
 			{
-				V_DrawScaledPatch(fx-xo, fy-yo, V_HUDTRANS|V_SLIDEIN|fflags|flip, kp_flameshieldmeter[ff][offset]);
+				// V_DrawScaledPatch(fx-xo, fy-yo, V_HUDTRANS|V_SLIDEIN|fflags|flip, kp_flameshieldmeter[ff][offset]);
+				V_DrawFixedPatch(
+					((fx-xo)<<FRACBITS), ((fy-yo)<<FRACBITS), 
+					baseHudScale, flameMeterFlags,
+					kp_flameshieldmeter[ff][offset], 0
+				);
 			}
 		}
 	}
@@ -1820,6 +2018,11 @@ static void K_drawKartSlotMachine(void)
 	fixed_t rouletteSpace = SLOT_SPACING;
 	vector2_t rouletteCrop = {10, 10};
 	INT32 i;
+
+	// RadioRacers
+	boolean shouldDrawOnPlayer = false;
+	INT32 baseVideoFlags = V_HUDTRANS|V_SLIDEIN;
+	fixed_t baseHudScale = FRACUNIT;
 
 	if (stplyr->itemRoulette.itemListLen > 0)
 	{
@@ -1898,7 +2101,35 @@ static void K_drawKartSlotMachine(void)
 	{
 		fx = ITEM_X;
 		fy = ITEM_Y;
-		fflags = V_SNAPTOTOP|V_SNAPTOLEFT|V_SPLITSCREEN;
+
+		// We are NOT supporting this for splitscreen, the vanilla layout is easier to read.
+		if (cv_rouletteonplayer.value == 1 && r_splitscreen == 0)
+		{
+			itembox_tracking_coordinates_t coords = RR_getRouletteCoordinatesForRingBox();
+
+			// if(result.x != 0 && result.y != 0)
+			if(coords.valid_coords)
+			{
+				baseVideoFlags = V_HUDTRANS;
+				shouldDrawOnPlayer = true;
+
+				baseHudScale = RR_getRingBoxHudScale();
+				float baseHudScaleFloat = RR_getRingBoxHudScaleFloat();
+
+				fx = coords.x;
+				fy = coords.y;
+
+				roulette_offset_spacing_t roulette_offset_spacing = RR_getRouletteSpacingOffsetForRingBox(
+					rouletteOffset
+				);
+				boxoffy += abs((boxoffy) - (int)(boxoffy*baseHudScaleFloat));
+				rouletteCrop = RR_getRouletteCroppingForRingBox(rouletteCrop);
+				rouletteSpace = roulette_offset_spacing.space;
+				rouletteOffset = roulette_offset_spacing.offset;
+			}
+		} else {
+			fflags = V_SNAPTOTOP|V_SNAPTOLEFT|V_SPLITSCREEN;
+		}
 	}
 
 	if (r_splitscreen == 1)
@@ -1907,12 +2138,17 @@ static void K_drawKartSlotMachine(void)
 	}
 
 	UINT8 *colormap = R_GetTranslationColormap(TC_DEFAULT, static_cast<skincolornum_t>(K_GetHudColor()), GTC_CACHE);
-	V_DrawMappedPatch(fx, fy, V_HUDTRANS|V_SLIDEIN|fflags, localbg, (K_UseColorHud()) ? colormap : NULL);
+	V_DrawFixedPatch(
+		(fx<<FRACBITS), (fy<<FRACBITS), 
+		baseHudScale, baseVideoFlags|fflags,
+		localbg, (K_UseColorHud()) ? colormap : NULL
+	);
 
+	INT32 clipRectFlags = (shouldDrawOnPlayer ? 0 : V_SLIDEIN|fflags);
 	V_SetClipRect(
 		((fx + rouletteCrop.x + boxoffx + splitbsx) << FRACBITS), ((fy + rouletteCrop.y + boxoffy - vstretch + splitbsy) << FRACBITS),
 		rouletteSpace + (hstretch<<FRACBITS), rouletteSpace + (vstretch<<FRACBITS),
-		V_SLIDEIN|fflags
+		clipRectFlags
 	);
 
 	// item box has special layering, transparency, different sized patches, other fucked up shit
@@ -1922,7 +2158,7 @@ static void K_drawKartSlotMachine(void)
 	{
 		V_DrawFixedPatch(
 			((fx)<<FRACBITS), ((fy)<<FRACBITS) + rouletteOffset,
-			FRACUNIT, V_HUDTRANS|V_SLIDEIN|fflags,
+			baseHudScale, baseVideoFlags|fflags,
 			localpatch[i], (localcolor[i] ? R_GetTranslationColormap(colormode[i], localcolor[i], GTC_CACHE) : NULL)
 		);
 
@@ -2255,7 +2491,7 @@ void K_DrawKartPositionNumXY(
 	{
 		fx = K_DrawKartPositionNumPatch(
 			(num % 10), splitIndex, color,
-			fx, fy, scale, V_SPLITSCREEN|fflags
+			fx, fy, scale, V_SPLITSCREEN|V_HUDTRANS|fflags
 		);
 		num /= 10;
 	} while (num);
@@ -3060,7 +3296,7 @@ static void K_drawRingCounter(boolean gametypeinfoshown)
 	INT32 ringflip = 0;
 	UINT8 *ringmap = NULL;
 	boolean colorring = false;
-	INT32 ringx = 0, fy = 0;
+	INT32 ringx = 0, fy = 0, lives_y = 0;
 
 	rn[0] = ((abs(stplyr->hudrings) / 10) % 10);
 	rn[1] = (abs(stplyr->hudrings) % 10);
@@ -3181,83 +3417,129 @@ static void K_drawRingCounter(boolean gametypeinfoshown)
 	}
 	else
 	{
+		const boolean DRAW_RINGS_ON_PLAYER = cv_ringsonplayer.value == 1;
+		INT32 ringcounterflags = V_HUDTRANS|V_SLIDEIN|splitflags;
+		INT32 RINGC_X = LAPS_X;
+
 		fy = LAPS_Y;
+		lives_y = LAPS_Y;
+
+		// RadioRacers: Copying driftgauge here
+		if (DRAW_RINGS_ON_PLAYER) {
+			vector3_t v;
+			trackingResult_t result;
+
+			ringcounterflags &= ~V_SLIDEIN;
+			ringcounterflags &= ~splitflags;
+
+			const boolean doesPlayerHaveMo = !((stplyr->mo == NULL || P_MobjWasRemoved(stplyr->mo)));
+			if (doesPlayerHaveMo)
+			{
+				v.x = R_InterpolateFixed(stplyr->mo->old_x, stplyr->mo->x);
+				v.y = R_InterpolateFixed(stplyr->mo->old_y, stplyr->mo->y);
+				v.z = R_InterpolateFixed(stplyr->mo->old_z, stplyr->mo->z);
+
+				// Legacy GL perspective
+				v.z += FixedMul(-15*FRACUNIT, stplyr->mo->scale);
+				/*
+				* Many thanks to Nev3r for figuring out the math for this functionality, opens up a lot of
+				possiblities.
+				*/
+				K_ObjectTracking(&result, &v, false);
+
+				// Add some offset so it's directly below the player (in Software)
+				fy = (result.y / FRACUNIT); 
+				RINGC_X = (result.x / FRACUNIT) - 20;
+			} 
+		}
 
 		if (gametypeinfoshown)
 		{
-			fy -= 11;
+			lives_y -= 11;
+			if (!DRAW_RINGS_ON_PLAYER)
+				fy -= 11;
 
 			if ((gametyperules & (GTR_BUMPERS|GTR_CIRCUIT)) == GTR_BUMPERS)
-				fy -= 4;
+			{
+				lives_y -= 4;
+				if (!DRAW_RINGS_ON_PLAYER)
+					fy -= 4;
+			}
 		}
 		else
 		{
-			fy += 9;
+			lives_y += 9;
+			if (!DRAW_RINGS_ON_PLAYER)
+				fy += 9;
 		}
 
 		if (cv_ng_ringcap.value > 0)
 		{
+			// If the cvar isn't active AND we're using lives..
+			INT32 ringstickerwidth = (uselives && !DRAW_RINGS_ON_PLAYER) ? (stplyr->lives >= 10 ? 70 : 64) : 33;
+
 			// Rings
 			using srb2::Draw;
-			Draw(LAPS_X+7, fy+1)
-				.flags(V_HUDTRANS|V_SLIDEIN|splitflags)
+			Draw(RINGC_X+7, fy+1)
+				.flags(ringcounterflags)
 				.align(Draw::Align::kCenter)
-				.width(uselives ? (stplyr->lives >= 10 ? 70 : 64) : 33)
+				.width(ringstickerwidth)
 				.small_sticker();
 
-			V_DrawMappedPatch(LAPS_X+ringx+7, fy-5, V_HUDTRANS|V_SLIDEIN|splitflags|ringflip, kp_ring[ringanim_realframe], (colorring ? ringmap : NULL));
+			V_DrawMappedPatch(RINGC_X+ringx+7, fy-5, V_HUDTRANS|V_SLIDEIN|splitflags|ringflip, kp_ring[ringanim_realframe], (colorring ? ringmap : NULL));
 
 			// "Why fy-4? Why LAPS_X+29+1?"
 			// "use magic numbers" - jartha 2024-03-05
 			if (stplyr->hudrings < 0) // Draw the minus for ring debt
 			{
-				V_DrawMappedPatch(LAPS_X+23-1, fy, V_HUDTRANS|V_SLIDEIN|splitflags, kp_ringdebtminus, ringmap);
+				V_DrawMappedPatch(RINGC_X+23-1, fy, V_HUDTRANS|V_SLIDEIN|splitflags, kp_ringdebtminus, ringmap);
 				using srb2::Draw;
-				Draw row = Draw(LAPS_X+29+0, fy-4).flags(V_HUDTRANS|V_SLIDEIN|splitflags).font(Draw::Font::kThinTimer).colormap(ringmap);
+				Draw row = Draw(RINGC_X+29+0, fy-4).flags(V_HUDTRANS|V_SLIDEIN|splitflags).font(Draw::Font::kThinTimer).colormap(ringmap);
 				row.text("{:02}", abs(stplyr->hudrings));
-				// V_DrawMappedPatch(LAPS_X+29, fy, V_HUDTRANS|V_SLIDEIN|splitflags, fontv[TALLNUM_FONT].font[rn[0]], ringmap);
-				// V_DrawMappedPatch(LAPS_X+35, fy, V_HUDTRANS|V_SLIDEIN|splitflags, fontv[TALLNUM_FONT].font[rn[1]], ringmap);
+				// V_DrawMappedPatch(RINGC_X+29, fy, V_HUDTRANS|V_SLIDEIN|splitflags, fontv[TALLNUM_FONT].font[rn[0]], ringmap);
+				// V_DrawMappedPatch(RINGC_X+35, fy, V_HUDTRANS|V_SLIDEIN|splitflags, fontv[TALLNUM_FONT].font[rn[1]], ringmap);
 			}
 			else
 			{
 				using srb2::Draw;
-				Draw row = Draw(LAPS_X+23+3, fy-4).flags(V_HUDTRANS|V_SLIDEIN|splitflags).font(Draw::Font::kThinTimer).colormap(ringmap);
+				Draw row = Draw(RINGC_X+23+3, fy-4).flags(V_HUDTRANS|V_SLIDEIN|splitflags).font(Draw::Font::kThinTimer).colormap(ringmap);
 				row.text("{:02}", abs(stplyr->hudrings));
-				// V_DrawMappedPatch(LAPS_X+23, fy, V_HUDTRANS|V_SLIDEIN|splitflags, fontv[TALLNUM_FONT].font[rn[0]], ringmap);
-				// V_DrawMappedPatch(LAPS_X+29, fy, V_HUDTRANS|V_SLIDEIN|splitflags, fontv[TALLNUM_FONT].font[rn[1]], ringmap);
+				// V_DrawMappedPatch(RINGC_X+23, fy, V_HUDTRANS|V_SLIDEIN|splitflags, fontv[TALLNUM_FONT].font[rn[0]], ringmap);
+				// V_DrawMappedPatch(RINGC_X+29, fy, V_HUDTRANS|V_SLIDEIN|splitflags, fontv[TALLNUM_FONT].font[rn[1]], ringmap);
 			}
 
 			// SPB ring lock
 			if (stplyr->pflags & PF_RINGLOCK)
-				V_DrawScaledPatch(LAPS_X-5, fy-17, V_HUDTRANS|V_SLIDEIN|splitflags, kp_ringspblock[stplyr->karthud[khud_ringspblock]]);
-		}
-		INT32 rco = 0;
-
-		if (cv_ng_ringcap.value == 0)
-		{
-			rco += 10;
-		}
-		else
-		{
-			rco = 0;
+				V_DrawScaledPatch(RINGC_X-5, fy-17, V_HUDTRANS|V_SLIDEIN|splitflags, kp_ringspblock[stplyr->karthud[khud_ringspblock]]);
 		}
 
 		// Lives
 		if (uselives)
 		{
+			INT32 facerank_x = 46;
+			INT32 lifecount_x = 65;
 			boolean ringson = (cv_ng_ringcap.value > 0);
 			UINT8 *colormap = R_GetTranslationColormap(TC_DEFAULT, static_cast<skincolornum_t>(K_GetHudColor()), GTC_CACHE);
 
-			if (!ringson && cv_extendedspeedometer.value)
-				fy -= 12;
+			if (DRAW_RINGS_ON_PLAYER || !ringson) {
+				facerank_x = 13;
+				lifecount_x = 32;
+
+				using srb2::Draw;
+				Draw(LAPS_X+7, lives_y+1)
+					.flags(V_HUDTRANS|V_SLIDEIN|splitflags)
+					.align(Draw::Align::kCenter)
+					.width(stplyr->lives >= 10 ? 37 : 31)
+					.small_sticker();
+			}
 
 			if (cv_highresportrait.value)
 			{
-				V_DrawFixedPatch((LAPS_X+rco+46)<<FRACBITS, (fy-5)<<FRACBITS, FRACUNIT >> 1, V_HUDTRANS|V_SLIDEIN|splitflags, (stplyr->skinlocal ? localfaceprefix[stplyr->localskin-1] : faceprefix[stplyr->localskin ? stplyr->localskin-1 : stplyr->skin])[FACE_WANTED], colormap);
+				V_DrawFixedPatch((LAPS_X+facerank_x)<<FRACBITS, (lives_y-5)<<FRACBITS, FRACUNIT >> 1, V_HUDTRANS|V_SLIDEIN|splitflags, (stplyr->skinlocal ? localfaceprefix[stplyr->localskin-1] : faceprefix[stplyr->localskin ? stplyr->localskin-1 : stplyr->skin])[FACE_WANTED], colormap);
 			}
 			else
 			{
-				V_DrawMappedPatch(LAPS_X+rco+46, fy-5, V_HUDTRANS|V_SLIDEIN|splitflags, (stplyr->skinlocal ? localfaceprefix[stplyr->localskin-1] : faceprefix[stplyr->localskin ? stplyr->localskin-1 : stplyr->skin])[FACE_RANK], colormap);
+				V_DrawMappedPatch(LAPS_X+facerank_x, lives_y-5, V_HUDTRANS|V_SLIDEIN|splitflags, (stplyr->skinlocal ? localfaceprefix[stplyr->localskin-1] : faceprefix[stplyr->localskin ? stplyr->localskin-1 : stplyr->skin])[FACE_RANK], colormap);
 			}
 			SINT8 livescount = 0;
 			if (stplyr->lives > 0)
@@ -3268,7 +3550,7 @@ static void K_drawRingCounter(boolean gametypeinfoshown)
 			}
 
 			using srb2::Draw;
-			Draw row = Draw(LAPS_X+rco+65, fy-4).flags(V_HUDTRANS|V_SLIDEIN|splitflags).font(Draw::Font::kThinTimer);
+			Draw row = Draw(LAPS_X+lifecount_x, lives_y-4).flags(V_HUDTRANS|V_SLIDEIN|splitflags).font(Draw::Font::kThinTimer);
 			row.text("{}", livescount);
 		}
 	}
@@ -3278,7 +3560,8 @@ static void K_drawRingCounter(boolean gametypeinfoshown)
 
 static void K_drawKartAccessibilityIcons(boolean gametypeinfoshown, INT32 fx)
 {
-    INT32 fy = LAPS_Y-14;
+	boolean showbluespheres = (gametyperules & GTR_SPHERES);
+	INT32 fy = LAPS_Y - ((cv_ringsonplayer.value == 1 && !showbluespheres && !G_GametypeUsesLives()) ? 0 : 14);
     INT32 splitflags = V_SNAPTOLEFT|V_SNAPTOBOTTOM|V_SPLITSCREEN;
 
     boolean mirror = false;
@@ -3428,23 +3711,18 @@ static void K_drawKartSpeedometer(boolean gametypeinfoshown)
 	UINT8 labeln = 0;
 	UINT8 numbers[3];
 	INT32 splitflags = V_SNAPTOBOTTOM|V_SNAPTOLEFT|V_SPLITSCREEN;
-	INT32 fy = LAPS_Y-14;
+	boolean showbluespheres = (gametyperules & GTR_SPHERES);
+	INT32 fy = LAPS_Y - 14;
 	INT32 stickerwidth = 42;
 	INT32 secondoff = 41;
 	UINT8 *colormap;
-	boolean ringson = (cv_ng_ringcap.value > 0);
 
 	//Just set something here for now
 	colormap = R_GetTranslationColormap(TC_DEFAULT,SKINCOLOR_GREEN,GTC_CACHE);
 
-	if (battleprisons)
+	if (showbluespheres)
 	{
 		fy -= 2;
-	}
-
-	if (!ringson && !battleprisons)
-	{
-		fy += 15;
 	}
 
 	if (!stplyr->exiting) // Keep the same speed value as when you crossed the finish line!
@@ -4238,7 +4516,11 @@ void K_DrawPlayerTag(fixed_t x, fixed_t y, player_t *p, playertagtype_t type, bo
 		// We only care about the trans flag here (based?) as well as V_VFLIP.
 		flags |= foreground ? 0 : V_60TRANS;
 		K_DrawNameTagForPlayer(x, y, p, flags);
-		K_DrawTypingNotifier(x, y, p, flags);
+
+		// RadioRacers: Don't REALLY need to hide this if a player is muted, but, consistency.
+		if (!IsPlayerMuted(p - players)) {
+			K_DrawTypingNotifier(x, y, p, flags);
+		}
 		break;
 
 	default:
@@ -5129,7 +5411,7 @@ static void K_drawKartMinimap(void)
 
 static void K_drawKartFinish(boolean finish)
 {
-	INT32 timer, minsplitstationary, pnum = 0, splitflags = V_SPLITSCREEN;
+	INT32 timer, minsplitstationary, pnum = 0, splitflags = V_SPLITSCREEN|V_HUDTRANS;
 	patch_t **kptodraw;
 
 	if (finish)
@@ -5312,7 +5594,7 @@ static void K_drawKartStartBulbs(void)
 			}
 		}
 
-		V_DrawFixedPatch(x, y, FRACUNIT, V_SNAPTOTOP|V_SPLITSCREEN,
+		V_DrawFixedPatch(x, y, FRACUNIT, V_SNAPTOTOP|V_SPLITSCREEN|V_HUDTRANS,
 			(r_splitscreen ? kp_prestartbulb_split[patchnum] : kp_prestartbulb[patchnum]), NULL);
 		x += spacing;
 	}
@@ -5368,11 +5650,17 @@ static void K_drawKartStartCountdown(void)
 
 	if (leveltime >= introtime && leveltime < starttime-(3*TICRATE))
 	{
+		if (cv_hud_hideposition.value)
+			return;
+		
 		if (numbulbs > 1)
 			K_drawKartStartBulbs();
 	}
 	else
 	{
+
+		if (cv_hud_hidecountdown.value)
+			return;
 
 		if (leveltime >= starttime-(2*TICRATE)) // 2
 			pnum++;
@@ -5406,7 +5694,7 @@ static void K_drawKartStartCountdown(void)
 		if (r_splitscreen) // splitscreen
 			pnum += 10;
 
-		V_DrawScaledPatch(STCD_X - (SHORT(kp_startcountdown[pnum]->width)/2), STCD_Y - (SHORT(kp_startcountdown[pnum]->height)/2), V_SPLITSCREEN, kp_startcountdown[pnum]);
+		V_DrawScaledPatch(STCD_X - (SHORT(kp_startcountdown[pnum]->width)/2), STCD_Y - (SHORT(kp_startcountdown[pnum]->height)/2), V_SPLITSCREEN|V_HUDTRANS, kp_startcountdown[pnum]);
 	}
 }
 
@@ -5825,7 +6113,7 @@ void K_drawKartFreePlay(void)
 		FRACUNIT,
 		FRACUNIT,
 		FRACUNIT,
-		V_SNAPTOBOTTOM|h_snap|V_SPLITSCREEN,
+		V_SNAPTOBOTTOM|h_snap|V_SPLITSCREEN|V_HUDTRANS,
 		NULL,
 		KART_FONT,
 		"FREE PLAY"
@@ -6659,7 +6947,7 @@ void K_drawKartHUD(void)
 			K_drawKartFinish(true);
 		else if (!(gametyperules & GTR_CIRCUIT))
 			;
-		else if (stplyr->karthud[khud_lapanimation] && !r_splitscreen)
+		else if (stplyr->karthud[khud_lapanimation] && !r_splitscreen && !cv_hud_hidelapemblem.value)
 			K_drawLapStartAnim();
 	}
 

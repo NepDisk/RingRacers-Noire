@@ -59,6 +59,7 @@
 #include "music.h"
 
 #include "noire/n_cvar.h"
+#include "radioracers/rr_cvar.h"
 
 #ifdef HWRENDER
 #include "hardware/hw_main.h"

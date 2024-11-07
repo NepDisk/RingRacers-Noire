@@ -274,6 +274,7 @@ boolean forcespecialstage = false;
 
 UINT8 splitscreen = 0;
 INT32 adminplayers[MAXPLAYERS];
+INT32 mutedplayers[MAXPLAYERS]; // RadioRacers: check doomstat.h for more information.
 
 // Scheduled commands.
 scheduleTask_t **schedule = NULL;
@@ -4008,6 +4009,49 @@ void ClearAdminPlayers(void)
 {
 	memset(adminplayers, -1, sizeof(adminplayers));
 }
+
+void MutePlayerFromChat(INT32 playernum) {
+	INT32 i;
+	for (i = 0; i < MAXPLAYERS; i++)
+	{
+		if (playernum == mutedplayers[i])
+			return; // Player is already muted
+		
+		if (mutedplayers[i] == -1) {
+			mutedplayers[i] = playernum;
+			break;			
+		}
+	}
+}
+
+void UnmutePlayerFromChat(INT32 playernum) {
+	INT32 i;
+	for (i = 0; i < MAXPLAYERS; i++)
+	{
+		if (mutedplayers[i] == playernum) {
+			mutedplayers[i] = -1;
+			break;			
+		}
+	}
+}
+
+boolean IsPlayerMuted(INT32 playernum) 
+{
+	INT32 i;
+	for (i = 0; i < MAXPLAYERS; i++)
+	{
+		if (playernum == mutedplayers[i]) {
+			return true;
+		}
+	}	
+	return false;
+}
+
+void ClearMutedPlayers(void)
+{
+	memset(mutedplayers, -1, sizeof(mutedplayers));
+}
+
 
 void RemoveAdminPlayer(INT32 playernum)
 {
