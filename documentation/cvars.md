@@ -316,9 +316,16 @@ Default Value: "Ring Racers"
 
 Choices: "Ring Racers", "Kart"
 
-Decides behaviour of Shrink.
+Decides behaviour of Eggmarks.
 
-SRB2Kart Shrink causes players ahead of the user to shrink down in size instantly on use and makes them drop their  current items.
+SRB2Kart Eggmarks don't have the speed up or transfer ability ability and the timer is 4 seconds instead of 6.
+
+#### ng_eggmaninvinpickup
+Default Value: "Off"
+
+Choices: "Off", "On"
+
+Decides if the player can pick up Eggmarks while using Grow or Invincibility
 
 #### ng_nerfdroptarget
 Default Value: "Off"

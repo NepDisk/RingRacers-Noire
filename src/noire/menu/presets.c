@@ -42,6 +42,7 @@ void N_RRVanillaPreset(INT32 choice)
 	CV_StealthSet(&cv_ng_oldgrow, "Ring Racers");
 	CV_StealthSet(&cv_ng_oldshrink, "Ring Racers");
 	CV_StealthSet(&cv_ng_oldeggman, "Ring Racers");
+	CV_Set(&cv_ng_eggboxinvinpickup, "On");
 	CV_Set(&cv_ng_nerfdroptarget, "Off");
 	CV_Set(&cv_ng_nerfflameshield, "Off");
 	CV_Set(&cv_ng_nerfflameshielddiminish, "1.2");
@@ -132,6 +133,7 @@ void N_NoirePreset(INT32 choice)
 	CV_StealthSet(&cv_ng_oldgrow, "Kart");
 	CV_StealthSet(&cv_ng_oldshrink, "Kart");
 	CV_StealthSet(&cv_ng_oldeggman, "Kart");
+	CV_Set(&cv_ng_eggboxinvinpickup, "Off");
 	CV_Set(&cv_ng_nerfdroptarget, "On");
 	CV_Set(&cv_ng_nerfflameshield, "On");
 	CV_Set(&cv_ng_nerfflameshielddiminish, "1.2");
@@ -221,6 +223,7 @@ void N_SRB2KPreset(INT32 choice)
 	CV_StealthSet(&cv_ng_oldgrow, "Kart");
 	CV_StealthSet(&cv_ng_oldshrink, "Kart");
 	CV_StealthSet(&cv_ng_oldeggman, "Kart");
+	CV_Set(&cv_ng_eggboxinvinpickup, "Off");
 	CV_Set(&cv_ng_nerfdroptarget, "On");
 	CV_Set(&cv_ng_nerfflameshield, "On");
 	CV_Set(&cv_ng_nerfflameshielddiminish, "1.2");

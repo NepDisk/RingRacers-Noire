@@ -149,6 +149,9 @@ menuitem_t OPTIONS_NoireGameplayItemFunctionality[] =
 	{IT_STRING | IT_CVAR, "Eggmark Behaviour", "Toggle between Ring Racers or Kart Eggmark behavior.",
 		NULL, {.cvar = &cv_ng_oldeggman}, 0, 0},
 
+	{IT_STRING | IT_CVAR, "Eggmark Invincibility Pickup", "Should Grow and Invincibility pick up Eggmarks?",
+		NULL, {.cvar = &cv_ng_eggboxinvinpickup}, 0, 0},
+
 	{IT_STRING | IT_CVAR, "Drop Target Nerf", "Make the Drop Target knockback less powerful.",
 		NULL, {.cvar = &cv_ng_nerfdroptarget}, 0, 0},
 

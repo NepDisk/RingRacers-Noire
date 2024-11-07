@@ -181,7 +181,7 @@ boolean K_EggItemCollide(mobj_t *t1, mobj_t *t2)
 		if (!P_CanPickupItem(t2->player, 2))
 			return true;
 
-		if (!(G_CompatLevel(0x1001) || G_CompatLevel(0x1000)) && ((cv_ng_oldinvincibility.value && t2->player->invincibilitytimer) || (cv_ng_oldgrow.value && (t2->player->growshrinktimer > 0))))
+		if ((!cv_ng_eggboxinvinpickup.value && t2->player->invincibilitytimer) || (!cv_ng_eggboxinvinpickup.value && (t2->player->growshrinktimer > 0)))
 			return true;
 
 		K_DropItems(t2->player);
