@@ -14477,10 +14477,14 @@ void K_MoveKartPlayer(player_t *player, boolean onground)
 				UINT8 award = TICRATE - player->trickboostdecay;
 
 				player->trickboost = award;
-				if (!(gametyperules & GTR_SPHERES))
-					K_AwardPlayerRings(player,
-						(TICRATE-player->trickboostdecay) * player->lastairtime/3 / TICRATE, // Scale ring award by same amount as trickboost
-					true);
+
+				if (cv_ng_trickrings.value)
+				{
+					if (!(gametyperules & GTR_SPHERES))
+						K_AwardPlayerRings(player,
+							(TICRATE-player->trickboostdecay) * player->lastairtime/3 / TICRATE, // Scale ring award by same amount as trickboost
+						true);
+				}
 
 				if (player->trickpanel == TRICKSTATE_FORWARD)
 					player->trickboostpower /= 18;

@@ -44,6 +44,7 @@ extern consvar_t cv_ng_maprings;
 extern consvar_t cv_ng_mapringcapsules;
 extern consvar_t cv_ng_mapringboxes;
 extern consvar_t cv_ng_ringboxtransform;
+extern consvar_t cv_ng_trickrings;
 
 //Items
 extern consvar_t cv_ng_forceoldboxscale;
@@ -93,6 +94,8 @@ extern consvar_t cv_ng_stumble;
 extern consvar_t cv_ng_safelanding;
 extern consvar_t cv_ng_hitlag;
 extern consvar_t cv_ng_combo;
+extern consvar_t cv_ng_invincibilitydamage;
+extern consvar_t cv_ng_growdamage;
 extern consvar_t cv_ng_triangledash;
 extern consvar_t cv_ng_triangledashdownthrust;
 extern consvar_t cv_ng_mapanger;

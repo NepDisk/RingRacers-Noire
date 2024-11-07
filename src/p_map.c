@@ -1549,13 +1549,15 @@ static BlockItReturn_t PIT_CheckThing(mobj_t *thing)
 				P_DamageMobj(g_tm.thing, thing, thing, 1, DMG_TUMBLE);
 			}
 
-			if (!cv_ng_tumble.value || !cv_ng_stumble.value)
+			if (cv_ng_invincibilitydamage.value == 0 || cv_ng_growdamage.value == 0)
 			{
-				if (g_tm.thing->hitlag == 0)
+				// Hacky as hell but it works to prevent infinite on the spot combos while keep spinout bump working.....
+				if ((g_tm.thing->player->justbumped == 0) && ((g_tm.thing->hitlag == 0) && (g_tm.thing->player->tumbleBounces == 0)) && (thing->player && thing->hitlag == 0 && thing->player->tumbleBounces == 0))
 				{
 					K_PvPTouchDamage(g_tm.thing, thing);
-					K_KartBouncing(g_tm.thing, thing);
 				}
+					K_KartBouncing(g_tm.thing, thing);
+
 			}
 			else
 			{

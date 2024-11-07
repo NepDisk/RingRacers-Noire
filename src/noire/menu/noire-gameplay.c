@@ -91,6 +91,9 @@ menuitem_t OPTIONS_NoireGameplayRings[] =
 
 	{IT_STRING | IT_CVAR, "Ring Box Transformation", "After picking up Item Boxes, can they turn into Ring Boxes?",
 		NULL, {.cvar = &cv_ng_ringboxtransform}, 0, 0},
+
+	{IT_STRING | IT_CVAR, "Trick Rings", "Enable or disable tricks giving rings to the player",
+		NULL, {.cvar = &cv_ng_trickrings}, 0, 0},
 };
 
 ///////////
@@ -251,6 +254,12 @@ menuitem_t OPTIONS_NoireGameplayAttack[] =
 
 	{IT_STRING | IT_CVAR, "Stumble", "Enable or disable stumble, a weaker form of tumble where racers just get pushed away.",
 		NULL, {.cvar = &cv_ng_stumble}, 0, 0},
+
+	{IT_STRING | IT_CVAR, "Invincibility Damage", "Sets what damage Invincibility does. Can conflict with Tumble/Stumble toggles",
+		NULL, {.cvar = &cv_ng_invincibilitydamage}, 0, 0},
+
+	{IT_STRING | IT_CVAR, "Grow Damage", "Sets what damage grow does. Can conflict with Tumble/Stumble toggles",
+		NULL, {.cvar = &cv_ng_growdamage}, 0, 0},
 
 	{IT_STRING | IT_CVAR, "Safe Landing", "Enable or disable safe landing, a source of damage when you land improperly.",
 		NULL, {.cvar = &cv_ng_safelanding}, 0, 0},

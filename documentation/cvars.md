@@ -365,6 +365,13 @@ Choices: "Off", "On"
 
 Sets if itemboxes turn into ringboxes on pickup.
 
+#### ng_trickrings
+Default Value: "On"
+
+Choices: "Off", "On"
+
+Sets if tricks give you rings.
+
 #### Items
 Cvars here all relate to items
 
@@ -556,15 +563,29 @@ Default Value: "On"
 Choices: "Off", "On"
 
 Sets if the player should be affected by tumble.
-
-If tumble is disabled, Invincibility will spinout instead.
+Converts it to spinout if on.
 
 #### ng_stumble
 Default Value: "On"
 
 Choices: "Off", "On"
 
-Sets if the player should be affected by stumble.
+Sets if the player should be affected by stumble at all.
+Converts it to spinout if on.
+
+#### ng_invincibilitydamage
+Default Value: "Tumble"
+
+Choices: "Spinout", "Tumble", "Stumble"
+
+Sets what type of damage Invincibility does.
+
+#### ng_growdamage
+Default Value: "Stumble"
+
+Choices: "Spinout", "Tumble", "Stumble"
+
+Sets what type of damage Invincibility does.
 
 If stumble is disabled, Grow will spinout instead.
 

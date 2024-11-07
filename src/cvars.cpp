@@ -925,6 +925,7 @@ consvar_t cv_ng_maprings = UnsavedNetVar("ng_maprings", "On").on_off().onchange_
 consvar_t cv_ng_mapringcapsules = UnsavedNetVar("ng_mapringcapsules", "On").on_off().onchange_noinit(NG_Generic_OnChange);
 consvar_t cv_ng_mapringboxes = UnsavedNetVar("ng_mapringboxes", "On").on_off();
 consvar_t cv_ng_ringboxtransform = UnsavedNetVar("ng_ringboxtransform", "On").on_off();
+consvar_t cv_ng_trickrings = UnsavedNetVar("ng_trickrings", "On").on_off();
 
 //Items
 consvar_t cv_ng_forceoldboxscale = UnsavedNetVar("ng_forceoldboxscale", "Off").on_off().onchange(NG_ForceSmallBoxScale_OnChange);
@@ -1296,6 +1297,9 @@ consvar_t cv_ng_draft = UnsavedNetVar("ng_draft", "On").on_off();
 consvar_t cv_ng_wavedash = UnsavedNetVar("ng_wavedash", "On").on_off();
 consvar_t cv_ng_tumble = UnsavedNetVar("ng_tumble", "On").on_off();
 consvar_t cv_ng_stumble = UnsavedNetVar("ng_stumble", "On").on_off();
+static CV_PossibleValue_t damagetype_cons_t[] = {{0, "Spinout"}, {1, "Tumble"}, {2, "Stumble"}, {0, NULL}};
+consvar_t cv_ng_invincibilitydamage = UnsavedNetVar("ng_invincibilitydamage", "Tumble").values(damagetype_cons_t);
+consvar_t cv_ng_growdamage = UnsavedNetVar("ng_growdamage", "Stumble").values(damagetype_cons_t);
 consvar_t cv_ng_safelanding = UnsavedNetVar("ng_safelanding", "On").on_off();
 consvar_t cv_ng_hitlag = UnsavedNetVar("ng_hitlag", "On").on_off();
 consvar_t cv_ng_combo = UnsavedNetVar("ng_combo", "On").on_off();

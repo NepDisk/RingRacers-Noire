@@ -58,6 +58,8 @@ void N_RRVanillaPreset(INT32 choice)
 	CV_Set(&cv_ng_wavedash, "On");
 	CV_Set(&cv_ng_tumble, "On");
 	CV_Set(&cv_ng_stumble, "On");
+	CV_Set(&cv_ng_invincibilitydamage, "Tumble");
+	CV_Set(&cv_ng_growdamage, "Stumble");
 	CV_Set(&cv_ng_safelanding, "On");
 	CV_Set(&cv_ng_hitlag, "On");
 	CV_Set(&cv_ng_combo, "On");
@@ -149,6 +151,8 @@ void N_NoirePreset(INT32 choice)
 	CV_Set(&cv_ng_wavedash, "Off");
 	CV_Set(&cv_ng_tumble, "Off");
 	CV_Set(&cv_ng_stumble, "Off");
+	CV_Set(&cv_ng_invincibilitydamage, "Spinout");
+	CV_Set(&cv_ng_growdamage, "Spinout");
 	CV_Set(&cv_ng_safelanding, "Off");
 	CV_Set(&cv_ng_hitlag, "Off");
 	CV_Set(&cv_ng_combo, "Off");
@@ -239,6 +243,8 @@ void N_SRB2KPreset(INT32 choice)
 	CV_Set(&cv_ng_wavedash, "Off");
 	CV_Set(&cv_ng_tumble, "Off");
 	CV_Set(&cv_ng_stumble, "Off");
+	CV_Set(&cv_ng_invincibilitydamage, "Spinout");
+	CV_Set(&cv_ng_growdamage, "Spinout");
 	CV_Set(&cv_ng_safelanding, "Off");
 	CV_Set(&cv_ng_hitlag, "Off");
 	CV_Set(&cv_ng_combo, "Off");
