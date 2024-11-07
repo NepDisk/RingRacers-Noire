@@ -31,6 +31,7 @@ void N_DoHyudoroSteal(player_t *player);
 void N_DoShrink(player_t *user);
 
 extern UINT8 N_NoireItemOddsRace[NUMKARTRESULTS-1][8];
+extern UINT8 N_NoireItemOddsOldRace[NUMKARTRESULTS-1][8];
 
 #ifdef __cplusplus
 } // extern "C"
