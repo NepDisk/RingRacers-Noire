@@ -64,7 +64,7 @@ menuitem_t OPTIONS_RadioRacersHud[] =
 		NULL, {.cvar = &cv_ringsonplayer}, 0, 0},
 
 	{IT_STRING | IT_CVAR, "Ring Counter Custom Offset", "The RING COUNTER's HUD yoffset when in custom mode.",
-		NULL, {.cvar = &cv_ringsonplayer}, 0, 0},
+		NULL, {.cvar = &cv_ringsonplayeryoffset}, 0, 0},
 
 	{IT_STRING | IT_CVAR, "Use Higher Resolution Portraits", "Draw higher resolution portraits in the minirankings.",
 		NULL, {.cvar = &cv_highresportrait}, 0, 0},
@@ -141,11 +141,10 @@ void RumbleEvents_OnChange(void)
 
 void Roulette_OnChange(void)
 {
-	if (con_startup) return;
 
 	UINT16 newstatus = (cv_rouletteonplayer.value) ? IT_STRING | IT_CVAR : IT_GRAYEDOUT;
 
-	for (int i = 5; i < 9; i++) {
+	for (int i = 6; i < 9; i++) {
 		OPTIONS_RadioRacersHud[i].status = newstatus;
 	}
 }
