@@ -703,7 +703,7 @@ void N_KartDrift(player_t *player, boolean onground)
 		if (player->driftcharge >= dsone)
 		{
 			S_StartSound(player->mo, sfx_s23c);
-			K_SpawnDashDustRelease(player);
+			//K_SpawnDashDustRelease(player);
 
 			angle_t pushdir = K_MomentumAngle(player->mo);
 
