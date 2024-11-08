@@ -98,12 +98,18 @@
 #define SELECTION_HOP (10*FRACUNIT)
 
 //NOIRE: Extra row support
+#define SELECTIONS_SPLIT // Decides if this should use the split layout or not.
 #define SELECTIONS_PER_ROW 4
 #define SELECTION_NUM_ROWS ((VOTE_NUM_LEVELS + SELECTIONS_PER_ROW - 1) / SELECTIONS_PER_ROW)
 #if SELECTION_NUM_ROWS < 1
 #define SELECTION_Y (144 * FRACUNIT + (SELECTION_HEIGHT >> 1))
 #else
+
+#ifdef SELECTIONS_SPLIT
+#define SELECTION_Y (50 * FRACUNIT + (SELECTION_HEIGHT >> 1)) - (SELECTION_HEIGHT * (SELECTION_NUM_ROWS - 1)) //Modify it for extra rows
+#else
 #define SELECTION_Y (144 * FRACUNIT + (SELECTION_HEIGHT >> 1)) - (SELECTION_HEIGHT * (SELECTION_NUM_ROWS - 1)) //Modify it for extra rows
+#endif //SELECTIONS_SPLIT
 #endif // VOTE_NUM_LEVELS
 
 #define SELECTOR_SPACE (8*FRACUNIT)
@@ -751,6 +757,7 @@ static void Y_DrawVoteBackground(void)
 
 static void Y_DrawVoteSelector(const fixed_t y, const fixed_t time, const UINT8 localPlayer)
 {
+	y_vote_player *const player = &vote.players[localPlayer];
 	//NOIRE: Extra map selections
 	const fixed_t destX =
 		SELECTION_X + (vote.players[localPlayer].selection >= SELECTIONS_PER_ROW
@@ -781,12 +788,23 @@ static void Y_DrawVoteSelector(const fixed_t y, const fixed_t time, const UINT8 
 
 		colormap = R_GetTranslationColormap(TC_RAINBOW, players[ g_localplayers[localPlayer] ].skincolor, GTC_CACHE);
 
+#ifdef SELECTIONS_SPLIT
+		fixed_t yoffset = player->selection < SELECTIONS_PER_ROW ? 18*FRACUNIT : 0;
+		V_DrawFixedPatch(
+			vote_draw.selectors[localPlayer].x, destY - SELECTOR_Y + yoffset - (9 * FRACUNIT),
+			FRACUNIT, 0,
+			vote_draw.selector_letter[localPlayer][blink],
+			colormap
+		);
+
+#else
 		V_DrawFixedPatch(
 			vote_draw.selectors[localPlayer].x, destY - SELECTOR_Y - (9 * FRACUNIT),
 			FRACUNIT, 0,
 			vote_draw.selector_letter[localPlayer][blink],
 			colormap
 		);
+#endif
 	}
 
 	fixed_t bob = FixedMul((time / freq * 2) + (FRACUNIT / 2), ANGLE_90);
@@ -798,19 +816,29 @@ static void Y_DrawVoteSelector(const fixed_t y, const fixed_t time, const UINT8 
 	{
 		bob = FSIN(bob);
 	}
-
+#ifdef SELECTIONS_SPLIT
+	fixed_t voteoffset = (player->selection < SELECTIONS_PER_ROW) ? 20*FRACUNIT : 0;
+	V_DrawFixedPatch(
+		vote_draw.selectors[localPlayer].x, destY - SELECTOR_Y + bob - voteoffset,
+		FRACUNIT, (player->selection < SELECTIONS_PER_ROW) ? V_VFLIP : 0,
+		vote_draw.selector_arrow,
+		colormap
+	);
+#else
 	V_DrawFixedPatch(
 		vote_draw.selectors[localPlayer].x, destY - SELECTOR_Y + bob,
 		FRACUNIT, 0,
 		vote_draw.selector_arrow,
 		colormap
 	);
+#endif
 }
 
 static void Y_DrawVoteSelection(fixed_t offset)
 {
 	static fixed_t animTimer = 0;
 	animTimer += renderdeltatics;
+	boolean flip[VOTE_NUM_LEVELS];
 
 	const size_t charAnim = animTimer / FRACUNIT / 4;
 
@@ -824,13 +852,28 @@ static void Y_DrawVoteSelection(fixed_t offset)
 	for (i = 0; i < VOTE_NUM_LEVELS; i++)
 	{
 		// NOIRE: Support of the extra votes. This one here should be able to create an indeterminate amount of rows.
-		#if SELECTION_NUM_ROWS > 1
+#ifdef SELECTIONS_SPLIT
+		flip[i] = false;
+#else
+		flip[i] = true;
+#endif
+
+#if SELECTION_NUM_ROWS > 1
 		if (i > 0 && (i & (SELECTIONS_PER_ROW - 1)) == 0) // Past the amount of items per row. Move Y further along, and reset X!
 		{
+#ifdef SELECTIONS_SPLIT
+			y = (144 * FRACUNIT + (SELECTION_HEIGHT >> 1));
+#else
 			y += SELECTION_SPACING_H;
+#endif
 			x = SELECTION_X;
 		}
-		#endif
+#endif
+
+#ifdef SELECTIONS_SPLIT
+		if (i > (VOTE_NUM_LEVELS/2)-1)
+			flip[i] = true;
+#endif
 
 		boolean selected = false;
 		fixed_t destHop = 0;
@@ -869,6 +912,11 @@ static void Y_DrawVoteSelection(fixed_t offset)
 			const fixed_t height = (SELECTION_WIDTH * BASEVIDHEIGHT) / BASEVIDWIDTH;
 			const fixed_t tx = x - (SELECTION_WIDTH >> 1);
 			const fixed_t ty = y + (height >> 1);
+#ifdef SELECTIONS_SPLIT
+			fixed_t yoffset = (flip[i] == false) ? -149 : 0;
+#else
+			fixed_t yoffset = 0;
+#endif
 
 			INT32 fx, fy, fw, fh;
 			INT32 dupx, dupy;
@@ -887,7 +935,7 @@ static void Y_DrawVoteSelection(fixed_t offset)
 			V_AdjustXYWithSnap(&fx, &fy, 0, dupx, dupy);
 
 			V_DrawFill(
-				fx - dupx, fy - fh + dupy,
+				fx - dupx, fy - fh + yoffset + dupy,
 				fw + (dupx << 1), fh,
 				31|V_NOSCALESTART
 			);
@@ -899,7 +947,7 @@ static void Y_DrawVoteSelection(fixed_t offset)
 
 				V_DrawCharacterScaled(
 					(fx + (6 * dupx * ci)) << FRACBITS,
-					(fy - fh + dupy) << FRACBITS,
+					(fy - fh + yoffset + dupy) << FRACBITS,
 					FRACUNIT,
 					V_ORANGEMAP | V_FORCEUPPERCASE | V_NOSCALESTART,
 					MED_FONT,
@@ -909,8 +957,14 @@ static void Y_DrawVoteSelection(fixed_t offset)
 			}
 		}
 
+#ifdef SELECTIONS_SPLIT
+		fixed_t thumbyoffset = (flip[i] == true) ? (y - vote_draw.levels[i].hop) : (y + vote_draw.levels[i].hop);
+#else
+		fixed_t thumbyoffset = y - vote_draw.levels[i].hop;
+#endif
+
 		Y_DrawVoteThumbnail(
-			x, y - vote_draw.levels[i].hop,
+			x, thumbyoffset,
 			SELECTION_WIDTH, 0,
 			i, (selected == false),
 			-1
@@ -1079,11 +1133,18 @@ static void Y_PlayerSendVote(const UINT8 localPlayer)
 {
 	y_vote_player *const player = &vote.players[localPlayer];
 	y_vote_catcher *const catcher = &player->catcher;
+#ifdef SELECTIONS_SPLIT
+	fixed_t selectionhop = player->selection < SELECTIONS_PER_ROW ? -SELECTION_HOP : SELECTION_HOP;
+#endif
 
 	catcher->action = CATCHER_FG_LOWER;
 	catcher->x = catcher->destX = SELECTION_X + (SELECTION_SPACING_W * ((player->selection < SELECTIONS_PER_ROW) ? player->selection : player->selection - SELECTIONS_PER_ROW)); //NOIRE: More votes
 	catcher->y = CATCHER_OFFSCREEN;
+#ifdef SELECTIONS_SPLIT
+	catcher->destY = player->selection < SELECTIONS_PER_ROW ? (SELECTION_Y - selectionhop) : ((144 * FRACUNIT + (SELECTION_HEIGHT >> 1)) - selectionhop); // NOIRE: More votes
+#else
 	catcher->destY = player->selection < SELECTIONS_PER_ROW ? (SELECTION_Y - SELECTION_HOP) : (SELECTION_Y - SELECTION_HOP) + SELECTION_SPACING_H; // NOIRE: More votes
+#endif
 	catcher->spr = 0;
 	catcher->level = VOTE_NOT_PICKED;
 
