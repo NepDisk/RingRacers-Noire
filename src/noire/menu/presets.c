@@ -94,7 +94,9 @@ void N_RRVanillaPreset(INT32 choice)
 	CV_Set(&cv_ng_butteredslopes, "On");
 	CV_Set(&cv_ng_slopeclimb, "On");
 	CV_Set(&cv_ng_slopehelper, "Off");
-	CV_Set(&cv_ng_slopehelperspeedboost, "1.2");
+	CV_Set(&cv_ng_slopehelperspeedboostg1, "1.8");
+	CV_Set(&cv_ng_slopehelperspeedboostg2, "1.5");
+	CV_Set(&cv_ng_slopehelperspeedboostg3, "1.2");
 	CV_Set(&cv_ng_slopehelperaccelboost, "1.25");
 	CV_Set(&cv_ng_stairjank, "All");
 	CV_Set(&cv_ng_turnstyle, "Vanilla");
@@ -195,7 +197,9 @@ void N_NoirePreset(INT32 choice)
 	CV_Set(&cv_ng_butteredslopes, "On");
 	CV_Set(&cv_ng_slopeclimb, "Off");
 	CV_Set(&cv_ng_slopehelper, "On");
-	CV_Set(&cv_ng_slopehelperspeedboost, "1.2");
+	CV_Set(&cv_ng_slopehelperspeedboostg1, "1.8");
+	CV_Set(&cv_ng_slopehelperspeedboostg2, "1.5");
+	CV_Set(&cv_ng_slopehelperspeedboostg3, "1.2");
 	CV_Set(&cv_ng_slopehelperaccelboost, "1.25");
 	CV_Set(&cv_ng_stairjank, "None");
 	CV_Set(&cv_ng_turnstyle, "V1");
@@ -295,7 +299,9 @@ void N_SRB2KPreset(INT32 choice)
 	CV_Set(&cv_ng_butteredslopes, "On");
 	CV_Set(&cv_ng_slopeclimb, "Off");
 	CV_Set(&cv_ng_slopehelper, "On");
-	CV_Set(&cv_ng_slopehelperspeedboost, "1.2");
+	CV_Set(&cv_ng_slopehelperspeedboostg1, "1.7");
+	CV_Set(&cv_ng_slopehelperspeedboostg2, "1.5");
+	CV_Set(&cv_ng_slopehelperspeedboostg3, "1.2");
 	CV_Set(&cv_ng_slopehelperaccelboost, "1.25");
 	CV_Set(&cv_ng_stairjank, "None");
 	CV_Set(&cv_ng_turnstyle, "V1");

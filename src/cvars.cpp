@@ -1368,7 +1368,9 @@ void NG_OldPogoOverride_OnChange(void);
 consvar_t cv_ng_butteredslopes = UnsavedNetVar("ng_slopephysics", "On").on_off();
 consvar_t cv_ng_slopeclimb = UnsavedNetVar("ng_sloperesistance", "On").on_off();
 consvar_t cv_ng_slopehelper = UnsavedNetVar("ng_slopehelper", "Off").on_off();
-consvar_t cv_ng_slopehelperspeedboost = UnsavedNetVar("ng_slopehelper_speedboost", "1.2").floating_point();
+consvar_t cv_ng_slopehelperspeedboostg1 = UnsavedNetVar("ng_slopehelper_speedboostgear1", "1.8").floating_point();
+consvar_t cv_ng_slopehelperspeedboostg2 = UnsavedNetVar("ng_slopehelper_speedboostgear2", "1.5").floating_point();
+consvar_t cv_ng_slopehelperspeedboostg3 = UnsavedNetVar("ng_slopehelper_speedboostgear3", "1.2").floating_point();
 consvar_t cv_ng_slopehelperaccelboost = UnsavedNetVar("ng_slopehelper_accelboost", "1.25").floating_point();
 consvar_t cv_ng_stairjank = UnsavedNetVar("ng_stairjank", "All").values({
 	{0, "None"},

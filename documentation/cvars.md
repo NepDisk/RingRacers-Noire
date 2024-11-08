@@ -896,10 +896,20 @@ When enabled this give the player a boost when going up slopes to make them less
 Good for when you want the downward slopeboost but not the slowdown from going up.
 Also good for ringless setups as it makes it possible to climb steep slopes without boosts.
 
-#### ng_slopehelper_speedboost
+#### ng_slopehelper_speedboostgear1
+Default Value: "1.7"
+
+Speed value used for slopehelper speedboost calculation in gear 1.
+
+#### ng_slopehelper_speedboostgear2
+Default Value: "1.5"
+
+Speed value used for slopehelper speedboost calculation in gear 2.
+
+#### ng_slopehelper_speedboostgear3
 Default Value: "1.2"
 
-Speed value used for sloehelper speedboost calculation.
+Speed value used for slopehelper speedboost calculation in gear 2.
 
 #### ng_slopehelper_accelboost
 Default Value: "1.25"
