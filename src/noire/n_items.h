@@ -29,6 +29,7 @@ extern "C" {
 
 void N_DoHyudoroSteal(player_t *player);
 void N_DoShrink(player_t *user);
+boolean N_CapsuleItemEnabled(kartitems_t item);
 
 extern UINT8 N_NoireItemOddsRace[NUMKARTRESULTS-1][8];
 

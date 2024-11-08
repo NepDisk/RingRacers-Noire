@@ -503,7 +503,7 @@ void M_DrawMenuForeground(void)
 //
 // Draw a banner across the top of the screen, with a description of the current option displayed
 //
-static void M_DrawMenuTooltips(void)
+void M_DrawMenuTooltips(void)
 {
 	if (currentMenu->menuitems[itemOn].tooltip != NULL)
 	{
@@ -5508,7 +5508,7 @@ void M_DrawVideoModes(void)
 // Gameplay Item Tggles:
 tic_t shitsfree = 0;
 
-static void DrawMappedString(INT32 x, INT32 y, INT32 option, int font, const char *text, const UINT8 *colormap)
+void DrawMappedString(INT32 x, INT32 y, INT32 option, int font, const char *text, const UINT8 *colormap)
 {
 	V_DrawStringScaled(
 		x * FRACUNIT,

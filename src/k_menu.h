@@ -1150,6 +1150,8 @@ void M_OptionsTick(void);
 boolean M_OptionsInputs(INT32 ch);
 boolean M_OptionsQuit(void);	// resets buttons when you quit the options.
 void M_OptionsChangeBGColour(INT16 newcolour);	// changes the background colour for options
+void M_DrawMenuTooltips(void);
+void DrawMappedString(INT32 x, INT32 y, INT32 option, int font, const char *text, const UINT8 *colormap);
 
 void M_VideoOptions(INT32 choice);
 void M_SoundOptions(INT32 choice);
@@ -1159,6 +1161,7 @@ void M_ServerOptions(INT32 choice);
 void M_RefreshAdvancedVideoOptions(void);
 
 void M_HandleItemToggles(INT32 choice);	// For item toggling
+void M_HandleCapsuleItemToggles(INT32 choice);	// For capsule item toggling
 void M_EraseData(INT32 choice);	// For data erasing
 void M_CheckProfileData(INT32 choice);	// check if we have profiles.
 

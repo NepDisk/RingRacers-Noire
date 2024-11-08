@@ -84,9 +84,6 @@ void Obj_SPBChase(mobj_t *spb)
 	angle_t hang, vang;
 	fixed_t wspeed, xyspeed, zspeed;
 
-	//if (LUA_CallAction("A_SPBChase", spb))
-		//return;
-
 	// Default speed
 	wspeed = spb->movefactor;
 
@@ -144,6 +141,12 @@ void Obj_SPBChase(mobj_t *spb)
 				UINT8 spark = ((10-spb->tracer->player->kartspeed) + spb->tracer->player->kartweight) / 2;
 				fixed_t easiness = ((spb->tracer->player->kartspeed + (10-spark)) << FRACBITS) / 2;
 
+				fixed_t scaleAdjust = FRACUNIT;
+				if (spb->tracer->scale > mapobjectscale)
+					scaleAdjust = GROW_PHYSICS_SCALE;
+				if (spb->tracer->scale < mapobjectscale)
+					scaleAdjust = SHRINK_PHYSICS_SCALE;
+
 				spb->lastlook = spb->tracer->player-players; // Save the player num for death scumming...
 
 				if (!P_IsObjectOnGround(spb->tracer) /*&& !spb->tracer->player->kartstuff[k_pogospring]*/)
@@ -154,7 +157,7 @@ void Obj_SPBChase(mobj_t *spb)
 				else
 				{
 					// 7/8ths max speed for Knuckles, 3/4ths max speed for min accel, exactly max speed for max accel
-					defspeed = FixedMul(((fracmax+1)<<FRACBITS) - easiness, K_GetKartSpeed(spb->tracer->player, false, false)) / fracmax;
+					defspeed = FixedMul(((fracmax+1)<<FRACBITS) - easiness, FixedMul(K_GetKartSpeed(spb->tracer->player, false, false), scaleAdjust)) / fracmax;
 				}
 
 				// Be fairer on conveyors

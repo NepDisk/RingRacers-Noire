@@ -819,6 +819,33 @@ consvar_t cv_items[] = {
 	UnsavedNetVar("triplegachabom",		"On").on_off(),
 };
 
+//Noire
+consvar_t cv_capsuleitems[] = {
+	UnsavedNetVar("capsule_sneaker",			"On").on_off(),
+	UnsavedNetVar("capsule_rocketsneaker",		"On").on_off(),
+	UnsavedNetVar("capsule_invincibility",		"On").on_off(),
+	UnsavedNetVar("capsule_banana",				"On").on_off(),
+	UnsavedNetVar("capsule_eggmark",			"On").on_off(),
+	UnsavedNetVar("capsule_orbinaut",			"On").on_off(),
+	UnsavedNetVar("capsule_jawz",				"On").on_off(),
+	UnsavedNetVar("capsule_mine",				"On").on_off(),
+	UnsavedNetVar("capsule_landmine",			"On").on_off(),
+	UnsavedNetVar("capsule_ballhog",			"On").on_off(),
+	UnsavedNetVar("capsule_selfpropelledbomb",	"On").on_off(),
+	UnsavedNetVar("capsule_grow",				"On").on_off(),
+	UnsavedNetVar("capsule_shrink",				"On").on_off(),
+	UnsavedNetVar("capsule_lightningshield",	"On").on_off(),
+	UnsavedNetVar("capsule_bubbleshield",		"On").on_off(),
+	UnsavedNetVar("capsule_flameshield",		"On").on_off(),
+	UnsavedNetVar("capsule_hyudoro",			"On").on_off(),
+	UnsavedNetVar("capsule_pogospring",			"On").on_off(),
+	UnsavedNetVar("capsule_superring",			"On").on_off(),
+	UnsavedNetVar("capsule_kitchensink",		"On").on_off(),
+	UnsavedNetVar("capsule_droptarget",			"On").on_off(),
+	UnsavedNetVar("capsule_gardentop",			"On").on_off(),
+	UnsavedNetVar("capsule_gachabom",			"On").on_off()
+};
+
 consvar_t cv_kartbot = UnsavedNetVar("bots", "Off").values({
 	{0, "Off"},
 	{1, "Lv.1"},
@@ -922,7 +949,6 @@ consvar_t cv_ng_ringdebt = UnsavedNetVar("ng_ringdebt", "On").on_off();
 consvar_t cv_ng_ringsting = UnsavedNetVar("ng_ringsting", "On").on_off();
 consvar_t cv_ng_ringdeathmark = UnsavedNetVar("ng_ringdeathmark", "Default (-20)").min_max(INT8_MIN, INT8_MAX, {{-20, "Default (-20)"}});
 consvar_t cv_ng_maprings = UnsavedNetVar("ng_maprings", "On").on_off().onchange_noinit(NG_Generic_OnChange);
-consvar_t cv_ng_mapringcapsules = UnsavedNetVar("ng_mapringcapsules", "On").on_off().onchange_noinit(NG_Generic_OnChange);
 consvar_t cv_ng_mapringboxes = UnsavedNetVar("ng_mapringboxes", "On").on_off();
 consvar_t cv_ng_ringboxtransform = UnsavedNetVar("ng_ringboxtransform", "On").on_off();
 consvar_t cv_ng_trickrings = UnsavedNetVar("ng_trickrings", "On").on_off();

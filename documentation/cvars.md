@@ -345,11 +345,7 @@ Choices: "Off", "On"
 Sets if rings can spawn on map start.
 
 #### ng_mapringcapsules
-Default Value: "On"
-
-Choices: "Off", "On"
-
-Sets if ring capsules can spawn on map start.
+This is deprecated, please use capsules_superring instead.
 
 #### ng_mapringboxes
 Default Value: "On"
@@ -525,6 +521,160 @@ Decides if Auto Roulette should be forced on everyone. This activates it regardl
 Default Value: 2048
 
 Magic distance value that is used in the item odds system calculations. For a good idea of what this does enable debugitemodds and look what it does.
+
+#### capsule_sneaker
+Default Value: "On"
+
+Choices: "Off", "On"
+
+Enable/Disable sneakers appearing in capsules.
+
+#### capsule_rocketsneaker
+Default Value: "On"
+
+Choices: "Off", "On"
+
+Enable/Disable rocket sneakers appearing in capsules.
+
+#### capsule_invincibility
+Default Value: "On"
+
+Choices: "Off", "On"
+
+Enable/disable invincibility appearing in capsules.
+
+#### capsule_banana
+Default Value: "On"
+
+Choices: "Off", "On"
+
+Enable/disable bananas appearing in capsules.
+
+#### capsule_eggmark
+Default Value: "On"
+
+Choices: "Off", "On"
+
+Enable/disable eggmarks appearing in capsules.
+
+#### capsule_orbinaut
+Default Value: "On"
+
+Choices: "Off", "On"
+
+Enable/disable orbinauts appearing in capsules.
+
+#### capsule_jawz
+Default Value: "On"
+
+Choices: "Off", "On"
+
+Enable/disable jawz appearing in capsules.
+
+#### capsule_mine
+Default Value: "On"
+
+Choices: "Off", "On"
+
+Enable/disable mines appearing in capsules.
+
+#### capsule_landmine
+Default Value: "On"
+
+Choices: "Off", "On"
+
+Enable/disable landmines appearing in capsules.
+
+#### capsule_ballhog
+Default Value: "On"
+
+Choices: "Off", "On"
+
+Enable/disable ballhogs appearing in capsules.
+
+#### capsule_selfpropelledbomb
+Default Value: "On"
+
+Choices: "Off", "On"
+
+Enable/disable SPBs appearing in capsules.
+
+#### capsule_grow
+Default Value: "On"
+
+Choices: "Off", "On"
+
+Enable/disable grow appearing in capsules.
+
+#### capsule_shrink
+Default Value: "On"
+
+Choices: "Off", "On"
+
+Enable/disable shrink appearing in capsules.
+
+#### capsule_lightningshield
+Default Value: "On"
+
+Choices: "Off", "On"
+
+Enable/disable lightningshields appearing in capsules.
+
+#### capsule_bubbleshield
+Default Value: "On"
+
+Choices: "Off", "On"
+
+Enable/disable bubbleshields appearing in capsules.
+
+#### capsule_flameshield
+Default Value: "On"
+
+Choices: "Off", "On"
+
+Enable/disable flameshields appearing in capsules.
+
+#### capsule_hyudoro
+Default Value: "On"
+
+Choices: "Off", "On"
+
+Enable/disable hyudoros appearing in capsules.
+
+#### capsule_superring
+Default Value: "On"
+
+Choices: "Off", "On"
+
+Enable/disable superrings appearing in capsules.
+
+#### capsule_kitchensink
+Default Value: "On"
+
+Choices: "Off", "On"
+
+Enable/disable kictenshinks appearing in capsules.
+
+#### capsule_droptarget
+Default Value: "On"
+
+Choices: "Off", "On"
+
+Enable/disable droptargets appearing in capsules.
+
+#### capsule_gardentop
+Default Value: "On"
+
+Choices: "Off", "On"
+
+Enable/disable garden tops appearing in capsules.
+
+#### capsule_gachabom
+Default Value: "On"
+
+Choices: "Off", "On"
+
+Enable/disable gachaboms appearing in capsules.
 
 ### Mechanics
 Cvars here all related to general game mechanics.

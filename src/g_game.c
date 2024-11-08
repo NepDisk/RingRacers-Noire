@@ -2286,7 +2286,7 @@ void G_PlayerReborn(INT32 player, boolean betweenmaps)
 	xtralife = players[player].xtralife;
 
 	pflags = (players[player].pflags & (PF_WANTSTOJOIN|PF_KICKSTARTACCEL|PF_SHRINKME|PF_SHRINKACTIVE|PF_AUTOROULETTE|PF_ANALOGSTICK|PF_AUTORING));
-	nflags = (players[player].nflags & (NF_OLDTRICKS));
+	nflags = (players[player].nflags & (NFE_OLDTRICKS));
 
 	// SRB2kart
 	memcpy(&itemRoulette, &players[player].itemRoulette, sizeof (itemRoulette));
@@ -2403,7 +2403,7 @@ void G_PlayerReborn(INT32 player, boolean betweenmaps)
 		prevcheck = players[player].nextcheck;
 
 		pflags |= (players[player].pflags & (PF_STASIS|PF_ELIMINATED|PF_NOCONTEST|PF_FAULT|PF_LOSTLIFE));
-		nflags |= (players[player].nflags & (NF_OLDTRICKS));
+		nflags |= (players[player].nflags & (NFE_OLDTRICKS));
 
 		if (spectator == false)
 		{

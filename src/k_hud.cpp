@@ -3671,7 +3671,7 @@ static void K_drawKartAccessibilityIcons(boolean gametypeinfoshown, INT32 fx)
 
     if (noire_ascicons)
 	{
-		if (stplyr->nflags & NF_OLDTRICKS)
+		if (stplyr->nflags & NFE_OLDTRICKS)
 		{
 			if (mirror)
 				fx -= 16;

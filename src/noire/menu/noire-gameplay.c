@@ -83,9 +83,6 @@ menuitem_t OPTIONS_NoireGameplayRings[] =
 	{IT_STRING | IT_CVAR, "Spawn Rings", "Will rings appear on tracks.",
 		NULL, {.cvar = &cv_ng_maprings}, 0, 0},
 
-	{IT_STRING | IT_CVAR, "Spawn Ring Capsules", "Will ring capsules appear on tracks.",
-		NULL, {.cvar = &cv_ng_mapringcapsules}, 0, 0},
-
 	{IT_STRING | IT_CVAR, "Spawn Ring Boxes", "Enable or disable Ring Boxes appearance in tracks.",
 		NULL, {.cvar = &cv_ng_mapringboxes}, 0, 0},
 
@@ -104,6 +101,9 @@ menuitem_t OPTIONS_NoireGameplayItems[] =
 
 	{IT_STRING | IT_SUBMENU, "Item Functionality Options...", "Adjust the functionality of various items.",
 		NULL, {.submenu = &OPTIONS_NoireGameplayItemFunctionalityDef}, 0, 0},
+
+	{IT_STRING | IT_SUBMENU, "Capsule Item Toggles...", "Toggle which capsules appear.",
+		NULL, {.submenu = &OPTIONS_NoireGameplayCapsuleItemsDef}, 0, 0},
 
 	{IT_STRING | IT_CVAR, "Force Small Itemboxes", "Force enable small Itemboxes on all maps regardless of mapheader.",
 		NULL, {.cvar = &cv_ng_forceoldboxscale}, 0, 0},
@@ -426,9 +426,9 @@ void NG_Rings_OnChange(void)
 			CV_Set(&cv_ng_ringsting, "On");
 			CV_Set(&cv_ng_ringdeathmark, "-20");
 			CV_Set(&cv_ng_maprings, "On");
-			CV_Set(&cv_ng_mapringcapsules, "On");
 			CV_Set(&cv_ng_mapringboxes, "On");
 			CV_Set(&cv_ng_ringboxtransform, "On");
+			CV_Set(&cv_capsuleitems[KITEM_SUPERRING-1], "On");
 		}
 
 		for (int i = 1; i < OPTIONS_NoireGameplayRingsDef.numitems; i++)
@@ -446,9 +446,9 @@ void NG_Rings_OnChange(void)
 			CV_Set(&cv_ng_ringsting, "Off");
 			CV_Set(&cv_ng_ringdeathmark, "-20");
 			CV_Set(&cv_ng_maprings, "Off");
-			CV_Set(&cv_ng_mapringcapsules, "Off");
 			CV_Set(&cv_ng_mapringboxes, "Off");
 			CV_Set(&cv_ng_ringboxtransform, "Off");
+			CV_Set(&cv_capsuleitems[KITEM_SUPERRING-1], "Off");
 		}
 
 		for (int i = 1; i < OPTIONS_NoireGameplayRingsDef.numitems; i++)

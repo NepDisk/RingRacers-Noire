@@ -1340,7 +1340,7 @@ void WeaponPref_Save(UINT8 **cp, INT32 playernum)
 	if (player->pflags & PF_AUTORING)
 		prefs |= WP_AUTORING;
 
-	if (player->nflags & NF_OLDTRICKS)
+	if (player->nflags & NFE_OLDTRICKS)
 		prefs |= WP_OLDTRICKS;
 
 	WRITEUINT8(*cp, prefs);
@@ -1354,7 +1354,7 @@ size_t WeaponPref_Parse(const UINT8 *bufstart, INT32 playernum)
 	UINT8 prefs = READUINT8(p);
 
 	player->pflags &= ~(PF_KICKSTARTACCEL|PF_SHRINKME|PF_AUTOROULETTE|PF_AUTORING);
-	player->nflags &= ~(NF_OLDTRICKS);
+	player->nflags &= ~(NFE_OLDTRICKS);
 
 	if (prefs & WP_KICKSTARTACCEL)
 		player->pflags |= PF_KICKSTARTACCEL;
@@ -1374,7 +1374,7 @@ size_t WeaponPref_Parse(const UINT8 *bufstart, INT32 playernum)
 		player->pflags |= PF_AUTORING;
 
 	if (prefs & WP_OLDTRICKS)
-		player->nflags |= NF_OLDTRICKS;
+		player->nflags |= NFE_OLDTRICKS;
 
 	if (leveltime < 2)
 	{

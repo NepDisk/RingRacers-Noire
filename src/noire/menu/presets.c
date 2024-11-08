@@ -26,7 +26,6 @@ void N_RRVanillaPreset(INT32 choice)
 	CV_Set(&cv_ng_ringsting, "On");
 	CV_SetValue(&cv_ng_ringdeathmark, -20);
 	CV_Set(&cv_ng_maprings, "On");
-	CV_Set(&cv_ng_mapringcapsules, "On");
 	CV_Set(&cv_ng_mapringboxes, "On");
 	CV_Set(&cv_ng_ringboxtransform, "On");
 	CV_Set(&cv_ng_trickrings, "On");
@@ -51,6 +50,13 @@ void N_RRVanillaPreset(INT32 choice)
 	CV_StealthSet(&cv_ng_noireodds, "Ring Racers");
 	CV_Set(&cv_ng_forceautoroulette, "Off");
 	CV_SetValue(&cv_distvar, 2048);
+
+	for (int i = 0; i < NUMKARTITEMS-1; i++)
+	{
+		CV_Set(&cv_capsuleitems[i], "On");
+	}
+
+	CV_Set(&cv_capsuleitems[KITEM_SUPERRING-1], "On");
 
 	// Mechanics
 	CV_Set(&cv_ng_fastfall, "On");
@@ -121,7 +127,6 @@ void N_NoirePreset(INT32 choice)
 	CV_Set(&cv_ng_ringsting, "Off");
 	CV_SetValue(&cv_ng_ringdeathmark, -20);
 	CV_Set(&cv_ng_maprings, "Off");
-	CV_Set(&cv_ng_mapringcapsules, "Off");
 	CV_Set(&cv_ng_mapringboxes, "Off");
 	CV_Set(&cv_ng_ringboxtransform, "Off");
 	CV_Set(&cv_ng_trickrings, "Off");
@@ -146,6 +151,13 @@ void N_NoirePreset(INT32 choice)
 	CV_StealthSet(&cv_ng_noireodds, "Noire");
 	CV_Set(&cv_ng_forceautoroulette, "On");
 	CV_SetValue(&cv_distvar, 2048);
+
+	for (int i = 0; i < NUMKARTITEMS-1; i++)
+	{
+		CV_Set(&cv_capsuleitems[i], "On");
+	}
+
+	CV_Set(&cv_capsuleitems[KITEM_SUPERRING-1], "Off");
 
 	// Mechanics
 	CV_Set(&cv_ng_fastfall, "On");
@@ -215,7 +227,6 @@ void N_SRB2KPreset(INT32 choice)
 	CV_Set(&cv_ng_ringsting, "Off");
 	CV_SetValue(&cv_ng_ringdeathmark, -20);
 	CV_Set(&cv_ng_maprings, "Off");
-	CV_Set(&cv_ng_mapringcapsules, "Off");
 	CV_Set(&cv_ng_mapringboxes, "Off");
 	CV_Set(&cv_ng_ringboxtransform, "Off");
 	CV_Set(&cv_ng_trickrings, "Off");
@@ -240,6 +251,13 @@ void N_SRB2KPreset(INT32 choice)
 	CV_StealthSet(&cv_ng_noireodds, "Noire");
 	CV_Set(&cv_ng_forceautoroulette, "On");
 	CV_SetValue(&cv_distvar, 2048);
+
+	for (int i = 0; i < NUMKARTITEMS-1; i++)
+	{
+		CV_Set(&cv_capsuleitems[i], "On");
+	}
+
+	CV_Set(&cv_capsuleitems[KITEM_SUPERRING-1], "Off");
 
 	// Mechanics
 	CV_Set(&cv_ng_fastfall, "Off");

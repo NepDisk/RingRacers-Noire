@@ -219,7 +219,7 @@ INT16 N_GetKartTurnValue(player_t* player, INT16 turnvalue)
 	}
 
 	// Staff ghosts - direction-only trickpanel behavior
-	if (G_CompatLevel(0x000A) || K_PlayerUsesBotMovement(player) || (player->nflags & NF_OLDTRICKS))
+	if (G_CompatLevel(0x000A) || K_PlayerUsesBotMovement(player) || (player->nflags & NFE_OLDTRICKS))
 	{
 		if (player->trickpanel == TRICKSTATE_READY || player->trickpanel == TRICKSTATE_FORWARD)
 		{
@@ -338,7 +338,7 @@ INT16 N_GetKartTurnValue(player_t* player, INT16 turnvalue)
 	}
 
 	// 2.2 - Presteering allowed in trickpanels
-	if (!G_CompatLevel(0x000A) && !K_PlayerUsesBotMovement(player) && !(player->nflags & NF_OLDTRICKS))
+	if (!G_CompatLevel(0x000A) && !K_PlayerUsesBotMovement(player) && !(player->nflags & NFE_OLDTRICKS))
 	{
 		if (player->trickpanel == TRICKSTATE_READY || player->trickpanel == TRICKSTATE_FORWARD)
 		{

@@ -41,7 +41,6 @@ extern consvar_t cv_ng_ringsting;
 extern consvar_t cv_ng_ringdeathmark;
 extern consvar_t cv_ng_durationcap;
 extern consvar_t cv_ng_maprings;
-extern consvar_t cv_ng_mapringcapsules;
 extern consvar_t cv_ng_mapringboxes;
 extern consvar_t cv_ng_ringboxtransform;
 extern consvar_t cv_ng_trickrings;

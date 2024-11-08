@@ -75,6 +75,7 @@ extern consvar_t cv_spectatorreentry, cv_duelspectatorreentry, cv_antigrief;
 
 // SRB2kart items
 extern consvar_t cv_items[NUMKARTRESULTS-1];
+extern consvar_t cv_capsuleitems[NUMKARTITEMS-1];
 
 extern consvar_t cv_kartspeed;
 extern consvar_t cv_kartbumpers;

@@ -2321,7 +2321,7 @@ void G_BeginRecording(void)
 				i |= DEMO_AUTORING;
 			if (player->pflags & PF_SHRINKME)
 				i |= DEMO_SHRINKME;
-			if (player->nflags & NF_OLDTRICKS)
+			if (player->nflags & NFE_OLDTRICKS)
 				i |= DEMO_OLDTRICKS;
 			if (player->bot == true)
 				i |= DEMO_BOT;
@@ -3427,9 +3427,9 @@ void G_DoPlayDemoEx(const char *defdemoname, lumpnum_t deflumpnum)
 			players[p].pflags &= ~PF_SHRINKME;
 
 		if (flags & DEMO_OLDTRICKS)
-			players[p].nflags |= NF_OLDTRICKS;
+			players[p].nflags |= NFE_OLDTRICKS;
 		else
-			players[p].nflags &= ~NF_OLDTRICKS;
+			players[p].nflags &= ~NFE_OLDTRICKS;
 
 		if ((players[p].bot = bot) == true)
 		{

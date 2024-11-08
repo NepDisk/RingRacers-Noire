@@ -18,6 +18,7 @@
 // too short than one file that's too massive.
 
 #include "k_kart.h"
+#include "d_netcmd.h"
 #include "d_player.h"
 #include "g_demo.h"
 #include "k_battle.h"
@@ -181,9 +182,15 @@ static void K_SpawnItemCapsules(void)
 		}
 
 		isRingCapsule = (mt->thing_args[0] < 1 || mt->thing_args[0] == KITEM_SUPERRING || mt->thing_args[0] >= NUMKARTITEMS);
-		if (isRingCapsule == true && ((gametyperules & GTR_SPHERES) || (modeattacking & ATTACKING_SPB) || !cv_ng_mapringcapsules.value))
+		if (isRingCapsule == true && ((gametyperules & GTR_SPHERES) || (modeattacking & ATTACKING_SPB)))
 		{
 			// don't spawn ring capsules in ringless gametypes
+			continue;
+		}
+
+		if ((mt->thing_args[0] < 1 || mt->thing_args[0] >= NUMKARTITEMS) && !cv_capsuleitems[KITEM_SUPERRING-1].value || !cv_capsuleitems[mt->thing_args[0]-1].value)
+		{
+			// don't spawn disabled items
 			continue;
 		}
 
@@ -10896,7 +10903,7 @@ INT16 K_GetKartTurnValue(const player_t *player, INT16 turnvalue)
 	}
 
 	// Staff ghosts - direction-only trickpanel behavior
-	if (G_CompatLevel(0x000A) || K_PlayerUsesBotMovement(player) || (player->nflags & NF_OLDTRICKS))
+	if (G_CompatLevel(0x000A) || K_PlayerUsesBotMovement(player) || (player->nflags & NFE_OLDTRICKS))
 	{
 		if (player->trickpanel == TRICKSTATE_READY || player->trickpanel == TRICKSTATE_FORWARD)
 		{
@@ -11082,7 +11089,7 @@ INT16 K_GetKartTurnValue(const player_t *player, INT16 turnvalue)
 	}
 
 	// 2.2 - Presteering allowed in trickpanels
-	if (!G_CompatLevel(0x000A) && !K_PlayerUsesBotMovement(player) && !(player->nflags & NF_OLDTRICKS))
+	if (!G_CompatLevel(0x000A) && !K_PlayerUsesBotMovement(player) && !(player->nflags & NFE_OLDTRICKS))
 	{
 		if (player->trickpanel == TRICKSTATE_READY || player->trickpanel == TRICKSTATE_FORWARD)
 		{
@@ -14213,7 +14220,7 @@ void K_MoveKartPlayer(player_t *player, boolean onground)
 				if (gametype != GT_TUTORIAL)
 				{
 
-					if (player->nflags & NF_OLDTRICKS)
+					if (player->nflags & NFE_OLDTRICKS)
 						K_AddMessageForPlayer(player, "Press <dpad> to trick!", true, false);
 					else
 						K_AddMessageForPlayer(player, "Press <dpad> + <a> to trick!", true, false);
@@ -14249,7 +14256,7 @@ void K_MoveKartPlayer(player_t *player, boolean onground)
 				}
 
 				// 2.2 - Pre-steering trickpanels
-				if (!G_CompatLevel(0x000A) && !K_PlayerUsesBotMovement(player) && !(player->nflags & NF_OLDTRICKS))
+				if (!G_CompatLevel(0x000A) && !K_PlayerUsesBotMovement(player) && !(player->nflags & NFE_OLDTRICKS))
 				{
 					if (!(buttons & BT_ACCELERATE))
 					{
@@ -14497,7 +14504,7 @@ void K_MoveKartPlayer(player_t *player, boolean onground)
 		}
 
 		// 2.2 - Lenient trickpanels
-		if (G_CompatLevel(0x000A) || K_PlayerUsesBotMovement(player) || (player->nflags & NF_OLDTRICKS))
+		if (G_CompatLevel(0x000A) || K_PlayerUsesBotMovement(player) || (player->nflags & NFE_OLDTRICKS))
 		{
 			// Wait until we let go off the control stick to remove the delay
 			// buttons must be neutral after the initial trick delay. This prevents weirdness where slight nudges after blast off would send you flying.
