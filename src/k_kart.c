@@ -4810,7 +4810,7 @@ void K_UpdateStumbleIndicator(player_t *player)
 
 #define MIN_WAVEDASH_CHARGE ((11*TICRATE/16)*9)
 
-static boolean K_IsLosingWavedash(player_t *player)
+boolean K_IsLosingWavedash(player_t *player)
 {
 	if (player->mo == NULL || P_MobjWasRemoved(player->mo) == true)
 		return true;

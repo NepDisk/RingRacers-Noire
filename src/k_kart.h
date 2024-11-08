@@ -146,6 +146,7 @@ void K_InitStumbleIndicator(player_t *player);
 void K_InitWavedashIndicator(player_t *player);
 void K_InitTrickIndicator(player_t *player);
 void K_UpdateStumbleIndicator(player_t *player);
+boolean K_IsLosingWavedash(player_t *player);
 void K_UpdateWavedashIndicator(player_t *player);
 void K_UpdateTrickIndicator(player_t *player);
 INT32 K_ExplodePlayer(player_t *player, mobj_t *inflictor, mobj_t *source);
