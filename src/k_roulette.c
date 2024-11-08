@@ -572,11 +572,6 @@ static boolean K_DenyShieldOdds(kartitems_t item)
 static boolean K_DenyAutoRouletteOdds(kartitems_t item)
 {
 	// Deny items that are too hard for newbies
-
-	// No thanks! - Nep
-	if (cv_ng_noireodds.value == 2 || cv_ng_noireodds.value == 1)
-		return false;
-
 	switch (item)
 	{
 		case KITEM_GARDENTOP:
@@ -815,7 +810,7 @@ INT32 K_KartGetItemOdds(const player_t *player, itemroulette_t *const roulette, 
 	else
 	{
 		I_Assert(pos < 8); // Ditto
-		if (cv_ng_noireodds.value == 2)
+		if (cv_ng_noireodds.value == 2) // TODO: Custom odds not complete yet!
 			newOdds = N_CustomItemOddsRace[item-1][pos];
 		else if (cv_ng_noireodds.value == 1)
 			newOdds = N_NoireItemOddsRace[item-1][pos];
