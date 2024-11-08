@@ -175,6 +175,13 @@ Default Value: ""
 
 Set this value to the lump name of an audio track to use that for the spectator music.
 
+#### votinggrayscale
+Default Value: "On"
+
+Choices: "Off", "On"
+
+Decides if unselected maps in voting are grey'd out.
+
 #### postracemusic
 Default Value: "Off"
 

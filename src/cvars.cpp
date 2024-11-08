@@ -597,6 +597,7 @@ consvar_t cv_highresportrait = Player("highresportrait", "Off").on_off();
 
 consvar_t cv_spectatormusic = Player("spectatormusic", "Off").on_off(); // Special spectator Music while watching a race
 consvar_t cv_spectatormusiclump = Player("spectatormusiclump", ""); // none means no music.
+consvar_t cv_votinggrayscale = Player("votegrayscale", "Off").on_off(); // voting grayscale.
 
 // HEP2 cvars....
 // Should probably make this profile specific...

@@ -69,6 +69,9 @@ menuitem_t OPTIONS_Noire[] =
 
 	{IT_STRING | IT_CVAR, "Hires Portrait", "Enable the use of the higher resolution character icons in some places",
 		NULL, {.cvar = &cv_highresportrait}, 0, 0},
+
+	{IT_STRING | IT_CVAR, "Voting Grayscale", "Enable/disable graying out of map icons in voting.",
+		NULL, {.cvar = &cv_votinggrayscale}, 0, 0},
 		
 	{IT_HEADER, "Sound/Music...", NULL,
 		NULL, {NULL}, 0, 0},

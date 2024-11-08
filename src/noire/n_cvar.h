@@ -32,6 +32,8 @@ extern consvar_t cv_spectatormusiclump;
 extern consvar_t cv_ng_trick_reversion[MAXSPLITSCREENPLAYERS];
 extern consvar_t cv_ng_dummyprofileoldtricks;
 
+extern consvar_t cv_votinggrayscale;
+
 //Rings
 extern consvar_t cv_ng_rings;
 extern consvar_t cv_ng_ringcap;
