@@ -1817,7 +1817,7 @@ static fixed_t K_GetBrakeFXScale(player_t *player, fixed_t maxScale)
 	return s;
 }
 
-static void K_SpawnBrakeDriftSparks(player_t *player) // Be sure to update the mobj thinker case too!
+void K_SpawnBrakeDriftSparks(player_t *player) // Be sure to update the mobj thinker case too!
 {
 	mobj_t *sparks;
 
@@ -6065,7 +6065,7 @@ static void K_SpawnDriftSparks(player_t *player)
 	}
 }
 
-static void K_SpawnAIZDust(player_t *player)
+void K_SpawnAIZDust(player_t *player)
 {
 	fixed_t newx;
 	fixed_t newy;
@@ -6408,7 +6408,7 @@ void K_DriftDustHandling(mobj_t *spawner)
 				dc += warntime;
 			}
 
-			c = K_DriftSparkColor(spawner->player, dc);
+			c = (cv_ng_olddrift.value == 1) ? N_DriftSparkColor(spawner->player, dc) : K_DriftSparkColor(spawner->player, dc);
 
 			if (dc > (4*driftval)+(32*3))
 			{
@@ -10852,7 +10852,7 @@ INT16 K_UpdateSteeringValue(INT16 inputSteering, INT16 destSteering)
 	return outputSteering;
 }
 
-static fixed_t K_GetUnderwaterStrafeMul(const player_t *player)
+fixed_t K_GetUnderwaterStrafeMul(const player_t *player)
 {
 	const fixed_t minSpeed = 11 * player->mo->scale;
 	fixed_t baseline = INT32_MAX;
@@ -14529,7 +14529,10 @@ void K_MoveKartPlayer(player_t *player, boolean onground)
 
 	}
 
-	K_KartDrift(player, onground);
+	if (cv_ng_olddrift.value)
+		N_KartDrift(player, onground);
+	else
+		K_KartDrift(player, onground);
 	K_KartSpindash(player);
 
 	if (onground == false

@@ -617,6 +617,13 @@ Choices: "Off", "Downward Thrust Only", "Forward Thrust Only", "On"
 
 Determines how Triangle dashing will work.
 
+#### ng_olddrift
+Default Value: "Ring Racers"
+
+Choices: "Ring Racers", "Kart"
+
+Determines how drifting will work
+
 #### ng_mapanger
 Default Value: 2
 

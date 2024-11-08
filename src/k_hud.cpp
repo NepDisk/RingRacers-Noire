@@ -3715,7 +3715,7 @@ static void K_drawKartSpeedometer(boolean gametypeinfoshown)
 	UINT8 numbers[3];
 	INT32 splitflags = V_SNAPTOBOTTOM|V_SNAPTOLEFT|V_SPLITSCREEN;
 	boolean showbluespheres = (gametyperules & GTR_SPHERES);
-	INT32 fy = LAPS_Y - 14;
+	INT32 fy = LAPS_Y - ((cv_ringsonplayer.value == 1 && !showbluespheres && !G_GametypeUsesLives()) ? 0 : 14);
 	INT32 stickerwidth = 42;
 	INT32 secondoff = 41;
 	UINT8 *colormap;
@@ -3727,6 +3727,8 @@ static void K_drawKartSpeedometer(boolean gametypeinfoshown)
 	{
 		fy -= 2;
 	}
+
+
 
 	if (!stplyr->exiting) // Keep the same speed value as when you crossed the finish line!
 	{
