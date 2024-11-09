@@ -189,12 +189,6 @@ boolean N_CapsuleItemEnabled(kartitems_t item)
 		return cv_capsuleitems[KITEM_SUPERRING - 1].value;
 	}
 
-	if (K_CanChangeRules(true) == false)
-	{
-		// Force all items to be enabled.
-		return true;
-	}
-
 	// Allow the user preference.
 	return cv_capsuleitems[item - 1].value;
 }
