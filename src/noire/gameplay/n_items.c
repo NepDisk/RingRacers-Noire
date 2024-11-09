@@ -183,7 +183,7 @@ UINT8 N_NoireItemOddsRace[NUMKARTRESULTS-1][8] =
 
 boolean N_CapsuleItemEnabled(kartitems_t item)
 {
-	if (item < 1 || item >= NUMKARTRESULTS)
+	if (item < 1 || item >= NUMKARTITEMS)
 	{
 		// Not a real item.
 		return cv_capsuleitems[KITEM_SUPERRING - 1].value;
