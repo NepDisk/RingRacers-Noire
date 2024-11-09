@@ -208,7 +208,7 @@ void N_NoirePreset(INT32 choice)
 	CV_Set(&cv_ng_nophysicsflag, "On");
 	CV_Set(&cv_ng_oldboostpower, "Off");
 	CV_Set(&cv_ng_oldspeedcalc, "Off");
-	CV_SetValue(&cv_ng_airspeedcap, 60);
+	CV_SetValue(&cv_ng_airspeedcap, 50);
 	CV_Set(&cv_ng_botrubberbandboost, "On");
 	CV_Set(&cv_ng_charsetrivals, "Off");
 	CV_Set(&cv_ng_rivals, "Off");
