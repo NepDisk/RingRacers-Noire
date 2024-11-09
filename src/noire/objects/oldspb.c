@@ -12,6 +12,8 @@
 #include "../../m_random.h"
 #include "../../k_kart.h"
 #include "../../p_local.h"
+#include "../../k_respawn.h"
+#include "../../k_specialstage.h"
 
 // These are not the OG functions, these were ported from v1
 void Obj_SPBOldThink(mobj_t *mobj)
@@ -77,7 +79,7 @@ void Obj_SPBOldTouch(mobj_t *spb, mobj_t *toucher)
 
 void Obj_SPBChase(mobj_t *spb)
 {
-	player_t *player = NULL;
+	mobj_t *bestMobj = NULL;
 	UINT8 i;
 	UINT8 bestrank = UINT8_MAX;
 	fixed_t dist;
@@ -114,9 +116,12 @@ void Obj_SPBChase(mobj_t *spb)
 		if (players[i].position < bestrank)
 		{
 			bestrank = players[i].position;
-			player = &players[i];
+			bestMobj = players[i].mo;
 		}
 	}
+
+	if (specialstageinfo.valid == true && specialstageinfo.ufo != NULL)
+		bestMobj = specialstageinfo.ufo;
 
 	if (spb->extravalue1 == 1) // MODE: TARGETING
 	{
@@ -172,6 +177,10 @@ void Obj_SPBChase(mobj_t *spb)
 
 				spbplace = spb->tracer->player->position;
 			}
+			else
+			{
+				spbplace = 1;
+			}
 
 			dist = P_AproxDistance(P_AproxDistance(spb->x-spb->tracer->x, spb->y-spb->tracer->y), spb->z-spb->tracer->z);
 
@@ -182,7 +191,7 @@ void Obj_SPBChase(mobj_t *spb)
 				wspeed = (3*defspeed)/2;
 			if (wspeed < 20*spb->tracer->scale)
 				wspeed = 20*spb->tracer->scale;
-			if (spb->tracer->player->carry & CR_SLIDING)
+			if (spb->tracer->player && spb->tracer->player->carry & CR_SLIDING)
 				wspeed = spb->tracer->player->speed/2;
 			//  ^^^^ current section: These are annoying, and grand metropolis in particular needs this.
 
@@ -234,16 +243,13 @@ void Obj_SPBChase(mobj_t *spb)
 			// Red speed lines for when it's gaining on its target. A tell for when you're starting to lose too much speed!
 			if (R_PointToDist2(0, 0, spb->momx, spb->momy) > (spb->tracer->player ? (16*spb->tracer->player->speed)/15
 				: (16*R_PointToDist2(0, 0, spb->tracer->momx, spb->tracer->momy))/15) // Going faster than the target
-				&& xyspeed > K_GetKartSpeed(spb->tracer->player, false, false)/4) // Don't display speedup lines at pitifully low speeds
+				&& xyspeed > (spb->tracer->player ? K_GetKartSpeed(spb->tracer->player, false, false) : K_GetKartSpeedFromStat(1)/4) // Don't display speedup lines at pitifully low speeds
 			{
 				mobj_t *fast = P_SpawnMobj(spb->x + (P_RandomRange(PR_DECORATION,-24,24) * spb->scale),
 					spb->y + (P_RandomRange(PR_DECORATION,-24,24) * spb->scale),
 					spb->z + (spb->height/2) + (P_RandomRange(PR_DECORATION,-24,24) * spb->scale),
 					MT_FASTLINE);
 				fast->angle = R_PointToAngle2(0, 0, spb->momx, spb->momy);
-				//fast->momx = (3*spb->momx)/4;
-				//fast->momy = (3*spb->momy)/4;
-				//fast->momz = (3*spb->momz)/4;
 				fast->color = SKINCOLOR_RED;
 				fast->colorized = true;
 				P_SetTarget(&fast->target, spb); // easier lua access
@@ -292,12 +298,19 @@ void Obj_SPBChase(mobj_t *spb)
 	{
 		spb->lastlook = -1; // Just make sure this is reset
 
-		if (!player || !player->mo || player->mo->health <= 0 /*|| player->respawn.state != RESPAWNST_NONE*/)
+		if (bestMobj == NULL
+			|| P_MobjWasRemoved(bestMobj) == true
+			|| bestMobj->health <= 0
+			|| (bestMobj->player != NULL && bestMobj->player->respawn.state != RESPAWNST_NONE))
 		{
 			// No one there? Completely STOP.
 			spb->momx = spb->momy = spb->momz = 0;
-			if (!player)
+
+			if (bestMobj == NULL)
+			{
 				spbplace = -1;
+			}
+
 			return;
 		}
 
@@ -306,7 +319,7 @@ void Obj_SPBChase(mobj_t *spb)
 		// don't hurt players that have nothing to do with this:
 		spb->flags |= MF_NOCLIPTHING;
 
-		P_SetTarget(&spb->tracer, player->mo);
+		P_SetTarget(&spb->tracer, bestMobj);
 		spbplace = bestrank;
 
 		dist = P_AproxDistance(P_AproxDistance(spb->x-spb->tracer->x, spb->y-spb->tracer->y), spb->z-spb->tracer->z);
