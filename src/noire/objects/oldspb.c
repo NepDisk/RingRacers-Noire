@@ -243,7 +243,7 @@ void Obj_SPBChase(mobj_t *spb)
 			// Red speed lines for when it's gaining on its target. A tell for when you're starting to lose too much speed!
 			if (R_PointToDist2(0, 0, spb->momx, spb->momy) > (spb->tracer->player ? (16*spb->tracer->player->speed)/15
 				: (16*R_PointToDist2(0, 0, spb->tracer->momx, spb->tracer->momy))/15) // Going faster than the target
-				&& xyspeed > (spb->tracer->player ? K_GetKartSpeed(spb->tracer->player, false, false) : K_GetKartSpeedFromStat(1)/4) // Don't display speedup lines at pitifully low speeds
+				&& xyspeed > (spb->tracer->player ? K_GetKartSpeed(spb->tracer->player, false, false) : K_GetKartSpeedFromStat(5))/4) // Don't display speedup lines at pitifully low speeds
 			{
 				mobj_t *fast = P_SpawnMobj(spb->x + (P_RandomRange(PR_DECORATION,-24,24) * spb->scale),
 					spb->y + (P_RandomRange(PR_DECORATION,-24,24) * spb->scale),
