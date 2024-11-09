@@ -197,6 +197,9 @@ menuitem_t OPTIONS_NoireGameplayMechanics[] =
 	{IT_STRING | IT_CVAR, "Draft/Tether", "Enable or disable the 'tether' between racers, pulling racers behind.",
 		NULL, {.cvar = &cv_ng_draft}, 0, 0},
 
+	{IT_STRING | IT_CVAR, "Drifting Functionality", "Toggle between Ring Racers or Kart mini-turbo charging behavior.",
+		NULL, {.cvar = &cv_ng_olddrift}, 0, 0},
+
 	{IT_STRING | IT_CVAR, "Wavedash", "Enable or disable the boost charged by sliptiding.",
 		NULL, {.cvar = &cv_ng_wavedash}, 0, 0},
 
