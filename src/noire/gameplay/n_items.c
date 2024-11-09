@@ -181,8 +181,14 @@ UINT8 N_NoireItemOddsRace[NUMKARTRESULTS-1][8] =
 	{ 0, 0, 0, 0, 0, 0, 0, 0 }  // Gachabom x3
 };
 
-boolean N_CapsuleItemEnabled(kartitems_t item)
+boolean K_ItemEnabled(kartitems_t item)
 {
+	if (item < 1 || item >= NUMKARTRESULTS)
+	{
+		// Not a real item.
+		return cv_capsuleitems[KITEM_SUPERRING - 1].value;
+	}
+
 	if (K_CanChangeRules(true) == false)
 	{
 		// Force all items to be enabled.
