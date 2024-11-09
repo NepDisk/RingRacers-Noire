@@ -165,7 +165,7 @@ void N_NoirePreset(INT32 choice)
 	CV_Set(&cv_ng_fastfall, "On");
 	CV_Set(&cv_ng_fastfallbounce, "Bubble Shield");
 	CV_Set(&cv_ng_draft, "Off");
-	CV_Set(&cv_ng_wavedash, "Off");
+	CV_Set(&cv_ng_wavedash, "On");
 	CV_Set(&cv_ng_tumble, "Off");
 	CV_Set(&cv_ng_stumble, "Off");
 	CV_Set(&cv_ng_invincibilitydamage, "Spinout");
