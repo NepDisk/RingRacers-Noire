@@ -188,7 +188,7 @@ static void K_SpawnItemCapsules(void)
 			continue;
 		}
 
-		if ((mt->thing_args[0] < 1 || mt->thing_args[0] >= NUMKARTITEMS) && !cv_capsuleitems[KITEM_SUPERRING-1].value || !cv_capsuleitems[mt->thing_args[0]-1].value)
+		if ((mt->thing_args[0] < 1 || mt->thing_args[0] == KITEM_SUPERRING || mt->thing_args[0] >= NUMKARTITEMS) && !cv_capsuleitems[KITEM_SUPERRING-1].value || !cv_capsuleitems[mt->thing_args[0]-1].value)
 		{
 			// don't spawn disabled items
 			continue;
