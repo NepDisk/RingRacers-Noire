@@ -181,7 +181,7 @@ UINT8 N_NoireItemOddsRace[NUMKARTRESULTS-1][8] =
 	{ 0, 0, 0, 0, 0, 0, 0, 0 }  // Gachabom x3
 };
 
-boolean K_ItemEnabled(kartitems_t item)
+boolean N_CapsuleItemEnabled(kartitems_t item)
 {
 	if (item < 1 || item >= NUMKARTRESULTS)
 	{
