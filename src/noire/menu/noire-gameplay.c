@@ -46,7 +46,7 @@ menuitem_t OPTIONS_NoireGameplayPresets[] =
 	{IT_STRING | IT_CALL, "\x85" "Ring Racers", "Ring Racers' vanilla gameplay.",
 		NULL, {.routine = N_RRVanillaPreset}, 0, 0},
 
-	{IT_STRING | IT_CALL, "\x85" "Noire+", "A mix of old and new. NepDisk's Personal setup.",
+	{IT_STRING | IT_CALL, "\x85" "Noire+", "A mix of old and new. NepDisk's personal ring-less setup.",
 		NULL, {.routine = N_NoirePreset}, 0, 0},
 
 	{IT_STRING | IT_CALL, "\x85" "SRB2Kart+", "Similar to modded SRB2kart.",
