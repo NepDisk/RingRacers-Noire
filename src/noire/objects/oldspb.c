@@ -48,7 +48,7 @@ void Obj_SPBOldTouch(mobj_t *spb, mobj_t *toucher)
 		// Stun the SPB, and remove the shield.
 		K_PopPlayerShield(toucher->player);
 		K_DropHnextList(toucher->player);
-		spb->extravalue1 = 3;
+		spb->extravalue1 = 2;
 		spb->extravalue2 = 55; // Slightly over the respawn timer length
 		return;
 	}
