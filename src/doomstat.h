@@ -960,6 +960,7 @@ extern consvar_t cv_jointimeout;
 extern ticcmd_t netcmds[BACKUPTICS][MAXPLAYERS];
 extern INT32 serverplayer;
 extern INT32 adminplayers[MAXPLAYERS];
+extern INT32 mutedplayers[MAXPLAYERS]; // RadioRacers: Array to store nodes of muted players in netgames
 
 /// \note put these in d_clisrv outright?
 

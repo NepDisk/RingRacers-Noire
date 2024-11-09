@@ -503,7 +503,7 @@ void M_DrawMenuForeground(void)
 //
 // Draw a banner across the top of the screen, with a description of the current option displayed
 //
-static void M_DrawMenuTooltips(void)
+void M_DrawMenuTooltips(void)
 {
 	if (currentMenu->menuitems[itemOn].tooltip != NULL)
 	{
@@ -5508,7 +5508,7 @@ void M_DrawVideoModes(void)
 // Gameplay Item Tggles:
 tic_t shitsfree = 0;
 
-static void DrawMappedString(INT32 x, INT32 y, INT32 option, int font, const char *text, const UINT8 *colormap)
+void DrawMappedString(INT32 x, INT32 y, INT32 option, int font, const char *text, const UINT8 *colormap)
 {
 	V_DrawStringScaled(
 		x * FRACUNIT,
@@ -6227,11 +6227,48 @@ void M_DrawKickHandler(void)
 				player_names[i]
 			);
 
-			V_DrawRightAlignedThinString(
-				x+118, y-2,
-				0,
-				(players[i].spectator) ? "SPECTATOR" : "PLAYING"
-			);
+
+			// RadioRacers: Draw a different tooltip next to the player depending on purpose
+			switch(playerkickmenu.purpose) 
+			{
+				case PKM_KICK:
+					V_DrawRightAlignedThinString(x+118, y-2, 0,
+						(players[i].spectator) ? "SPECTATOR" : "PLAYING"
+					);
+					break;
+				case PKM_MUTE:
+					if (P_IsMachineLocalPlayer(&players[i]))
+						break;
+						
+					if (players[i].bot) {
+						V_DrawRightAlignedThinString(x+116, y-4, 0, "\x88IT'S A BOT");
+					} else {
+						INT32 speechBubbleStart = 103;
+						boolean isMuted = IsPlayerMuted(i);
+						// Speech bubble
+						V_DrawMappedPatch(x+speechBubbleStart, y+8, 
+							(isMuted) ? V_TRANSLUCENT : 0, 
+							W_CachePatchName("K_TALK", PU_CACHE), 
+							NULL);
+
+						patch_t *typingDot = W_CachePatchName("K_TYPDOT", PU_CACHE); // Typing dot
+						if (!isMuted) {
+							int speechBubbleTicker = (playerkickmenu.ticker % (8*3)) / 3;
+							if (speechBubbleTicker >= 2) {
+								V_DrawMappedPatch(x+(speechBubbleStart+3), y+8, 0, typingDot, NULL);
+								if (speechBubbleTicker >= 4) {
+									V_DrawMappedPatch(x+(speechBubbleStart+6), y+8, 0, typingDot, NULL);
+									if (speechBubbleTicker >= 6) {
+										V_DrawMappedPatch(x+(speechBubbleStart+9), y+8, 0, typingDot, NULL);
+									}
+								}
+							}
+						}
+					}					
+					break;
+				default:
+					break;
+			}
 		}
 
 		if (i == playerkickmenu.player)
@@ -6258,12 +6295,27 @@ void M_DrawKickHandler(void)
 	//V_DrawFill(32 + (playerkickmenu.player & 8), 32 + (playerkickmenu.player & 7)*8, 8, 8, playeringame[playerkickmenu.player] ? 0 : 16);
 
 	V_DrawFixedPatch(0, 0, FRACUNIT, 0, W_CachePatchName("MENUHINT", PU_CACHE), NULL);
+
+
+	// RadioRacers: Draw a different title depending on the kick menu purpose
+	const char *kickMenuTitle = NULL;
+	switch(playerkickmenu.purpose) {
+		case PKM_KICK:
+			kickMenuTitle = (playerkickmenu.adminpowered)
+				? "You are using ""\x85""Admin Tools""\x80"", ""\x83""(A)""\x80"" to kick and ""\x84""(C)""\x80"" to ban"
+				: K_GetMidVoteLabel(menucallvote);
+			break;
+		case PKM_MUTE:
+			kickMenuTitle = "Mute Players - ""\x83(A)""\x80 to toggle.";
+			break;
+		default:
+			kickMenuTitle = "Player Menu";
+	}
+
 	V_DrawCenteredThinString(
 		BASEVIDWIDTH/2, 12,
 		0,
-		(playerkickmenu.adminpowered)
-			? "You are using ""\x85""Admin Tools""\x80"", ""\x83""(A)""\x80"" to kick and ""\x84""(C)""\x80"" to ban"
-			: K_GetMidVoteLabel(menucallvote)
+		kickMenuTitle
 	);
 }
 

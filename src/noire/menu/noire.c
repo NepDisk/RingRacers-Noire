@@ -51,9 +51,6 @@ menuitem_t OPTIONS_Noire[] =
 
 	{IT_HEADER, "Miscellaneous HUD...", NULL,
 		NULL, {NULL}, 0, 0},
-		
-	{IT_STRING | IT_CVAR, "HUD Translucency", "Determines how transparent the hud is.",
-		NULL, {.cvar = &cv_translucenthud}, 0, 0},
 
 	{IT_STRING | IT_CVAR, "Hold Scoreboard Button", "Reverts the scoreboard button behavior to how it was in SRB2Kart.",
 		NULL, {.cvar = &cv_holdscorebutt}, 0, 0},
@@ -72,6 +69,9 @@ menuitem_t OPTIONS_Noire[] =
 
 	{IT_STRING | IT_CVAR, "Hires Portrait", "Enable the use of the higher resolution character icons in some places",
 		NULL, {.cvar = &cv_highresportrait}, 0, 0},
+
+	{IT_STRING | IT_CVAR, "Voting Grayscale", "Enable/disable graying out of map icons in voting.",
+		NULL, {.cvar = &cv_votinggrayscale}, 0, 0},
 		
 	{IT_HEADER, "Sound/Music...", NULL,
 		NULL, {NULL}, 0, 0},

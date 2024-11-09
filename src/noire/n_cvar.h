@@ -32,6 +32,8 @@ extern consvar_t cv_spectatormusiclump;
 extern consvar_t cv_ng_trick_reversion[MAXSPLITSCREENPLAYERS];
 extern consvar_t cv_ng_dummyprofileoldtricks;
 
+extern consvar_t cv_votinggrayscale;
+
 //Rings
 extern consvar_t cv_ng_rings;
 extern consvar_t cv_ng_ringcap;
@@ -39,10 +41,11 @@ extern consvar_t cv_ng_spillcap;
 extern consvar_t cv_ng_ringdebt;
 extern consvar_t cv_ng_ringsting;
 extern consvar_t cv_ng_ringdeathmark;
+extern consvar_t cv_ng_durationcap;
 extern consvar_t cv_ng_maprings;
-extern consvar_t cv_ng_mapringcapsules;
 extern consvar_t cv_ng_mapringboxes;
 extern consvar_t cv_ng_ringboxtransform;
+extern consvar_t cv_ng_trickrings;
 
 //Items
 extern consvar_t cv_ng_forceoldboxscale;
@@ -56,6 +59,7 @@ extern consvar_t cv_ng_oldinvincibility;
 extern consvar_t cv_ng_oldgrow;
 extern consvar_t cv_ng_oldshrink;
 extern consvar_t cv_ng_oldeggman;
+extern consvar_t cv_ng_eggboxinvinpickup;
 extern consvar_t cv_ng_nerfdroptarget;
 extern consvar_t cv_ng_nerfflameshield;
 extern consvar_t cv_ng_nerfflameshielddiminish;
@@ -91,6 +95,10 @@ extern consvar_t cv_ng_stumble;
 extern consvar_t cv_ng_safelanding;
 extern consvar_t cv_ng_hitlag;
 extern consvar_t cv_ng_combo;
+extern consvar_t cv_ng_invincibilitydamage;
+extern consvar_t cv_ng_growdamage;
+extern consvar_t cv_ng_triangledash;
+extern consvar_t cv_ng_olddrift;
 extern consvar_t cv_ng_mapanger;
 extern consvar_t cv_ng_tripwires;
 extern consvar_t cv_ng_lives;
@@ -110,12 +118,15 @@ extern consvar_t cv_ng_spindash;
 extern consvar_t cv_ng_spindashthreshold;
 extern consvar_t cv_ng_spindashcharge;
 extern consvar_t cv_ng_spindashoverheat;
+extern consvar_t cv_ng_desperationforce;
 
 //Driving
 extern consvar_t cv_ng_butteredslopes;
 extern consvar_t cv_ng_slopeclimb;
 extern consvar_t cv_ng_slopehelper;
-extern consvar_t cv_ng_slopehelperspeedboost;
+extern consvar_t cv_ng_slopehelperspeedboostg1;
+extern consvar_t cv_ng_slopehelperspeedboostg2;
+extern consvar_t cv_ng_slopehelperspeedboostg3;
 extern consvar_t cv_ng_slopehelperaccelboost;
 extern consvar_t cv_ng_stairjank;
 extern consvar_t cv_ng_turnstyle;

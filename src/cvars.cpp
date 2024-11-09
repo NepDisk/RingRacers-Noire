@@ -41,6 +41,8 @@
 #include "noire/n_hud.h"
 // HEP2
 #include "hep2/h_cvars.h"
+// RadioRacers
+#include "radioracers/rr_cvar.h"
 
 // There is a memset in one of consvar_t's constructors. It
 // SHOULD be safe if there is no polymorphism, but just
@@ -467,7 +469,7 @@ consvar_t cv_scr_scale = Player("scr_scale", "1.0").floating_point();
 consvar_t cv_scr_x = Player("scr_x", "0.0").floating_point();
 consvar_t cv_scr_y = Player("scr_y", "0.0").floating_point();
 
-consvar_t cv_translucenthud = Player("translucenthud", "10").values({{0, "MIN"}, {10, "MAX"}});
+consvar_t cv_translucenthud = Player("translucenthud", "10").min_max(0, 10);
 
 consvar_t cv_seenames = Player("seenames", "On").on_off();
 consvar_t cv_shadow = Player("shadow", "On").on_off();
@@ -515,6 +517,68 @@ consvar_t precachesound = Player("precachesound", "Off").on_off();
 // stereo reverse
 consvar_t stereoreverse = Player("stereoreverse", "Off").on_off();
 
+/**
+ * RadioRacers: cvars for custom miscellanous functionalities
+ */
+// Vote Snitch
+consvar_t cv_votesnitch = Player("votesnitch", "On").on_off();
+
+// Rumble Events
+consvar_t cv_morerumbleevents = Player("morerumbleevents", "On").on_off().onchange(RumbleEvents_OnChange);
+consvar_t cv_rr_rumble_wall_bump = Player("rr_rumble_wall_bump", "On").on_off();
+consvar_t cv_rr_rumble_fastfall_bounce = Player("rr_rumble_fastfall_bounce", "On").on_off();
+consvar_t cv_rr_rumble_drift = Player("rr_rumble_drift", "On").on_off();
+consvar_t cv_rr_rumble_spindash = Player("rr_rumble_spindash", "On").on_off();
+consvar_t cv_rr_rumble_tailwhip = Player("rr_rumble_tailwhip", "On").on_off();
+consvar_t cv_rr_rumble_rings = Player("rr_rumble_rings", "On").on_off();
+consvar_t cv_rr_rumble_wavedash = Player("rr_rumble_wavedash", "On").on_off();
+
+// Rings drawn on player (akin to driftgauge)
+consvar_t cv_ringsonplayer = Player("ringsonplayer", "Vanilla").values({
+	{0, "Vanilla"},
+	{1, "Custom"}
+});
+
+consvar_t cv_ringsonplayeryoffset = Player("ringsonplayeryoffset", "None").min_max(INT32_MIN, INT32_MAX, {{0,"None"}});
+
+// Item/Ringbox Roulette drawn on player
+consvar_t cv_rouletteonplayer = Player("rouletteonplayer", "Vanilla").values({
+	{0, "Vanilla"},
+	{1, "Custom"}
+}).onchange_noinit(Roulette_OnChange);
+
+static CV_PossibleValue_t itemboxscale_cons_t[] = {
+	{(4*FRACUNIT)/10, "40%"},
+	{FRACUNIT/2, "50%"},
+	{(3*FRACUNIT)/5, "60%"},
+	{(14*FRACUNIT)/20, "70%"},
+	{(4*FRACUNIT)/5, "80%"},
+	{(9*FRACUNIT)/10, "90%"},
+	{FRACUNIT, "100%"},
+	{0, NULL}
+};
+
+static CV_PossibleValue_t itemboxposition_cons_t[] = {
+	{0, "Left"},
+	{1, "Above"},
+	{2, "Right"},
+	{0, NULL}
+};
+
+// How big should we draw the item roulette?
+// And where exactly should we draw it?
+consvar_t cv_ringbox_roulette_player_scale = Player("ringbox_roulette_player_scale", "60%").values(itemboxscale_cons_t);
+consvar_t cv_item_roulette_player_scale = Player("item_roulette_player_scale", "60%").values(itemboxscale_cons_t);
+
+consvar_t cv_ringbox_roulette_player_position = Player("ringbox_roulette_player_position", "Right").values(itemboxposition_cons_t);
+consvar_t cv_item_roulette_player_position = Player("item_roulette_player_position", "Left").values(itemboxposition_cons_t);
+
+// Hide the giant big ass letters at the start of the race
+consvar_t cv_hud_hidecountdown = Player("hidecountdown", "No").yes_no();
+// Hide the bigass position bulbs at the start of the race
+consvar_t cv_hud_hideposition = Player("hideposition", "No").yes_no();
+// Hide the bigass lap emblem when you start a new lap
+consvar_t cv_hud_hidelapemblem = Player("hidelapemblem", "No").yes_no();
 
 //
 // Noire client related cvars for customization
@@ -533,6 +597,7 @@ consvar_t cv_highresportrait = Player("highresportrait", "Off").on_off();
 
 consvar_t cv_spectatormusic = Player("spectatormusic", "Off").on_off(); // Special spectator Music while watching a race
 consvar_t cv_spectatormusiclump = Player("spectatormusiclump", ""); // none means no music.
+consvar_t cv_votinggrayscale = Player("votegrayscale", "Off").on_off(); // voting grayscale.
 
 // HEP2 cvars....
 // Should probably make this profile specific...
@@ -755,6 +820,33 @@ consvar_t cv_items[] = {
 	UnsavedNetVar("triplegachabom",		"On").on_off(),
 };
 
+//Noire
+consvar_t cv_capsuleitems[] = {
+	UnsavedNetVar("capsule_sneaker",			"On").on_off(),
+	UnsavedNetVar("capsule_rocketsneaker",		"On").on_off(),
+	UnsavedNetVar("capsule_invincibility",		"On").on_off(),
+	UnsavedNetVar("capsule_banana",				"On").on_off(),
+	UnsavedNetVar("capsule_eggmark",			"On").on_off(),
+	UnsavedNetVar("capsule_orbinaut",			"On").on_off(),
+	UnsavedNetVar("capsule_jawz",				"On").on_off(),
+	UnsavedNetVar("capsule_mine",				"On").on_off(),
+	UnsavedNetVar("capsule_landmine",			"On").on_off(),
+	UnsavedNetVar("capsule_ballhog",			"On").on_off(),
+	UnsavedNetVar("capsule_selfpropelledbomb",	"On").on_off(),
+	UnsavedNetVar("capsule_grow",				"On").on_off(),
+	UnsavedNetVar("capsule_shrink",				"On").on_off(),
+	UnsavedNetVar("capsule_lightningshield",	"On").on_off(),
+	UnsavedNetVar("capsule_bubbleshield",		"On").on_off(),
+	UnsavedNetVar("capsule_flameshield",		"On").on_off(),
+	UnsavedNetVar("capsule_hyudoro",			"On").on_off(),
+	UnsavedNetVar("capsule_pogospring",			"On").on_off(),
+	UnsavedNetVar("capsule_superring",			"On").on_off(),
+	UnsavedNetVar("capsule_kitchensink",		"On").on_off(),
+	UnsavedNetVar("capsule_droptarget",			"On").on_off(),
+	UnsavedNetVar("capsule_gardentop",			"On").on_off(),
+	UnsavedNetVar("capsule_gachabom",			"On").on_off()
+};
+
 consvar_t cv_kartbot = UnsavedNetVar("bots", "Off").values({
 	{0, "Off"},
 	{1, "Lv.1"},
@@ -853,13 +945,14 @@ void NG_Rings_OnChange(void);
 consvar_t cv_ng_rings = UnsavedNetVar("ng_rings", "On").on_off().onchange_noinit(NG_Rings_OnChange);
 consvar_t cv_ng_ringcap = UnsavedNetVar("ng_ringcap", "Default (20)").min_max(INT8_MIN, INT8_MAX, {{20, "Default (20)"}}); //Rings in player are a Signed int, so we'll put the limits to the technical limits
 consvar_t cv_ng_spillcap = UnsavedNetVar("ng_spillcap", "Default (20)").min_max(INT8_MIN, INT8_MAX, {{20, "Default (20)"}});
+consvar_t cv_ng_durationcap = UnsavedNetVar("ng_durationcap", "Off").min_max(0, INT32_MAX, {{0, "Off"}});
 consvar_t cv_ng_ringdebt = UnsavedNetVar("ng_ringdebt", "On").on_off();
 consvar_t cv_ng_ringsting = UnsavedNetVar("ng_ringsting", "On").on_off();
 consvar_t cv_ng_ringdeathmark = UnsavedNetVar("ng_ringdeathmark", "Default (-20)").min_max(INT8_MIN, INT8_MAX, {{-20, "Default (-20)"}});
 consvar_t cv_ng_maprings = UnsavedNetVar("ng_maprings", "On").on_off().onchange_noinit(NG_Generic_OnChange);
-consvar_t cv_ng_mapringcapsules = UnsavedNetVar("ng_mapringcapsules", "On").on_off().onchange_noinit(NG_Generic_OnChange);
 consvar_t cv_ng_mapringboxes = UnsavedNetVar("ng_mapringboxes", "On").on_off();
 consvar_t cv_ng_ringboxtransform = UnsavedNetVar("ng_ringboxtransform", "On").on_off();
+consvar_t cv_ng_trickrings = UnsavedNetVar("ng_trickrings", "On").on_off();
 
 //Items
 consvar_t cv_ng_forceoldboxscale = UnsavedNetVar("ng_forceoldboxscale", "Off").on_off().onchange(NG_ForceSmallBoxScale_OnChange);
@@ -873,6 +966,7 @@ consvar_t cv_ng_oldinvincibility = UnsavedNetVar("ng_oldinvincibility", "Ring Ra
 consvar_t cv_ng_oldgrow = UnsavedNetVar("ng_oldgrow", "Ring Racers").values(rrOrKart_cons_t).onchange_noinit(NG_Olditem_OnChange);
 consvar_t cv_ng_oldshrink = UnsavedNetVar("ng_oldshrink", "Ring Racers").values(rrOrKart_cons_t).onchange_noinit(NG_Olditem_OnChange);
 consvar_t cv_ng_oldeggman = UnsavedNetVar("ng_oldeggman", "Ring Racers").values(rrOrKart_cons_t).onchange_noinit(NG_Olditem_OnChange);
+consvar_t cv_ng_eggboxinvinpickup = UnsavedNetVar("ng_eggmaninvinpickup", "On").on_off();
 consvar_t cv_ng_nerfdroptarget = UnsavedNetVar("ng_nerfdroptarget", "Off").on_off();
 consvar_t cv_ng_nerfflameshield = UnsavedNetVar("ng_nerfflameshield", "Off").on_off();
 consvar_t cv_ng_nerfflameshielddiminish = UnsavedNetVar("ng_flameshield_diminish", "1.2").floating_point();
@@ -1230,9 +1324,19 @@ consvar_t cv_ng_draft = UnsavedNetVar("ng_draft", "On").on_off();
 consvar_t cv_ng_wavedash = UnsavedNetVar("ng_wavedash", "On").on_off();
 consvar_t cv_ng_tumble = UnsavedNetVar("ng_tumble", "On").on_off();
 consvar_t cv_ng_stumble = UnsavedNetVar("ng_stumble", "On").on_off();
+static CV_PossibleValue_t damagetype_cons_t[] = {{0, "Spinout"}, {1, "Tumble"}, {2, "Stumble"}, {0, NULL}};
+consvar_t cv_ng_invincibilitydamage = UnsavedNetVar("ng_invincibilitydamage", "Tumble").values(damagetype_cons_t);
+consvar_t cv_ng_growdamage = UnsavedNetVar("ng_growdamage", "Stumble").values(damagetype_cons_t);
 consvar_t cv_ng_safelanding = UnsavedNetVar("ng_safelanding", "On").on_off();
 consvar_t cv_ng_hitlag = UnsavedNetVar("ng_hitlag", "On").on_off();
 consvar_t cv_ng_combo = UnsavedNetVar("ng_combo", "On").on_off();
+consvar_t cv_ng_triangledash = UnsavedNetVar("ng_triangledash", "On").values({
+	{0, "Off"},
+	{1, "Downward Thrust Only"},
+	{2, "Forward Thrust Only"},
+	{3, "On"},
+});
+consvar_t cv_ng_olddrift = UnsavedNetVar("ng_olddrift", "Ring Racers").values(rrOrKart_cons_t);
 consvar_t cv_ng_mapanger = UnsavedNetVar("ng_mapanger", "Default (2)").min_max(0, INT32_MAX, {{-1, "Disabled"}, {2, "Default (2)"}});
 consvar_t cv_ng_tripwires = UnsavedNetVar("ng_tripwires", "On").on_off().onchange_noinit(NG_Generic_OnChange);
 void NG_ForceNoPosition_OnChange(void);
@@ -1258,13 +1362,16 @@ consvar_t cv_ng_spindash = UnsavedNetVar("ng_spindash", "On").on_off().onchange_
 consvar_t cv_ng_spindashthreshold = UnsavedNetVar("ng_spindashthreshold", "Default (6)").min_max(0, 100, {{6, "Default (6)"}});
 consvar_t cv_ng_spindashcharge = UnsavedNetVar("ng_spindashcharge", "Default (0)").min_max(0, 100, {{0, "Default (0)"}});
 consvar_t cv_ng_spindashoverheat = UnsavedNetVar("ng_spindashoverheat", "On").on_off();
+consvar_t cv_ng_desperationforce = UnsavedNetVar("ng_spindashforcedesperation", "Off").on_off();
 
 //Driving
 void NG_OldPogoOverride_OnChange(void);
 consvar_t cv_ng_butteredslopes = UnsavedNetVar("ng_slopephysics", "On").on_off();
 consvar_t cv_ng_slopeclimb = UnsavedNetVar("ng_sloperesistance", "On").on_off();
 consvar_t cv_ng_slopehelper = UnsavedNetVar("ng_slopehelper", "Off").on_off();
-consvar_t cv_ng_slopehelperspeedboost = UnsavedNetVar("ng_slopehelper_speedboost", "1.2").floating_point();
+consvar_t cv_ng_slopehelperspeedboostg1 = UnsavedNetVar("ng_slopehelper_speedboostgear1", "1.8").floating_point();
+consvar_t cv_ng_slopehelperspeedboostg2 = UnsavedNetVar("ng_slopehelper_speedboostgear2", "1.5").floating_point();
+consvar_t cv_ng_slopehelperspeedboostg3 = UnsavedNetVar("ng_slopehelper_speedboostgear3", "1.2").floating_point();
 consvar_t cv_ng_slopehelperaccelboost = UnsavedNetVar("ng_slopehelper_accelboost", "1.25").floating_point();
 consvar_t cv_ng_stairjank = UnsavedNetVar("ng_stairjank", "All").values({
 	{0, "None"},

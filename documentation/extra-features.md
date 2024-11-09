@@ -1,6 +1,5 @@
 # Noire Extra Features
 
-
 ## F12 Spymode
 This bind removed in Ring Racers has been brought back.
 

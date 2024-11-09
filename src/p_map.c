@@ -516,10 +516,13 @@ boolean P_DoSpring(mobj_t *spring, mobj_t *object)
 			{
 				raisestate = spring->info->seestate;
 
-				object->player->tumbleBounces = 1;
-				object->player->pflags &= ~PF_TUMBLESOUND;
-				object->player->tumbleHeight = 50;
-				P_SetPlayerMobjState(object->player->mo, S_KART_SPINOUT);
+				if (cv_ng_tumble.value)
+				{
+					object->player->tumbleBounces = 1;
+					object->player->pflags &= ~PF_TUMBLESOUND;
+					object->player->tumbleHeight = 50;
+					P_SetPlayerMobjState(object->player->mo, S_KART_SPINOUT);
+				}
 
 				// FIXME: try to compensate tumbling gravity
 				object->momz = 3 * object->momz / 2;
@@ -1546,13 +1549,15 @@ static BlockItReturn_t PIT_CheckThing(mobj_t *thing)
 				P_DamageMobj(g_tm.thing, thing, thing, 1, DMG_TUMBLE);
 			}
 
-			if (!cv_ng_tumble.value || !cv_ng_stumble.value)
+			if (cv_ng_invincibilitydamage.value == 0 || cv_ng_growdamage.value == 0)
 			{
-				if (g_tm.thing->hitlag == 0)
+				// Hacky as hell but it works to prevent infinite on the spot combos while keep spinout bump working.....
+				if ((g_tm.thing->player->justbumped == 0) && ((g_tm.thing->hitlag == 0) && (g_tm.thing->player->tumbleBounces == 0)) && (thing->player && thing->hitlag == 0 && thing->player->tumbleBounces == 0))
 				{
 					K_PvPTouchDamage(g_tm.thing, thing);
-					K_KartBouncing(g_tm.thing, thing);
 				}
+					K_KartBouncing(g_tm.thing, thing);
+
 			}
 			else
 			{
@@ -4194,10 +4199,13 @@ static void P_BouncePlayerMove(mobj_t *mo, TryMoveResult_t *result)
 	// Combo avoidance!
 	if (mo->player && P_PlayerInPain(mo->player) && gametyperules & GTR_BUMPERS && mo->health == 1)
 	{
-		K_StumblePlayer(mo->player);
+		if (cv_ng_stumble.value || G_CompatLevel(0x1001) || G_CompatLevel(0x1000))
+			K_StumblePlayer(mo->player);
 		K_BumperInflate(mo->player);
-		mo->player->tumbleBounces = TUMBLEBOUNCES;
-		mo->hitlag = max(mo->hitlag, 6);
+		if (cv_ng_stumble.value || G_CompatLevel(0x1001) || G_CompatLevel(0x1000))
+			mo->player->tumbleBounces = TUMBLEBOUNCES;
+		if (cv_ng_hitlag.value || G_CompatLevel(0x1001) || G_CompatLevel(0x1000))
+			mo->hitlag = max(mo->hitlag, 6);
 	}
 
 	mo->momx = tmxmove;

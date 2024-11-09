@@ -18,6 +18,7 @@
 #include "../../m_cond.h"
 #include "../../s_sound.h"
 #include "../../k_zvote.h"
+#include "../../d_main.h"
 
 #ifdef HAVE_DISCORDRPC
 #include "../../discord.h"
@@ -25,6 +26,9 @@
 
 // ESC pause menu
 // Since there's no descriptions to each item, we'll use the descriptions as the names of the patches we want to draw for each option :)
+
+// RadioRacers
+char mutePlayersPauseIcon[] = "M_ICOADM";
 
 menuitem_t PAUSE_Main[] =
 {
@@ -48,6 +52,10 @@ menuitem_t PAUSE_Main[] =
 
 	{IT_STRING | IT_ARROWS, "ADMIN TOOLS", "M_ICOADM",
 		NULL, {.routine = M_KickHandler}, 0, 0},
+
+	// RadioRacers: Using the same icon as voting for now.
+	{IT_STRING | IT_ARROWS, "MUTE PLAYERS", mutePlayersPauseIcon,
+		NULL, {.routine = M_MuteHandler}, 0, 0}, 
 
 	{IT_STRING | IT_ARROWS, "CALL VOTE", "M_ICOVOT",
 		NULL, {.routine = M_HandlePauseMenuCallVote}, 0, 0},
@@ -121,6 +129,10 @@ void M_OpenPauseMenu(void)
 {
 	INT32 i = 0;
 
+	// Radio Racers
+	if (radioracers_usemuteicons)
+		strncpy(mutePlayersPauseIcon, "M_ICOMUT", (sizeof mutePlayersPauseIcon - 1));
+
 	currentMenu = &PAUSE_MainDef;
 
 	// Ready the variables
@@ -142,6 +154,7 @@ void M_OpenPauseMenu(void)
 	PAUSE_Main[mpause_switchmap].status = IT_DISABLED;
 	PAUSE_Main[mpause_callvote].status = IT_DISABLED;
 	PAUSE_Main[mpause_admin].status = IT_DISABLED;
+	PAUSE_Main[mpause_muteplayers].status = IT_DISABLED;
 #ifdef HAVE_DISCORDRPC
 	PAUSE_Main[mpause_discordrequests].status = IT_DISABLED;
 #endif
@@ -237,6 +250,8 @@ void M_OpenPauseMenu(void)
 
 			PAUSE_Main[mpause_callvote].status = IT_STRING | IT_ARROWS;
 		}
+		
+		PAUSE_Main[mpause_muteplayers].status = IT_STRING | IT_CALL;
 	}
 
 	if (G_GametypeHasSpectators())

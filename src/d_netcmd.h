@@ -75,6 +75,7 @@ extern consvar_t cv_spectatorreentry, cv_duelspectatorreentry, cv_antigrief;
 
 // SRB2kart items
 extern consvar_t cv_items[NUMKARTRESULTS-1];
+extern consvar_t cv_capsuleitems[NUMKARTITEMS-1];
 
 extern consvar_t cv_kartspeed;
 extern consvar_t cv_kartbumpers;
@@ -263,6 +264,13 @@ void ClearAdminPlayers(void);
 void RemoveAdminPlayer(INT32 playernum);
 void ItemFinder_OnChange(void);
 void D_SetPassword(const char *pw);
+
+// RadioRacers
+void ClearMutedPlayers(void); // Clear the muted players array at the end of a netgame.
+void MutePlayerFromChat(INT32 playernum); // Mute a player from chat.
+void UnmutePlayerFromChat(INT32 playernum); // Unmute a player from chat.
+boolean IsPlayerMuted(INT32 playernum); // Check if a player node is in the 'muted players' array
+
 
 struct scheduleTask_t
 {

@@ -56,12 +56,7 @@
 //Noire
 #include "noire/n_cvar.h"
 #include "noire/n_object.h"
-
-// HEP2
-#include "hep2/h_cvars.h"
-
-// HEP2
-#include "hep2/h_cvars.h"
+#include "noire/n_control.h"
 
 // HEP2
 #include "hep2/h_cvars.h"
@@ -7884,7 +7879,7 @@ static boolean P_MobjRegularThink(mobj_t *mobj)
 		}
 		else
 		{
-			UINT8 driftcolor = K_DriftSparkColor(mobj->target->player, mobj->target->player->driftcharge);
+			UINT8 driftcolor = (cv_ng_olddrift.value == 1) ? N_DriftSparkColor(mobj->target->player, mobj->target->player->driftcharge) : K_DriftSparkColor(mobj->target->player, mobj->target->player->driftcharge);
 			fixed_t newx, newy;
 			angle_t travelangle;
 

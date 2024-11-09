@@ -2808,6 +2808,24 @@ boolean P_DamageMobj(mobj_t *target, mobj_t *inflictor, mobj_t *source, INT32 da
 	if (damagetype != DMG_SPECTATOR && target->player && target->player->spectator)
 		return false;
 
+	if (!cv_ng_tumble.value)
+	{
+		if ((damagetype & DMG_TYPEMASK) == DMG_TUMBLE)
+		{
+			damagetype &= ~DMG_TUMBLE;
+			damagetype |= DMG_NORMAL;
+		}
+	}
+
+	if (!cv_ng_stumble.value)
+	{
+		if ((damagetype & DMG_TYPEMASK) == DMG_STUMBLE)
+		{
+			damagetype &= ~DMG_STUMBLE;
+			damagetype |= DMG_NORMAL;
+		}
+	}
+
 	// source is checked without a removal guard in so many places that it's genuinely less work to do it here.
 	if (source && P_MobjWasRemoved(source))
 		source = NULL;
@@ -3034,7 +3052,7 @@ boolean P_DamageMobj(mobj_t *target, mobj_t *inflictor, mobj_t *source, INT32 da
 				}
 				else if (K_IsBigger(target, inflictor) == true &&
 					// SPB bypasses grow (K_IsBigger handles NULL check)
-					(type != DMG_EXPLODE || inflictor->type != MT_SPBEXPLOSION || !inflictor->movefactor))
+					((cv_ng_oldgrow.value && !( G_CompatLevel(0x1001) || G_CompatLevel(0x1000))) || (type != DMG_EXPLODE || inflictor->type != MT_SPBEXPLOSION || !inflictor->movefactor)))
 				{
 					sfx = sfx_grownd;
 				}
@@ -3340,21 +3358,11 @@ boolean P_DamageMobj(mobj_t *target, mobj_t *inflictor, mobj_t *source, INT32 da
 					break;
 				case DMG_STUMBLE:
 				case DMG_WHUMBLE:
-					if (cv_ng_stumble.value)
-						K_StumblePlayer(player);
-					else
-					{
- ;						P_DamageMobj(player->mo, inflictor, source, 1, DMG_NORMAL);
-					}
+					K_StumblePlayer(player);
 					ringburst = 0;
 					break;
 				case DMG_TUMBLE:
-					if(cv_ng_tumble.value)
-						K_TumblePlayer(player, inflictor, source, hitFromInvinc);
-					else
-					{
-						P_DamageMobj(player->mo, inflictor, source, 1, DMG_NORMAL);
-					}
+					K_TumblePlayer(player, inflictor, source, hitFromInvinc);
 					ringburst = 10;
 					break;
 				case DMG_EXPLODE:

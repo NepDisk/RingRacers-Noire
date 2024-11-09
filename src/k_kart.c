@@ -18,7 +18,9 @@
 // too short than one file that's too massive.
 
 #include "k_kart.h"
+#include "d_netcmd.h"
 #include "d_player.h"
+#include "g_demo.h"
 #include "k_battle.h"
 #include "k_pwrlv.h"
 #include "k_color.h"
@@ -77,6 +79,8 @@
 #include "noire/n_boosts.h"
 #include "noire/n_soc.h"
 #include "noire/n_items.h"
+#include "radioracers/rr_cvar.h"
+#include "radioracers/rr_controller.h"
 
 // SOME IMPORTANT VARIABLES DEFINED IN DOOMDEF.H:
 // gamespeed is cc (0 for easy, 1 for normal, 2 for hard)
@@ -178,9 +182,15 @@ static void K_SpawnItemCapsules(void)
 		}
 
 		isRingCapsule = (mt->thing_args[0] < 1 || mt->thing_args[0] == KITEM_SUPERRING || mt->thing_args[0] >= NUMKARTITEMS);
-		if (isRingCapsule == true && ((gametyperules & GTR_SPHERES) || (modeattacking & ATTACKING_SPB) || !cv_ng_mapringcapsules.value))
+		if (isRingCapsule == true && ((gametyperules & GTR_SPHERES) || (modeattacking & ATTACKING_SPB)))
 		{
 			// don't spawn ring capsules in ringless gametypes
+			continue;
+		}
+
+		if ((mt->thing_args[0] < 1 || mt->thing_args[0] >= NUMKARTITEMS) && !cv_capsuleitems[KITEM_SUPERRING-1].value || !cv_capsuleitems[mt->thing_args[0]-1].value)
+		{
+			// don't spawn disabled items
 			continue;
 		}
 
@@ -1814,7 +1824,7 @@ static fixed_t K_GetBrakeFXScale(player_t *player, fixed_t maxScale)
 	return s;
 }
 
-static void K_SpawnBrakeDriftSparks(player_t *player) // Be sure to update the mobj thinker case too!
+void K_SpawnBrakeDriftSparks(player_t *player) // Be sure to update the mobj thinker case too!
 {
 	mobj_t *sparks;
 
@@ -4800,7 +4810,7 @@ void K_UpdateStumbleIndicator(player_t *player)
 
 #define MIN_WAVEDASH_CHARGE ((11*TICRATE/16)*9)
 
-static boolean K_IsLosingWavedash(player_t *player)
+boolean K_IsLosingWavedash(player_t *player)
 {
 	if (player->mo == NULL || P_MobjWasRemoved(player->mo) == true)
 		return true;
@@ -6062,7 +6072,7 @@ static void K_SpawnDriftSparks(player_t *player)
 	}
 }
 
-static void K_SpawnAIZDust(player_t *player)
+void K_SpawnAIZDust(player_t *player)
 {
 	fixed_t newx;
 	fixed_t newy;
@@ -6405,7 +6415,7 @@ void K_DriftDustHandling(mobj_t *spawner)
 				dc += warntime;
 			}
 
-			c = K_DriftSparkColor(spawner->player, dc);
+			c = (cv_ng_olddrift.value == 1) ? N_DriftSparkColor(spawner->player, dc) : K_DriftSparkColor(spawner->player, dc);
 
 			if (dc > (4*driftval)+(32*3))
 			{
@@ -8856,16 +8866,24 @@ void K_KartPlayerThink(player_t *player, ticcmd_t *cmd)
 
 	Obj_DashRingPlayerThink(player);
 
-	if (!cv_ng_tumble.value)
+	if (G_CompatLevel(0x1001) || G_CompatLevel(0x1000))
 	{
-		player->tumbleBounces = 0;
-		player->tumbleHeight = 0;
+		if (!cv_ng_tumble.value)
+		{
+			player->tumbleBounces = 0;
+			player->tumbleHeight = 0;
+		}
 	}
 
 	if (!cv_ng_ringdebt.value)
 	{
 			if (player->rings < 0)
 				player->rings = 0;
+	}
+
+	if (cv_ng_durationcap.value > 0)
+	{
+		player->ringboost = min(player->ringboost, cv_ng_durationcap.value);
 	}
 
 	// update boost angle if not spun out
@@ -10841,7 +10859,7 @@ INT16 K_UpdateSteeringValue(INT16 inputSteering, INT16 destSteering)
 	return outputSteering;
 }
 
-static fixed_t K_GetUnderwaterStrafeMul(const player_t *player)
+fixed_t K_GetUnderwaterStrafeMul(const player_t *player)
 {
 	const fixed_t minSpeed = 11 * player->mo->scale;
 	fixed_t baseline = INT32_MAX;
@@ -10885,7 +10903,7 @@ INT16 K_GetKartTurnValue(const player_t *player, INT16 turnvalue)
 	}
 
 	// Staff ghosts - direction-only trickpanel behavior
-	if (G_CompatLevel(0x000A) || K_PlayerUsesBotMovement(player) || (player->nflags & NF_OLDTRICKS))
+	if (G_CompatLevel(0x000A) || K_PlayerUsesBotMovement(player) || (player->nflags & NFE_OLDTRICKS))
 	{
 		if (player->trickpanel == TRICKSTATE_READY || player->trickpanel == TRICKSTATE_FORWARD)
 		{
@@ -11071,7 +11089,7 @@ INT16 K_GetKartTurnValue(const player_t *player, INT16 turnvalue)
 	}
 
 	// 2.2 - Presteering allowed in trickpanels
-	if (!G_CompatLevel(0x000A) && !K_PlayerUsesBotMovement(player) && !(player->nflags & NF_OLDTRICKS))
+	if (!G_CompatLevel(0x000A) && !K_PlayerUsesBotMovement(player) && !(player->nflags & NFE_OLDTRICKS))
 	{
 		if (player->trickpanel == TRICKSTATE_READY || player->trickpanel == TRICKSTATE_FORWARD)
 		{
@@ -11193,8 +11211,16 @@ static void K_KartDrift(player_t *player, boolean onground)
 	// Grown players taking yellow spring panels will go below minspeed for one tic,
 	// and will then wrongdrift or have their sparks removed because of this.
 	// This fixes this problem.
-	if (player->pogospring && player->mo->scale > mapobjectscale)
-		minspeed = FixedMul(10 << FRACBITS, mapobjectscale);
+	if (!G_CompatLevel(0x1001))
+	{
+		if (player->pogospring == 2 && player->mo->scale > mapobjectscale)
+			minspeed = FixedMul(10 << FRACBITS, mapobjectscale);
+	}
+	else
+	{
+		if (player->pogospring && player->mo->scale > mapobjectscale)
+			minspeed = FixedMul(10 << FRACBITS, mapobjectscale);
+	}
 
 	// Drifting is actually straffing + automatic turning.
 	// Holding the Jump button will enable drifting.
@@ -11214,13 +11240,13 @@ static void K_KartDrift(player_t *player, boolean onground)
 			UINT8 oldDriftBoost = player->driftboost;
 
 			// Airtime means we're not gaining speed. Get grounded!
-			if (!onground)
+			if (!onground && (cv_ng_triangledash.value == 1 || cv_ng_triangledash.value == 3))
 				player->mo->momz -= player->speed/2;
 
 			if (player->driftcharge < 0)
 			{
 				// Stage 0: Grey sparks
-				if (!onground)
+				if (!onground && (cv_ng_triangledash.value == 2 || cv_ng_triangledash.value == 3))
 					P_Thrust(player->mo, pushdir, player->speed / 8);
 
 				if (player->driftboost < 15)
@@ -11229,7 +11255,7 @@ static void K_KartDrift(player_t *player, boolean onground)
 			else if (player->driftcharge >= dsone && player->driftcharge < dstwo)
 			{
 				// Stage 1: Yellow sparks
-				if (!onground)
+				if (!onground && (cv_ng_triangledash.value == 2 || cv_ng_triangledash.value == 3))
 					P_Thrust(player->mo, pushdir, player->speed / 3);
 
 				if (player->driftboost < 20)
@@ -11240,7 +11266,7 @@ static void K_KartDrift(player_t *player, boolean onground)
 			else if (player->driftcharge < dsthree)
 			{
 				// Stage 2: Red sparks
-				if (!onground)
+				if (!onground && (cv_ng_triangledash.value == 2 || cv_ng_triangledash.value == 3))
 					P_Thrust(player->mo, pushdir, player->speed / 2);
 
 				if (player->driftboost < 50)
@@ -11251,7 +11277,7 @@ static void K_KartDrift(player_t *player, boolean onground)
 			else if (player->driftcharge < dsfour)
 			{
 				// Stage 3: Blue sparks
-				if (!onground)
+				if (!onground && (cv_ng_triangledash.value == 2 || cv_ng_triangledash.value == 3))
 					P_Thrust(player->mo, pushdir, player->speed);
 
 				if (player->driftboost < 85)
@@ -11266,7 +11292,7 @@ static void K_KartDrift(player_t *player, boolean onground)
 			else if (player->driftcharge >= dsfour)
 			{
 				// Stage 4: Rainbow sparks
-				if (!onground)
+				if (!onground && (cv_ng_triangledash.value == 2 || cv_ng_triangledash.value == 3))
 					P_Thrust(player->mo, pushdir, (5 * player->speed / 4));
 
 				if (player->driftboost < 125)
@@ -11501,7 +11527,6 @@ static void K_KartDrift(player_t *player, boolean onground)
 		if (cv_ng_wavedash.value)
 		{
 
-
 			if (!extendedSliptide)
 			{
 				// Give charge proportional to your angle. Sharp turns are rewarding, slow analog slides are not—remember, this is giving back the speed you gave up.
@@ -11518,8 +11543,13 @@ static void K_KartDrift(player_t *player, boolean onground)
 
 				if (player->wavedash >= MIN_WAVEDASH_CHARGE && (player->wavedash - addCharge) < MIN_WAVEDASH_CHARGE)
 					S_StartSound(player->mo, sfx_waved5);
-			}
 
+				// RadioRacers: Really gross.
+				if (cv_morerumbleevents.value && P_IsMachineLocalPlayer(player))
+				{
+					localPlayerWavedashClickTimer = 5;
+				}
+			}
 		}
 
 			if (abs(player->aizdrifttilt) < ANGLE_22h)
@@ -12128,7 +12158,7 @@ void K_KartEbrakeVisuals(player_t *p)
 			if (p->mo->hprev && !P_MobjWasRemoved(p->mo->hprev))
 			{
 				const INT16 overcharge = (p->spindash - MAXCHARGETIME);
-				const boolean desperation = (p->rings <= 0 && (cv_ng_ringcap.value > 0)); // desperation spindash
+				const boolean desperation = (cv_ng_desperationforce.value || ((p->rings <= 0) && (cv_ng_ringcap.value > 0))); // desperation spindash
 
 				UINT8 frame = min(1 + ((p->spindash*3) / MAXCHARGETIME), 4);
 
@@ -12403,7 +12433,7 @@ static void K_KartSpindash(player_t *player)
 
 			INT16 chargetime = MAXCHARGETIME - ++player->spindash;
 
-			if (player->rings <= 0 && chargetime >= 0 && (cv_ng_ringcap.value > 0)) // Desperation spindash
+			if ((cv_ng_desperationforce.value && chargetime >= 0)|| (player->rings <= 0 && chargetime >= 0 && (cv_ng_ringcap.value > 0))) // Desperation spindash
 			{
 				player->spindash++;
 				if (!S_SoundPlaying(player->mo, sfx_kc38))
@@ -12544,6 +12574,11 @@ boolean K_FastFallBounce(player_t *player)
 		else
 		{
 			S_StartSound(player->mo, sfx_ffbonc);
+			// RadioRacers: .. right around here.
+			if (P_IsMachineLocalPlayer(player) && !localPlayerJustBootyBounced)
+			{
+				localPlayerJustBootyBounced = true;
+			}
 		}
 
 		if (player->mo->eflags & MFE_UNDERWATER)
@@ -14174,15 +14209,18 @@ void K_MoveKartPlayer(player_t *player, boolean onground)
 			if (momz * P_MobjFlip(player->mo) < -10*FRACUNIT)	// :youfuckedup:
 			{
 				// tumble if you let your chance pass!!
-				player->tumbleBounces = 1;
-				player->pflags &= ~PF_TUMBLESOUND;
-				player->tumbleHeight = 30;	// Base tumble bounce height
+				if (cv_ng_tumble.value || G_CompatLevel(0x1001) || G_CompatLevel(0x1000))
+				{
+					player->tumbleBounces = 1;
+					player->pflags &= ~PF_TUMBLESOUND;
+					player->tumbleHeight = 30;	// Base tumble bounce height
+				}
 				player->trickpanel = TRICKSTATE_NONE;
 				P_SetPlayerMobjState(player->mo, S_KART_SPINOUT);
 				if (gametype != GT_TUTORIAL)
 				{
 
-					if (player->nflags & NF_OLDTRICKS)
+					if (player->nflags & NFE_OLDTRICKS)
 						K_AddMessageForPlayer(player, "Press <dpad> to trick!", true, false);
 					else
 						K_AddMessageForPlayer(player, "Press <dpad> + <a> to trick!", true, false);
@@ -14218,7 +14256,7 @@ void K_MoveKartPlayer(player_t *player, boolean onground)
 				}
 
 				// 2.2 - Pre-steering trickpanels
-				if (!G_CompatLevel(0x000A) && !K_PlayerUsesBotMovement(player) && !(player->nflags & NF_OLDTRICKS))
+				if (!G_CompatLevel(0x000A) && !K_PlayerUsesBotMovement(player) && !(player->nflags & NFE_OLDTRICKS))
 				{
 					if (!(buttons & BT_ACCELERATE))
 					{
@@ -14424,7 +14462,8 @@ void K_MoveKartPlayer(player_t *player, boolean onground)
 				if (player->curshield != KSHIELD_BUBBLE) // Allow bubblebounce (it's cute) but don't give standard trick rewards
 				{
 					P_InstaThrust(player->mo, player->mo->angle, 2*abs(player->fastfall)/3 + 15*FRACUNIT);
-					player->mo->hitlag = 3;
+					if (cv_ng_hitlag.value || G_CompatLevel(0x1001) || G_CompatLevel(0x1000))
+						player->mo->hitlag = 3;
 					S_StartSound(player->mo, sfx_gshba);
 					player->fastfall = 0; // intentionally skip bounce
 					player->trickcharge = 0;
@@ -14445,10 +14484,14 @@ void K_MoveKartPlayer(player_t *player, boolean onground)
 				UINT8 award = TICRATE - player->trickboostdecay;
 
 				player->trickboost = award;
-				if (!(gametyperules & GTR_SPHERES))
-					K_AwardPlayerRings(player,
-						(TICRATE-player->trickboostdecay) * player->lastairtime/3 / TICRATE, // Scale ring award by same amount as trickboost
-					true);
+
+				if (cv_ng_trickrings.value)
+				{
+					if (!(gametyperules & GTR_SPHERES))
+						K_AwardPlayerRings(player,
+							(TICRATE-player->trickboostdecay) * player->lastairtime/3 / TICRATE, // Scale ring award by same amount as trickboost
+						true);
+				}
 
 				if (player->trickpanel == TRICKSTATE_FORWARD)
 					player->trickboostpower /= 18;
@@ -14461,7 +14504,7 @@ void K_MoveKartPlayer(player_t *player, boolean onground)
 		}
 
 		// 2.2 - Lenient trickpanels
-		if (G_CompatLevel(0x000A) || K_PlayerUsesBotMovement(player) || (player->nflags & NF_OLDTRICKS))
+		if (G_CompatLevel(0x000A) || K_PlayerUsesBotMovement(player) || (player->nflags & NFE_OLDTRICKS))
 		{
 			// Wait until we let go off the control stick to remove the delay
 			// buttons must be neutral after the initial trick delay. This prevents weirdness where slight nudges after blast off would send you flying.
@@ -14493,7 +14536,10 @@ void K_MoveKartPlayer(player_t *player, boolean onground)
 
 	}
 
-	K_KartDrift(player, onground);
+	if (cv_ng_olddrift.value)
+		N_KartDrift(player, onground);
+	else
+		K_KartDrift(player, onground);
 	K_KartSpindash(player);
 
 	if (onground == false

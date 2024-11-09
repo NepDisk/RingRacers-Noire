@@ -627,7 +627,7 @@ void N_AdjustPlayerFriction(player_t *player, boolean onground)
 // Based on indevs slopehelper script, Thanks!
 void N_SlopeHelper(player_t *player)
 {
-	fixed_t speedval = cv_ng_slopehelperspeedboost.value;
+	fixed_t speedval = 0;
 	fixed_t accelval = cv_ng_slopehelperaccelboost.value;
 	pslope_t *slope = player->mo->standingslope;
 	boolean flip = !(player->mo->eflags & MFE_VERTICALFLIP);
@@ -641,6 +641,20 @@ void N_SlopeHelper(player_t *player)
 
 	if (!slope || (player->offroad && K_ApplyOffroad(player)))
 		return;
+
+	switch (gamespeed)
+	{
+		case 1:
+			speedval = cv_ng_slopehelperspeedboostg1.value;
+			break;
+		case 2:
+			speedval = cv_ng_slopehelperspeedboostg2.value;
+			break;
+		case 3:
+			speedval = cv_ng_slopehelperspeedboostg3.value;
+			break;
+	}
+
 
 	if ((((int)slope->zangle > 0) && flip) || (((int)slope->zangle < 0) && (!flip)))
 		hillangle = momangle - slope->xydirection;

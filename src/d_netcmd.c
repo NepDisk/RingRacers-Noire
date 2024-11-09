@@ -24,6 +24,7 @@
 #include "hu_stuff.h"
 #include "g_input.h"
 #include "k_menu.h"
+#include "p_mobj.h"
 #include "r_local.h"
 #include "r_skins.h"
 #include "p_local.h"
@@ -77,6 +78,8 @@
 #include "music.h"
 
 #include "noire/n_cvar.h"
+
+#include "fastcmp.h"
 
 #include "fastcmp.h"
 
@@ -271,6 +274,7 @@ boolean forcespecialstage = false;
 
 UINT8 splitscreen = 0;
 INT32 adminplayers[MAXPLAYERS];
+INT32 mutedplayers[MAXPLAYERS]; // RadioRacers: check doomstat.h for more information.
 
 // Scheduled commands.
 scheduleTask_t **schedule = NULL;
@@ -860,7 +864,7 @@ static void SetPlayerName(INT32 playernum, char *newname)
 
 boolean CanChangeSkin(INT32 playernum)
 {
-	(void)playernum;
+	//(void)playernum;
 
 	// Of course we can change if we're not playing
 	if (!Playing() || !addedtogame)
@@ -868,6 +872,12 @@ boolean CanChangeSkin(INT32 playernum)
 
 	// Force skin in effect.
 	if (cv_forceskin.value != -1 && K_CanChangeRules(true))
+		return false;
+
+	if (players[playernum].spectator || players[playernum].playerstate == PST_DEAD || players[playernum].playerstate == PST_REBORN)
+		return true;
+
+	if (players[playernum].speed > 0 || (players[playernum].mo && !P_MobjWasRemoved(players[playernum].mo) && !P_IsObjectOnGround(players[playernum].mo)))
 		return false;
 
 	// ... there used to be a lot more here, but it's now handled in Got_NameAndColor.
@@ -1330,7 +1340,7 @@ void WeaponPref_Save(UINT8 **cp, INT32 playernum)
 	if (player->pflags & PF_AUTORING)
 		prefs |= WP_AUTORING;
 
-	if (player->nflags & NF_OLDTRICKS)
+	if (player->nflags & NFE_OLDTRICKS)
 		prefs |= WP_OLDTRICKS;
 
 	WRITEUINT8(*cp, prefs);
@@ -1344,7 +1354,7 @@ size_t WeaponPref_Parse(const UINT8 *bufstart, INT32 playernum)
 	UINT8 prefs = READUINT8(p);
 
 	player->pflags &= ~(PF_KICKSTARTACCEL|PF_SHRINKME|PF_AUTOROULETTE|PF_AUTORING);
-	player->nflags &= ~(NF_OLDTRICKS);
+	player->nflags &= ~(NFE_OLDTRICKS);
 
 	if (prefs & WP_KICKSTARTACCEL)
 		player->pflags |= PF_KICKSTARTACCEL;
@@ -1364,7 +1374,7 @@ size_t WeaponPref_Parse(const UINT8 *bufstart, INT32 playernum)
 		player->pflags |= PF_AUTORING;
 
 	if (prefs & WP_OLDTRICKS)
-		player->nflags |= NF_OLDTRICKS;
+		player->nflags |= NFE_OLDTRICKS;
 
 	if (leveltime < 2)
 	{
@@ -3733,7 +3743,7 @@ void P_SetPlayerSpectator(INT32 playernum)
 
 	players[playernum].playerstate = PST_REBORN;
 
-	if (cv_spectatormusic.value)
+	if (cv_spectatormusic.value && (players[displayplayers[0]].spectator == true) && !r_splitscreen)
 	{
 		if (P_UseContinuousLevelMusic())
 		{
@@ -3999,6 +4009,49 @@ void ClearAdminPlayers(void)
 {
 	memset(adminplayers, -1, sizeof(adminplayers));
 }
+
+void MutePlayerFromChat(INT32 playernum) {
+	INT32 i;
+	for (i = 0; i < MAXPLAYERS; i++)
+	{
+		if (playernum == mutedplayers[i])
+			return; // Player is already muted
+		
+		if (mutedplayers[i] == -1) {
+			mutedplayers[i] = playernum;
+			break;			
+		}
+	}
+}
+
+void UnmutePlayerFromChat(INT32 playernum) {
+	INT32 i;
+	for (i = 0; i < MAXPLAYERS; i++)
+	{
+		if (mutedplayers[i] == playernum) {
+			mutedplayers[i] = -1;
+			break;			
+		}
+	}
+}
+
+boolean IsPlayerMuted(INT32 playernum) 
+{
+	INT32 i;
+	for (i = 0; i < MAXPLAYERS; i++)
+	{
+		if (playernum == mutedplayers[i]) {
+			return true;
+		}
+	}	
+	return false;
+}
+
+void ClearMutedPlayers(void)
+{
+	memset(mutedplayers, -1, sizeof(mutedplayers));
+}
+
 
 void RemoveAdminPlayer(INT32 playernum)
 {

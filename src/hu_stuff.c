@@ -184,6 +184,7 @@ static void Command_Sayto_f(void);
 static void Command_Sayteam_f(void);
 static void Command_CSay_f(void);
 static void Command_Shout(void);
+static void Command_MutePlayer(void); // RadioRacers - mute player command
 static void Got_Saycmd(const UINT8 **p, INT32 playernum);
 
 void HU_LoadGraphics(void)
@@ -235,6 +236,7 @@ void HU_Init(void)
 	COM_AddCommand("sayteam", Command_Sayteam_f);
 	COM_AddCommand("csay", Command_CSay_f);
 	COM_AddCommand("shout", Command_Shout);
+	COM_AddCommand("muteplayer", Command_MutePlayer); // RadioRacers - muteplayer command
 	RegisterNetXCmd(XD_SAY, Got_Saycmd);
 
 	// only allocate if not present, to save us a lot of headache
@@ -676,6 +678,91 @@ static void Command_Shout(void)
 	DoSayPacketFromCommand(0, 1, HU_SHOUT);
 }
 
+/** RadioRacers: Locally mute a player in a netgame.
+*/
+static void Command_MutePlayer(void)
+{
+	/**
+	 * RadioRacers:
+	 * Go through the array of muted players and mute/unmute them, depending on 
+	 * the current muted status.
+	 * 
+	 * If muted, unmute.
+	 * If unmuted, mute.
+	 * 
+	 * You shouldn't be able to mute the server. 
+	 */
+
+	// Not in a netgame.
+	if (!netgame)
+	{
+		CONS_Printf(M_GetText("This only works in a netgame.\n")); // Silly, silly.
+		return;
+	}
+
+	// Not enough arguments.
+	if (COM_Argc() < 2)
+	{
+		CONS_Printf(M_GetText("muteplayer <playername|playernum>: locally mute a player in chat\n"));
+		return;
+	}
+
+	// Player's chat is muted already.
+	if (cv_mute.value) 
+	{
+		CONS_Printf(M_GetText("Your chat is already muted. Behave yourself.\n"));
+	}
+
+	INT32 target;
+
+	// Non-existent player.
+	target = nametonum(COM_Argv(1));
+	if (target == -1)
+	{
+		CONS_Alert(CONS_NOTICE, M_GetText("No player with that name!\n"));
+		return;
+	}
+
+	// Attempting to mute .. yourself.
+	if (P_IsMachineLocalPlayer(&players[target])) {
+		CONS_Alert(CONS_NOTICE, M_GetText("You cannot mute yourself.\n"));
+		return;
+	}
+
+	// Attempting to mute the server host. Administrators are fine, though.
+	if (target == serverplayer) {
+		CONS_Alert(CONS_NOTICE, M_GetText("You cannot mute the server host.\n"));
+		return;
+	}
+
+	// Attempting to mute .. a bot?
+	if (players[target].bot) {
+		CONS_Alert(CONS_NOTICE, M_GetText("Bots don't talk!\n"));
+		return;
+	}
+
+	// Check if target player is muted or not.
+	boolean isMuted = IsPlayerMuted(target);
+
+	if (isMuted) {
+		UnmutePlayerFromChat(target); // Unmute
+
+		HU_AddChatText(
+			va("\x86*%s \x86has been \x85unmuted\x86. (Only you can see this.)",player_names[target]),
+			false
+		);
+		S_StartSound(NULL, sfx_tmxunx);
+	} else {
+		MutePlayerFromChat(target); // Mute
+
+		HU_AddChatText(
+			va("\x86*%s \x86has been \x83muted\x86. (Only you can see this.)",player_names[target]),
+			false
+		);
+		S_StartSound(NULL, sfx_tmxunx);
+	}
+}
+
 /** Receives a message, processing an ::XD_SAY command.
   * \sa DoSayPacket
   * \author Graue <graue@oceanbase.org>
@@ -752,10 +839,12 @@ static void Got_Saycmd(const UINT8 **p, INT32 playernum)
 	}
 
 	// Show messages sent by you, to you, to your team, or to everyone:
-	if (playernum == consoleplayer // By you
+	// RadioRacers: AND they're not muted
+	if ((playernum == consoleplayer // By you
 	|| (target == -1 && ST_SameTeam(&players[consoleplayer], &players[playernum])) // To your team
 	|| target == 0 // To everyone
-	|| consoleplayer == target-1) // To you
+	|| consoleplayer == target-1)
+	&& !IsPlayerMuted(playernum)) // To you
 	{
 		const char *prefix = "", *cstart = "", *cend = "", *adminchar = "\x82~\x83", *remotechar = "\x82@\x83", *fmt2, *textcolor = "\x80";
 		char *tempchar = NULL;

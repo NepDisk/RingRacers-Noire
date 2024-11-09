@@ -1,6 +1,7 @@
 // RINGRACERS-NOIRE
 //-----------------------------------------------------------------------------
 // Copyright (C) 2024 by NepDisk
+// Copyright (C) 2020 by KartKrew
 //
 // This program is free software distributed under the
 // terms of the GNU General Public License, version 2.
@@ -9,6 +10,11 @@
 
 #include "../n_control.h"
 #include "../n_soc.h"
+#include "../../k_color.h"
+#include "../../k_kart.h"
+#include "../../m_easing.h"
+#include "../../radioracers/rr_cvar.h"
+#include "../../radioracers/rr_controller.h"
 
 // v2 almost broke sliptiding when it fixed turning bugs!
 // This value is fine-tuned to feel like v1 again without reverting any of those changes.
@@ -215,7 +221,7 @@ INT16 N_GetKartTurnValue(player_t* player, INT16 turnvalue)
 	}
 
 	// Staff ghosts - direction-only trickpanel behavior
-	if (G_CompatLevel(0x000A) || K_PlayerUsesBotMovement(player) || (player->nflags & NF_OLDTRICKS))
+	if (G_CompatLevel(0x000A) || K_PlayerUsesBotMovement(player) || (player->nflags & NFE_OLDTRICKS))
 	{
 		if (player->trickpanel == TRICKSTATE_READY || player->trickpanel == TRICKSTATE_FORWARD)
 		{
@@ -249,7 +255,16 @@ INT16 N_GetKartTurnValue(player_t* player, INT16 turnvalue)
 	}
 
 	p_maxspeed = K_GetKartSpeed(player, false, false);
-	p_speed = min(FixedHypot(player->mo->momx, player->mo->momy), (p_maxspeed * 2));
+
+	if (player->curshield == KSHIELD_TOP)
+	{
+		// Do not downscale turning speed with faster
+		// movement speed; behaves as if turning in place.
+		p_speed = 0;
+	}
+	else
+		p_speed = min(FixedHypot(player->mo->momx, player->mo->momy), (p_maxspeed * 2));
+
 	weightadjust = FixedDiv((p_maxspeed * 3) - p_speed, (p_maxspeed * 3) + (player->kartweight * FRACUNIT));
 
 	if (K_PlayerUsesBotMovement(player))
@@ -309,9 +324,10 @@ INT16 N_GetKartTurnValue(player_t* player, INT16 turnvalue)
 
 	if (player->curshield == KSHIELD_TOP || !cv_ng_underwaterhandling.value) //NOIRE: Take into consideration the underwater handling cvar
 		;
-	else if (player->mo->eflags & (MFE_UNDERWATER))
+	else if (player->mo->eflags & MFE_UNDERWATER)
 	{
-		turnfixed = FixedMul(turnfixed, 3 * FRACUNIT / 2);
+		fixed_t div = min(FRACUNIT + K_GetUnderwaterStrafeMul(player), 2*FRACUNIT);
+		turnfixed = FixedDiv(turnfixed, div);
 	}
 
 	// Weight has a small effect on turning
@@ -324,7 +340,7 @@ INT16 N_GetKartTurnValue(player_t* player, INT16 turnvalue)
 	}
 
 	// 2.2 - Presteering allowed in trickpanels
-	if (!G_CompatLevel(0x000A) && !K_PlayerUsesBotMovement(player) && !(player->nflags & NF_OLDTRICKS))
+	if (!G_CompatLevel(0x000A) && !K_PlayerUsesBotMovement(player) && !(player->nflags & NFE_OLDTRICKS))
 	{
 		if (player->trickpanel == TRICKSTATE_READY || player->trickpanel == TRICKSTATE_FORWARD)
 		{
@@ -477,5 +493,570 @@ void N_LegacyStart(player_t *player)
 		player->boostcharge = 0;
 	}
 
+}
+
+UINT16 N_DriftSparkColor(player_t *player, INT32 charge)
+{
+	INT32 ds = K_GetKartDriftSparkValue(player);
+	UINT16 color = SKINCOLOR_NONE;
+
+	if (charge < 0)
+	{
+		// Stage 0: GREY
+		color = SKINCOLOR_GREY;
+	}
+	else if (charge >= ds*4)
+	{
+		// Stage 3: Rainbow
+		if (charge <= (ds*4)+(32*3))
+		{
+			// transition
+			color = SKINCOLOR_SILVER;
+		}
+		else
+		{
+			color = K_RainbowColor(leveltime);
+		}
+	}
+	else if (charge >= ds*2)
+	{
+		// Stage 2: Red
+		if (charge <= (ds*2)+(32*3))
+		{
+			// transition
+			color = SKINCOLOR_TANGERINE;
+		}
+		else
+		{
+			color = SKINCOLOR_KETCHUP;
+		}
+	}
+	else if (charge >= ds)
+	{
+		// Stage 1: Blue
+		if (charge <= (ds)+(32*3))
+		{
+			// transition
+			color = SKINCOLOR_PURPLE;
+		}
+		else
+		{
+			color = SKINCOLOR_SAPPHIRE;
+		}
+	}
+
+	return color;
+}
+
+void N_SpawnDriftSparks(player_t *player)
+{
+	INT32 ds = K_GetKartDriftSparkValue(player);
+	fixed_t newx;
+	fixed_t newy;
+	mobj_t *spark;
+	angle_t travelangle;
+	INT32 i;
+
+	I_Assert(player != NULL);
+	I_Assert(player->mo != NULL);
+	I_Assert(!P_MobjWasRemoved(player->mo));
+
+	if (leveltime % 2 == 1)
+		return;
+
+	if (!player->drift
+		|| (player->driftcharge < ds && !(player->driftcharge < 0)))
+		return;
+
+	travelangle = player->mo->angle-(ANGLE_45/5)*player->drift;
+
+	for (i = 0; i < 2; i++)
+	{
+		SINT8 size = 1;
+		UINT8 trail = 0;
+
+		newx = player->mo->x + P_ReturnThrustX(player->mo, travelangle + ((i&1) ? -1 : 1)*ANGLE_135, FixedMul(32*FRACUNIT, player->mo->scale));
+		newy = player->mo->y + P_ReturnThrustY(player->mo, travelangle + ((i&1) ? -1 : 1)*ANGLE_135, FixedMul(32*FRACUNIT, player->mo->scale));
+		spark = P_SpawnMobj(newx, newy, player->mo->z, MT_DRIFTSPARK);
+
+		P_SetTarget(&spark->target, player->mo);
+		spark->angle = travelangle-(ANGLE_45/5)*player->drift;
+		spark->destscale = player->mo->scale;
+		P_SetScale(spark, player->mo->scale);
+
+		spark->momx = player->mo->momx/2;
+		spark->momy = player->mo->momy/2;
+		//spark->momz = player->mo->momz/2;
+
+		spark->color = N_DriftSparkColor(player, player->driftcharge);
+
+		if (player->driftcharge < 0)
+		{
+			// Stage 0: Grey
+			size = 0;
+		}
+		else if (player->driftcharge >= ds*4)
+		{
+			// Stage 3: Rainbow
+			size = 2;
+			trail = 2;
+
+			if (player->driftcharge <= (ds*4)+(32*3))
+			{
+				// transition
+				P_SetScale(spark, (spark->destscale = spark->scale*3/2));
+			}
+			else
+			{
+				spark->colorized = true;
+			}
+		}
+		else if (player->driftcharge >= ds*2)
+		{
+			// Stage 2: Blue
+			size = 2;
+			trail = 1;
+
+			if (player->driftcharge <= (ds*2)+(32*3))
+			{
+				// transition
+				P_SetScale(spark, (spark->destscale = spark->scale*3/2));
+			}
+		}
+		else
+		{
+			// Stage 1: Red
+			size = 1;
+
+			if (player->driftcharge <= (ds)+(32*3))
+			{
+				// transition
+				P_SetScale(spark, (spark->destscale = spark->scale*2));
+			}
+		}
+
+		if ((player->drift > 0 && player->cmd.turning > 0) // Inward drifts
+			|| (player->drift < 0 && player->cmd.turning < 0))
+		{
+			if ((player->drift < 0 && (i & 1))
+				|| (player->drift > 0 && !(i & 1)))
+			{
+				size++;
+			}
+			else if ((player->drift < 0 && !(i & 1))
+				|| (player->drift > 0 && (i & 1)))
+			{
+				size--;
+			}
+		}
+		else if ((player->drift > 0 && player->cmd.turning < 0) // Outward drifts
+			|| (player->drift < 0 && player->cmd.turning > 0))
+		{
+			if ((player->drift < 0 && (i & 1))
+				|| (player->drift > 0 && !(i & 1)))
+			{
+				size--;
+			}
+			else if ((player->drift < 0 && !(i & 1))
+				|| (player->drift > 0 && (i & 1)))
+			{
+				size++;
+			}
+		}
+
+		if (size == 2)
+			P_SetMobjState(spark, S_DRIFTSPARK_A1);
+		else if (size < 1)
+			P_SetMobjState(spark, S_DRIFTSPARK_C1);
+		else if (size > 2)
+			P_SetMobjState(spark, S_DRIFTSPARK_D1);
+
+		if (trail > 0)
+			spark->tics += trail;
+
+		K_MatchGenericExtraFlags(spark, player->mo);
+	}
+}
+
+void N_KartDrift(player_t *player, boolean onground)
+{
+	fixed_t minspeed = (10 * player->mo->scale); //NOIRE: No longer a const due to the pogo spring grow check we do below.
+
+	const INT32 dsone = K_GetKartDriftSparkValue(player);
+	const INT32 dstwo = K_GetKartDriftSparkValue(player) * 2;
+	const INT32 dsthree = K_GetKartDriftSparkValue(player) * 4;
+
+	const UINT16 buttons = K_GetKartButtons(player);
+
+	// NOIRE:
+	// Grown players taking yellow spring panels will go below minspeed for one tic,
+	// and will then wrongdrift or have their sparks removed because of this.
+	// This fixes this problem.
+	if (player->pogospring == 2 && player->mo->scale > mapobjectscale)
+		minspeed = FixedMul(10 << FRACBITS, mapobjectscale);
+
+	// Drifting is actually straffing + automatic turning.
+	// Holding the Jump button will enable drifting.
+	// (This comment is extremely funny)
+
+	// Drift Release (Moved here so you can't "chain" drifts)
+	if (player->drift != -5 && player->drift != 5)
+	{
+		if (player->driftcharge >= dsone)
+		{
+			S_StartSound(player->mo, sfx_s23c);
+			//K_SpawnDashDustRelease(player);
+
+			angle_t pushdir = K_MomentumAngle(player->mo);
+
+			// Airtime means we're not gaining speed. Get grounded!
+			if (!onground && (cv_ng_triangledash.value == 1 || cv_ng_triangledash.value == 3))
+				player->mo->momz -= player->speed/2;
+
+			if (player->driftcharge >= dsone && player->driftcharge < dstwo)
+			{
+				// Stage 1: Red sparks
+				if (!onground && (cv_ng_triangledash.value == 2 || cv_ng_triangledash.value == 3))
+					P_Thrust(player->mo, pushdir, player->speed / 8);
+
+				if (player->driftboost < 20)
+					player->driftboost = 20;
+
+			}
+			else if (player->driftcharge < dsthree)
+			{
+				// Stage 2: Blue sparks
+				if (!onground && (cv_ng_triangledash.value == 2 || cv_ng_triangledash.value == 3))
+					P_Thrust(player->mo, pushdir, player->speed / 2);
+				if (player->driftboost < 50)
+					player->driftboost = 50;
+
+			}
+			else if (player->driftcharge >= dsthree)
+			{
+				// Stage 3: Rainbow sparks
+				if (!onground && (cv_ng_triangledash.value == 2 || cv_ng_triangledash.value == 3))
+					P_Thrust(player->mo, pushdir, (5 * player->speed / 4));
+				if (player->driftboost < 125)
+					player->driftboost = 125;
+			}
+		}
+		// Remove charge
+		player->driftcharge = 0;
+	}
+
+	// Drifting: left or right?
+	if (!(player->pflags & PF_DRIFTINPUT))
+	{
+		// drift is not being performed so if we're just finishing set driftend and decrement counters
+		if (player->drift > 0)
+		{
+			player->drift--;
+			player->pflags |= PF_DRIFTEND;
+		}
+		else if (player->drift < 0)
+		{
+			player->drift++;
+			player->pflags |= PF_DRIFTEND;
+		}
+		else
+			player->pflags &= ~PF_DRIFTEND;
+	}
+	else if (player->speed > minspeed
+		&& (player->drift == 0 || (player->pflags & PF_DRIFTEND)))
+	{
+		if (player->cmd.turning > 0)
+		{
+			// Starting left drift
+			player->drift = 1;
+			player->driftcharge = 0;
+			player->pflags &= ~PF_DRIFTEND;
+		}
+		else if (player->cmd.turning < 0)
+		{
+			// Starting right drift
+			player->drift = -1;
+			player->driftcharge = 0;
+			player->pflags &= ~PF_DRIFTEND;
+		}
+	}
+
+	if (P_PlayerInPain(player) || player->speed < minspeed)
+	{
+		// Stop drifting
+		player->drift = player->driftcharge = player->aizdriftstrat = 0;
+		player->pflags &= ~(PF_BRAKEDRIFT|PF_GETSPARKS);
+	}
+	else if ((player->pflags & PF_DRIFTINPUT) && player->drift != 0)
+	{
+		// Incease/decrease the drift value to continue drifting in that direction
+		fixed_t driftadditive = 24;
+		boolean playsound = false;
+
+		if (onground)
+		{
+			if (player->drift >= 1) // Drifting to the left
+			{
+				player->drift++;
+				if (player->drift > 5)
+					player->drift = 5;
+
+				if (player->cmd.turning > 0) // Inward
+					driftadditive += abs(player->cmd.turning)/100;
+				if (player->cmd.turning < 0) // Outward
+					driftadditive -= abs(player->cmd.turning)/75;
+			}
+			else if (player->drift <= -1) // Drifting to the right
+			{
+				player->drift--;
+				if (player->drift < -5)
+					player->drift = -5;
+
+				if (player->cmd.turning < 0) // Inward
+					driftadditive += abs(player->cmd.turning)/100;
+				if (player->cmd.turning > 0) // Outward
+					driftadditive -= abs(player->cmd.turning)/75;
+			}
+
+			// Disable drift-sparks until you're going fast enough
+			if (!(player->pflags & PF_GETSPARKS)
+				|| (player->offroad && K_ApplyOffroad(player)))
+				driftadditive = 0;
+
+			if (player->speed > minspeed*2)
+				player->pflags |= PF_GETSPARKS;
+		}
+		else
+		{
+			driftadditive = 0;
+		}
+
+		// This spawns the drift sparks
+		if ((player->driftcharge + driftadditive >= dsone)
+			|| (player->driftcharge < 0))
+		{
+			N_SpawnDriftSparks(player);
+		}
+
+		if ((player->driftcharge < dsone && player->driftcharge+driftadditive >= dsone)
+			|| (player->driftcharge < dstwo && player->driftcharge+driftadditive >= dstwo)
+			|| (player->driftcharge < dsthree && player->driftcharge+driftadditive >= dsthree))
+		{
+			playsound = true;
+		}
+
+		// Sound whenever you get a different tier of sparks
+		if (playsound && P_IsDisplayPlayer(player))
+		{
+			S_StartSoundAtVolume(player->mo, sfx_s3ka2, 192);
+		}
+
+		player->driftcharge += driftadditive;
+		player->pflags &= ~PF_DRIFTEND;
+	}
+
+	#define MIN_WAVEDASH_CHARGE ((11*TICRATE/16)*9)
+	// No longer meet the conditions to sliptide?
+	// We'll spot you the sliptide as long as you keep turning, but no charging wavedashes.
+	boolean extendedSliptide = false;
+
+	// We don't meet sliptide conditions!
+	if ((player->handleboost < (SLIPTIDEHANDLING/2))
+	|| (!player->steering)
+	|| (!player->aizdriftstrat)
+	|| (player->steering > 0) != (player->aizdriftstrat > 0))
+	{
+		if (cv_ng_wavedash.value && !player->drift && player->steering && player->aizdriftextend // If we were sliptiding last tic,
+			&& (player->steering > 0) == (player->aizdriftextend > 0) // we're steering in the right direction,
+			&& player->speed >= K_GetKartSpeed(player, false, true)) // and we're above the threshold to spawn dust...
+		{
+			extendedSliptide = true; // Then keep your current sliptide, but note the behavior change for wavedash handling.
+		}
+		else // Otherwise, update sliptide status as usual.
+		{
+			if (!player->drift)
+				player->aizdriftstrat = 0;
+			else
+				player->aizdriftstrat = ((player->drift > 0) ? 1 : -1);
+		}
+	}
+
+	if (player->airtime > 2) // Arbitrary number. Small discontinuities due to Super Jank shouldn't thrash your handling properties.
+	{
+		player->aizdriftstrat = 0;
+		extendedSliptide = false;
+	}
+
+	// If we're sliptiding, whether through an extension or otherwise, allow sliptide extensions next tic.
+	if (K_Sliptiding(player))
+		player->aizdriftextend = player->aizdriftstrat;
+	else
+		player->aizdriftextend = 0;
+
+
+	if ((player->aizdriftstrat && !player->drift)
+		|| (extendedSliptide))
+	{
+		K_SpawnAIZDust(player);
+
+		if (cv_ng_wavedash.value)
+		{
+
+			if (!extendedSliptide)
+			{
+				// Give charge proportional to your angle. Sharp turns are rewarding, slow analog slides are not—remember, this is giving back the speed you gave up.
+				UINT16 addCharge = FixedInt(
+					FixedMul(10*FRACUNIT,
+						FixedDiv(abs(player->steering)*FRACUNIT, (9*KART_FULLTURN/10)*FRACUNIT)
+					));
+				addCharge = min(10, max(addCharge, 1));
+				// "Why 9*KART_FULLTURN/10?" For bullshit turn solver reasons, it's extremely common to steer at like 99% of FULLTURN even when at the edge of your analog range.
+				// This makes wavedash charge noticeably slower on even modest delay, despite the magnitude of the turn seeming the same.
+				// So we only require 90% of a turn to get full charge strength.
+
+				player->wavedash += addCharge;
+
+				if (player->wavedash >= MIN_WAVEDASH_CHARGE && (player->wavedash - addCharge) < MIN_WAVEDASH_CHARGE)
+					S_StartSound(player->mo, sfx_waved5);
+
+				// RadioRacers: Really gross.
+				if (cv_morerumbleevents.value && P_IsMachineLocalPlayer(player))
+				{
+					localPlayerWavedashClickTimer = 5;
+				}
+			}
+		}
+
+			if (abs(player->aizdrifttilt) < ANGLE_22h)
+			{
+				player->aizdrifttilt =
+					(abs(player->aizdrifttilt) + ANGLE_11hh / 4) *
+					player->aizdriftstrat;
+			}
+
+			if (abs(player->aizdriftturn) < ANGLE_112h)
+			{
+				player->aizdriftturn =
+					(abs(player->aizdriftturn) + ANGLE_11hh) *
+					player->aizdriftstrat;
+			}
+
+	}
+
+	/*
+	if (player->mo->eflags & MFE_UNDERWATER)
+		player->aizdriftstrat = 0;
+	*/
+
+	if (cv_ng_wavedash.value)
+	{
+		if (!K_Sliptiding(player) || extendedSliptide)
+		{
+			if (!extendedSliptide && K_IsLosingWavedash(player) && player->wavedash > 0)
+			{
+				if (player->wavedash > HIDEWAVEDASHCHARGE && !S_SoundPlaying(player->mo, sfx_waved2))
+					S_StartSoundAtVolume(player->mo, sfx_waved2,
+						Easing_InSine(
+							min(FRACUNIT, FRACUNIT * player->wavedash / MIN_WAVEDASH_CHARGE),
+							120,
+							255
+						)
+					); // Losing combo time, going to boost
+				S_StopSoundByID(player->mo, sfx_waved1);
+				S_StopSoundByID(player->mo, sfx_waved4);
+				player->wavedashdelay++;
+				if (player->wavedashdelay > TICRATE/2)
+				{
+					if (player->wavedash > HIDEWAVEDASHCHARGE)
+					{
+						fixed_t maxZipPower = 2*FRACUNIT;
+						fixed_t minZipPower = 1*FRACUNIT;
+						fixed_t powerSpread = maxZipPower - minZipPower;
+
+						int minPenalty = 2*1 + (9-9); // Kinda doing a similar thing to driftspark stage timers here.
+						int maxPenalty = 2*9 + (9-1); // 1/9 gets max, 9/1 gets min, everyone else gets something in between.
+						int penaltySpread = maxPenalty - minPenalty;
+						int yourPenalty = 2*player->kartspeed + (9 - player->kartweight); // And like driftsparks, speed hurts double.
+
+						yourPenalty -= minPenalty; // Normalize; minimum penalty should take away 0 power.
+
+						fixed_t yourPowerReduction = FixedDiv(yourPenalty * FRACUNIT, penaltySpread * FRACUNIT);
+						fixed_t yourPower = maxZipPower - FixedMul(yourPowerReduction, powerSpread);
+						int yourBoost = FixedInt(FixedMul(yourPower, player->wavedash/10 * FRACUNIT));
+
+						// Award boost.
+						player->wavedashboost += yourBoost;
+
+						// Set power of the resulting boost.
+						player->wavedashpower = min(FRACUNIT, FRACUNIT * player->wavedash / MIN_WAVEDASH_CHARGE);
+
+						// Scale boost sound to power.
+						S_StartSoundAtVolume(player->mo, sfx_waved3,
+							Easing_InSine(
+								player->wavedashpower,
+								120,
+								255
+							)
+						);
+
+						K_SpawnDriftBoostExplosion(player, 0);
+					}
+					S_StopSoundByID(player->mo, sfx_waved1);
+					S_StopSoundByID(player->mo, sfx_waved2);
+					S_StopSoundByID(player->mo, sfx_waved4);
+					player->wavedash = 0;
+					player->wavedashdelay = 0;
+				}
+			}
+			else
+			{
+				S_StopSoundByID(player->mo, sfx_waved1);
+				S_StopSoundByID(player->mo, sfx_waved2);
+				if (player->wavedash > 0 && !S_SoundPlaying(player->mo, sfx_waved4))
+					S_StartSoundAtVolume(player->mo, sfx_waved4, 255); // Passive woosh
+			}
+
+			player->aizdrifttilt -= player->aizdrifttilt / 4;
+			player->aizdriftturn -= player->aizdriftturn / 4;
+
+			if (abs(player->aizdrifttilt) < ANGLE_11hh / 4)
+				player->aizdrifttilt = 0;
+			if (abs(player->aizdriftturn) < ANGLE_11hh)
+				player->aizdriftturn = 0;
+		}
+		else
+		{
+			player->wavedashdelay = 0;
+			S_StopSoundByID(player->mo, sfx_waved2);
+			S_StopSoundByID(player->mo, sfx_waved4);
+			if (player->wavedash > HIDEWAVEDASHCHARGE && !S_SoundPlaying(player->mo, sfx_waved1))
+				S_StartSoundAtVolume(player->mo, sfx_waved1, 255); // Charging
+		}
+	}
+	else
+	{
+		if (!K_Sliptiding(player) || extendedSliptide)
+		{
+			player->aizdrifttilt -= player->aizdrifttilt / 4;
+			player->aizdriftturn -= player->aizdriftturn / 4;
+
+			if (abs(player->aizdrifttilt) < ANGLE_11hh / 4)
+				player->aizdrifttilt = 0;
+			if (abs(player->aizdriftturn) < ANGLE_11hh)
+				player->aizdriftturn = 0;
+		}
+	}
+
+	if (player->drift
+		&& ((buttons & BT_BRAKE)
+		|| !(buttons & BT_ACCELERATE))
+		&& P_IsObjectOnGround(player->mo))
+	{
+		if (!(player->pflags & PF_BRAKEDRIFT))
+			K_SpawnBrakeDriftSparks(player);
+		player->pflags |= PF_BRAKEDRIFT;
+	}
+	else
+		player->pflags &= ~PF_BRAKEDRIFT;
 }
 

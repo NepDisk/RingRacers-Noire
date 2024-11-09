@@ -159,11 +159,15 @@ boolean K_BananaBallhogCollide(mobj_t *t1, mobj_t *t2)
 
 boolean K_EggItemCollide(mobj_t *t1, mobj_t *t2)
 {
-	// Push fakes out of other item boxes
-	if (t2->type == MT_RANDOMITEM || t2->type == MT_EGGMANITEM)
+
+	if (!cv_ng_oldeggman.value && !( G_CompatLevel(0x1001) || G_CompatLevel(0x1000)))
 	{
-		P_InstaThrust(t1, R_PointToAngle2(t2->x, t2->y, t1->x, t1->y), t2->radius/4);
-		return true;
+		// Push fakes out of other item boxes
+		if (t2->type == MT_RANDOMITEM || t2->type == MT_EGGMANITEM)
+		{
+			P_InstaThrust(t1, R_PointToAngle2(t2->x, t2->y, t1->x, t1->y), t2->radius/4);
+			return true;
+		}
 	}
 
 	if (t2->player)
@@ -175,6 +179,9 @@ boolean K_EggItemCollide(mobj_t *t1, mobj_t *t2)
 			return true;
 
 		if (!P_CanPickupItem(t2->player, 2))
+			return true;
+
+		if ((!cv_ng_eggboxinvinpickup.value && t2->player->invincibilitytimer) || (!cv_ng_eggboxinvinpickup.value && (t2->player->growshrinktimer > 0)))
 			return true;
 
 		K_DropItems(t2->player);
@@ -1169,15 +1176,50 @@ boolean K_PvPTouchDamage(mobj_t *t1, mobj_t *t2)
 		};
 	};
 
-	// Cause tumble on invincibility
+	// Cause tumble
 	auto shouldTumble = [](mobj_t *t1, mobj_t *t2)
 	{
-		return (t1->player->invincibilitytimer > 0);
+		return false;
 	};
 
 	if (forEither(shouldTumble, doDamage(DMG_TUMBLE)))
 	{
 		return true;
+	}
+
+	{
+		UINT8 damagetype;
+
+		// Cause damage on invincibility
+		auto shouldInvin = [](mobj_t *t1, mobj_t *t2)
+		{
+			return (t1->player->invincibilitytimer > 0);
+		};
+
+		auto doStumble = [](mobj_t *t1, mobj_t *t2)
+		{
+			K_StumblePlayer(t2->player);
+		};
+
+		if (cv_ng_invincibilitydamage.value == 0)
+			damagetype = DMG_NORMAL;
+		else if (cv_ng_invincibilitydamage.value == 1)
+			damagetype = DMG_TUMBLE;
+
+		if ((cv_ng_invincibilitydamage.value == 0) || (cv_ng_invincibilitydamage.value == 1))
+		{
+			if (forEither(shouldInvin, doDamage(damagetype)))
+			{
+				return true;
+			}
+		}
+		else
+		{
+			if (forEither(shouldInvin, doStumble))
+			{
+				return true;
+			}
+		}
 	}
 
 	// Flame Shield dash damage
@@ -1210,10 +1252,10 @@ boolean K_PvPTouchDamage(mobj_t *t1, mobj_t *t2)
 		}
 	}
 
-	// Cause stumble on scale difference
+	// Cause stumble
 	auto shouldStumble = [](mobj_t *t1, mobj_t *t2)
 	{
-		return K_IsBigger(t1, t2);
+		return false;
 	};
 
 	auto doStumble = [](mobj_t *t1, mobj_t *t2)
@@ -1224,6 +1266,36 @@ boolean K_PvPTouchDamage(mobj_t *t1, mobj_t *t2)
 	if (forEither(shouldStumble, doStumble))
 	{
 		return true;
+	}
+
+	{
+		UINT8 damagetype;
+
+		// Cause damage on invincibility
+		auto shouldGrow = [](mobj_t *t1, mobj_t *t2)
+		{
+			return K_IsBigger(t1, t2);
+		};
+
+		if (cv_ng_growdamage.value == 0)
+			damagetype = DMG_NORMAL;
+		else if (cv_ng_growdamage.value == 1)
+			damagetype = DMG_TUMBLE;
+
+		if ((cv_ng_growdamage.value == 0) || (cv_ng_growdamage.value == 1))
+		{
+			if (forEither(shouldGrow, doDamage(damagetype)))
+			{
+				return true;
+			}
+		}
+		else
+		{
+			if (forEither(shouldGrow, doStumble))
+			{
+				return true;
+			}
+		}
 	}
 
 	if (cv_ng_ringsting.value)

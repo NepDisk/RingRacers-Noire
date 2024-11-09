@@ -137,7 +137,7 @@ typedef enum
 //
 typedef enum
 {
-	NF_OLDTRICKS			= 1<<0, // Pre 2.2 tricks.
+	NFE_OLDTRICKS			= 1<<0, // Pre 2.2 tricks.
 } nflags_t;
 
 typedef enum

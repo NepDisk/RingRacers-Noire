@@ -19,6 +19,77 @@ Choices: "16 bits", "24 bits"
 
 Decides what how many bits should be used in palette rendering. "16 bits" is what software looks like in game and "24 bits" is what software looks like in screenshots.
 
+### Radio Racers Hud Menu
+
+#### ringsonplayer
+Default Value: "Vanilla"
+
+Choices: :"Vanilla", "Custom"
+
+When set to "Custom" the ring counter will be drawn under the player.
+
+#### ringsonplayeryoffset
+Default Value: "None"
+
+Value used for y offset of ring counter when its near the player.
+Useful to move it out of the way of Lua hud elements such as driftgauge.
+
+#### rouletteonplayer
+Default Value: "Vanilla"
+
+Choices: "Vanilla", "Custom"
+
+When set to "Custom" the roulette will be drawn near the player.
+
+#### ringbox_roulette_player_scale
+Default Value: "60%"
+
+Choices: "40%", "50%", "60%", "70%", "80%", "90%", "100%"
+
+Sets the scale of the ring roulette when its drawn near the player.
+
+#### item_roulette_player_scale
+Default Value: "60%"
+
+Choices: "40%", "50%", "60%", "70%", "80%", "90%", "100%"
+
+Sets the scale of the item roulette when its drawn near the player.
+
+#### ringbox_roulette_player_position
+Default Value: "Right"
+
+Choices: "Left", "Right", "Above"
+
+Sets the position of the ring roulette when its near the player
+
+#### item_roulette_player_position
+Default Value: "Right"
+
+Choices: "Left", "Right", "Above"
+
+Sets the position of the item roulette when its near the player
+
+#### hidecountdown
+Default Value: "Off"
+
+Choices: "Off", "On"
+
+When enabled it hides the letters at the start of the race
+
+#### hideposition
+Default Value: "Off"
+
+Choices: "Off", "On"
+
+When enabled it hides the position bulbs at the start of the race
+
+#### hidelapemblem
+Default Value: "Off"
+
+Choices: "Off", "On"
+
+When enabled it hides the lap emblem when you start a new lap
+
 ### Noire Menu
 
 #### holdscoreboardbutton
@@ -104,6 +175,13 @@ Default Value: ""
 
 Set this value to the lump name of an audio track to use that for the spectator music.
 
+#### votinggrayscale
+Default Value: "On"
+
+Choices: "Off", "On"
+
+Decides if unselected maps in voting are grey'd out.
+
 #### postracemusic
 Default Value: "Off"
 
@@ -146,6 +224,78 @@ Choices: "Off", "On"
 
 Sets if oldtricks is enabled, this is profile tied so its probably better to set there.
 
+### RadioRacers Menu
+
+#### votesnitch
+Default Value: "On"
+
+Choices: "Off", "On"
+
+Shows what players voted during a Z-Vote.
+
+#### morerumbleevents
+Default Value: "On"
+
+Choices: "Off", "On"
+
+Enables / disables RadioRacers' extra rumble feedback.
+
+#### rr_rumble_wall_bump
+Default Value: "On"
+
+Choices: "Off", "On"
+
+Enables / disables rumble on wall hit.
+
+#### rr_rumble_fastfall_bounce
+Default Value: "On"
+
+Choices: "Off", "On"
+
+Enables / disables rumble on fast fall bounce.
+
+#### rr_rumble_drift
+Default Value: "On"
+
+Choices: "Off", "On"
+
+Enables / disables rumble on drifting.
+
+#### cv_rr_rumble_spindash
+Default Value: "On"
+
+Choices: "Off", "On"
+
+Enables / disables rumble on spindashing.
+
+#### rr_rumble_tailwhip
+Default Value: "On"
+
+Choices: "Off", "On"
+
+Enables / disables rumble on instawhip.
+
+#### rr_rumble_tailwhip
+Default Value: "On"
+
+Choices: "Off", "On"
+
+Enables / disables rumble on instawhip.
+
+#### rr_rumble_rings
+Default Value: "On"
+
+Choices: "Off", "On"
+
+Enables / disables rumble on ring usage.
+
+#### cv_rr_rumble_wavedash
+Default Value: "On"
+
+Choices: "Off", "On"
+
+Enables / disables rumble on wavedashing.
+
 ## Gameplay Cvars
 These are Cvars the affect the actual gameplay. These values are netsynched but not saved.
 
@@ -167,9 +317,13 @@ The total amount of rings a player is allowed to have at one time.
 #### ng_spillcap
 Default Value: 20
 
-Choices: "Off", "On"
-
 The maximum amount of rings to be dropped at once.
+
+#### ng_durationcap
+Default Value: 0
+
+The maximum amount of ringboost a player can have at once in tics. Can be used to nerf jackpot and ring stacking.
+Zero means disabled.
 
 #### ng_ringdebt
 Default Value: "On"
@@ -198,11 +352,7 @@ Choices: "Off", "On"
 Sets if rings can spawn on map start.
 
 #### ng_mapringcapsules
-Default Value: "On"
-
-Choices: "Off", "On"
-
-Sets if ring capsules can spawn on map start.
+This is deprecated, please use capsules_superring instead.
 
 #### ng_mapringboxes
 Default Value: "On"
@@ -217,6 +367,13 @@ Default Value: "On"
 Choices: "Off", "On"
 
 Sets if itemboxes turn into ringboxes on pickup.
+
+#### ng_trickrings
+Default Value: "On"
+
+Choices: "Off", "On"
+
+Sets if tricks give you rings.
 
 #### Items
 Cvars here all relate to items
@@ -312,9 +469,16 @@ Default Value: "Ring Racers"
 
 Choices: "Ring Racers", "Kart"
 
-Decides behaviour of Shrink.
+Decides behaviour of Eggmarks.
 
-SRB2Kart Shrink causes players ahead of the user to shrink down in size instantly on use and makes them drop their  current items.
+SRB2Kart Eggmarks don't have the speed up or transfer ability ability and the timer is 4 seconds instead of 6.
+
+#### ng_eggmaninvinpickup
+Default Value: "Off"
+
+Choices: "Off", "On"
+
+Decides if the player can pick up Eggmarks while using Grow or Invincibility
 
 #### ng_nerfdroptarget
 Default Value: "Off"
@@ -365,6 +529,160 @@ Default Value: 2048
 
 Magic distance value that is used in the item odds system calculations. For a good idea of what this does enable debugitemodds and look what it does.
 
+#### capsule_sneaker
+Default Value: "On"
+
+Choices: "Off", "On"
+
+Enable/Disable sneakers appearing in capsules.
+
+#### capsule_rocketsneaker
+Default Value: "On"
+
+Choices: "Off", "On"
+
+Enable/Disable rocket sneakers appearing in capsules.
+
+#### capsule_invincibility
+Default Value: "On"
+
+Choices: "Off", "On"
+
+Enable/disable invincibility appearing in capsules.
+
+#### capsule_banana
+Default Value: "On"
+
+Choices: "Off", "On"
+
+Enable/disable bananas appearing in capsules.
+
+#### capsule_eggmark
+Default Value: "On"
+
+Choices: "Off", "On"
+
+Enable/disable eggmarks appearing in capsules.
+
+#### capsule_orbinaut
+Default Value: "On"
+
+Choices: "Off", "On"
+
+Enable/disable orbinauts appearing in capsules.
+
+#### capsule_jawz
+Default Value: "On"
+
+Choices: "Off", "On"
+
+Enable/disable jawz appearing in capsules.
+
+#### capsule_mine
+Default Value: "On"
+
+Choices: "Off", "On"
+
+Enable/disable mines appearing in capsules.
+
+#### capsule_landmine
+Default Value: "On"
+
+Choices: "Off", "On"
+
+Enable/disable landmines appearing in capsules.
+
+#### capsule_ballhog
+Default Value: "On"
+
+Choices: "Off", "On"
+
+Enable/disable ballhogs appearing in capsules.
+
+#### capsule_selfpropelledbomb
+Default Value: "On"
+
+Choices: "Off", "On"
+
+Enable/disable SPBs appearing in capsules.
+
+#### capsule_grow
+Default Value: "On"
+
+Choices: "Off", "On"
+
+Enable/disable grow appearing in capsules.
+
+#### capsule_shrink
+Default Value: "On"
+
+Choices: "Off", "On"
+
+Enable/disable shrink appearing in capsules.
+
+#### capsule_lightningshield
+Default Value: "On"
+
+Choices: "Off", "On"
+
+Enable/disable lightningshields appearing in capsules.
+
+#### capsule_bubbleshield
+Default Value: "On"
+
+Choices: "Off", "On"
+
+Enable/disable bubbleshields appearing in capsules.
+
+#### capsule_flameshield
+Default Value: "On"
+
+Choices: "Off", "On"
+
+Enable/disable flameshields appearing in capsules.
+
+#### capsule_hyudoro
+Default Value: "On"
+
+Choices: "Off", "On"
+
+Enable/disable hyudoros appearing in capsules.
+
+#### capsule_superring
+Default Value: "On"
+
+Choices: "Off", "On"
+
+Enable/disable superrings appearing in capsules.
+
+#### capsule_kitchensink
+Default Value: "On"
+
+Choices: "Off", "On"
+
+Enable/disable kictenshinks appearing in capsules.
+
+#### capsule_droptarget
+Default Value: "On"
+
+Choices: "Off", "On"
+
+Enable/disable droptargets appearing in capsules.
+
+#### capsule_gardentop
+Default Value: "On"
+
+Choices: "Off", "On"
+
+Enable/disable garden tops appearing in capsules.
+
+#### capsule_gachabom
+Default Value: "On"
+
+Choices: "Off", "On"
+
+Enable/disable gachaboms appearing in capsules.
+
 ### Mechanics
 Cvars here all related to general game mechanics.
 
@@ -402,15 +720,29 @@ Default Value: "On"
 Choices: "Off", "On"
 
 Sets if the player should be affected by tumble.
-
-If tumble is disabled, Invincibility will spinout instead.
+Converts it to spinout if on.
 
 #### ng_stumble
 Default Value: "On"
 
 Choices: "Off", "On"
 
-Sets if the player should be affected by stumble.
+Sets if the player should be affected by stumble at all.
+Converts it to spinout if on.
+
+#### ng_invincibilitydamage
+Default Value: "Tumble"
+
+Choices: "Spinout", "Tumble", "Stumble"
+
+Sets what type of damage Invincibility does.
+
+#### ng_growdamage
+Default Value: "Stumble"
+
+Choices: "Spinout", "Tumble", "Stumble"
+
+Sets what type of damage Invincibility does.
 
 If stumble is disabled, Grow will spinout instead.
 
@@ -434,6 +766,20 @@ Default Value: "On"
 Choices: "Off", "On"
 
 Sets if the player should be allowed to be combo'd by damage sources.
+
+#### ng_triangledash
+Default Value: "On"
+
+Choices: "Off", "Downward Thrust Only", "Forward Thrust Only", "On"
+
+Determines how Triangle dashing will work.
+
+#### ng_olddrift
+Default Value: "Ring Racers"
+
+Choices: "Ring Racers", "Kart"
+
+Determines how drifting will work
 
 #### ng_mapanger
 Default Value: 2
@@ -526,6 +872,13 @@ Choices: "Off", "On"
 
 Sets if overcharging the spindash hurts the player.
 
+#### ng_spindashforcedesperation
+Default Value: "Off"
+
+Choices: "Off", "On"
+
+Sets if player should always have the fast spindash.
+
 #### ng_slopephysics
 Default Value: "On"
 
@@ -550,10 +903,20 @@ When enabled this give the player a boost when going up slopes to make them less
 Good for when you want the downward slopeboost but not the slowdown from going up.
 Also good for ringless setups as it makes it possible to climb steep slopes without boosts.
 
-#### ng_slopehelper_speedboost
+#### ng_slopehelper_speedboostgear1
+Default Value: "1.7"
+
+Speed value used for slopehelper speedboost calculation in gear 1.
+
+#### ng_slopehelper_speedboostgear2
+Default Value: "1.5"
+
+Speed value used for slopehelper speedboost calculation in gear 2.
+
+#### ng_slopehelper_speedboostgear3
 Default Value: "1.2"
 
-Speed value used for sloehelper speedboost calculation.
+Speed value used for slopehelper speedboost calculation in gear 2.
 
 #### ng_slopehelper_accelboost
 Default Value: "1.25"

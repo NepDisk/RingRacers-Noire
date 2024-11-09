@@ -13,6 +13,7 @@
 #include "../../m_random.h"
 #include "../n_cvar.h"
 #include "../../g_demo.h"
+#include "../../k_grandprix.h"
 
 void N_DoHyudoroSteal(player_t *player)
 {
@@ -94,6 +95,7 @@ void N_DoShrink(player_t *user)
 	INT32 i;
 
 	S_StartSound(user->mo, sfx_kc46); // Sound the BANG!
+	K_SetItemCooldown(KITEM_SHRINK, TICRATE*30);
 
 	for (i = 0; i < MAXPLAYERS; i++)
 	{
@@ -178,3 +180,15 @@ UINT8 N_NoireItemOddsRace[NUMKARTRESULTS-1][8] =
 	{ 0, 0, 1, 2, 1, 0, 0, 0 }, // Jawz x2
 	{ 0, 0, 0, 0, 0, 0, 0, 0 }  // Gachabom x3
 };
+
+boolean N_CapsuleItemEnabled(kartitems_t item)
+{
+	if (K_CanChangeRules(true) == false)
+	{
+		// Force all items to be enabled.
+		return true;
+	}
+
+	// Allow the user preference.
+	return cv_capsuleitems[item - 1].value;
+}

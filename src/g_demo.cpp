@@ -172,9 +172,10 @@ demoghost *ghosts = NULL;
 // - 0x000C (Ring Racers v2.2)
 // - 0x000D (Ring Racers v2.3)
 // - 0x1000 (Ring Racers Noire v1.0)
-// - 0x1001 (Ring Racers Noire v1.0)
+// - 0x1001 (Ring Racers Noire v1.1)
+// - 0x1002 (Ring Racers Noire v1.2)
 
-#define DEMOVERSION 0x1001
+#define DEMOVERSION 0x1002
 
 boolean G_CompatLevel(UINT16 level)
 {
@@ -2320,7 +2321,7 @@ void G_BeginRecording(void)
 				i |= DEMO_AUTORING;
 			if (player->pflags & PF_SHRINKME)
 				i |= DEMO_SHRINKME;
-			if (player->nflags & NF_OLDTRICKS)
+			if (player->nflags & NFE_OLDTRICKS)
 				i |= DEMO_OLDTRICKS;
 			if (player->bot == true)
 				i |= DEMO_BOT;
@@ -2537,6 +2538,7 @@ UINT8 G_CmpDemoTime(char *oldname, char *newname)
 	case 0x000C: // 2.2
 	case 0x000D: // 2.3
 	case 0x1000: // Noire 1.0
+	case 0x1001: // Noire 1.1
 		break;
 	// too old, cannot support.
 	default:
@@ -2691,6 +2693,7 @@ void G_LoadDemoInfo(menudemo_t *pdemo, boolean allownonmultiplayer)
 	case 0x000C: // 2.2
 	case 0x000D: // 2.3
 	case 0x1000: // Noire 1.0
+	case 0x1001: // Noire 1.1
 		if (P_SaveBufferRemaining(&info) < 64)
 		{
 			goto corrupt;
@@ -3123,6 +3126,7 @@ void G_DoPlayDemoEx(const char *defdemoname, lumpnum_t deflumpnum)
 	case 0x000C: // 2.2
 	case 0x000D: // 2.3
 	case 0x1000: // Noire 1.0
+	case 0x1001: // Noire 1.1
 		break;
 	// too old, cannot support.
 	default:
@@ -3423,9 +3427,9 @@ void G_DoPlayDemoEx(const char *defdemoname, lumpnum_t deflumpnum)
 			players[p].pflags &= ~PF_SHRINKME;
 
 		if (flags & DEMO_OLDTRICKS)
-			players[p].nflags |= NF_OLDTRICKS;
+			players[p].nflags |= NFE_OLDTRICKS;
 		else
-			players[p].nflags &= ~NF_OLDTRICKS;
+			players[p].nflags &= ~NFE_OLDTRICKS;
 
 		if ((players[p].bot = bot) == true)
 		{
@@ -3595,6 +3599,7 @@ void G_AddGhost(savebuffer_t *buffer, const char *defdemoname)
 	case 0x000C: // 2.2
 	case 0x000D: // 2.3
 	case 0x1000: // Noire 1.0
+	case 0x1001: // Noire 1.1
 		break;
 	// too old, cannot support.
 	default:
@@ -3860,6 +3865,7 @@ staffbrief_t *G_GetStaffGhostBrief(UINT8 *buffer)
 		case 0x000C: // 2.2
 		case 0x000D: // 2.3
 		case 0x1000: // Noire 1.0
+		case 0x1001: // Noire 1.1
 			break;
 
 		// too old, cannot support.

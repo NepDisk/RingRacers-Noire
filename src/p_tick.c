@@ -53,6 +53,9 @@
 #include "k_hud.h" // messagetimer
 #include "k_endcam.h"
 
+// RadioRacers
+#include "radioracers/rr_controller.h"
+
 #include "lua_profile.h"
 
 #ifdef PARANOIA
@@ -739,11 +742,27 @@ static inline void P_DeviceRumbleTick(void)
 		UINT16 low = 0;
 		UINT16 high = 0;
 
+		// RadioRacers: Yeah.
+		rumbleevent_e rumbleEvent;
+
 		if (player->mo != NULL && !player->exiting)
 		{
 			if ((player->mo->eflags & MFE_DAMAGEHITLAG) && player->mo->hitlag)
 			{
 				low = high = 65536 / 2;
+			}
+			else if (
+				RR_ShouldUseMoreRumbleEvents() && 
+				(rumbleEvent = RR_GetRumbleEvent(player)) != 0
+			)
+			{
+				low = high =  RR_GetRumbleStrength(rumbleEvent);
+
+				// RadioRacers: Really gross.
+				if (P_IsMachineLocalPlayer(player) && localPlayerWavedashClickTimer > 0)
+				{
+					localPlayerWavedashClickTimer--;
+				}
 			}
 			else if (player->sneakertimer > (sneakertime-(TICRATE/2)))
 			{

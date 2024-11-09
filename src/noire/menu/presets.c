@@ -21,13 +21,14 @@ void N_RRVanillaPreset(INT32 choice)
 	CV_Set(&cv_ng_rings, "On");
 	CV_SetValue(&cv_ng_ringcap, 20);
 	CV_SetValue(&cv_ng_spillcap, 20);
+	CV_Set(&cv_ng_durationcap, "Off");
 	CV_Set(&cv_ng_ringdebt, "On");
 	CV_Set(&cv_ng_ringsting, "On");
 	CV_SetValue(&cv_ng_ringdeathmark, -20);
 	CV_Set(&cv_ng_maprings, "On");
-	CV_Set(&cv_ng_mapringcapsules, "On");
 	CV_Set(&cv_ng_mapringboxes, "On");
 	CV_Set(&cv_ng_ringboxtransform, "On");
+	CV_Set(&cv_ng_trickrings, "On");
 
 	// Items
 	CV_Set(&cv_ng_forceoldboxscale, "Off");
@@ -41,6 +42,7 @@ void N_RRVanillaPreset(INT32 choice)
 	CV_StealthSet(&cv_ng_oldgrow, "Ring Racers");
 	CV_StealthSet(&cv_ng_oldshrink, "Ring Racers");
 	CV_StealthSet(&cv_ng_oldeggman, "Ring Racers");
+	CV_Set(&cv_ng_eggboxinvinpickup, "On");
 	CV_Set(&cv_ng_nerfdroptarget, "Off");
 	CV_Set(&cv_ng_nerfflameshield, "Off");
 	CV_Set(&cv_ng_nerfflameshielddiminish, "1.2");
@@ -49,6 +51,13 @@ void N_RRVanillaPreset(INT32 choice)
 	CV_Set(&cv_ng_forceautoroulette, "Off");
 	CV_SetValue(&cv_distvar, 2048);
 
+	for (int i = 0; i < NUMKARTITEMS-1; i++)
+	{
+		CV_Set(&cv_capsuleitems[i], "On");
+	}
+
+	CV_Set(&cv_capsuleitems[KITEM_SUPERRING-1], "On");
+
 	// Mechanics
 	CV_Set(&cv_ng_fastfall, "On");
 	CV_Set(&cv_ng_fastfallbounce, "On");
@@ -56,9 +65,13 @@ void N_RRVanillaPreset(INT32 choice)
 	CV_Set(&cv_ng_wavedash, "On");
 	CV_Set(&cv_ng_tumble, "On");
 	CV_Set(&cv_ng_stumble, "On");
+	CV_Set(&cv_ng_invincibilitydamage, "Tumble");
+	CV_Set(&cv_ng_growdamage, "Stumble");
 	CV_Set(&cv_ng_safelanding, "On");
 	CV_Set(&cv_ng_hitlag, "On");
 	CV_Set(&cv_ng_combo, "On");
+	CV_Set(&cv_ng_triangledash, "On");
+	CV_Set(&cv_ng_olddrift, "Ring Racers");
 	CV_SetValue(&cv_ng_mapanger, 2);
 	CV_Set(&cv_ng_tripwires, "On");
 	CV_Set(&cv_ng_forcenoposition, "Off");
@@ -76,11 +89,14 @@ void N_RRVanillaPreset(INT32 choice)
 	CV_SetValue(&cv_ng_spindashthreshold, 6);
 	CV_SetValue(&cv_ng_spindashcharge, 0);
 	CV_Set(&cv_ng_spindashoverheat, "On");
+	CV_Set(&cv_ng_desperationforce, "Off");
 
 	CV_Set(&cv_ng_butteredslopes, "On");
 	CV_Set(&cv_ng_slopeclimb, "On");
 	CV_Set(&cv_ng_slopehelper, "Off");
-	CV_Set(&cv_ng_slopehelperspeedboost, "1.2");
+	CV_Set(&cv_ng_slopehelperspeedboostg1, "1.8");
+	CV_Set(&cv_ng_slopehelperspeedboostg2, "1.5");
+	CV_Set(&cv_ng_slopehelperspeedboostg3, "1.2");
 	CV_Set(&cv_ng_slopehelperaccelboost, "1.25");
 	CV_Set(&cv_ng_stairjank, "All");
 	CV_Set(&cv_ng_turnstyle, "Vanilla");
@@ -108,13 +124,14 @@ void N_NoirePreset(INT32 choice)
 	CV_Set(&cv_ng_rings, "Off");
 	CV_SetValue(&cv_ng_ringcap, 0);
 	CV_SetValue(&cv_ng_spillcap, 0);
+	CV_Set(&cv_ng_durationcap, "Off");
 	CV_Set(&cv_ng_ringdebt, "Off");
 	CV_Set(&cv_ng_ringsting, "Off");
 	CV_SetValue(&cv_ng_ringdeathmark, -20);
 	CV_Set(&cv_ng_maprings, "Off");
-	CV_Set(&cv_ng_mapringcapsules, "Off");
 	CV_Set(&cv_ng_mapringboxes, "Off");
 	CV_Set(&cv_ng_ringboxtransform, "Off");
+	CV_Set(&cv_ng_trickrings, "Off");
 
 	// Items
 	CV_Set(&cv_ng_forceoldboxscale, "Off");
@@ -127,7 +144,8 @@ void N_NoirePreset(INT32 choice)
 	CV_StealthSet(&cv_ng_oldinvincibility, "Kart");
 	CV_StealthSet(&cv_ng_oldgrow, "Kart");
 	CV_StealthSet(&cv_ng_oldshrink, "Kart");
-	CV_StealthSet(&cv_ng_oldeggman, "Ring Racers");
+	CV_StealthSet(&cv_ng_oldeggman, "Kart");
+	CV_Set(&cv_ng_eggboxinvinpickup, "Off");
 	CV_Set(&cv_ng_nerfdroptarget, "On");
 	CV_Set(&cv_ng_nerfflameshield, "On");
 	CV_Set(&cv_ng_nerfflameshielddiminish, "1.2");
@@ -136,17 +154,28 @@ void N_NoirePreset(INT32 choice)
 	CV_Set(&cv_ng_forceautoroulette, "On");
 	CV_SetValue(&cv_distvar, 2048);
 
+	for (int i = 0; i < NUMKARTITEMS-1; i++)
+	{
+		CV_Set(&cv_capsuleitems[i], "On");
+	}
+
+	CV_Set(&cv_capsuleitems[KITEM_SUPERRING-1], "Off");
+
 	// Mechanics
 	CV_Set(&cv_ng_fastfall, "On");
 	CV_Set(&cv_ng_fastfallbounce, "Bubble Shield");
 	CV_Set(&cv_ng_draft, "Off");
-	CV_Set(&cv_ng_wavedash, "Off");
+	CV_Set(&cv_ng_wavedash, "On");
 	CV_Set(&cv_ng_tumble, "Off");
 	CV_Set(&cv_ng_stumble, "Off");
+	CV_Set(&cv_ng_invincibilitydamage, "Spinout");
+	CV_Set(&cv_ng_growdamage, "Spinout");
 	CV_Set(&cv_ng_safelanding, "Off");
 	CV_Set(&cv_ng_hitlag, "Off");
 	CV_Set(&cv_ng_combo, "Off");
-	CV_SetValue(&cv_ng_mapanger, 0);
+	CV_Set(&cv_ng_triangledash, "Forward Thrust Only");
+	CV_Set(&cv_ng_olddrift, "Ring Racers");
+	CV_SetValue(&cv_ng_mapanger, -1);
 	CV_Set(&cv_ng_tripwires, "On");
 	CV_Set(&cv_ng_forcenoposition, "Off");
 	CV_Set(&cv_ng_dospecialstage, "On");
@@ -163,11 +192,14 @@ void N_NoirePreset(INT32 choice)
 	CV_SetValue(&cv_ng_spindashthreshold, 6);
 	CV_SetValue(&cv_ng_spindashcharge, 0);
 	CV_Set(&cv_ng_spindashoverheat, "On");
+	CV_Set(&cv_ng_desperationforce, "On");
 
 	CV_Set(&cv_ng_butteredslopes, "On");
 	CV_Set(&cv_ng_slopeclimb, "Off");
 	CV_Set(&cv_ng_slopehelper, "On");
-	CV_Set(&cv_ng_slopehelperspeedboost, "1.2");
+	CV_Set(&cv_ng_slopehelperspeedboostg1, "1.8");
+	CV_Set(&cv_ng_slopehelperspeedboostg2, "1.5");
+	CV_Set(&cv_ng_slopehelperspeedboostg3, "1.2");
 	CV_Set(&cv_ng_slopehelperaccelboost, "1.25");
 	CV_Set(&cv_ng_stairjank, "None");
 	CV_Set(&cv_ng_turnstyle, "V1");
@@ -176,7 +208,7 @@ void N_NoirePreset(INT32 choice)
 	CV_Set(&cv_ng_nophysicsflag, "On");
 	CV_Set(&cv_ng_oldboostpower, "Off");
 	CV_Set(&cv_ng_oldspeedcalc, "Off");
-	CV_SetValue(&cv_ng_airspeedcap, 75);
+	CV_SetValue(&cv_ng_airspeedcap, 60);
 	CV_Set(&cv_ng_botrubberbandboost, "On");
 	CV_Set(&cv_ng_charsetrivals, "Off");
 	CV_Set(&cv_ng_rivals, "Off");
@@ -194,13 +226,14 @@ void N_SRB2KPreset(INT32 choice)
 	CV_Set(&cv_ng_rings, "Off");
 	CV_SetValue(&cv_ng_ringcap, 0);
 	CV_SetValue(&cv_ng_spillcap, 0);
+	CV_Set(&cv_ng_durationcap, "Off");
 	CV_Set(&cv_ng_ringdebt, "Off");
 	CV_Set(&cv_ng_ringsting, "Off");
 	CV_SetValue(&cv_ng_ringdeathmark, -20);
 	CV_Set(&cv_ng_maprings, "Off");
-	CV_Set(&cv_ng_mapringcapsules, "Off");
 	CV_Set(&cv_ng_mapringboxes, "Off");
 	CV_Set(&cv_ng_ringboxtransform, "Off");
+	CV_Set(&cv_ng_trickrings, "Off");
 
 	// Items
 	CV_Set(&cv_ng_forceoldboxscale, "Off");
@@ -214,6 +247,7 @@ void N_SRB2KPreset(INT32 choice)
 	CV_StealthSet(&cv_ng_oldgrow, "Kart");
 	CV_StealthSet(&cv_ng_oldshrink, "Kart");
 	CV_StealthSet(&cv_ng_oldeggman, "Kart");
+	CV_Set(&cv_ng_eggboxinvinpickup, "Off");
 	CV_Set(&cv_ng_nerfdroptarget, "On");
 	CV_Set(&cv_ng_nerfflameshield, "On");
 	CV_Set(&cv_ng_nerfflameshielddiminish, "1.2");
@@ -222,6 +256,13 @@ void N_SRB2KPreset(INT32 choice)
 	CV_Set(&cv_ng_forceautoroulette, "On");
 	CV_SetValue(&cv_distvar, 2048);
 
+	for (int i = 0; i < NUMKARTITEMS-1; i++)
+	{
+		CV_Set(&cv_capsuleitems[i], "On");
+	}
+
+	CV_Set(&cv_capsuleitems[KITEM_SUPERRING-1], "Off");
+
 	// Mechanics
 	CV_Set(&cv_ng_fastfall, "Off");
 	CV_Set(&cv_ng_fastfallbounce, "Off");
@@ -229,10 +270,14 @@ void N_SRB2KPreset(INT32 choice)
 	CV_Set(&cv_ng_wavedash, "Off");
 	CV_Set(&cv_ng_tumble, "Off");
 	CV_Set(&cv_ng_stumble, "Off");
+	CV_Set(&cv_ng_invincibilitydamage, "Spinout");
+	CV_Set(&cv_ng_growdamage, "Spinout");
 	CV_Set(&cv_ng_safelanding, "Off");
 	CV_Set(&cv_ng_hitlag, "Off");
 	CV_Set(&cv_ng_combo, "Off");
-	CV_SetValue(&cv_ng_mapanger, 0);
+	CV_Set(&cv_ng_triangledash, "Off");
+	CV_Set(&cv_ng_olddrift, "Kart");
+	CV_SetValue(&cv_ng_mapanger, -1);
 	CV_Set(&cv_ng_tripwires, "On");
 	CV_Set(&cv_ng_forcenoposition, "Off");
 	CV_Set(&cv_ng_dospecialstage, "On");
@@ -249,11 +294,14 @@ void N_SRB2KPreset(INT32 choice)
 	CV_SetValue(&cv_ng_spindashthreshold, 6);
 	CV_SetValue(&cv_ng_spindashcharge, 0);
 	CV_Set(&cv_ng_spindashoverheat, "On");
+	CV_Set(&cv_ng_desperationforce, "On");
 
 	CV_Set(&cv_ng_butteredslopes, "On");
 	CV_Set(&cv_ng_slopeclimb, "Off");
 	CV_Set(&cv_ng_slopehelper, "On");
-	CV_Set(&cv_ng_slopehelperspeedboost, "1.2");
+	CV_Set(&cv_ng_slopehelperspeedboostg1, "1.7");
+	CV_Set(&cv_ng_slopehelperspeedboostg2, "1.5");
+	CV_Set(&cv_ng_slopehelperspeedboostg3, "1.2");
 	CV_Set(&cv_ng_slopehelperaccelboost, "1.25");
 	CV_Set(&cv_ng_stairjank, "None");
 	CV_Set(&cv_ng_turnstyle, "V1");

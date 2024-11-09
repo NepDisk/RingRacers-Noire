@@ -59,6 +59,7 @@
 #include "music.h"
 
 #include "noire/n_cvar.h"
+#include "radioracers/rr_cvar.h"
 
 #ifdef HWRENDER
 #include "hardware/hw_main.h"
@@ -2213,32 +2214,7 @@ void Y_PlayIntermissionMusic(void)
 			Music_Remap("intermission", "racent");
 	}
 	else
-	{
-		//copy paste from noire lOL
-		player_t* bestplayer = &players[data.mainplayer];
-
-		// somehow null.
-		if (bestplayer == NULL)
-		{
-			Music_Remap("intermission", "racent");
-
-			if (!Music_Playing("intermission"))
-				Music_Play("intermission");
-
-			return;
-		}
-
-		if (bestplayer->pflags & PF_NOCONTEST)
-			Music_Remap("intermission", "racenc"); // fzero lose
-		else if (K_IsPlayerLosing(bestplayer) == true)
-			Music_Remap("intermission", "racels"); // cue the 2pac music
-		else if (bestplayer->position == 1) // first place!
-			Music_Remap("intermission", "racewn"); // practice
-		else // nothing else.
-			Music_Remap("intermission", "racent");
-
-		//Music_Remap("intermission", "racent");
-	}
+		Music_Remap("intermission", "racent");
 
 	if (!Music_Playing("intermission"))
 		Music_Play("intermission");

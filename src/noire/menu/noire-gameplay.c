@@ -46,7 +46,7 @@ menuitem_t OPTIONS_NoireGameplayPresets[] =
 	{IT_STRING | IT_CALL, "\x85" "Ring Racers", "Ring Racers' vanilla gameplay.",
 		NULL, {.routine = N_RRVanillaPreset}, 0, 0},
 
-	{IT_STRING | IT_CALL, "\x85" "Noire+", "A mix of old and new. NepDisk's Personal setup.",
+	{IT_STRING | IT_CALL, "\x85" "Noire+", "A mix of old and new. NepDisk's personal ring-less setup.",
 		NULL, {.routine = N_NoirePreset}, 0, 0},
 
 	{IT_STRING | IT_CALL, "\x85" "SRB2Kart+", "Similar to modded SRB2kart.",
@@ -68,6 +68,9 @@ menuitem_t OPTIONS_NoireGameplayRings[] =
 	{IT_STRING | IT_CVAR, "Spill Cap", "Maximum amount of rings that can be lost upon taking damage.",
 		NULL, {.cvar = &cv_ng_spillcap}, 0, 0},
 
+	{IT_STRING | IT_CVAR, "Duration Cap", "Maximum amount of ringboost allowed in tics",
+		NULL, {.cvar = &cv_ng_durationcap}, 0, 0},
+
 	{IT_STRING | IT_CVAR, "Ring Debt", "Let ring count go into negatives.",
 		NULL, {.cvar = &cv_ng_ringdebt}, 0, 0},
 
@@ -80,14 +83,14 @@ menuitem_t OPTIONS_NoireGameplayRings[] =
 	{IT_STRING | IT_CVAR, "Spawn Rings", "Will rings appear on tracks.",
 		NULL, {.cvar = &cv_ng_maprings}, 0, 0},
 
-	{IT_STRING | IT_CVAR, "Spawn Ring Capsules", "Will ring capsules appear on tracks.",
-		NULL, {.cvar = &cv_ng_mapringcapsules}, 0, 0},
-
 	{IT_STRING | IT_CVAR, "Spawn Ring Boxes", "Enable or disable Ring Boxes appearance in tracks.",
 		NULL, {.cvar = &cv_ng_mapringboxes}, 0, 0},
 
 	{IT_STRING | IT_CVAR, "Ring Box Transformation", "After picking up Item Boxes, can they turn into Ring Boxes?",
 		NULL, {.cvar = &cv_ng_ringboxtransform}, 0, 0},
+
+	{IT_STRING | IT_CVAR, "Trick Rings", "Enable or disable tricks giving rings to the player",
+		NULL, {.cvar = &cv_ng_trickrings}, 0, 0},
 };
 
 ///////////
@@ -98,6 +101,9 @@ menuitem_t OPTIONS_NoireGameplayItems[] =
 
 	{IT_STRING | IT_SUBMENU, "Item Functionality Options...", "Adjust the functionality of various items.",
 		NULL, {.submenu = &OPTIONS_NoireGameplayItemFunctionalityDef}, 0, 0},
+
+	{IT_STRING | IT_SUBMENU, "Capsule Item Toggles...", "Toggle which capsules appear.",
+		NULL, {.submenu = &OPTIONS_NoireGameplayCapsuleItemsDef}, 0, 0},
 
 	{IT_STRING | IT_CVAR, "Force Small Itemboxes", "Force enable small Itemboxes on all maps regardless of mapheader.",
 		NULL, {.cvar = &cv_ng_forceoldboxscale}, 0, 0},
@@ -146,6 +152,9 @@ menuitem_t OPTIONS_NoireGameplayItemFunctionality[] =
 	{IT_STRING | IT_CVAR, "Eggmark Behaviour", "Toggle between Ring Racers or Kart Eggmark behavior.",
 		NULL, {.cvar = &cv_ng_oldeggman}, 0, 0},
 
+	{IT_STRING | IT_CVAR, "Eggmark Invincibility Pickup", "Should Grow and Invincibility pick up Eggmarks?",
+		NULL, {.cvar = &cv_ng_eggboxinvinpickup}, 0, 0},
+
 	{IT_STRING | IT_CVAR, "Drop Target Nerf", "Make the Drop Target knockback less powerful.",
 		NULL, {.cvar = &cv_ng_nerfdroptarget}, 0, 0},
 
@@ -173,6 +182,9 @@ menuitem_t OPTIONS_NoireGameplayMechanics[] =
 	{IT_STRING | IT_SUBMENU, "Damage Options...", "Adjust the behavior of sending and reciving damage.",
 		NULL, {.submenu = &OPTIONS_NoireGameplayAttackDef}, 0, 0},
 
+	{IT_STRING | IT_SUBMENU, "Map Options...", "Adjust the behavior of map mechanics.",
+		NULL, {.submenu = &OPTIONS_NoireGameplayMapsDef}, 0, 0},
+
 	{IT_NOTHING|IT_SPACE, NULL, NULL,
 		NULL, {NULL}, 0, 0},
 
@@ -185,20 +197,14 @@ menuitem_t OPTIONS_NoireGameplayMechanics[] =
 	{IT_STRING | IT_CVAR, "Draft/Tether", "Enable or disable the 'tether' between racers, pulling racers behind.",
 		NULL, {.cvar = &cv_ng_draft}, 0, 0},
 
+	{IT_STRING | IT_CVAR, "Drifting Functionality", "Toggle between Ring Racers or Kart mini-turbo charging behavior.",
+		NULL, {.cvar = &cv_ng_olddrift}, 0, 0},
+
 	{IT_STRING | IT_CVAR, "Wavedash", "Enable or disable the boost charged by sliptiding.",
 		NULL, {.cvar = &cv_ng_wavedash}, 0, 0},
 
-	{IT_STRING | IT_CVAR, "Map Anger", "Amount of times a map has to be ignored by everyone to vote itself.",
-		NULL, {.cvar = &cv_ng_mapanger}, 0, 0},
-
-	{IT_STRING | IT_CVAR, "Tripwires", "Enable or disable terrain recognized as tripwire.",
-		NULL, {.cvar = &cv_ng_tripwires}, 0, 0},
-
-	{IT_STRING | IT_CVAR, "Force Disable Position", "Force disable Position on all maps regardless of mapheader.",
-		NULL, {.cvar = &cv_ng_forcenoposition}, 0, 0},
-
-	{IT_STRING | IT_CVAR, "Special Stages", "Enable or disable special stages in Intense or higher GPs.",
-		NULL, {.cvar = &cv_ng_dospecialstage}, 0, 0},
+	{IT_STRING | IT_CVAR, "Triangle Dash", "Enable or disable the thrusts done by miniturbos in the air.",
+		NULL, {.cvar = &cv_ng_triangledash}, 0, 0},
 };
 
 ///////////
@@ -235,6 +241,10 @@ menuitem_t OPTIONS_NoireGameplaySpindash[] =
 
 	{IT_STRING | IT_CVAR, "Overheat", "Enable or disable overcharging spindash hurting racers.",
 		NULL, {.cvar = &cv_ng_spindashoverheat}, 0, 0},
+
+	{IT_STRING | IT_CVAR, "Force Desperation", "Force enable desperation spindash regardless of ring count",
+		NULL, {.cvar = &cv_ng_desperationforce}, 0, 0},
+
 };
 
 ///////////
@@ -248,6 +258,12 @@ menuitem_t OPTIONS_NoireGameplayAttack[] =
 	{IT_STRING | IT_CVAR, "Stumble", "Enable or disable stumble, a weaker form of tumble where racers just get pushed away.",
 		NULL, {.cvar = &cv_ng_stumble}, 0, 0},
 
+	{IT_STRING | IT_CVAR, "Invincibility Damage", "Sets what damage Invincibility does. Can conflict with Tumble/Stumble toggles",
+		NULL, {.cvar = &cv_ng_invincibilitydamage}, 0, 0},
+
+	{IT_STRING | IT_CVAR, "Grow Damage", "Sets what damage grow does. Can conflict with Tumble/Stumble toggles",
+		NULL, {.cvar = &cv_ng_growdamage}, 0, 0},
+
 	{IT_STRING | IT_CVAR, "Safe Landing", "Enable or disable safe landing, a source of damage when you land improperly.",
 		NULL, {.cvar = &cv_ng_safelanding}, 0, 0},
 
@@ -256,6 +272,25 @@ menuitem_t OPTIONS_NoireGameplayAttack[] =
 
 	{IT_STRING | IT_CVAR, "Combos", "Enable or disable hit combos.",
 		NULL, {.cvar = &cv_ng_combo}, 0, 0},
+};
+
+///////////
+// MAPS
+///////////
+
+menuitem_t OPTIONS_NoireGameplayMaps[] =
+{
+	{IT_STRING | IT_CVAR, "Map Anger", "Amount of times a map has to be ignored by everyone to vote itself.",
+		NULL, {.cvar = &cv_ng_mapanger}, 0, 0},
+
+	{IT_STRING | IT_CVAR, "Tripwires", "Enable or disable terrain recognized as tripwire.",
+		NULL, {.cvar = &cv_ng_tripwires}, 0, 0},
+
+	{IT_STRING | IT_CVAR, "Force Disable Position", "Force disable Position on all maps regardless of mapheader.",
+		NULL, {.cvar = &cv_ng_forcenoposition}, 0, 0},
+
+	{IT_STRING | IT_CVAR, "Special Stages", "Enable or disable special stages in Intense or higher GPs.",
+		NULL, {.cvar = &cv_ng_dospecialstage}, 0, 0},
 };
 
 ///////////
@@ -394,9 +429,9 @@ void NG_Rings_OnChange(void)
 			CV_Set(&cv_ng_ringsting, "On");
 			CV_Set(&cv_ng_ringdeathmark, "-20");
 			CV_Set(&cv_ng_maprings, "On");
-			CV_Set(&cv_ng_mapringcapsules, "On");
 			CV_Set(&cv_ng_mapringboxes, "On");
 			CV_Set(&cv_ng_ringboxtransform, "On");
+			CV_Set(&cv_capsuleitems[KITEM_SUPERRING-1], "On");
 		}
 
 		for (int i = 1; i < OPTIONS_NoireGameplayRingsDef.numitems; i++)
@@ -414,9 +449,9 @@ void NG_Rings_OnChange(void)
 			CV_Set(&cv_ng_ringsting, "Off");
 			CV_Set(&cv_ng_ringdeathmark, "-20");
 			CV_Set(&cv_ng_maprings, "Off");
-			CV_Set(&cv_ng_mapringcapsules, "Off");
 			CV_Set(&cv_ng_mapringboxes, "Off");
 			CV_Set(&cv_ng_ringboxtransform, "Off");
+			CV_Set(&cv_capsuleitems[KITEM_SUPERRING-1], "Off");
 		}
 
 		for (int i = 1; i < OPTIONS_NoireGameplayRingsDef.numitems; i++)
@@ -756,6 +791,24 @@ menu_t OPTIONS_NoireGameplayAttackDef = {
 	&OPTIONS_NoireGameplayMechanicsDef,
 	0,
 	OPTIONS_NoireGameplayAttack,
+	48, 80,
+	SKINCOLOR_BLACK, 0,
+	MBF_DRAWBGWHILEPLAYING,
+	NULL,
+	2, 5,
+	M_DrawGenericOptions,
+	M_DrawOptionsCogs,
+	M_OptionsTick,
+	NULL,
+	NULL,
+	NULL,
+};
+
+menu_t OPTIONS_NoireGameplayMapsDef = {
+	sizeof (OPTIONS_NoireGameplayMaps) / sizeof (menuitem_t),
+	&OPTIONS_NoireGameplayMechanicsDef,
+	0,
+	OPTIONS_NoireGameplayMaps,
 	48, 80,
 	SKINCOLOR_BLACK, 0,
 	MBF_DRAWBGWHILEPLAYING,
