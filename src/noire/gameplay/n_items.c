@@ -95,7 +95,7 @@ void N_DoShrink(player_t *user)
 	INT32 i;
 
 	S_StartSound(user->mo, sfx_kc46); // Sound the BANG!
-	K_SetItemCooldown(KITEM_SHRINK, TICRATE*30)
+	K_SetItemCooldown(KITEM_SHRINK, TICRATE*30);
 
 	for (i = 0; i < MAXPLAYERS; i++)
 	{
