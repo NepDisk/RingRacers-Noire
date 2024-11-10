@@ -20,6 +20,7 @@
 #include "k_kart.h"
 #include "d_netcmd.h"
 #include "d_player.h"
+#include "doomstat.h"
 #include "g_demo.h"
 #include "k_battle.h"
 #include "k_pwrlv.h"
@@ -161,6 +162,7 @@ void K_TimerReset(void)
 	memset(&g_musicfade, 0, sizeof g_musicfade);
 	numbulbs = 1;
 	inDuel = rainbowstartavailable = false;
+	rainbowstartcountdown = 0;
 	linecrossed = 0;
 	timelimitintics = extratimeintics = secretextratime = 0;
 	g_pointlimit = 0;
@@ -188,9 +190,9 @@ static void K_SpawnItemCapsules(void)
 			continue;
 		}
 
-		if ((mt->thing_args[0] < 1 || mt->thing_args[0] >= NUMKARTITEMS) && !cv_capsuleitems[KITEM_SUPERRING-1].value || !cv_capsuleitems[mt->thing_args[0]-1].value)
+		if (N_CapsuleItemEnabled(mt->thing_args[0]) == false)
 		{
-			// don't spawn disabled items
+			// don't spawn disabled capsule items
 			continue;
 		}
 
@@ -289,6 +291,18 @@ void K_TimerInit(void)
 
 				if (!N_UseLegacyStart())
 					rainbowstartavailable = true;
+
+				if (!cv_ng_firstblood.value)
+					rainbowstartavailable = false;
+
+				if (cv_ng_firstbloodrb.value)
+					rainbowstartcountdown = -1;
+
+				if (!cv_ng_firstblood.value)
+				{
+					rainbowstartavailable = false;
+					rainbowstartcountdown = 0;
+				}
 
 				// 1v1 activates DUEL rules!
 				inDuel = (numPlayers == 2);

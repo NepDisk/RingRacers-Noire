@@ -461,7 +461,7 @@ void N_LegacyStart(player_t *player)
 
 			if (player->boostcharge <= 36)
 			{
-				player->startboost = 0;
+				player->dropdashboost = 0;
 				K_DoSneaker(player, 0);
 				player->sneakertimer = 70; // PERFECT BOOST!!
 

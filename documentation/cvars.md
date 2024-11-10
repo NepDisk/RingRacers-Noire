@@ -781,6 +781,20 @@ Choices: "Ring Racers", "Kart"
 
 Determines how drifting will work
 
+#### ng_firstblood
+Default Value: "On"
+
+Choices: "Off", "On"
+
+Determines if first blood is avilable after countdown.
+
+#### ng_firstblood_alt
+Default Value: "Off"
+
+Choices: "Off", "On"
+
+An alternative version of firstblood someone randomly suggeted to me. When the line is crossed it lingers for 9 tics allowing a small few to get a boost as well. As a result the boost was nerfed to use dropdashboost instead.
+
 #### ng_mapanger
 Default Value: 2
 

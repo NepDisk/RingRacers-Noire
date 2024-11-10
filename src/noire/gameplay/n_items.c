@@ -183,10 +183,10 @@ UINT8 N_NoireItemOddsRace[NUMKARTRESULTS-1][8] =
 
 boolean N_CapsuleItemEnabled(kartitems_t item)
 {
-	if (K_CanChangeRules(true) == false)
+	if (item < 1 || item >= NUMKARTITEMS)
 	{
-		// Force all items to be enabled.
-		return true;
+		// Not a real item.
+		return cv_capsuleitems[KITEM_SUPERRING - 1].value;
 	}
 
 	// Allow the user preference.

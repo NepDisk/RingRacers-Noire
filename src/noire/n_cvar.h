@@ -99,6 +99,8 @@ extern consvar_t cv_ng_invincibilitydamage;
 extern consvar_t cv_ng_growdamage;
 extern consvar_t cv_ng_triangledash;
 extern consvar_t cv_ng_olddrift;
+extern consvar_t cv_ng_firstblood;
+extern consvar_t cv_ng_firstbloodrb;
 extern consvar_t cv_ng_mapanger;
 extern consvar_t cv_ng_tripwires;
 extern consvar_t cv_ng_lives;

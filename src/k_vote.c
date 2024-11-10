@@ -862,7 +862,7 @@ static void Y_DrawVoteSelection(fixed_t offset)
 		if (i > 0 && (i & (SELECTIONS_PER_ROW - 1)) == 0) // Past the amount of items per row. Move Y further along, and reset X!
 		{
 #ifdef SELECTIONS_SPLIT
-			y = (144 * FRACUNIT + (SELECTION_HEIGHT >> 1));
+			y += SELECTION_SPACING_H + (90*FRACUNIT);
 #else
 			y += SELECTION_SPACING_H;
 #endif
@@ -912,20 +912,21 @@ static void Y_DrawVoteSelection(fixed_t offset)
 			const fixed_t height = (SELECTION_WIDTH * BASEVIDHEIGHT) / BASEVIDWIDTH;
 			const fixed_t tx = x - (SELECTION_WIDTH >> 1);
 			const fixed_t ty = y + (height >> 1);
-#ifdef SELECTIONS_SPLIT
-			fixed_t yoffset = (flip[i] == false) ? -149 : 0;
-#else
-			fixed_t yoffset = 0;
-#endif
-
 			INT32 fx, fy, fw, fh;
 			INT32 dupx, dupy;
+			fixed_t yoffset;
 
 			dupx = vid.dupx;
 			dupy = vid.dupy;
 
 			// only use one dup, to avoid stretching (har har)
 			dupx = dupy = (dupx < dupy ? dupx : dupy);
+
+#ifdef SELECTIONS_SPLIT
+			yoffset = (flip[i] == false) ? FixedMul(37*FRACUNIT, dupy << FRACBITS) >> FRACBITS : 0;
+#else
+			yoffset = 0;
+#endif
 
 			fx = FixedMul(tx, dupx << FRACBITS) >> FRACBITS;
 			fy = FixedMul(ty, dupy << FRACBITS) >> FRACBITS;
@@ -935,7 +936,7 @@ static void Y_DrawVoteSelection(fixed_t offset)
 			V_AdjustXYWithSnap(&fx, &fy, 0, dupx, dupy);
 
 			V_DrawFill(
-				fx - dupx, fy - fh + yoffset + dupy,
+				fx - dupx, fy - fh - yoffset + dupy,
 				fw + (dupx << 1), fh,
 				31|V_NOSCALESTART
 			);
@@ -947,7 +948,7 @@ static void Y_DrawVoteSelection(fixed_t offset)
 
 				V_DrawCharacterScaled(
 					(fx + (6 * dupx * ci)) << FRACBITS,
-					(fy - fh + yoffset + dupy) << FRACBITS,
+					(fy - fh - yoffset + dupy) << FRACBITS,
 					FRACUNIT,
 					V_ORANGEMAP | V_FORCEUPPERCASE | V_NOSCALESTART,
 					MED_FONT,
@@ -1077,7 +1078,11 @@ void Y_VoteDrawer(void)
 		}
 
 		vote_draw.selectTransition += FixedMul(
+#ifdef SELECTIONS_SPLIT
+			((slideOut ? FRACUNIT + (FRACUNIT/2) : 0) - vote_draw.selectTransition) / 2,
+#else
 			((slideOut ? FRACUNIT : 0) - vote_draw.selectTransition) / 2,
+#endif
 			renderdeltatics
 		);
 	}

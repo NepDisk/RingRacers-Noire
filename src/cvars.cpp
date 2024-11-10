@@ -1337,6 +1337,8 @@ consvar_t cv_ng_triangledash = UnsavedNetVar("ng_triangledash", "On").values({
 	{3, "On"},
 });
 consvar_t cv_ng_olddrift = UnsavedNetVar("ng_olddrift", "Ring Racers").values(rrOrKart_cons_t);
+consvar_t cv_ng_firstblood = UnsavedNetVar("ng_firstblood", "On").on_off().onchange_noinit(NG_Generic_OnChange);
+consvar_t cv_ng_firstbloodrb = UnsavedNetVar("ng_firstblood_alt", "Off").on_off().onchange_noinit(NG_Generic_OnChange);;
 consvar_t cv_ng_mapanger = UnsavedNetVar("ng_mapanger", "Default (2)").min_max(0, INT32_MAX, {{-1, "Disabled"}, {2, "Default (2)"}});
 consvar_t cv_ng_tripwires = UnsavedNetVar("ng_tripwires", "On").on_off().onchange_noinit(NG_Generic_OnChange);
 void NG_ForceNoPosition_OnChange(void);

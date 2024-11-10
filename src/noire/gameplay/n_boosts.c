@@ -303,7 +303,7 @@ void N_GetKartBoostPower(player_t *player)
 #define ADDBOOST(s,a,h,b,ns) { \
 	numboosts++; \
 	speedboost += max(s, speedboost); \
-	accelboost = max(a, accelboost); \
+	accelboost += max(a, accelboost); \
 	handleboost = max(h, handleboost); \
 	nonspeedboost = max(ns, nonspeedboost); \
 	boostmult += b; \
@@ -433,7 +433,30 @@ void N_GetKartBoostPower(player_t *player)
 
 	if (player->driftboost) // Drift Boost
 	{
-		ADDBOOST(FRACUNIT/4,4*FRACUNIT,0,0,0)
+		// Rebuff Eggman's stat block corner
+		// const INT32 heavyAccel = ((9 - player->kartspeed) * 2) + (player->kartweight - 1);
+		// const fixed_t heavyAccelBonus = FRACUNIT + ((heavyAccel * maxmetabolismincrease * 2) / 24);
+
+		// hello commit from 18 months ago, The Situation Has Changed.
+		// We buffed rings so many times that weight needs a totally different class of change!
+		// I've left the old formulas in, in case I'm smoking dick, but this was sorely needed in TA especially.
+		const fixed_t herbalfolkmedicine = FRACUNIT + FRACUNIT*(player->kartweight-1)/12 + FRACUNIT*(8-player->kartspeed)/32;
+
+		fixed_t driftSpeed = FRACUNIT/4; // 25% base
+
+		if (player->strongdriftboost > 0)
+		{
+			// Purple/Rainbow drift boost
+			driftSpeed = FixedMul(driftSpeed, 4*FRACUNIT/3); // 25% -> 33%
+		}
+
+		// Bottom-left bonus
+		// driftSpeed = FixedMul(driftSpeed, heavyAccelBonus);
+
+		// Fucking bonus ever
+		driftSpeed = FixedMul(driftSpeed, herbalfolkmedicine);
+
+		ADDBOOST(driftSpeed, 4*FRACUNIT, 0, 0, 0); // + variable top speed, + 400% acceleration, +0% handling
 	}
 
 	if (player->trickboost)	// Trick pannel up-boost

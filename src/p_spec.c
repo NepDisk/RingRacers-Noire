@@ -2059,15 +2059,37 @@ static void K_HandleLapIncrement(player_t *player)
 				Music_Stop("position");
 			}
 
-			if (rainbowstartavailable == true && player->mo->hitlag == 0)
+
+			if (cv_ng_firstbloodrb.value)
 			{
-				S_StartSound(player->mo, sfx_s23c);
-				player->startboost = 125;
+				if (rainbowstartavailable == true && player->mo->hitlag == 0)
+				{
+					if (player->dropdashboost == 0)
+					{
+						S_StartSound(player->mo, sfx_s23c);
 
-				K_SpawnDriftBoostExplosion(player, 4);
-				K_SpawnDriftElectricSparks(player, SKINCOLOR_SILVER, false);
+						K_SpawnDriftBoostExplosion(player, 4);
+						K_SpawnDriftElectricSparks(player, SKINCOLOR_SILVER, false);
+					}
+					player->dropdashboost = 125;
 
-				rainbowstartavailable = false;
+					if (rainbowstartcountdown == -1)
+						rainbowstartcountdown = 9;
+				}
+
+			}
+			else
+			{
+				if (rainbowstartavailable == true && player->mo->hitlag == 0)
+				{
+					S_StartSound(player->mo, sfx_s23c);
+					player->startboost = 125;
+
+					K_SpawnDriftBoostExplosion(player, 4);
+					K_SpawnDriftElectricSparks(player, SKINCOLOR_SILVER, false);
+
+					rainbowstartavailable = false;
+				}
 			}
 
 			if (player->laps == 1 && (modeattacking & ATTACKING_SPB))

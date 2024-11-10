@@ -6674,6 +6674,7 @@ static void P_NetArchiveMisc(savebuffer_t *save, boolean resending)
 	WRITEUINT8(save->p, lastLowestLap);
 	WRITESINT8(save->p, spbplace);
 	WRITEUINT8(save->p, rainbowstartavailable);
+	WRITEINT32(save->p, rainbowstartcountdown);
 	WRITEUINT8(save->p, inDuel);
 
 	WRITEUINT32(save->p, introtime);
@@ -6868,6 +6869,7 @@ static boolean P_NetUnArchiveMisc(savebuffer_t *save, boolean reloading)
 	lastLowestLap = READUINT8(save->p);
 	spbplace = READSINT8(save->p);
 	rainbowstartavailable = (boolean)READUINT8(save->p);
+	rainbowstartcountdown = READINT32(save->p);
 	inDuel = (boolean)READUINT8(save->p);
 
 	introtime = READUINT32(save->p);

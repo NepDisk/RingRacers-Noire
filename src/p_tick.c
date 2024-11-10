@@ -1309,6 +1309,17 @@ void P_Ticker(boolean run)
 		if (bombflashtimer)
 			bombflashtimer--;	// Bomb seizure prevention
 
+		if (cv_ng_firstbloodrb.value)
+		{
+
+			if (rainbowstartcountdown > 0)
+				rainbowstartcountdown--;
+
+			if (rainbowstartcountdown == 0)
+				rainbowstartavailable = false;
+
+		}
+
 		// Tick quake effects
 		quake = g_quakes;
 		while (quake != NULL)

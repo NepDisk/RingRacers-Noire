@@ -1,4 +1,4 @@
-#define SRB2VERSION "1.2"/* this must be the first line, for cmake !! */
+#define SRB2VERSION "1.2.1"/* this must be the first line, for cmake !! */
 
 // The Modification Version, starting from 1. Do not follow your version string for this,
 // it's only for detection of the version the player is using so the MS can alert them of an update.
