@@ -869,6 +869,7 @@ extern boolean thwompsactive;
 extern UINT8 lastLowestLap;
 extern SINT8 spbplace;
 extern boolean rainbowstartavailable;
+extern INT32 rainbowstartcountdown;
 extern tic_t linecrossed;
 extern boolean inDuel;
 

@@ -20,6 +20,7 @@
 #include "k_kart.h"
 #include "d_netcmd.h"
 #include "d_player.h"
+#include "doomstat.h"
 #include "g_demo.h"
 #include "k_battle.h"
 #include "k_pwrlv.h"
@@ -289,6 +290,12 @@ void K_TimerInit(void)
 
 				if (!N_UseLegacyStart())
 					rainbowstartavailable = true;
+
+				if (!cv_ng_firstblood.value)
+					rainbowstartavailable = false;
+
+				if (cv_ng_firstbloodrb.value)
+					rainbowstartcountdown = -1;
 
 				// 1v1 activates DUEL rules!
 				inDuel = (numPlayers == 2);

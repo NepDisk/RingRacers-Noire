@@ -72,6 +72,8 @@ void N_RRVanillaPreset(INT32 choice)
 	CV_Set(&cv_ng_combo, "On");
 	CV_Set(&cv_ng_triangledash, "On");
 	CV_Set(&cv_ng_olddrift, "Ring Racers");
+	CV_Set(&cv_ng_firstblood, "On");
+	CV_Set(&cv_ng_firstbloodrb, "Off");
 	CV_SetValue(&cv_ng_mapanger, 2);
 	CV_Set(&cv_ng_tripwires, "On");
 	CV_Set(&cv_ng_forcenoposition, "Off");
@@ -175,6 +177,8 @@ void N_NoirePreset(INT32 choice)
 	CV_Set(&cv_ng_combo, "Off");
 	CV_Set(&cv_ng_triangledash, "Forward Thrust Only");
 	CV_Set(&cv_ng_olddrift, "Ring Racers");
+	CV_Set(&cv_ng_firstblood, "On");
+	CV_Set(&cv_ng_firstbloodrb, "Off");
 	CV_SetValue(&cv_ng_mapanger, -1);
 	CV_Set(&cv_ng_tripwires, "On");
 	CV_Set(&cv_ng_forcenoposition, "Off");
@@ -277,6 +281,8 @@ void N_SRB2KPreset(INT32 choice)
 	CV_Set(&cv_ng_combo, "Off");
 	CV_Set(&cv_ng_triangledash, "Off");
 	CV_Set(&cv_ng_olddrift, "Kart");
+	CV_Set(&cv_ng_firstblood, "On");
+	CV_Set(&cv_ng_firstbloodrb, "Off");
 	CV_SetValue(&cv_ng_mapanger, -1);
 	CV_Set(&cv_ng_tripwires, "On");
 	CV_Set(&cv_ng_forcenoposition, "Off");
