@@ -162,6 +162,7 @@ void K_TimerReset(void)
 	memset(&g_musicfade, 0, sizeof g_musicfade);
 	numbulbs = 1;
 	inDuel = rainbowstartavailable = false;
+	rainbowstartcountdown = 0;
 	linecrossed = 0;
 	timelimitintics = extratimeintics = secretextratime = 0;
 	g_pointlimit = 0;
@@ -296,6 +297,12 @@ void K_TimerInit(void)
 
 				if (cv_ng_firstbloodrb.value)
 					rainbowstartcountdown = -1;
+
+				if (!cv_ng_firstblood.value)
+				{
+					rainbowstartavailable = false;
+					rainbowstartcountdown = 0;
+				}
 
 				// 1v1 activates DUEL rules!
 				inDuel = (numPlayers == 2);

@@ -393,7 +393,7 @@ void N_GetKartBoostPower(player_t *player)
 			Easing_InCubic(
 				player->wavedashpower,
 				0,
-				FixedMul(FRACUNIT/4, 4*FRACUNIT/3)
+				8*FRACUNIT/10
 			),
 			Easing_InSine(
 				player->wavedashpower,

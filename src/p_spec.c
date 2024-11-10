@@ -2064,11 +2064,14 @@ static void K_HandleLapIncrement(player_t *player)
 			{
 				if (rainbowstartavailable == true && player->mo->hitlag == 0)
 				{
-					S_StartSound(player->mo, sfx_s23c);
-					player->dropdashboost = 125;
+					if (player->dropdashboost == 0)
+					{
+						S_StartSound(player->mo, sfx_s23c);
 
-					K_SpawnDriftBoostExplosion(player, 4);
-					K_SpawnDriftElectricSparks(player, SKINCOLOR_SILVER, false);
+						K_SpawnDriftBoostExplosion(player, 4);
+						K_SpawnDriftElectricSparks(player, SKINCOLOR_SILVER, false);
+					}
+					player->dropdashboost = 125;
 
 					if (rainbowstartcountdown == -1)
 						rainbowstartcountdown = 9;
