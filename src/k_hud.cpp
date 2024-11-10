@@ -3489,26 +3489,26 @@ static void K_drawRingCounter(boolean gametypeinfoshown)
 				.width(ringstickerwidth)
 				.small_sticker();
 
-			V_DrawMappedPatch(RINGC_X+ringx+7, fy-5, V_HUDTRANS|V_SLIDEIN|splitflags|ringflip, kp_ring[ringanim_realframe], (colorring ? ringmap : NULL));
+			V_DrawMappedPatch(RINGC_X+ringx+7, fy-5, ringcounterflags|ringflip, kp_ring[ringanim_realframe], (colorring ? ringmap : NULL));
 
 			// "Why fy-4? Why LAPS_X+29+1?"
 			// "use magic numbers" - jartha 2024-03-05
 			if (stplyr->hudrings < 0) // Draw the minus for ring debt
 			{
-				V_DrawMappedPatch(RINGC_X+23-1, fy, V_HUDTRANS|V_SLIDEIN|splitflags, kp_ringdebtminus, ringmap);
+				V_DrawMappedPatch(RINGC_X+23-1, fy, ringcounterflags, kp_ringdebtminus, ringmap);
 				using srb2::Draw;
-				Draw row = Draw(RINGC_X+29+0, fy-4).flags(V_HUDTRANS|V_SLIDEIN|splitflags).font(Draw::Font::kThinTimer).colormap(ringmap);
+				Draw row = Draw(RINGC_X+29+0, fy-4).flags(ringcounterflags).font(Draw::Font::kThinTimer).colormap(ringmap);
 				row.text("{:02}", abs(stplyr->hudrings));
-				// V_DrawMappedPatch(RINGC_X+29, fy, V_HUDTRANS|V_SLIDEIN|splitflags, fontv[TALLNUM_FONT].font[rn[0]], ringmap);
-				// V_DrawMappedPatch(RINGC_X+35, fy, V_HUDTRANS|V_SLIDEIN|splitflags, fontv[TALLNUM_FONT].font[rn[1]], ringmap);
+				// V_DrawMappedPatch(RINGC_X+29, fy, ringcounterflags, fontv[TALLNUM_FONT].font[rn[0]], ringmap);
+				// V_DrawMappedPatch(RINGC_X+35, fy, ringcounterflags, fontv[TALLNUM_FONT].font[rn[1]], ringmap);
 			}
 			else
 			{
 				using srb2::Draw;
-				Draw row = Draw(RINGC_X+23+3, fy-4).flags(V_HUDTRANS|V_SLIDEIN|splitflags).font(Draw::Font::kThinTimer).colormap(ringmap);
+				Draw row = Draw(RINGC_X+23+3, fy-4).flags(ringcounterflags).font(Draw::Font::kThinTimer).colormap(ringmap);
 				row.text("{:02}", abs(stplyr->hudrings));
-				// V_DrawMappedPatch(RINGC_X+23, fy, V_HUDTRANS|V_SLIDEIN|splitflags, fontv[TALLNUM_FONT].font[rn[0]], ringmap);
-				// V_DrawMappedPatch(RINGC_X+29, fy, V_HUDTRANS|V_SLIDEIN|splitflags, fontv[TALLNUM_FONT].font[rn[1]], ringmap);
+				// V_DrawMappedPatch(RINGC_X+23, fy, ringcounterflags, fontv[TALLNUM_FONT].font[rn[0]], ringmap);
+				// V_DrawMappedPatch(RINGC_X+29, fy, ringcounterflags, fontv[TALLNUM_FONT].font[rn[1]], ringmap);
 			}
 
 			// SPB ring lock
