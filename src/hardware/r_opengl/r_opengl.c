@@ -673,7 +673,6 @@ static void Shader_CompileError(const char *message, GLuint program, INT32 shade
 static void Shader_SetUniforms(FSurfaceInfo *Surface, GLRGBAFloat *poly, GLRGBAFloat *tint, GLRGBAFloat *fade);
 
 static GLRGBAFloat shader_defaultcolor = {1.0f, 1.0f, 1.0f, 1.0f};
-
 #endif	// GL_SHADERS
 
 void SetupGLFunc4(void)
