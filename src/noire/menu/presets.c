@@ -72,6 +72,7 @@ void N_RRVanillaPreset(INT32 choice)
 	CV_Set(&cv_ng_safelanding, "On");
 	CV_Set(&cv_ng_hitlag, "On");
 	CV_Set(&cv_ng_combo, "On");
+	CV_Set(&cv_ng_tricktumble, "On");
 	CV_Set(&cv_ng_triangledash, "On");
 	CV_Set(&cv_ng_olddrift, "Ring Racers");
 	CV_Set(&cv_ng_firstblood, "On");
@@ -179,6 +180,7 @@ void N_NoirePreset(INT32 choice)
 	CV_Set(&cv_ng_safelanding, "Off");
 	CV_Set(&cv_ng_hitlag, "Off");
 	CV_Set(&cv_ng_combo, "Off");
+	CV_Set(&cv_ng_tricktumble, "Off");
 	CV_Set(&cv_ng_triangledash, "Forward Thrust Only");
 	CV_Set(&cv_ng_olddrift, "Ring Racers");
 	CV_Set(&cv_ng_firstblood, "On");
@@ -285,6 +287,7 @@ void N_SRB2KPreset(INT32 choice)
 	CV_Set(&cv_ng_safelanding, "Off");
 	CV_Set(&cv_ng_hitlag, "Off");
 	CV_Set(&cv_ng_combo, "Off");
+	CV_Set(&cv_ng_tricktumble, "Off");
 	CV_Set(&cv_ng_triangledash, "Off");
 	CV_Set(&cv_ng_olddrift, "Kart");
 	CV_Set(&cv_ng_firstblood, "On");

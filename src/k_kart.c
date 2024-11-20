@@ -14241,7 +14241,7 @@ void K_MoveKartPlayer(player_t *player, boolean onground)
 			if (momz * P_MobjFlip(player->mo) < -10*FRACUNIT)	// :youfuckedup:
 			{
 				// tumble if you let your chance pass!!
-				if (cv_ng_tumble.value || G_CompatLevel(0x1001) || G_CompatLevel(0x1000))
+				if (cv_ng_tricktumble.value && (cv_ng_tumble.value || G_CompatLevel(0x1001) || G_CompatLevel(0x1000)))
 				{
 					player->tumbleBounces = 1;
 					player->pflags &= ~PF_TUMBLESOUND;

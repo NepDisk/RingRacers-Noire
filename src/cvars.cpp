@@ -1332,6 +1332,7 @@ consvar_t cv_ng_growdamage = UnsavedNetVar("ng_growdamage", "Stumble").values(da
 consvar_t cv_ng_safelanding = UnsavedNetVar("ng_safelanding", "On").on_off();
 consvar_t cv_ng_hitlag = UnsavedNetVar("ng_hitlag", "On").on_off();
 consvar_t cv_ng_combo = UnsavedNetVar("ng_combo", "On").on_off();
+consvar_t cv_ng_tricktumble = UnsavedNetVar("ng_tricktumble", "On").on_off();
 consvar_t cv_ng_triangledash = UnsavedNetVar("ng_triangledash", "On").values({
 	{0, "Off"},
 	{1, "Downward Thrust Only"},

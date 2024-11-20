@@ -270,6 +270,9 @@ menuitem_t OPTIONS_NoireGameplayAttack[] =
 	{IT_STRING | IT_CVAR, "Safe Landing", "Enable or disable safe landing, a source of damage when you land improperly.",
 		NULL, {.cvar = &cv_ng_safelanding}, 0, 0},
 
+	{IT_STRING | IT_CVAR, "Trick Tumble", "Enable or disable failed tricks causing you to tumble.",
+		NULL, {.cvar = &cv_ng_tricktumble}, 0, 0},
+
 	{IT_STRING | IT_CVAR, "Hitlag", "Enable or disable hitlag.",
 		NULL, {.cvar = &cv_ng_hitlag}, 0, 0},
 
