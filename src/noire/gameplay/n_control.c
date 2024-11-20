@@ -303,15 +303,7 @@ INT16 N_GetKartTurnValue(player_t* player, INT16 turnvalue)
 	{
 		fixed_t sliptide_handle;
 
-		if (G_CompatLevel(0x000A))
-		{
-			// Compat level for 2.0 staff ghosts
-			sliptide_handle = 5 * SLIPTIDEHANDLING / 4;
-		}
-		else
-		{
-			sliptide_handle = 3 * SLIPTIDEHANDLING / 4;
-		}
+		sliptide_handle = 5 * SLIPTIDEHANDLING / 4;
 
 		finalhandleboost = FixedMul(sliptide_handle, FixedDiv(player->speed, topspeed));
 	}

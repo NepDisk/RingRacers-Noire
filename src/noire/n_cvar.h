@@ -46,6 +46,8 @@ extern consvar_t cv_ng_maprings;
 extern consvar_t cv_ng_mapringboxes;
 extern consvar_t cv_ng_ringboxtransform;
 extern consvar_t cv_ng_trickrings;
+extern consvar_t cv_ng_nerfrings;
+extern consvar_t cv_ng_nerfringsdiminish;
 
 //Items
 extern consvar_t cv_ng_forceoldboxscale;

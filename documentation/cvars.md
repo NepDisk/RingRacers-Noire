@@ -375,6 +375,18 @@ Choices: "Off", "On"
 
 Sets if tricks give you rings.
 
+#### ng_nerfrings
+Default Value: "Off"
+
+Choices: "Off", "On"
+
+Applies a diminishing speed equation onto ringboost to to try to make it more fair.
+
+#### ng_rings_diminish
+Default Value: "1.2"
+
+Value used in diminishing speed equation used on ringboost.
+
 #### Items
 Cvars here all relate to items
 

@@ -3578,19 +3578,15 @@ static void K_GetKartBoostPower(player_t *player)
 		}
 	}
 
-
-
 	if (cv_ng_nerfflameshield.value)
 	{
 		if (player->flamedash) // Flame Shield dash
 		{
 			fixed_t dash = K_FlameShieldDashVar(player->flamedash);
 			fixed_t diminishvalue = cv_ng_nerfflameshielddiminish.value;
-			fixed_t intermediate = 0;
 			fixed_t boost = 0;
 
-			intermediate = FixedDiv(FixedMul(diminishvalue, FRACUNIT*-1/2) - FRACUNIT/4,-diminishvalue+FRACUNIT/2);
-			boost = FixedMul(diminishvalue,(FRACUNIT-FixedDiv(FRACUNIT,(dash+intermediate))));
+			boost = N_SimpleFixedDiminish(dash,diminishvalue);
 
 			ADDBOOST(
 				boost, // + diminished top speed
@@ -3701,18 +3697,40 @@ static void K_GetKartBoostPower(player_t *player)
 		ADDBOOST(3*FRACUNIT/4, 4*FRACUNIT, SLIPTIDEHANDLING/2); // + 75% top speed, + 400% acceleration, +25% handling
 	}
 
-	if (player->ringboost) // Ring Boost
+	if (cv_ng_nerfrings.value)
 	{
-		// This one's a little special: we add extra top speed per tic of ringboost stored up, to allow for Ring Box to really rocket away.
-		// (We compensate when decrementing ringboost to avoid runaway exponential scaling hell.)
-		fixed_t rb = FixedDiv(player->ringboost * FRACUNIT, max(FRACUNIT, K_RingDurationBoost(player)));
-		ADDBOOST(
-			FRACUNIT/4 + FixedMul(FRACUNIT / 1750, rb),
-			4*FRACUNIT,
-			Easing_InCubic(min(FRACUNIT, rb / (TICRATE*12)), 0, 2*SLIPTIDEHANDLING/5)
-		); // + 20% + ???% top speed, + 400% acceleration, +???% handling
-	}
+		if (player->ringboost) // Ring Boost (with nerf applied)
+		{
+			// This one's a little special: we add extra top speed per tic of ringboost stored up, to allow for Ring Box to really rocket away.
+			// (We compensate when decrementing ringboost to avoid runaway exponential scaling hell.)
+			// (Diminishment will also be applied so class A can't cheese with jackpot maxing.)
 
+			fixed_t rb = FixedDiv(player->ringboost * FRACUNIT, max(FRACUNIT, K_RingDurationBoost(player)));
+			fixed_t diminishvalue = cv_ng_nerfringsdiminish.value;
+			fixed_t boost = FixedMul(FRACUNIT / 1750, rb);
+			fixed_t finalboost = N_SimpleFixedDiminish(boost,diminishvalue);
+
+			ADDBOOST(
+				FRACUNIT/4 + finalboost,
+				4*FRACUNIT,
+				Easing_InCubic(min(FRACUNIT, rb / (TICRATE*12)), 0, 2*SLIPTIDEHANDLING/5)
+			); // + 20% + ???% top speed, + 400% acceleration, +???% handling
+		}
+	}
+	else
+	{
+		if (player->ringboost) // Ring Boost
+		{
+			// This one's a little special: we add extra top speed per tic of ringboost stored up, to allow for Ring Box to really rocket away.
+			// (We compensate when decrementing ringboost to avoid runaway exponential scaling hell.)
+			fixed_t rb = FixedDiv(player->ringboost * FRACUNIT, max(FRACUNIT, K_RingDurationBoost(player)));
+			ADDBOOST(
+				FRACUNIT/4 + FixedMul(FRACUNIT / 1750, rb),
+				4*FRACUNIT,
+				Easing_InCubic(min(FRACUNIT, rb / (TICRATE*12)), 0, 2*SLIPTIDEHANDLING/5)
+			); // + 20% + ???% top speed, + 400% acceleration, +???% handling
+		}
+	}
 
 	if (!cv_ng_oldeggman.value)
 	{
