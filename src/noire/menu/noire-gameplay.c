@@ -71,6 +71,9 @@ menuitem_t OPTIONS_NoireGameplayRings[] =
 	{IT_STRING | IT_CVAR, "Duration Cap", "Maximum amount of ringboost allowed in tics",
 		NULL, {.cvar = &cv_ng_durationcap}, 0, 0},
 
+	{IT_STRING | IT_CVAR, "Ring Max Speed Diminish", "Enable ring max speed being diminished. The value used can be adjusted with ng_rings_diminish.",
+		NULL, {.cvar = &cv_ng_trickrings}, 0, 0},
+
 	{IT_STRING | IT_CVAR, "Ring Debt", "Let ring count go into negatives.",
 		NULL, {.cvar = &cv_ng_ringdebt}, 0, 0},
 

@@ -954,7 +954,7 @@ consvar_t cv_ng_mapringboxes = UnsavedNetVar("ng_mapringboxes", "On").on_off();
 consvar_t cv_ng_ringboxtransform = UnsavedNetVar("ng_ringboxtransform", "On").on_off();
 consvar_t cv_ng_trickrings = UnsavedNetVar("ng_trickrings", "On").on_off();
 consvar_t cv_ng_nerfrings = UnsavedNetVar("ng_nerfrings", "Off").on_off();
-consvar_t cv_ng_nerfringsdiminish= UnsavedNetVar("ng_rings_diminish", "1.0").floating_point();
+consvar_t cv_ng_nerfringsdiminish= UnsavedNetVar("ng_rings_diminish", "1.2").floating_point();
 
 //Items
 consvar_t cv_ng_forceoldboxscale = UnsavedNetVar("ng_forceoldboxscale", "Off").on_off().onchange(NG_ForceSmallBoxScale_OnChange);
