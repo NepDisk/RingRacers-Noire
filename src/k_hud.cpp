@@ -5416,7 +5416,7 @@ static void K_drawKartMinimap(void)
 
 static void K_drawKartFinish(boolean finish)
 {
-	INT32 timer, minsplitstationary, pnum = 0, splitflags = V_SPLITSCREEN|V_HUDTRANS;
+	INT32 timer, minsplitstationary, pnum = 0, splitflags = V_SPLITSCREEN;
 	patch_t **kptodraw;
 
 	if (finish)
