@@ -779,6 +779,13 @@ Choices: "Off", "On"
 
 Sets if the player should be allowed to be combo'd by damage sources.
 
+#### ng_tricktumble
+Default Value: "On"
+
+Choices: "Off", "On"
+
+Sets if the player should be forced to tumble on a failed trick.
+
 #### ng_triangledash
 Default Value: "On"
 

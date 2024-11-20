@@ -99,6 +99,7 @@ extern consvar_t cv_ng_hitlag;
 extern consvar_t cv_ng_combo;
 extern consvar_t cv_ng_invincibilitydamage;
 extern consvar_t cv_ng_growdamage;
+extern consvar_t cv_ng_tricktumble;
 extern consvar_t cv_ng_triangledash;
 extern consvar_t cv_ng_olddrift;
 extern consvar_t cv_ng_firstblood;
