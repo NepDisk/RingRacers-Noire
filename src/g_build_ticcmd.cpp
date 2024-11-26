@@ -345,7 +345,14 @@ class TiccmdBuilder
 		// But forward/backward IS used for aiming.
 		if (joystickvector.yaxis != 0)
 		{
-			cmd->throwdir -= (joystickvector.yaxis * KART_FULLTURN) / JOYAXISRANGE;
+			if(!cv_invertedflight[ssplayer - 1].value || (!player()->rideroid && !player()->dlzrocket))
+			{
+				cmd->throwdir -= (joystickvector.yaxis * KART_FULLTURN) / JOYAXISRANGE;
+			}
+			if((cv_invertedflight[ssplayer - 1].value && player()->rideroid) || (cv_invertedflight[ssplayer - 1].value && player()->dlzrocket))
+			{
+				cmd->throwdir -= ((joystickvector.yaxis * KART_FULLTURN) / JOYAXISRANGE) * -1;
+			}
 		}
 	}
 

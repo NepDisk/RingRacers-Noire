@@ -83,6 +83,7 @@ profile_t* PR_MakeProfile(
 	newprofile->autoroulette = false;
 	newprofile->litesteer = false;
 	newprofile->autoring = false;
+	newprofile->invertedflight = false;
 	newprofile->rumble = true;
 	newprofile->fov = atoi(cv_dummyprofilefov.defaultvalue);
 
@@ -105,6 +106,7 @@ profile_t* PR_MakeProfileFromPlayer(const char *prname, const char *pname, const
 	newprofile->autoroulette = cv_autoroulette[pnum].value;
 	newprofile->litesteer = cv_litesteer[pnum].value;
 	newprofile->autoring = cv_autoring[pnum].value;
+	newprofile->invertedflight = cv_invertedflight[pnum].value;
 	newprofile->rumble = cv_rumble[pnum].value;
 	newprofile->fov = cv_fov[pnum].value / FRACUNIT;
 
@@ -302,6 +304,7 @@ void PR_SaveProfiles(void)
 		jsonprof.preferences.autoroulette = cprof->autoroulette;
 		jsonprof.preferences.litesteer = cprof->litesteer;
 		jsonprof.preferences.autoring = cprof->autoring;
+		jsonprof.preferences.invertedflight = cprof->invertedflight;
 		jsonprof.preferences.rumble = cprof->rumble;
 		jsonprof.preferences.fov = cprof->fov;
 
@@ -487,6 +490,7 @@ void PR_LoadProfiles(void)
 		newprof->autoroulette = jsprof.preferences.autoroulette;
 		newprof->litesteer = jsprof.preferences.litesteer;
 		newprof->autoring = jsprof.preferences.autoring;
+		newprof->invertedflight = jsprof.preferences.invertedflight;
 		newprof->rumble = jsprof.preferences.rumble;
 		newprof->fov = jsprof.preferences.fov;
 
@@ -569,6 +573,7 @@ static void PR_ApplyProfile_Settings(profile_t *p, UINT8 playernum)
 	CV_StealthSetValue(&cv_autoroulette[playernum], p->autoroulette);
 	CV_StealthSetValue(&cv_litesteer[playernum], p->litesteer);
 	CV_StealthSetValue(&cv_autoring[playernum], p->autoring);
+	CV_StealthSetValue(&cv_invertedflight[playernum], p->invertedflight);
 	CV_StealthSetValue(&cv_rumble[playernum], p->rumble);
 	CV_StealthSetValue(&cv_fov[playernum], p->fov);
 
