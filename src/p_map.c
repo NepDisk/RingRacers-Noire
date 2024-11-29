@@ -3623,28 +3623,45 @@ static void P_HitSlideLine(line_t *ld)
 //
 static void P_PlayerHitBounceLine(line_t *ld, vector2_t* normal)
 {
+	INT32 side;
+	angle_t lineangle;
 	fixed_t movelen;
 	fixed_t x, y;
 
-	movelen = P_AproxDistance(tmxmove, tmymove);
-
 	if (slidemo->player && movelen < (15*mapobjectscale))
 		movelen = (15*mapobjectscale);
+	
+	if (ld)
+	{
+		side = P_PointOnLineSide(slidemo->x, slidemo->y, ld);
+		lineangle = R_PointToAngle2(0, 0, ld->dx, ld->dy)-ANGLE_90;
 
-	if (!ld)
+		if (side == 1)
+			lineangle += ANGLE_180;
+
+		lineangle >>= ANGLETOFINESHIFT;
+
+		movelen = P_AproxDistance(tmxmove, tmymove);
+	}
+	else
 	{
 		angle_t th = R_PointToAngle2(0, 0, tmxmove, tmymove);
 		normal->x = -FCOS(th);
 		normal->y = -FSIN(th);
-	}
 
-	x = FixedMul(movelen, normal->x);
-	y = FixedMul(movelen, normal->y);
+		x = FixedMul(movelen, normal->x);
+		y = FixedMul(movelen, normal->y);
+	}
 
 	if (ld && P_IsLineTripWire(ld))
 	{
-		tmxmove = x * 4;
-		tmymove = y * 4;
+		tmxmove += FixedMul(movelen, FINECOSINE(lineangle)) * 4;
+		tmymove += FixedMul(movelen, FINESINE(lineangle)) * 4;
+	}
+	else if (ld)
+	{
+		tmxmove += FixedMul(movelen, FINECOSINE(lineangle));
+		tmymove += FixedMul(movelen, FINESINE(lineangle));
 	}
 	else
 	{
