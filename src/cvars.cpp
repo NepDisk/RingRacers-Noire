@@ -1322,6 +1322,11 @@ consvar_t cv_ng_fastfallbounce = UnsavedNetVar("ng_fastfallbounce", "On").values
 	{1, "Bubble Shield"},
 	{2, "On"},
 });
+consvar_t cv_ng_bubbleshieldbounce = UnsavedNetVar("ng_bubbleshieldbounce", "On").values({
+	{0, "Off"},
+	{1, "Pop"},
+	{2, "On"},
+});
 consvar_t cv_ng_draft = UnsavedNetVar("ng_draft", "On").on_off();
 consvar_t cv_ng_wavedash = UnsavedNetVar("ng_wavedash", "On").on_off();
 consvar_t cv_ng_tumble = UnsavedNetVar("ng_tumble", "On").on_off();

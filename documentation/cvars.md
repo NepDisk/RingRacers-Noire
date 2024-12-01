@@ -712,6 +712,13 @@ Choices: "Off", "Bubble Shield". "On"
 
 Decides if the fast fall bounce should work. "Bubble Shield" Makes it only bounce when the Bubble Shield is active.
 
+#### ng_bubbleshieldbounce
+Default Value: "On"
+
+Choices: "Off", "Pop". "On"
+
+Decides how bubbleshield bounces work. Pop forces 1st behaviour in any postion.
+
 #### ng_draft
 Default Value: "On"
 

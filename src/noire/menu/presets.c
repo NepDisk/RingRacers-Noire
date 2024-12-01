@@ -63,6 +63,7 @@ void N_RRVanillaPreset(INT32 choice)
 	// Mechanics
 	CV_Set(&cv_ng_fastfall, "On");
 	CV_Set(&cv_ng_fastfallbounce, "On");
+	CV_Set(&cv_ng_bubbleshieldbounce, "On");
 	CV_Set(&cv_ng_draft, "On");
 	CV_Set(&cv_ng_wavedash, "On");
 	CV_Set(&cv_ng_tumble, "On");
@@ -171,6 +172,7 @@ void N_NoirePreset(INT32 choice)
 	// Mechanics
 	CV_Set(&cv_ng_fastfall, "On");
 	CV_Set(&cv_ng_fastfallbounce, "Bubble Shield");
+	CV_Set(&cv_ng_bubbleshieldbounce, "Pop");
 	CV_Set(&cv_ng_draft, "Off");
 	CV_Set(&cv_ng_wavedash, "On");
 	CV_Set(&cv_ng_tumble, "Off");
@@ -278,6 +280,7 @@ void N_SRB2KPreset(INT32 choice)
 	// Mechanics
 	CV_Set(&cv_ng_fastfall, "Off");
 	CV_Set(&cv_ng_fastfallbounce, "Off");
+	CV_Set(&cv_ng_bubbleshieldbounce, "Off");
 	CV_Set(&cv_ng_draft, "Off");
 	CV_Set(&cv_ng_wavedash, "Off");
 	CV_Set(&cv_ng_tumble, "Off");
