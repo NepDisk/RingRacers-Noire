@@ -51,6 +51,7 @@ struct ProfilePreferencesJson
 	bool rumble;
 	uint8_t fov;
 	bool flipcam;
+	bool oldtricks;
 	tm test;
 
 	NLOHMANN_DEFINE_TYPE_INTRUSIVE_WITH_DEFAULT(

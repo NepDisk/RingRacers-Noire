@@ -312,6 +312,7 @@ void PR_SaveProfiles(void)
 		jsonprof.preferences.rumble = cprof->rumble;
 		jsonprof.preferences.fov = cprof->fov;
 		jsonprof.preferences.flipcam = cprof->flipcam;
+		jsonprof.preferences.oldtricks = cprof->oldtricks;
 
 		for (size_t j = 0; j < num_gamecontrols; j++)
 		{
@@ -499,6 +500,7 @@ void PR_LoadProfiles(void)
 		newprof->rumble = jsprof.preferences.rumble;
 		newprof->fov = jsprof.preferences.fov;
 		newprof->flipcam = jsprof.preferences.flipcam;
+		newprof->oldtricks = jsprof.preferences.oldtricks;
 
 		try
 		{
