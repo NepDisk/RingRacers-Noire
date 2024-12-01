@@ -11409,7 +11409,7 @@ static void K_KartDrift(player_t *player, boolean onground)
 		}
 	}
 
-	if (P_PlayerInPain(player) || player->speed <= 0)
+	if (P_PlayerInPain(player) || (player->speed <= 0 && !player->mo->momz))
 	{
 		// Stop drifting
 		player->drift = player->driftcharge = player->aizdriftstrat = 0;
