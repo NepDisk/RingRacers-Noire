@@ -105,6 +105,9 @@ menuitem_t OPTIONS_NoireProfileAccessibility[] = {
 
 	{IT_STRING | IT_CVAR, "Flipcam", "Flip the camera when upside down. Kinda sucks.",
 		NULL, {.cvar = &cv_dummyprofileflipcam}, 0, 0},
+
+	{IT_STRING | IT_CVAR, "Inverted Flight", "Hold UP to go down, and vice versa, on a flying mount.",
+		NULL, {.cvar = &cv_dummyprofileinvertedflight}, 0, 0},
 };
 
 menu_t OPTIONS_NoireProfileAccessibilityDef = {

@@ -1605,6 +1605,7 @@ consvar_t cv_dummyprofilefov = MenuDummy("dummyprofilefov", "100").min_max(70, 1
 consvar_t cv_dummyprofilelitesteer = MenuDummy("dummyprofilelitesteer", "Off").on_off();
 consvar_t cv_dummyprofileautoring = MenuDummy("dummyprofileautoring", "Off").on_off();
 consvar_t cv_dummyprofilekickstart = MenuDummy("dummyprofilekickstart", "Off").on_off();
+consvar_t cv_dummyprofileinvertedflight = MenuDummy("dummyprofileinvertedflight", "Off").on_off();
 consvar_t cv_dummyprofilename = MenuDummy("dummyprofilename", "");
 consvar_t cv_dummyprofileplayername = MenuDummy("dummyprofileplayername", "");
 consvar_t cv_dummyprofilerumble = MenuDummy("dummyprofilerumble", "On").on_off();
@@ -1734,6 +1735,13 @@ consvar_t cv_autoring[MAXSPLITSCREENPLAYERS] = {
 	Player("autoring2", "Off").on_off().onchange(weaponPrefChange2),
 	Player("autoring3", "Off").on_off().onchange(weaponPrefChange3),
 	Player("autoring4", "Off").on_off().onchange(weaponPrefChange4),
+};
+
+consvar_t cv_invertedflight[MAXSPLITSCREENPLAYERS] = {
+	Player("invertedflight", "Off").on_off().onchange(weaponPrefChange),
+	Player("invertedflight2", "Off").on_off().onchange(weaponPrefChange2),
+	Player("invertedflight3", "Off").on_off().onchange(weaponPrefChange3),
+	Player("invertedflight4", "Off").on_off().onchange(weaponPrefChange4),
 };
 
 consvar_t cv_cam_dist[MAXSPLITSCREENPLAYERS] = {

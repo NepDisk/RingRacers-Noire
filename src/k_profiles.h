@@ -47,6 +47,7 @@ struct ProfilePreferencesJson
 	bool autoroulette;
 	bool litesteer;
 	bool autoring;
+	bool invertedflight;
 	bool rumble;
 	uint8_t fov;
 	bool flipcam;
@@ -58,6 +59,7 @@ struct ProfilePreferencesJson
 		autoroulette,
 		litesteer,
 		autoring,
+		invertedflight,
 		rumble,
 		fov,
 		flipcam
@@ -165,6 +167,7 @@ struct profile_t
 	boolean autoroulette;				// cv_autoroulette
 	boolean litesteer;					// cv_litesteer
 	boolean autoring;					// cv_autoring
+	boolean invertedflight;             // cv_invertedflight
 	boolean rumble;						// cv_rumble
 	UINT8 fov;							// cv_fov
 	boolean flipcam;					// cv_flipcam

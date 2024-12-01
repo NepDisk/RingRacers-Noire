@@ -101,6 +101,7 @@ static void M_ProfileEditApply(void)
 	optionsmenu.profile->autoroulette = cv_dummyprofileautoroulette.value;
 	optionsmenu.profile->litesteer = cv_dummyprofilelitesteer.value;
 	optionsmenu.profile->autoring = cv_dummyprofileautoring.value;
+	optionsmenu.profile->invertedflight = cv_dummyprofileinvertedflight.value;
 	optionsmenu.profile->rumble = cv_dummyprofilerumble.value;
 	optionsmenu.profile->fov = cv_dummyprofilefov.value;
 	optionsmenu.profile->flipcam = cv_dummyprofileflipcam.value;
