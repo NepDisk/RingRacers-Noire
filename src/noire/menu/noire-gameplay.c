@@ -197,6 +197,9 @@ menuitem_t OPTIONS_NoireGameplayMechanics[] =
 	{IT_STRING | IT_CVAR, "Fast Fall Bounce", "Enable or disable the short bounce upon landing after fast-falling.",
 		NULL, {.cvar = &cv_ng_fastfallbounce}, 0, 0},
 
+	{IT_STRING | IT_CVAR, "Bubble Shield Bounce", "Decide how bubble bounces work.",
+		NULL, {.cvar = &cv_ng_fastfallbounce}, 0, 0},
+
 	{IT_STRING | IT_CVAR, "Draft/Tether", "Enable or disable the 'tether' between racers, pulling racers behind.",
 		NULL, {.cvar = &cv_ng_draft}, 0, 0},
 
@@ -246,6 +249,9 @@ menuitem_t OPTIONS_NoireGameplaySpindash[] =
 		NULL, {.cvar = &cv_ng_spindashoverheat}, 0, 0},
 
 	{IT_STRING | IT_CVAR, "Force Desperation", "Force enable desperation spindash regardless of ring count",
+		NULL, {.cvar = &cv_ng_desperationforce}, 0, 0},
+
+	{IT_STRING | IT_CVAR, "Garden Top Spindash", "Toggle being able to spindash with the Garden Top.",
 		NULL, {.cvar = &cv_ng_desperationforce}, 0, 0},
 
 };

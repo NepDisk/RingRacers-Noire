@@ -717,7 +717,7 @@ Default Value: "On"
 
 Choices: "Off", "Pop". "On"
 
-Decides how bubbleshield bounces work. Pop forces 1st behaviour in any postion.
+Decides how bubbleshield bounces work. Pop forces 1st behaviour in any position.
 
 #### ng_draft
 Default Value: "On"
@@ -918,6 +918,13 @@ Default Value: "Off"
 Choices: "Off", "On"
 
 Sets if player should always have the fast spindash.
+
+#### ng_topspindash
+Default Value: "On"
+
+Choices: "Off", "On"
+
+Decides if the player should be able to spindash with the garden top. This can be used to fixed broken map skips only doable with spindashing with the top and then tossing it
 
 #### ng_slopephysics
 Default Value: "On"

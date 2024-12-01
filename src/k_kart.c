@@ -12458,6 +12458,9 @@ static void K_KartSpindash(player_t *player)
 
 	if (cv_ng_spindash.value && player->speed < cv_ng_spindashthreshold.value*player->mo->scale)
 	{
+		if (!cv_ng_topspindash.value && (player->curshield == KSHIELD_TOP))
+			return;
+
 		if ((buttons & (BT_DRIFT|BT_BRAKE)) == (BT_DRIFT|BT_BRAKE))
 		{
 			UINT8 ringdropframes = 2 + (player->kartspeed + player->kartweight);
@@ -12561,7 +12564,7 @@ boolean K_FastFallBounce(player_t *player)
 			bounce = minBounce;
 		}
 
-		if ((cv_ng_bubbleshieldbounce.value != 0) && player->curshield == KSHIELD_BUBBLE)
+		if ((cv_ng_bubbleshieldbounce.value != 0) && (player->curshield == KSHIELD_BUBBLE))
 		{
 			S_StartSound(player->mo, sfx_s3k44);
 
@@ -12591,7 +12594,7 @@ boolean K_FastFallBounce(player_t *player)
 				numplayers = 1; // solo behavior
 			}
 
-			if ((cv_ng_bubbleshieldbounce.value == 1) || player->position == 1 && player->positiondelay <= 0 && numplayers != 1)
+			if ((cv_ng_bubbleshieldbounce.value == 1) || (player->position == 1 && player->positiondelay <= 0 && numplayers != 1))
 			{
 				S_StartSound(player->mo, sfx_kc31);
 				K_StripItems(player);
