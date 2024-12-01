@@ -522,52 +522,61 @@ void NG_OldPogoOverride_OnChange(void)
 
 void NG_ForceNoPosition_OnChange(void)
 {
-	static boolean displayedWarning = false;
-	if (!displayedWarning && menuactive)
+	if (cv_ng_forcenoposition.value)
 	{
-		M_StartMessage(
-			"WARNING!",
-			M_GetText("It is recommended to use mapheader value\n\"LegacyStart = True\" instead of this convar.\nSome maps may break.\n\nEnable at your own risk!"),
-			NULL,
-			MM_NOTHING,
-			NULL,
-			NULL
-		);
-		displayedWarning = true;
+		static boolean displayedWarning = false;
+		if (!displayedWarning && menuactive)
+		{
+			M_StartMessage(
+				"WARNING!",
+				M_GetText("It is recommended to use mapheader value\n\"LegacyStart = True\" instead of this convar.\nSome maps may break.\n\nEnable at your own risk!"),
+				NULL,
+				MM_NOTHING,
+				NULL,
+				NULL
+			);
+			displayedWarning = true;
+		}
 	}
 }
 
 void NG_ForceSmallBoxScale_OnChange(void)
 {
-	static boolean displayedWarning = false;
-	if (!displayedWarning && menuactive)
+	if (cv_ng_forceoldboxscale.value)
 	{
-		M_StartMessage(
-			"WARNING!",
-			M_GetText("It is recommended to use mapheader value\n\"LegacyBoxScale = True\" instead of this convar.\nThis may make some maps harder.\n\nEnable at your own risk!"),
-			NULL,
-			MM_NOTHING,
-			NULL,
-			NULL
-		);
-		displayedWarning = true;
+		static boolean displayedWarning = false;
+		if (!displayedWarning && menuactive)
+		{
+			M_StartMessage(
+				"WARNING!",
+				M_GetText("It is recommended to use mapheader value\n\"LegacyBoxScale = True\" instead of this convar.\nThis may make some maps harder.\n\nEnable at your own risk!"),
+				NULL,
+				MM_NOTHING,
+				NULL,
+				NULL
+			);
+			displayedWarning = true;
+		}
 	}
 }
 
 void NG_SRB2KartMovement_OnChange(void)
 {
-	static boolean displayedWarning = false;
-	if (!displayedWarning && menuactive)
+	if (cv_ng_oldspeedcalc.value)
 	{
-		M_StartMessage(
-			"WARNING!",
-			M_GetText("This changes how the air-speed and ground-speed caps works.\nGround thrusts will be slower and max speed is handled by the cap.\nSome maps may break and the Garden Top will be slower.\n\nEnable at your own risk!"),
-			NULL,
-			MM_NOTHING,
-			NULL,
-			NULL
-		);
-		displayedWarning = true;
+		static boolean displayedWarning = false;
+		if (!displayedWarning && menuactive)
+		{
+			M_StartMessage(
+				"WARNING!",
+				M_GetText("This changes how the air-speed and ground-speed caps works.\nGround thrusts will be slower and max speed is handled by the cap.\nSome maps may break and the Garden Top will be slower.\n\nEnable at your own risk!"),
+				NULL,
+				MM_NOTHING,
+				NULL,
+				NULL
+			);
+			displayedWarning = true;
+		}
 	}
 }
 
