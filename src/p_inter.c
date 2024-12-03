@@ -1136,6 +1136,7 @@ void P_TouchCheatcheck(mobj_t *post, player_t *player, boolean snaptopost)
 		player->respawn.pointangle = post->angle;
 		player->respawn.flip = ((post->flags2 & MF2_OBJECTFLIP) || (post->spawnpoint->options & MTF_OBJECTFLIP)) ? true : false;	// store flipping
 		player->respawn.manual = true;
+		player->lastsafecheatcheck = post->health;
 
 	}
 
