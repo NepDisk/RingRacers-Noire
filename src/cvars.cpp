@@ -969,6 +969,7 @@ consvar_t cv_ng_oldgrow = UnsavedNetVar("ng_oldgrow", "Ring Racers").values(rrOr
 consvar_t cv_ng_oldshrink = UnsavedNetVar("ng_oldshrink", "Ring Racers").values(rrOrKart_cons_t).onchange_noinit(NG_Olditem_OnChange);
 consvar_t cv_ng_oldeggman = UnsavedNetVar("ng_oldeggman", "Ring Racers").values(rrOrKart_cons_t).onchange_noinit(NG_Olditem_OnChange);
 consvar_t cv_ng_eggboxinvinpickup = UnsavedNetVar("ng_eggmaninvinpickup", "On").on_off();
+consvar_t cv_ng_oldshrinkitemdrop= UnsavedNetVar("ng_oldshrinkitemdrop", "On").on_off();
 consvar_t cv_ng_nerfdroptarget = UnsavedNetVar("ng_nerfdroptarget", "Off").on_off();
 consvar_t cv_ng_nerfflameshield = UnsavedNetVar("ng_nerfflameshield", "Off").on_off();
 consvar_t cv_ng_nerfflameshielddiminish = UnsavedNetVar("ng_flameshield_diminish", "1.2").floating_point();

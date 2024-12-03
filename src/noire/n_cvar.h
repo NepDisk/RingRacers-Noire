@@ -62,6 +62,7 @@ extern consvar_t cv_ng_oldgrow;
 extern consvar_t cv_ng_oldshrink;
 extern consvar_t cv_ng_oldeggman;
 extern consvar_t cv_ng_eggboxinvinpickup;
+extern consvar_t cv_ng_oldshrinkitemdrop;
 extern consvar_t cv_ng_nerfdroptarget;
 extern consvar_t cv_ng_nerfflameshield;
 extern consvar_t cv_ng_nerfflameshielddiminish;

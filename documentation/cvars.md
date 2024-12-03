@@ -492,6 +492,13 @@ Choices: "Off", "On"
 
 Decides if the player can pick up Eggmarks while using Grow or Invincibility
 
+#### ng_oldshrinkitemdrop
+Default Value: "On"
+
+Choices: "Off", "On"
+
+Decides if using Kart shrink drops everyone's items.
+
 #### ng_nerfdroptarget
 Default Value: "Off"
 
