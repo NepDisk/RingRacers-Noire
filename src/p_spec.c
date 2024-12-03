@@ -2244,7 +2244,46 @@ static void K_HandleLapIncrement(player_t *player)
 		}
 		else if (player->cheatchecknum)
 		{
-			S_StartSound(player->mo, sfx_s26d);
+			if (!player->checkskip)
+				S_StartSound(player->mo, sfx_s26d);
+			player->checkskip = 3;
+		}
+		else
+		{
+			if (player->laps == 1 && numbosswaypoints > 0)
+			{
+				if (cv_ng_firstbloodrb.value)
+				{
+					if (rainbowstartavailable == true && player->mo->hitlag == 0)
+					{
+						if (player->dropdashboost == 0)
+						{
+							S_StartSound(player->mo, sfx_s23c);
+
+							K_SpawnDriftBoostExplosion(player, 4);
+							K_SpawnDriftElectricSparks(player, SKINCOLOR_SILVER, false);
+						}
+						player->dropdashboost = 125;
+
+						if (rainbowstartcountdown == -1)
+							rainbowstartcountdown = 9;
+					}
+
+				}
+				else
+				{
+					if (rainbowstartavailable == true && player->mo->hitlag == 0)
+					{
+						S_StartSound(player->mo, sfx_s23c);
+						player->startboost = 125;
+
+						K_SpawnDriftBoostExplosion(player, 4);
+						K_SpawnDriftElectricSparks(player, SKINCOLOR_SILVER, false);
+
+						rainbowstartavailable = false;
+					}
+				}
+			}
 		}
 	}
 }
