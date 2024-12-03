@@ -2000,6 +2000,8 @@ static void K_HandleLapIncrement(player_t *player)
 			}
 
 			player->cheatchecknum = 0;
+			if (numbosswaypoints > 0)
+				player->lastsafecheatcheck = 0;
 			player->laps++;
 
 			// P_DoPlayerExit can edit latestlap, so we do this first
