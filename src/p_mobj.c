@@ -65,6 +65,7 @@ actioncache_t actioncachehead;
 
 static mobj_t *overlaycap = NULL;
 mobj_t *waypointcap = NULL;
+mobj_t *boss3cap = NULL;
 
 // Used as a fast iterator to certain objects that help bot
 // AI, need HUD tracking or appear on the minimap. It's pretty
@@ -13386,8 +13387,8 @@ static boolean P_SetupSpawnedMapThing(mapthing_t *mthing, mobj_t *mobj)
 	case MT_BOSS3WAYPOINT:
 		mobj->health = mthing->angle;
 		mobj->movecount = mthing->extrainfo;
-		P_SetTarget(&mobj->tracer, waypointcap);
-		P_SetTarget(&waypointcap, mobj);
+		P_SetTarget(&mobj->tracer, boss3cap);
+		P_SetTarget(&boss3cap, mobj);
 		numbosswaypoints++;
 		break;
 	case MT_SPIKE:

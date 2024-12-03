@@ -11867,49 +11867,41 @@ void K_KartUpdatePosition(player_t *player)
 void K_UpdateAllPlayerPositions(void)
 {
 	INT32 i;
-	if (numbosswaypoints == 0)
+	// First loop: Ensure all players' distance to the finish line are all accurate
+	for (i = 0; i < MAXPLAYERS; i++)
 	{
-		// First loop: Ensure all players' distance to the finish line are all accurate
-		for (i = 0; i < MAXPLAYERS; i++)
+		player_t *player = &players[i];
+		if (!playeringame[i] || player->spectator || !player->mo || P_MobjWasRemoved(player->mo))
 		{
-			player_t *player = &players[i];
-			if (!playeringame[i] || player->spectator || !player->mo || P_MobjWasRemoved(player->mo))
-			{
-				continue;
-			}
-
-			if (K_PodiumSequence() == true)
-			{
-				K_UpdatePodiumWaypoints(player);
-				continue;
-			}
-
-			if (player->respawn.state == RESPAWNST_MOVE &&
-				player->respawn.init == true &&
-				player->lastsafelap != player->laps)
-			{
-				player->laps = player->lastsafelap;
-				player->cheatchecknum = player->lastsafecheatcheck;
-			}
-
-			K_UpdatePlayerWaypoints(player);
+			continue;
 		}
 
-		// Second loop: Ensure all player positions reflect everyone's distances
-		for (i = 0; i < MAXPLAYERS; i++)
+		if (K_PodiumSequence() == true)
 		{
-			if (playeringame[i] && players[i].mo && !P_MobjWasRemoved(players[i].mo))
-			{
-				K_KartUpdatePosition(&players[i]);
-			}
+			K_UpdatePodiumWaypoints(player);
+			continue;
 		}
+
+		if (player->respawn.state == RESPAWNST_MOVE &&
+			player->respawn.init == true &&
+			player->lastsafelap != player->laps)
+		{
+			player->laps = player->lastsafelap;
+			player->cheatchecknum = player->lastsafecheatcheck;
+		}
+
+		K_UpdatePlayerWaypoints(player);
 	}
-	else
+
+	// Second loop: Ensure all player positions reflect everyone's distances
+	for (i = 0; i < MAXPLAYERS; i++)
 	{
-		// Use legacy postion update code from v1
-		for (i = 0; i < MAXPLAYERS; i++)
+		if (playeringame[i] && players[i].mo && !P_MobjWasRemoved(players[i].mo))
 		{
-			K_KartLegacyUpdatePosition(&players[i]);
+			if (numbosswaypoints > 0)
+				K_KartLegacyUpdatePosition(&players[i]);
+			else
+				K_KartUpdatePosition(&players[i]);
 		}
 	}
 }

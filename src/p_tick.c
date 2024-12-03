@@ -304,6 +304,7 @@ void P_InitThinkers(void)
 
 	waypointcap = NULL;
 	trackercap = NULL;
+	boss3cap = NULL;
 
 	titlemapcam.mobj = NULL;
 

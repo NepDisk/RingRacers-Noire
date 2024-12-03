@@ -8743,14 +8743,14 @@ boolean P_LoadLevel(boolean fromnetsave, boolean reloadinggamestate)
 	K_ClearWaypoints();
 	K_ClearFinishBeamLine();
 
-	// Load the waypoints please!
+	// Load the ccheckpoints and waypoints please!
 	if (gametyperules & GTR_CIRCUIT && gamestate != GS_TITLESCREEN)
 	{
-		if (numbosswaypoints == 0 )
+		if ((K_SetupWaypointList() == false))
 		{
-			if (K_SetupWaypointList() == false)
+			if (numbosswaypoints == 0)
 			{
-				CONS_Alert(CONS_ERROR, "Waypoints were not able to be setup! Player positions will not work correctly.\n");
+				CONS_Alert(CONS_ERROR, "Waypoints were not able to be setup and legacy checkpoints do not exist! Player positions will not work correctly.\n");
 			}
 		}
 
