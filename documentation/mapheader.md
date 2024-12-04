@@ -5,3 +5,6 @@ When this is put into a mapheader, the map will instead start with a SRB2Kart st
 
 ## LegacyBoxScale
 When this is put into a mapheader, itemboxes will be the same size as they were in SRB2Kart.
+
+## Terrain
+This can be used to turn off Terrain on maps. Mostly useful for binary maps.
