@@ -525,6 +525,7 @@ struct mapheader_t
 	UINT8 lapspersection;				///< Number of laps per section in hybrid section-circuit maps.
 	boolean legacystart;				///< Should map use SRB2Kart style race start
 	boolean legacyboxscale;				///< Should map use SRB2Kart itembox scale
+	boolean terrain;					///< Should map use terrain.
 	fixed_t gravity;					///< Map-wide gravity.
 	char relevantskin[SKINNAMESIZE+1];	///< Skin to use for tutorial (if not provided, uses Eggman.)
 

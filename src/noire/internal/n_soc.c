@@ -41,4 +41,17 @@ boolean N_UseLegacyItemboxScale(void)
 	return false;
 }
 
+boolean N_UseTerrain(void)
+{
+    const mapheader_t *mapheader = mapheaderinfo[gamemap - 1];
+
+	if (mapheader->terrain == true)
+		return true;
+
+	if (mapheader->terrain == false)
+		return false;
+
+	return true;
+}
+
 

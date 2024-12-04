@@ -57,6 +57,7 @@
 #include "noire/n_cvar.h"
 #include "noire/n_object.h"
 #include "noire/n_control.h"
+#include "noire/n_soc.h"
 
 // HEP2
 #include "hep2/h_cvars.h"
@@ -4069,10 +4070,10 @@ static void P_PlayerMobjThinker(mobj_t *mobj)
 	}
 
 	P_SquishThink(mobj);
-	if (!udmf)
-		mobj->terrain = NULL;
-	else
+	if (N_UseTerrain())
 		K_UpdateTerrainOverlay(mobj);
+	else
+		mobj->terrain = NULL;
 
 animonly:
 	P_CyclePlayerMobjState(mobj);
@@ -10447,10 +10448,10 @@ void P_MobjThinker(mobj_t *mobj)
 	}
 
 	P_SquishThink(mobj);
-	if (!udmf)
-		mobj->terrain = NULL;
-	else
+	if (N_UseTerrain())
 		K_UpdateTerrainOverlay(mobj);
+	else
+		mobj->terrain = NULL;
 
 	// Crush enemies!
 	if (mobj->ceilingz - mobj->floorz < mobj->height)

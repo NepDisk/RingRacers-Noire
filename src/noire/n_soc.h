@@ -22,6 +22,7 @@ extern "C" {
 
 boolean N_UseLegacyStart(void);
 boolean N_UseLegacyItemboxScale(void);
+boolean N_UseTerrain(void);
 
 #ifdef __cplusplus
 } // extern "C"
