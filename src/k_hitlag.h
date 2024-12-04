@@ -62,6 +62,7 @@ void K_AddHitLag(mobj_t *mo, INT32 tics, boolean fromDamage);
 void K_SetHitLagForObjects(mobj_t *victim, mobj_t *inflictor, mobj_t *source, INT32 tics, boolean fromDamage);
 void K_SpawnSingleHitLagSpark(mobj_t *parent, vector3_t *offset, fixed_t scale, UINT8 tics, UINT8 pause, skincolornum_t color);
 void K_PlayHitLagSFX(mobj_t *victim, UINT8 tics);
+void K_SpawnHitLagEFX(mobj_t *victim, mobj_t *inflictor, mobj_t *source, UINT8 tics);
 
 #ifdef __cplusplus
 } // extern "C"

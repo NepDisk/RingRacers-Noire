@@ -542,6 +542,7 @@ extern actioncache_t actioncachehead;
 
 extern mobj_t *trackercap;
 extern mobj_t *waypointcap;
+extern mobj_t *boss3cap;
 
 void P_InitCachedActions(void);
 void P_RunCachedActions(void);

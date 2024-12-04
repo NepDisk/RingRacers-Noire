@@ -115,7 +115,8 @@ void N_DoShrink(player_t *user)
 				&& !players[i].hyudorotimer)
 			{
 				// Start shrinking!
-				K_DropItems(&players[i]);
+				if (cv_ng_oldshrinkitemdrop.value)
+					K_DropItems(&players[i]);
 				players[i].growshrinktimer = -(20*TICRATE);
 
 				if (players[i].mo && !P_MobjWasRemoved(players[i].mo))

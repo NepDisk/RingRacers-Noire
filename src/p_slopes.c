@@ -28,6 +28,7 @@
 
 // Noire:
 #include "noire/n_cvar.h"
+#include "noire/n_soc.h"
 
 pslope_t *slopelist = NULL;
 UINT16 slopecount = 0;
@@ -980,9 +981,9 @@ boolean P_CanApplySlopeLaunch(mobj_t *mo, pslope_t *slope)
 		return false;
 	}
 
-	// No physics slopes are fine to launch off of. NOIRE: No, just no. Allow this to disabled via cvar
+	// No physics slopes are fine to launch off of. NOIRE: No, just no. Allow this to disabled via cvar or map header.
 
-	if((mo->standingslope->flags & SL_NOPHYSICS) && cv_ng_nophysicsflag.value)
+	if((mo->standingslope->flags & SL_NOPHYSICS) && N_LegacyNoPhysics())
 	{
 		//Don't do slope launch pls thx.
 		return false;
@@ -1007,7 +1008,7 @@ void P_QuantizeMomentumToSlope(vector3_t *momentum, pslope_t *slope)
 {
 	vector3_t axis; // Fuck you, C90.
 
-	if ((slope->flags & SL_NOPHYSICS) && cv_ng_nophysicsflag.value)
+	if ((slope->flags & SL_NOPHYSICS) && N_LegacyNoPhysics())
 		return; // No physics, no quantizing.
 
 	axis.x = -slope->d.y;

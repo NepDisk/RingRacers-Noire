@@ -492,6 +492,13 @@ Choices: "Off", "On"
 
 Decides if the player can pick up Eggmarks while using Grow or Invincibility
 
+#### ng_oldshrinkitemdrop
+Default Value: "On"
+
+Choices: "Off", "On"
+
+Decides if using Kart shrink drops everyone's items.
+
 #### ng_nerfdroptarget
 Default Value: "Off"
 
@@ -712,6 +719,13 @@ Choices: "Off", "Bubble Shield". "On"
 
 Decides if the fast fall bounce should work. "Bubble Shield" Makes it only bounce when the Bubble Shield is active.
 
+#### ng_bubbleshieldbounce
+Default Value: "On"
+
+Choices: "Off", "Pop". "On"
+
+Decides how bubbleshield bounces work. Pop forces 1st behaviour in any position.
+
 #### ng_draft
 Default Value: "On"
 
@@ -911,6 +925,13 @@ Default Value: "Off"
 Choices: "Off", "On"
 
 Sets if player should always have the fast spindash.
+
+#### ng_topspindash
+Default Value: "On"
+
+Choices: "Off", "On"
+
+Decides if the player should be able to spindash with the garden top. This can be used to fixed broken map skips only doable with spindashing with the top and then tossing it
 
 #### ng_slopephysics
 Default Value: "On"

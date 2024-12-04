@@ -497,6 +497,8 @@ static void P_ClearSingleMapHeaderInfo(INT16 num)
 	mapheaderinfo[num]->use_encore_lighting = false;
 	mapheaderinfo[num]->legacyboxscale = false;
 	mapheaderinfo[num]->legacystart = false;
+	mapheaderinfo[num]->terrain = true;
+	mapheaderinfo[num]->legacynophysics = false;
 #if 1 // equivalent to "Followers = DEFAULT"
 	P_SetDefaultHeaderFollowers(num);
 #else
@@ -8743,14 +8745,14 @@ boolean P_LoadLevel(boolean fromnetsave, boolean reloadinggamestate)
 	K_ClearWaypoints();
 	K_ClearFinishBeamLine();
 
-	// Load the waypoints please!
+	// Load the ccheckpoints and waypoints please!
 	if (gametyperules & GTR_CIRCUIT && gamestate != GS_TITLESCREEN)
 	{
-		if (numbosswaypoints == 0 )
+		if ((K_SetupWaypointList() == false))
 		{
-			if (K_SetupWaypointList() == false)
+			if (numbosswaypoints == 0)
 			{
-				CONS_Alert(CONS_ERROR, "Waypoints were not able to be setup! Player positions will not work correctly.\n");
+				CONS_Alert(CONS_ERROR, "Waypoints were not able to be setup and legacy checkpoints do not exist! Player positions will not work correctly.\n");
 			}
 		}
 
@@ -9372,8 +9374,8 @@ UINT16 P_PartialAddWadFile(const char *wadfilename, boolean local)
 		return false;
 	}
 
-	wadfiles[wadnum]->localfile = local;
 	wadnum = (UINT16)(numwadfiles-1);
+	wadfiles[wadnum]->localfile = local;
 
 	// Local addons should never be marked important, as we dont want them in our demos
 	if (local)

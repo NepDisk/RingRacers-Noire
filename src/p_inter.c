@@ -1136,6 +1136,7 @@ void P_TouchCheatcheck(mobj_t *post, player_t *player, boolean snaptopost)
 		player->respawn.pointangle = post->angle;
 		player->respawn.flip = ((post->flags2 & MF2_OBJECTFLIP) || (post->spawnpoint->options & MTF_OBJECTFLIP)) ? true : false;	// store flipping
 		player->respawn.manual = true;
+		player->lastsafecheatcheck = post->health;
 
 	}
 
@@ -3254,7 +3255,7 @@ boolean P_DamageMobj(mobj_t *target, mobj_t *inflictor, mobj_t *source, INT32 da
 					K_TryHurtSoundExchange(target, source);
 
 					if (!cv_ng_hitlag.value)
-						K_PlayHitLagSFX(target, 5);
+						K_SpawnHitLagEFX(player->mo, source, source, 10);
 
 					if (K_Cooperative() == false)
 					{

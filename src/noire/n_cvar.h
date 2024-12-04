@@ -62,6 +62,7 @@ extern consvar_t cv_ng_oldgrow;
 extern consvar_t cv_ng_oldshrink;
 extern consvar_t cv_ng_oldeggman;
 extern consvar_t cv_ng_eggboxinvinpickup;
+extern consvar_t cv_ng_oldshrinkitemdrop;
 extern consvar_t cv_ng_nerfdroptarget;
 extern consvar_t cv_ng_nerfflameshield;
 extern consvar_t cv_ng_nerfflameshielddiminish;
@@ -90,6 +91,7 @@ extern consvar_t cv_djaitbl[8]; extern consvar_t cv_tgaitbl[8];
 //Mechanics
 extern consvar_t cv_ng_fastfall;
 extern consvar_t cv_ng_fastfallbounce;
+extern consvar_t cv_ng_bubbleshieldbounce;
 extern consvar_t cv_ng_draft;
 extern consvar_t cv_ng_wavedash;
 extern consvar_t cv_ng_tumble;
@@ -124,6 +126,7 @@ extern consvar_t cv_ng_spindashthreshold;
 extern consvar_t cv_ng_spindashcharge;
 extern consvar_t cv_ng_spindashoverheat;
 extern consvar_t cv_ng_desperationforce;
+extern consvar_t cv_ng_topspindash;
 
 //Driving
 extern consvar_t cv_ng_butteredslopes;

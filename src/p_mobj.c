@@ -57,6 +57,7 @@
 #include "noire/n_cvar.h"
 #include "noire/n_object.h"
 #include "noire/n_control.h"
+#include "noire/n_soc.h"
 
 // HEP2
 #include "hep2/h_cvars.h"
@@ -65,6 +66,7 @@ actioncache_t actioncachehead;
 
 static mobj_t *overlaycap = NULL;
 mobj_t *waypointcap = NULL;
+mobj_t *boss3cap = NULL;
 
 // Used as a fast iterator to certain objects that help bot
 // AI, need HUD tracking or appear on the minimap. It's pretty
@@ -4068,10 +4070,10 @@ static void P_PlayerMobjThinker(mobj_t *mobj)
 	}
 
 	P_SquishThink(mobj);
-	if (!udmf)
-		mobj->terrain = NULL;
-	else
+	if (N_UseTerrain())
 		K_UpdateTerrainOverlay(mobj);
+	else
+		mobj->terrain = NULL;
 
 animonly:
 	P_CyclePlayerMobjState(mobj);
@@ -10446,10 +10448,10 @@ void P_MobjThinker(mobj_t *mobj)
 	}
 
 	P_SquishThink(mobj);
-	if (!udmf)
-		mobj->terrain = NULL;
-	else
+	if (N_UseTerrain())
 		K_UpdateTerrainOverlay(mobj);
+	else
+		mobj->terrain = NULL;
 
 	// Crush enemies!
 	if (mobj->ceilingz - mobj->floorz < mobj->height)
@@ -13386,8 +13388,8 @@ static boolean P_SetupSpawnedMapThing(mapthing_t *mthing, mobj_t *mobj)
 	case MT_BOSS3WAYPOINT:
 		mobj->health = mthing->angle;
 		mobj->movecount = mthing->extrainfo;
-		P_SetTarget(&mobj->tracer, waypointcap);
-		P_SetTarget(&waypointcap, mobj);
+		P_SetTarget(&mobj->tracer, boss3cap);
+		P_SetTarget(&boss3cap, mobj);
 		numbosswaypoints++;
 		break;
 	case MT_SPIKE:

@@ -21,8 +21,10 @@
 #include "m_random.h"
 #include "m_misc.h"
 #include "p_local.h"
+#include "p_mobj.h"
 #include "p_setup.h"
 #include "p_saveg.h"
+#include "p_tick.h"
 #include "r_data.h"
 #include "r_fps.h"
 #include "r_textures.h"
@@ -2928,6 +2930,7 @@ typedef enum
 	MD3_REAPPEAR		= 1<<1,
 	MD3_PUNT_REF		= 1<<2,
 	MD3_OWNER			= 1<<3,
+	MD3_BOSS3CAP		= 1<<4
 } mobj_diff3_t;
 
 typedef enum
@@ -3254,6 +3257,8 @@ static void SaveMobjThinker(savebuffer_t *save, const thinker_t *th, const UINT8
 		diff3 |= MD3_PUNT_REF;
 	if (mobj->owner)
 		diff3 |= MD3_OWNER;
+	if (mobj == boss3cap)
+		diff3 |= MD3_BOSS3CAP;
 
 	if (diff3 != 0)
 		diff2 |= MD2_MORE;
@@ -4863,6 +4868,9 @@ static thinker_t* LoadMobjThinker(savebuffer_t *save, actionf_p1 thinker)
 
 	if (diff2 & MD2_KITEMCAP)
 		P_SetTarget(&trackercap, mobj);
+
+	if (diff3 & MD3_BOSS3CAP)
+		P_SetTarget(&boss3cap, mobj);
 
 	R_AddMobjInterpolator(mobj);
 

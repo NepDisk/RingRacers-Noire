@@ -969,6 +969,7 @@ consvar_t cv_ng_oldgrow = UnsavedNetVar("ng_oldgrow", "Ring Racers").values(rrOr
 consvar_t cv_ng_oldshrink = UnsavedNetVar("ng_oldshrink", "Ring Racers").values(rrOrKart_cons_t).onchange_noinit(NG_Olditem_OnChange);
 consvar_t cv_ng_oldeggman = UnsavedNetVar("ng_oldeggman", "Ring Racers").values(rrOrKart_cons_t).onchange_noinit(NG_Olditem_OnChange);
 consvar_t cv_ng_eggboxinvinpickup = UnsavedNetVar("ng_eggmaninvinpickup", "On").on_off();
+consvar_t cv_ng_oldshrinkitemdrop= UnsavedNetVar("ng_oldshrinkitemdrop", "On").on_off();
 consvar_t cv_ng_nerfdroptarget = UnsavedNetVar("ng_nerfdroptarget", "Off").on_off();
 consvar_t cv_ng_nerfflameshield = UnsavedNetVar("ng_nerfflameshield", "Off").on_off();
 consvar_t cv_ng_nerfflameshielddiminish = UnsavedNetVar("ng_flameshield_diminish", "1.2").floating_point();
@@ -1322,6 +1323,11 @@ consvar_t cv_ng_fastfallbounce = UnsavedNetVar("ng_fastfallbounce", "On").values
 	{1, "Bubble Shield"},
 	{2, "On"},
 });
+consvar_t cv_ng_bubbleshieldbounce = UnsavedNetVar("ng_bubbleshieldbounce", "On").values({
+	{0, "Off"},
+	{1, "Pop"},
+	{2, "On"},
+});
 consvar_t cv_ng_draft = UnsavedNetVar("ng_draft", "On").on_off();
 consvar_t cv_ng_wavedash = UnsavedNetVar("ng_wavedash", "On").on_off();
 consvar_t cv_ng_tumble = UnsavedNetVar("ng_tumble", "On").on_off();
@@ -1368,6 +1374,7 @@ consvar_t cv_ng_spindashthreshold = UnsavedNetVar("ng_spindashthreshold", "Defau
 consvar_t cv_ng_spindashcharge = UnsavedNetVar("ng_spindashcharge", "Default (0)").min_max(0, 100, {{0, "Default (0)"}});
 consvar_t cv_ng_spindashoverheat = UnsavedNetVar("ng_spindashoverheat", "On").on_off();
 consvar_t cv_ng_desperationforce = UnsavedNetVar("ng_spindashforcedesperation", "Off").on_off();
+consvar_t cv_ng_topspindash = UnsavedNetVar("ng_topspindash", "On").on_off();
 
 //Driving
 void NG_OldPogoOverride_OnChange(void);
@@ -1599,6 +1606,7 @@ consvar_t cv_dummyprofilefov = MenuDummy("dummyprofilefov", "100").min_max(70, 1
 consvar_t cv_dummyprofilelitesteer = MenuDummy("dummyprofilelitesteer", "Off").on_off();
 consvar_t cv_dummyprofileautoring = MenuDummy("dummyprofileautoring", "Off").on_off();
 consvar_t cv_dummyprofilekickstart = MenuDummy("dummyprofilekickstart", "Off").on_off();
+consvar_t cv_dummyprofileinvertedflight = MenuDummy("dummyprofileinvertedflight", "Off").on_off();
 consvar_t cv_dummyprofilename = MenuDummy("dummyprofilename", "");
 consvar_t cv_dummyprofileplayername = MenuDummy("dummyprofileplayername", "");
 consvar_t cv_dummyprofilerumble = MenuDummy("dummyprofilerumble", "On").on_off();
@@ -1728,6 +1736,13 @@ consvar_t cv_autoring[MAXSPLITSCREENPLAYERS] = {
 	Player("autoring2", "Off").on_off().onchange(weaponPrefChange2),
 	Player("autoring3", "Off").on_off().onchange(weaponPrefChange3),
 	Player("autoring4", "Off").on_off().onchange(weaponPrefChange4),
+};
+
+consvar_t cv_invertedflight[MAXSPLITSCREENPLAYERS] = {
+	Player("invertedflight", "Off").on_off().onchange(weaponPrefChange),
+	Player("invertedflight2", "Off").on_off().onchange(weaponPrefChange2),
+	Player("invertedflight3", "Off").on_off().onchange(weaponPrefChange3),
+	Player("invertedflight4", "Off").on_off().onchange(weaponPrefChange4),
 };
 
 consvar_t cv_cam_dist[MAXSPLITSCREENPLAYERS] = {

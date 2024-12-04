@@ -102,6 +102,7 @@ extern consvar_t cv_kickstartaccel[MAXSPLITSCREENPLAYERS];
 extern consvar_t cv_autoroulette[MAXSPLITSCREENPLAYERS];
 extern consvar_t cv_litesteer[MAXSPLITSCREENPLAYERS];
 extern consvar_t cv_autoring[MAXSPLITSCREENPLAYERS];
+extern consvar_t cv_invertedflight[MAXSPLITSCREENPLAYERS];
 extern consvar_t cv_shrinkme[MAXSPLITSCREENPLAYERS];
 
 extern consvar_t cv_deadzone[MAXSPLITSCREENPLAYERS];

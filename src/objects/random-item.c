@@ -169,7 +169,7 @@ boolean Obj_RandomItemSpawnIn(mobj_t *mobj)
 	{
 		statenum_t boxstate = mobj->state - states;
 		if (boxstate >= S_RINGBOX1 || boxstate <= S_RINGBOX12)
-			P_SetMobjState(mobj, S_RANDOMITEM1);
+			P_SetMobjState(mobj, S_RANDOMITEM1+(leveltime/4) % 12);
 	}
 
 

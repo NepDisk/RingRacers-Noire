@@ -9527,8 +9527,8 @@ void K_KartPlayerThink(player_t *player, ticcmd_t *cmd)
 		player->topAccel = FixedMul(topmult, player->topAccel);
 	}
 
-	// Start at lap 1 on binary maps just to be safe.
-	if ((!udmf) && player->laps == 0 && numlaps > 0)
+	// Start at lap 1 on maps using old checkpoints just to be safe.
+	if ((numbosswaypoints > 0) && player->laps == 0 && numlaps > 0)
 		player->laps = 1;
 
 	player->topAccel = min(player->topAccel + TOPACCELREGEN, MAXTOPACCEL);
@@ -11409,7 +11409,7 @@ static void K_KartDrift(player_t *player, boolean onground)
 		}
 	}
 
-	if (P_PlayerInPain(player) || player->speed <= 0)
+	if (P_PlayerInPain(player) || (player->speed <= 0 && !player->mo->momz))
 	{
 		// Stop drifting
 		player->drift = player->driftcharge = player->aizdriftstrat = 0;
@@ -11867,49 +11867,41 @@ void K_KartUpdatePosition(player_t *player)
 void K_UpdateAllPlayerPositions(void)
 {
 	INT32 i;
-	if (numbosswaypoints == 0)
+	// First loop: Ensure all players' distance to the finish line are all accurate
+	for (i = 0; i < MAXPLAYERS; i++)
 	{
-		// First loop: Ensure all players' distance to the finish line are all accurate
-		for (i = 0; i < MAXPLAYERS; i++)
+		player_t *player = &players[i];
+		if (!playeringame[i] || player->spectator || !player->mo || P_MobjWasRemoved(player->mo))
 		{
-			player_t *player = &players[i];
-			if (!playeringame[i] || player->spectator || !player->mo || P_MobjWasRemoved(player->mo))
-			{
-				continue;
-			}
-
-			if (K_PodiumSequence() == true)
-			{
-				K_UpdatePodiumWaypoints(player);
-				continue;
-			}
-
-			if (player->respawn.state == RESPAWNST_MOVE &&
-				player->respawn.init == true &&
-				player->lastsafelap != player->laps)
-			{
-				player->laps = player->lastsafelap;
-				player->cheatchecknum = player->lastsafecheatcheck;
-			}
-
-			K_UpdatePlayerWaypoints(player);
+			continue;
 		}
 
-		// Second loop: Ensure all player positions reflect everyone's distances
-		for (i = 0; i < MAXPLAYERS; i++)
+		if (K_PodiumSequence() == true)
 		{
-			if (playeringame[i] && players[i].mo && !P_MobjWasRemoved(players[i].mo))
-			{
-				K_KartUpdatePosition(&players[i]);
-			}
+			K_UpdatePodiumWaypoints(player);
+			continue;
 		}
+
+		if (player->respawn.state == RESPAWNST_MOVE &&
+			player->respawn.init == true &&
+			player->lastsafelap != player->laps)
+		{
+			player->laps = player->lastsafelap;
+			player->cheatchecknum = player->lastsafecheatcheck;
+		}
+
+		K_UpdatePlayerWaypoints(player);
 	}
-	else
+
+	// Second loop: Ensure all player positions reflect everyone's distances
+	for (i = 0; i < MAXPLAYERS; i++)
 	{
-		// Use legacy postion update code from v1
-		for (i = 0; i < MAXPLAYERS; i++)
+		if (playeringame[i] && players[i].mo && !P_MobjWasRemoved(players[i].mo))
 		{
-			K_KartLegacyUpdatePosition(&players[i]);
+			if (numbosswaypoints > 0)
+				K_KartLegacyUpdatePosition(&players[i]);
+			else
+				K_KartUpdatePosition(&players[i]);
 		}
 	}
 }
@@ -12458,6 +12450,9 @@ static void K_KartSpindash(player_t *player)
 
 	if (cv_ng_spindash.value && player->speed < cv_ng_spindashthreshold.value*player->mo->scale)
 	{
+		if (!cv_ng_topspindash.value && (player->curshield == KSHIELD_TOP))
+			return;
+
 		if ((buttons & (BT_DRIFT|BT_BRAKE)) == (BT_DRIFT|BT_BRAKE))
 		{
 			UINT8 ringdropframes = 2 + (player->kartspeed + player->kartweight);
@@ -12561,7 +12556,7 @@ boolean K_FastFallBounce(player_t *player)
 			bounce = minBounce;
 		}
 
-		if (player->curshield == KSHIELD_BUBBLE)
+		if ((cv_ng_bubbleshieldbounce.value != 0) && (player->curshield == KSHIELD_BUBBLE))
 		{
 			S_StartSound(player->mo, sfx_s3k44);
 
@@ -12591,7 +12586,7 @@ boolean K_FastFallBounce(player_t *player)
 				numplayers = 1; // solo behavior
 			}
 
-			if (player->position == 1 && player->positiondelay <= 0 && numplayers != 1)
+			if ((cv_ng_bubbleshieldbounce.value == 1) || (player->position == 1 && player->positiondelay <= 0 && numplayers != 1))
 			{
 				S_StartSound(player->mo, sfx_kc31);
 				K_StripItems(player);

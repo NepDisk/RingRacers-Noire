@@ -43,7 +43,7 @@ void K_KartLegacyUpdatePosition(player_t *player)
 				player->nextcheck = players[i].nextcheck = 0;
 
 				// This checks every thing on the map, and looks for MT_BOSS3WAYPOINT (the thing we're using for checkpoint wp's, for now)
-				for (mo = waypointcap; mo != NULL; mo = mo->tracer)
+				for (mo = boss3cap; mo != NULL; mo = mo->tracer)
 				{
 					pmo = P_AproxDistance(P_AproxDistance(	mo->x - player->mo->x,
 															mo->y - player->mo->y),

@@ -185,7 +185,7 @@ void K_PlayHitLagSFX(mobj_t *victim, UINT8 tics)
 	Return:-
 		N/A
 --------------------------------------------------*/
-static void K_SpawnHitLagEFX(mobj_t *victim, mobj_t *inflictor, mobj_t *source, UINT8 tics)
+void K_SpawnHitLagEFX(mobj_t *victim, mobj_t *inflictor, mobj_t *source, UINT8 tics)
 {
 	vector3_t offset = { 0, 0, 0 };
 	fixed_t newScale = FRACUNIT;

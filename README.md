@@ -29,7 +29,7 @@ This contain information about all the new thing added by Noire.
 
 # Credits
 
-Thanks to Alug, Haya, LuigiBudd, Freaky Mutant Man, WumboSpasm, mncho and Anreol for their forks and Pull Requests!
+Thanks to Alug, Haya, LuigiBudd, Freaky Mutant Man, WumboSpasm, Superstarxalien, Blonded,  mncho and Anreol for their forks and Pull Requests!
 
 Also thanks to Indev for creating the original Slope Helper script!
 
