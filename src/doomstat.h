@@ -526,6 +526,7 @@ struct mapheader_t
 	boolean legacystart;				///< Should map use SRB2Kart style race start
 	boolean legacyboxscale;				///< Should map use SRB2Kart itembox scale
 	boolean terrain;					///< Should map use terrain.
+	boolean legacynophysics;			///< Should no physics allow ramping.
 	fixed_t gravity;					///< Map-wide gravity.
 	char relevantskin[SKINNAMESIZE+1];	///< Skin to use for tutorial (if not provided, uses Eggman.)
 

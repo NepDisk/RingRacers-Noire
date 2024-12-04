@@ -54,4 +54,18 @@ boolean N_UseTerrain(void)
 	return true;
 }
 
+boolean N_LegacyNoPhysics(void)
+{
+    const mapheader_t *mapheader = mapheaderinfo[gamemap - 1];
 
+	if (mapheader->legacynophysics == true)
+		return true;
+
+	if (cv_ng_nophysicsflag.value)
+		return true;
+
+	if (mapheader->legacynophysics == false)
+		return false;
+
+	return false;
+}

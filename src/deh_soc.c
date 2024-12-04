@@ -1394,6 +1394,13 @@ void readlevelheader(MYFILE *f, char * name)
 				else
 					mapheaderinfo[num]->terrain = false;
 			}
+			else if (fastcmp(word, "LEGACYNOPHYSICS"))
+			{
+				if (i || word2[0] == 'T' || word2[0] == 'Y')
+					mapheaderinfo[num]->legacynophysics = true;
+				else
+					mapheaderinfo[num]->legacynophysics = false;
+			}
 			else if (fastcmp(word, "SKYBOXSCALE"))
 				mapheaderinfo[num]->skybox_scalex = mapheaderinfo[num]->skybox_scaley = mapheaderinfo[num]->skybox_scalez = (INT16)i;
 			else if (fastcmp(word, "SKYBOXSCALEX"))

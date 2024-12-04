@@ -8,3 +8,6 @@ When this is put into a mapheader, itemboxes will be the same size as they were 
 
 ## Terrain
 This can be used to turn off Terrain on maps. Mostly useful for binary maps.
+
+## LegacyNoPhysics
+This restores the no physics flag on sectors not allowing launching.
