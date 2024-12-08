@@ -10193,7 +10193,7 @@ void P_MobjThinker(mobj_t *mobj)
 			mobj->spriteyscale = 5*FRACUNIT;
 		}
 
-		if (mobj->player != NULL && mobj->hitlag == 0 && (mobj->eflags & MFE_DAMAGEHITLAG))
+		if (mobj->player != NULL && (cv_ng_hitlag.value && (mobj->hitlag == 0 && (mobj->eflags & MFE_DAMAGEHITLAG))))
 		{
 			if (mobj->player->ringburst > 0)
 			{

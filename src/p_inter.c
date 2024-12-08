@@ -3397,6 +3397,19 @@ boolean P_DamageMobj(mobj_t *target, mobj_t *inflictor, mobj_t *source, INT32 da
 				K_PopPlayerShield(player);
 				player->instashield = 15;
 
+				if (!cv_ng_hitlag.value)
+				{
+					if (player->ringburst > 0)
+					{
+						// Delayed ring loss
+						P_PlayRinglossSound(player->mo);
+						P_PlayerRingBurst(player, player->ringburst);
+						player->ringburst = 0;
+					}
+
+					K_HandleDirectionalInfluence(player);
+				}
+
 				K_PlayPainSound(target, source);
 			}
 			else if (inflictor && inflictor->type == MT_INSTAWHIP)
